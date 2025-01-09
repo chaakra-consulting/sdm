@@ -1,0 +1,101 @@
+@SPK@include("partials/mainhead.html")
+
+<!-- Prism CSS -->
+<link rel="stylesheet" href="../assets/libs/prismjs/themes/prism-coy.min.css">
+
+<link rel="stylesheet" href="../assets/libs/@simonwep/pickr/themes/classic.min.css">
+<link rel="stylesheet" href="../assets/libs/@simonwep/pickr/themes/monolith.min.css">
+<link rel="stylesheet" href="../assets/libs/@simonwep/pickr/themes/nano.min.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Color Pickers", "subtitle": 'Form Elements'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="card custom-card">
+                            <div class="card-header justify-content-between">
+                                <div class="card-title">
+                                    Bootstrap Color Picker
+                                </div>
+                                <div class="prism-toggle">
+                                    <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <input type="color" class="form-control form-control-color border-0"
+                                        id="exampleColorInput" value="#136ad0" title="Choose your color">
+                            </div>
+                            <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;input type="color" class="form-control form-control-color border-0"
+    id="exampleColorInput" value="#136ad0" title="Choose your color"&gt;</code></pre>
+<!-- Prism Code -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    Classic
+                                </div>
+                            </div>
+                            <div class="card-body d-flex justify-content-between">
+                                <div>
+                                    <div class="theme-container"></div>
+                                    <div class="pickr-container example-picker"></div>
+                                </div>
+                                <div>
+                                    <div class="theme-container1"></div>
+                                    <div class="pickr-container1 example-picker"></div>
+                                </div>
+                                <div>
+                                    <div class="theme-container2"></div>
+                                    <div class="pickr-container2 example-picker"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Prism JS -->
+    <script src="../assets/libs/prismjs/prism.js"></script>
+    <script src="../assets/js/prism-custom.js"></script>
+
+    <!-- Color Picker JS -->
+    <script src="../assets/js/color-picker.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

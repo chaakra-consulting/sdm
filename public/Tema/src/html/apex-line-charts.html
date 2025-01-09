@@ -1,0 +1,168 @@
+@SPK@include("partials/mainhead.html")
+<link rel="stylesheet" href="../assets/libs/apexcharts/apexcharts.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Apex Line Charts", "subtitle": 'Apex Charts'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="line-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Line Chart With Data Labels</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="line-chart-datalabels"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Zoomable Time Series</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="zoom-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Line With Annotations</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="annotation-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Brush Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="brush-chart1"></div>
+                                <div id="brush-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">StepLine Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="stepline-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Gradient Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="gradient-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Missing/Null Values Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="null-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Real Time Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="dynamic-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Dashed Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="dashed-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Syncing Charts</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-line"></div>
+                                <div id="chart-line2"></div>
+                                <div id="chart-area"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Apex Charts JS -->
+    <script src="../assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- Used In Zoomable TIme Series Chart -->
+    <script src="../assets/js/dataseries.js"></script>
+
+    <!---Used In Annotations Chart-->
+    <script src="../assets/js/apexcharts-stock-prices.js"></script>
+
+    <!-- Internal Apex Line Charts JS -->
+    <script src="../assets/js/apexcharts-line.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

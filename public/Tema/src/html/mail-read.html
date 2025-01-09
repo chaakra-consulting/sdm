@@ -1,0 +1,189 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Mail Read", "subtitle": 'Mail'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-lg-4 col-xl-3 col-md-12 col-sm-12">
+                        <div class="card mb-4">
+                            <div class="main-content-left main-content-left-mail card-body">
+                                <a class="btn btn-primary btn-compose" href="mail-compose.html"
+                                    id="btnCompose">Compose</a>
+                                <div class="main-mail-menu">
+                                    <nav class="nav main-nav-column mb-4">
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bxs-inbox"></i> Inbox
+                                            <span>18</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-star"></i> Starred
+                                            <span>8</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-alarm-snooze"></i> Snoozed
+                                            <span>6</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-bookmarks"></i> Important
+                                            <span>15</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-send"></i> Sent Mail
+                                            <span>24</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-edit"></i> Drafts <span>2</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-message-error"></i> Spam
+                                            <span>32</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-message-square-detail"></i> Chats
+                                            <span>14</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-folder-open"></i> All Mail
+                                            <span>652</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-book-content"></i> Contacts
+                                            <span>547</span></a>
+                                        <a class="nav-link" href="javascript:void(0);"><i class="bx bx-trash"></i> Trash
+                                            <span>365</span></a>
+                                    </nav>
+                                    <label class="main-content-label main-content-label-sm">Settings</label>
+                                    <nav class="nav main-nav-column">
+                                        <a class="nav-link active" href="javascript:void(0);">Email Settings</a>
+                                        <a class="nav-link" href="javascript:void(0);">Account Information</a>
+                                    </nav>
+                                </div><!-- main-mail-menu -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Velit a labore <span class="badge bg-primary">inbox</span></h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="email-media">
+                                    <div class="mt-0 d-sm-flex">
+                                        <img class="me-2 rounded-circle avatar avatar-xl" src="../assets/images/faces/6.jpg"
+                                            alt="avatar">
+                                        <div class="media-body">
+                                            <div class="float-end d-none d-md-flex">
+                                                <span class="me-3">Sep 13 , 2019 12:45 pm</span>
+                                                <small class="me-3"><i class="bx bx-star fs-18" data-bs-toggle="tooltip"
+                                                        title="" data-bs-original-title="Rated"></i></small>
+                                                <small class="me-3"><i class="bx bx-reply fs-18"
+                                                        data-bs-toggle="tooltip" title=""
+                                                        data-bs-original-title="Reply"></i></small>
+                                                <div class="me-3">
+                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown"
+                                                        role="button" aria-haspopup="true" aria-expanded="false"><i
+                                                            class="fe fe-more-horizontal  fs-18"
+                                                            data-bs-toggle="tooltip" title=""
+                                                            data-bs-original-title="View more"></i></a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="javascript:void(0);">Reply</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Report
+                                                            Spam</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Show
+                                                            Original</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Print</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Filter</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media-title  fw-bold mt-3">Alica Nestle <span
+                                                    class="text-muted">( alicnestle@gmail.com )</span>
+                                            </div>
+                                            <p class="mb-0">to Adam Cotter ( adamcotter@gmail.com ) </p>
+                                            <small class="me-2 d-md-none">Sep 13 , 2019 12:45 pm</small>
+                                            <small class="me-2 d-md-none"><i class="fe fe-star text-muted"
+                                                    data-bs-toggle="tooltip" title=""
+                                                    data-bs-original-title="Rated"></i></small>
+                                            <small class="me-2 d-md-none"><i class="fa fa-reply text-muted"
+                                                    data-bs-toggle="tooltip" title=""
+                                                    data-bs-original-title="Reply"></i></small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="eamil-body mt-5">
+                                    <h6>Hi Sir/Madam</h6>
+                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                                        doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+                                        veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
+                                        voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
+                                        consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. </p>
+                                    <p> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                                        culpa qui officia.</p>
+                                    <p> Nor again is there anyone who loves or pursues or desires to obtain pain of
+                                        itself, because it is pain, but because occasionally circumstances occur in
+                                        which toil and pain can procure him some great pleasure. To take a trivial
+                                        example, which of us ever undertakes laborious physical exercise, except to
+                                        obtain some advantage from it?</p>
+                                    <p class="mb-3">Thanking you Sir/Madam</p>
+                                    <div class="email-attch">
+                                        <div class="float-end">
+                                            <a href="javascript:void(0);"><i class="bx bxs-download fs-18"
+                                                    data-bs-toggle="tooltip" title="Download"></i></a>
+                                        </div>
+                                        <p>3Attachments<a href="javascript:void(0);" class="text-primary"> View All Images</a></p>
+                                        <div class="emai-img">
+                                            <div class="d-sm-flex">
+                                                <div class=" m-2">
+                                                    <a href="javascript:void(0);"><img class="wd-150 mb-2 rounded-3"
+                                                            src="../assets/images/media/media-71.jpg"
+                                                            alt="placeholder image"></a>
+                                                    <h6 class="mb-3 mb-lg-0 fs-14">1.jpg <small
+                                                            class="text-muted fw-normal">12kb</small></h6>
+                                                </div>
+                                                <div class="m-2">
+                                                    <a href="javascript:void(0);"><img class="wd-150 mb-2 rounded-3"
+                                                            src="../assets/images/media/media-70.jpg"
+                                                            alt="placeholder image"></a>
+                                                    <h6 class="mb-3 mb-lg-0 fs-14">2.jpg <small
+                                                            class="text-muted fw-normal">18kb</small></h6>
+                                                </div>
+                                                <div class="m-2">
+                                                    <a href="javascript:void(0);"><img class="wd-150 mb-2 rounded-3"
+                                                            src="../assets/images/media/media-69.jpg"
+                                                            alt="placeholder image"></a>
+                                                    <h6 class="fs-14">3.jpg <small class="text-muted fw-normal">21kb</small></h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="btn-list">
+                                    <a class="btn btn-primary" href="javascript:void(0);"><i
+                                            class="fa fa-reply me-1"></i> Reply</a>
+                                    <a class="btn btn-info" href="javascript:void(0);"><i class="fa fa-share me-1"></i>
+                                        Forward</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

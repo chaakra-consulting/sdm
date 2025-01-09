@@ -1,0 +1,308 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Echart Charts", "subtitle": 'Charts'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-basic-line" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Smoothed Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-smoothed-line" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Area Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-basic-area" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Stacked Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-stacked-line" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Stacked Area Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-stacked-area" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Step Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-step-line" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Bar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bar-basic" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Bar With Background Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bar-background" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Style For a Single Bar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bar-single" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Water Fall Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-waterfall" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Bar With Negative Values Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-negative-values" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Bar With Labels Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bar-labels" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Horizontal Bar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bar-horizontal" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Horizontal Stacked Bar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-stacked-horizontal" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Pie Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-pie" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Doughnut Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-doughnut" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Scatter Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-scatter" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Bubble Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-bubble" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Candlestick Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-candlestick" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Radar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-basic-radar" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Heatmap Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-heatmap" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Treemap Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-treemap" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Funnel Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-funnel" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Gauge Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-gauge-basic" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Simple Graph Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-simple-graph" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Pictorial Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="echart-pictorial" class="echart-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Echarts JS -->
+    <script src="../assets/libs/echarts/echarts.min.js"></script>
+
+    <!-- Internal Echarts JS -->
+    <script src="../assets/js/echarts.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

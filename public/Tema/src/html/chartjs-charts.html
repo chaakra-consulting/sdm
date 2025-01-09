@@ -1,0 +1,138 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Chartjs", "subtitle": 'Charts'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Line Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-line" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Bar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-bar" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Pie Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-pie" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Doughnut Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-doughnut" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Mixed Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-mixed" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Polar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-polar" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Radial Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-radar" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Scatter Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-scatter" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Chartjs Bubble Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chartjs-bubble" class="chartjs-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Chartjs Chart JS -->
+    <script src="../assets/libs/chart.js/chart.min.js"></script>
+
+    <!-- Imternal Chartjs JS -->
+    <script src="../assets/js/chartjs-charts.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

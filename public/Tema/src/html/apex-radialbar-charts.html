@@ -1,0 +1,118 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Apex Radialbar Charts", "subtitle": 'Apex Charts'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Pie Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="radialbar-basic"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Multiple Radialbar Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="radialbar-multiple"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Circle Chart - Custom Angle</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="circle-custom"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Gradient Circle Chart</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="gradient-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Stroked Circular Gauge</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="circular-stroked"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Circle Chart With Image</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="circle-image"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Semi Circular Gauge</div>
+                            </div>
+                            <div class="card-body">
+                                <div id="circular-semi"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+    
+    @SPK@include("partials/commonjs.html")
+    
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Apex Charts JS -->
+    <script src="../assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- Internal Apex Radialbar Charts JS -->
+    <script src="../assets/js/apexcharts-radialbar.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

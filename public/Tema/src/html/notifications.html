@@ -1,0 +1,169 @@
+@SPK@include("partials/mainhead.html")
+<!-- Notifications Css -->
+<link rel="stylesheet" href="../assets/libs/awesome-notifications/style.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Notifications", "subtitle": 'Apps'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Basic Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="basic">Basic Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Async Notification With Error Message</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="async-error">Async Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Async Notification With Success Message</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="async-success">Async Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">PopUp Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="popup">Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End::row-1 -->
+                        
+                <!-- Start::row-2 -->
+                <div class="row">
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Info Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn  btn-info" id="info">Info Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Success Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn  btn-success" id="success">Success Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Warning Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-warning" id="warning">Warning Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Error Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-danger" id="error">Error Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End::row-2 -->
+
+                <!-- Start::row-3 -->
+                <div class="row">
+                    <div class="col-xl-4 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Confirmation Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn  btn-secondary" id="confirm">Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Async Block With Error Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="async">Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Async Block With Success Notification</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-primary" id="async-block">Notification</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End::row-3 -->
+
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Rating JS -->
+    <script src="../assets/libs/awesome-notifications/index.var.js"></script>
+    <script src="../assets/js/notifications.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

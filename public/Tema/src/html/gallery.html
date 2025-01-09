@@ -1,0 +1,88 @@
+@SPK@include("partials/mainhead.html")
+<!-- GLightbox CSS -->
+<link rel="stylesheet" href="../assets/libs/glightbox/css/glightbox.min.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Gallery", "subtitle": 'Pages'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-69.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-69.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-77.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-77.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-71.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-71.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-84.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-84.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-44.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-44.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-45.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-45.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-42.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-42.jpg" alt="image" >
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <a href="../assets/images/media/media-59.jpg" class="glightbox card" data-gallery="gallery1">
+                            <img src="../assets/images/media/media-59.jpg" alt="image" >
+                        </a>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Gallery JS -->
+    <script src="../assets/libs/glightbox/js/glightbox.min.js"></script>
+    <script src="../assets/js/gallery.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+@SPK@include("partials/mainhead.html")
+<!-- Treeview Css -->
+<link rel="stylesheet" href="../assets/libs/js-treeview/treeview.min.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Treeview", "subtitle": 'Apps'})
+
+                    <!-- Start::row-1 -->
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">Basic Treeview</div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="tree" class=" fs-15"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!--End::row-1 -->
+
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Treview JS -->
+    <script src="../assets/libs/js-treeview/treeview.min.js"></script>
+    <script src="../assets/js/treeview.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

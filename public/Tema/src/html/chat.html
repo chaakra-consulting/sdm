@@ -1,0 +1,974 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Chat", "subtitle": 'Mail'})
+
+                <!-- Start::row-1 -->
+                    <div class="row main-chart-wrapper">
+                        <div class="col-sm-12 col-md-12 col-lg-5 col-xl-3">
+                            <div class="card custom-card">
+                                <div class="main-content-app pt-0">
+                                    <div class="main-content-left main-content-left-chat">
+                                        <ul class="nav nav-pills nav-style-3 border-bottom px-2 pt-2" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link active" data-bs-toggle="tab" role="tab" aria-current="page" href="#recent-chat" aria-selected="true">Recent Chat</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#groups" aria-selected="false" tabindex="-1">Groups</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#calls" aria-selected="false" tabindex="-1">Calls</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content main-chat-list">
+                                            <div class="tab-pane p-0 border-0 active" id="recent-chat">
+                                                <div class="chat-users-tab" id="chat-msg-scroll">
+                                                    <div class="main-chat-list">
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/5.jpg"> <span>2</span>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Socrates Itumay</span> <span class="ps-2">2 hours</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, blandit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user">
+                                                                <img alt="" src="../assets/images/faces/6.jpg"> <span>1</span>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Dexter dela Cruz</span> <span class="ps-2">3 hours</span>
+                                                                </div>
+                                                                <p>Maec enas tempus, tellus eget con dime ntum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media selected" href="#">
+                                                            <div class="main-img-user online"><img alt="" src="../assets/images/faces/9.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Reynante Labares</span> <span class="ps-2">10 hours</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, bl ndit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/11.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Joyce Chua</span> <span class="ps-2">2 days</span>
+                                                                </div>
+                                                                <p>Ma ecenas tempus, tellus eget con dimen tum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/4.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Rolando Paloso</span> <span class="ps-2">2 days</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, blandit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user">
+                                                                <img alt="" src="../assets/images/faces/7.jpg"> <span>1</span>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Ariana Monino</span> <span class="ps-2">3 days</span>
+                                                                </div>
+                                                                <p>Maece nas tempus, tellus eget cond imentum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/8.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Maricel Villalon</span> <span class="ps-2">4 days</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, blandit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/12.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Maryjane Pechon</span> <span class="ps-2">5 days</span>
+                                                                </div>
+                                                                <p>Mae cenas tempus, tellus eget co ndimen tum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/5.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Lovely Dela Cruz</span> <span class="ps-2">5 days</span>
+                                                                </div>
+                                                                <p>Mae cenas tempus, tellus eget co ndimen tum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/10.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Daniel Padilla</span> <span class="ps-2">5 days</span>
+                                                                </div>
+                                                                <p>Mae cenas tempus, tellus eget co ndimen tum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/3.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>John Pratts</span> <span class="ps-2">6 days</span>
+                                                                </div>
+                                                                <p>Mae cenas tempus, tellus eget co ndimen tum rhoncus, sem quam</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media new" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/7.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Raymart Santiago</span> <span class="ps-2">6 days</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, blandit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                        <a class="media border-bottom-0" href="#">
+                                                            <div class="main-img-user"><img alt="" src="../assets/images/faces/6.jpg"></div>
+                                                            <div class="media-body">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                    <span>Samuel Lerin</span> <span class="ps-2">7 days</span>
+                                                                </div>
+                                                                <p>Nam quam nunc, blandit vel aecenas et ante tincid</p>
+                                                            </div>
+                                                        </a>
+                                                    </div><!-- main-chat-list -->
+                                                </div>
+                                            </div><!-- main-chat-list -->
+                                            <div class="tab-pane p-0 border-0" id="groups">
+                                                <div class="chat-groups-tab" id="groups-tab-pane">
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/5.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Amelia Taylor</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">Today, 05:30 AM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/4.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Grace Russell</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">Today, 12:15 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/9.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Joanne Miller</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">Yesterday, 02:15 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-incoming"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/12.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Kimberly Nolan</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-down-left text-danger me-2"></i>
+                                                                    <p class="text-muted tx-13">Yesterday, 05:39 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/6.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Andrea Mackay</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-down-left text-danger me-2"></i>
+                                                                    <p class="text-muted tx-13">29 june 2020, 03:21 AM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-danger fe fe-phone-call"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/1.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Samantha Lewis</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">1 july 2020, 10:23 AM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-incoming"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/2.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Victoria Kerr</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-down-left text-danger me-2"></i>
+                                                                    <p class="text-muted tx-13">1 july 2020, 4:45 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-danger fe fe-phone-call"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/7.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Socrates Itumay</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">2 july 2020, 11:14 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/8.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Rebecca Johnston</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-down-left text-danger me-2"></i>
+                                                                    <p class="text-muted tx-13">3 july 2020, 06:14 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-danger fe fe-phone-incoming"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/3.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Madeleine James</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">4 july 2020, 5:12 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/5.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Socrates Itumay</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">4 july 2020, 5:12 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/7.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Raymart Santiago</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fe fe-arrow-up-right text-success me-2"></i>
+                                                                    <p class="text-muted tx-13">4 july 2020, 5:12 PM</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-success fe fe-phone-outgoing"></i>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane p-0 border-0" id="calls">
+                                                <div id="calls-tab-pane" class="chat-calls-tab">
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/3.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Lillian Ross</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Home</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/5.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Socrates Itumay</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Mobile</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/4.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Elizabeth Scott</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Office</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/5.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Cameron Watson</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Home</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/8.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Christopher Arnold</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Mobile</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/4.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Justin Bailey</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Office</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/7.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Richard Berry</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Home</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/9.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Abraham Clark</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Mobile</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/4.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Anderson</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Office</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/2.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Clarkson Gray</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Home</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/12.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Henderson Dyer</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Mobile</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" class="d-flex align-items-center media">
+                                                        <div class="mb-0 me-2">
+                                                            <div class="main-img-user online">
+                                                                <img alt="" src="../assets/images/faces/1.jpg"> <span>2</span>
+                                                            </div>
+                                                        </div>
+                                                       <div class="align-items-center justify-content-between">
+                                                            <div class="media-body ms-2">
+                                                                <div class="media-contact-name flex-wrap">
+                                                                     <span>Marshall Fisher</span>
+                                                                     <span></span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="text-muted tx-13">Office</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ms-auto">
+                                                            <i class="contact-status text-primary fe fe-message-square  me-2"></i>
+                                                            <i class="contact-status text-success fe fe-phone-call me-2"></i>
+                                                            <i class="contact-status text-danger fe fe-video"></i>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- main-chat-list -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-7 col-xl-6">
+                            <div class="card custom-card">
+                                <div class="main-content-app pt-0">
+                                    <div class="main-content-body main-content-body-chat">
+                                        <div class="main-chat-header pt-3">
+                                            <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/9.jpg"></div>
+                                            <div class="main-chat-msg-name ms-2">
+                                                <h6 class="mb-0 fs-15 fw-semibold">Reynante Labares</h6>
+                                                <span class="dot-label bg-success"></span><small class="me-3 fs-12 text-muted">Last seen: 2 minutes ago</small>
+                                            </div>
+                                            <nav class="nav">
+                                                <a class="nav-link d-lg-none" href="javascript:void(0);" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fe fe-more-horizontal"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-end shadow">
+                                                    <a class="dropdown-item" href="#"><i class="fe fe-phone-call me-1"></i> Phone Call</a>
+                                                    <a class="dropdown-item" href="#"><i class="fe fe-video me-1"></i> Video Call</a>
+                                                    <a class="dropdown-item" href="#"><i class="fe fe-user-plus me-1"></i> Add Contact</a>
+                                                    <a class="dropdown-item" href="#"><i class="fe fe-trash-2 me-1"></i> Delete</a>
+                                                </div>
+                                                <a class="nav-link d-lg-block d-none" data-bs-toggle="tooltip" href="javascript:void(0);" title="Phone Call"><i class="fe fe-phone-call"></i></a>
+                                                <a class="nav-link d-lg-block d-none" data-bs-toggle="tooltip" href="javascript:void(0);" title="Video Call"><i class="fe fe-video"></i></a>
+                                                <a class="nav-link d-lg-block d-none" data-bs-toggle="tooltip" href="javascript:void(0);" title="Add Contact"><i class="fe fe-user-plus"></i></a>
+                                                <a class="nav-link d-lg-block d-none" data-bs-toggle="tooltip" href="javascript:void(0);" title="Delete"><i class="fe fe-trash-2"></i></a>
+                                            </nav>
+                                        </div><!-- main-chat-header -->
+                                        <div class="main-chat-body" id="ChatBody">
+                                            <div class="content-inner chat-content" id="main-chat-content">
+                                                <label class="main-chat-time"><span>3 days ago</span></label>
+                                                <div class="media flex-row-reverse">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/9.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper right">
+                                                            Nulla consequat massa quis enim. Donec pede justo, fringilla vel...
+                                                        </div>
+                                                        <div class="main-msg-wrapper">
+                                                            rhoncus ut, imperdiet a, venenatis vitae, justo...
+                                                        </div>
+                                                        <div>
+                                                            <span>9:48 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="media">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/6.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper left">
+                                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                                        </div>
+                                                        <div>
+                                                            <span>9:32 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="media flex-row-reverse">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/9.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper right">
+                                                            Nullam dictum felis eu pede mollis pretium
+                                                        </div>
+                                                        <div>
+                                                            <span>11:22 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div><label class="main-chat-time"><span>Yesterday</span></label>
+                                                <div class="media">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/6.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper left">
+                                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                                        </div>
+                                                        <div>
+                                                            <span>9:32 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="media flex-row-reverse">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/9.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper right">
+                                                            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
+                                                        </div>
+                                                        <div class="main-msg-wrapper">
+                                                            Nullam dictum felis eu pede mollis pretium
+                                                        </div>
+                                                        <div>
+                                                            <span>9:48 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div><label class="main-chat-time"><span>Today</span></label>
+                                                <div class="media">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/6.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper left">
+                                                            Maecenas tempus, tellus eget condimentum rhoncus
+                                                        </div>
+                                                        <div class="pd-0">
+                                                            <img alt="avatar" class="wd-100 rounded-3 mb-1 me-1" src="../assets/images/media/media-82.jpg">
+                                                            <img alt="avatar" class="wd-100 rounded-3 mb-1 me-1" src="../assets/images/media/media-84.jpg">
+                                                            <img alt="avatar" class="wd-100 rounded-3 mb-1" src="../assets/images/media/media-83.jpg">
+                                                        </div>
+                                                        <div>
+                                                            <span>10:12 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="media flex-row-reverse">
+                                                    <div class="main-img-user online"><img alt="avatar" src="../assets/images/faces/9.jpg"></div>
+                                                    <div class="media-body">
+                                                        <div class="main-msg-wrapper right">
+                                                            Maecenas tempus, tellus eget condimentum rhoncus
+                                                        </div>
+                                                        <div class="main-msg-wrapper">
+                                                            Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
+                                                        </div>
+                                                        <div>
+                                                            <span>09:40 am</span> <a href="javascript:void(0);"><i class="icon ion-android-more-horizontal"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="main-chat-footer">
+                                            <input class="form-control" placeholder="Type your message here..." type="text">
+											<a class="main-msg-clip me-2" href="javascript:void(0);"><i class="fe fe-paperclip"></i></a>
+                                            <a class="main-msg-send" href="javascript:void(0);"><i class="fe fe-send"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-3">
+                            <div class="card custom-card chat-account">
+                                <div class="main-content-app d-block pt-0">
+                                    <div class="chat-user-details" id="chat-user-details">
+                                        <div class="card-body text-center">
+                                            <div class="user-lock text-center">
+                                                <div class="dropdown text-end">
+                                                    <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> <i class="fe fe-more-vertical fs-16"></i> </a>
+                                                    <div class="dropdown-menu dropdown-menu-end"> <a class="dropdown-item" href="javascript:;"><i class="fe fe-message-square me-2"></i> Message</a> <a class="dropdown-item" href="javascript:;"><i class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item" href="javascript:;"><i class="fe fe-eye me-2"></i> View</a> <a class="dropdown-item" href="javascript:;"><i class="fe fe-trash-2 me-2"></i> Delete</a> </div>
+                                                </div>
+                                                <a href="profile.html"><img alt="avatar" class="rounded-circle" src="../assets/images/faces/2.jpg"></a>
+                                            </div>
+                                            <a href="profile.html"><h5 class=" mb-1 mt-3 fs-17">Ryan Gracie</h5></a>
+                                            <p class="mb-0 fs-13 text-muted">Web Designer</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="mb-3">Contact Details</h6>
+                                            <div class="d-flex">
+                                                <div>
+                                                    <p class="contact-icon text-primary m-0"><i class="fe fe-phone"></i></p>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <p class="tx-13 mb-0">Phone</p>
+                                                    <p class="fs-12 text-muted">+1 135792468</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    <p class="contact-icon text-primary m-0"><i class="fe fe-mail"></i></p>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <p class="tx-13 mb-0">Email</p>
+                                                    <p class="fs-12 text-muted">harvey@gmail.com.</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    <p class="contact-icon text-primary m-0"><i class="fe fe-map-pin"></i></p>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <p class="tx-13 mb-0">Address</p>
+                                                    <p class="fs-12 text-muted mb-0">California.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="mb-3">Shared Files</h6>
+                                            <div class="media mb-3">
+                                                <p class="contact-icon rounded-1 fs-17 text-primary m-0"><i class="mdi mdi-file-image"></i></p>
+                                                <div class="media-body ms-3 d-flex">
+                                                    <div class="">
+                                                        <p class="tx-13 text-dark mb-0">Image1.jpg</p>
+                                                        <span class="fs-12 text-muted">200 KB</span>
+                                                    </div>
+                                                    <div class="ms-auto my-auto">
+                                                        <a href="javascript:void(0);" class="btn px-0"><i class="fe fe-download my-auto text-muted tx-18"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media mb-3">
+                                                <p class="contact-icon rounded-1 fs-17 text-danger m-0"><i class="mdi mdi-file-pdf"></i></p>
+                                                <div class="media-body ms-3 d-flex">
+                                                    <div class="">
+                                                        <p class="tx-13 text-dark mb-0">Doc1.pdf</p>
+                                                        <span class="fs-12 text-muted">48 KB</span>
+                                                    </div>
+                                                    <div class="ms-auto my-auto">
+                                                        <a href="javascript:void(0);" class="btn px-0"><i class="fe fe-download my-auto text-muted tx-18"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media mb-3">
+                                                <p class="contact-icon rounded-1 fs-17 text-info m-0"><i class="mdi mdi-file-word"></i></p>
+                                                <div class="media-body ms-3 d-flex">
+                                                    <div class="">
+                                                        <p class="tx-13 text-dark mb-0">Word1.doc</p>
+                                                        <span class="fs-12 text-muted">35 KB</span>
+                                                    </div>
+                                                    <div class="ms-auto my-auto">
+                                                        <a href="javascript:void(0);" class="btn px-0"><i class="fe fe-download my-auto text-muted tx-18"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media">
+                                                <p class="contact-icon rounded-1 fs-17 text-warning m-0"><i class="mdi mdi-file-powerpoint"></i></p>
+                                                <div class="media-body ms-3 d-flex">
+                                                    <div class="">
+                                                        <p class="tx-13 text-dark mb-0">Example1.ppt</p>
+                                                        <span class="fs-12 text-muted">54 KB</span>
+                                                    </div>
+                                                    <div class="ms-auto my-auto">
+                                                        <a href="javascript:void(0);" class="btn px-0"><i class="fe fe-download my-auto text-muted tx-18"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Chat JS -->
+    <script src="../assets/js/chat.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

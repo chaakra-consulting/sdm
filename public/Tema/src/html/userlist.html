@@ -1,0 +1,389 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Userlist", "subtitle": 'Advanced Ui'})
+
+                <!-- Start::row-1 -->
+				<div class="row">
+					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 grid-margin">
+						<div class="card">
+							<div class="card-header pb-0">
+								<div class="d-flex justify-content-between">
+									<h4 class="card-title mb-0">USERS TABLE</h4>
+									<a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+										class="mdi mdi-dots-horizontal text-gray"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a class="dropdown-item" href="javascript:void(0);">Action</a>
+										<a class="dropdown-item" href="javascript:void(0);">Another
+											Action</a>
+										<a class="dropdown-item" href="javascript:void(0);">Something Else
+											Here</a>
+									</div>
+								</div>
+								<p class="fs-12 text-gray-5 mb-2">Example of Valex Simple Table. <a href="">Learn
+										more</a></p>
+							</div>
+							<div class="card-body">
+								<div class="table-responsive border border-bottom-0 userlist-table">
+									<table class="table card-table table-vcenter text-nowrap mb-0">
+										<thead>
+											<tr>
+												<th><span>User photo</span></th>
+												<th><span>Name</span></th>
+												<th><span>Created</span></th>
+												<th><span>Status</span></th>
+												<th><span>Email</span></th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/1.jpg">
+												</td>
+												<td>Megan Peters</td>
+												<td>
+													08/06/2021
+												</td>
+												<td>
+													<span class="badge bg-success-transparent">Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">mila@kunis.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/2.jpg">
+												</td>
+												<td>George Clooney</td>
+												<td>
+													12/06/2021
+												</td>
+												<td>
+													<span class="badge bg-success-transparent">Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">marlon@brando.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/13.jpg">
+												</td>
+												<td>Ryan Gossling</td>
+												<td>
+													14/06/2021
+												</td>
+												<td>
+													<span class="badge bg-danger-transparent">Banned</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">jack@nicholson</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/1.jpg">
+												</td>
+												<td> Emma Watson</td>
+												<td>
+													16/06/2021
+												</td>
+												<td>
+													<span class="badge bg-warning-transparent">Pending</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">jack@nicholsonm</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/12.jpg">
+												</td>
+												<td>Mila Kunis</td>
+												<td>
+													18/06/2021
+												</td>
+												<td>
+													<span class="badge bg-secondary-transparent">In Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">mila@kunis.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/4.jpg">
+												</td>
+												<td>Phil Watson</td>
+												<td>
+													23/06/2021
+												</td>
+												<td>
+													<span class="badge bg-success-transparent">Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">phil@watson.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/5.jpg">
+												</td>
+												<td>Sonia Robertson</td>
+												<td>
+													25/06/2021
+												</td>
+												<td>
+													<span class="badge bg-success-transparent">Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">robertson@sonia.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/7.jpg">
+												</td>
+												<td>Adam Hamilton</td>
+												<td>
+													31/06/2021
+												</td>
+												<td>
+													<span class="badge bg-warning-transparent">Pending</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">mila@kunis.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/9.jpg">
+												</td>
+												<td>Leah Morgan</td>
+												<td>
+													02/07/2021
+												</td>
+												<td>
+													<span class="badge bg-warning-transparent">Pending</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">morganleah@.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/11.jpg">
+												</td>
+												<td>Amelia McDonald</td>
+												<td>
+													08/07/2021
+												</td>
+												<td>
+													<span class="badge bg-success-transparent">Active</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">amelia23@kunis.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img alt="avatar" class="rounded-circle avatar-md avatar"
+														src="../assets/images/faces/17.jpg">
+												</td>
+												<td>Paul Molive</td>
+												<td>
+													12/07/2021
+												</td>
+												<td>
+													<span class="badge bg-danger-transparent">Banned</span>
+												</td>
+												<td>
+													<a href="javascript:void(0);">paul45@kunis.com</a>
+												</td>
+												<td>
+													<a href="javascript:void(0);" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="search">
+														<i class="las la-search"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title="" data-bs-original-title="edit">
+														<i class="las la-pen"></i>
+													</a>
+													<a href="javascript:void(0);" class="btn btn-sm btn-danger"  data-bs-toggle="tooltip" title="" data-bs-original-title="delete">
+														<i class="las la-trash"></i>
+													</a>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<ul class="pagination mt-4 mb-0 float-end flex-wrap">
+									<li class="page-item page-prev disabled">
+										<a class="page-link" href="javascript:void(0);" tabindex="-1">Prev</a>
+									</li>
+									<li class="page-item active"><a class="page-link" href="javascript:void(0);">1</a></li>
+									<li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+									<li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+									<li class="page-item"><a class="page-link" href="javascript:void(0);">4</a></li>
+									<li class="page-item page-next">
+										<a class="page-link" href="javascript:void(0);">Next</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div><!-- COL END -->
+				</div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

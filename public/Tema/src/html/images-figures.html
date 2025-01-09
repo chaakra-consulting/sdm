@@ -1,0 +1,271 @@
+@SPK@include("partials/mainhead.html")
+
+<!-- Prism CSS -->
+<link rel="stylesheet" href="../assets/libs/prismjs/themes/prism-coy.min.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Images & Figures", "subtitle": 'Elements'})
+
+                    <!-- Start:: row-1 -->
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Responsive image
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title mb-3">Use <code> .img-fluid </code>class to the img tag to get responsive image.</p>
+                                    <div class="text-center">
+                                        <img src="../assets/images/media/media-48.jpg" class="img-fluid" alt="...">
+                                    </div>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;div class="text-center"&gt;
+    &lt;img src="../assets/images/media/media-48.jpg" class="img-fluid" alt="..."&gt;
+&lt;/div&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Image With Radius
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title mb-3">Use <code>.rounded</code> class along with <code>.img-fluid</code> to get border radius.</p>
+                                    <div class="text-center">
+                                        <img src="../assets/images/media/media-49.jpg" class="img-fluid rounded" alt="...">
+                                    </div>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;div class="text-center"&gt;
+    &lt;img src="../assets/images/media/media-49.jpg" class="img-fluid rounded" alt="..."&gt;
+&lt;/div&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Rounded Image
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title mb-3">Use <code>.rounded-pill</code> class to <code>img</code> tag to get rounded image.</p>
+                                    <div class="text-center">
+                                        <img src="../assets/images/media/media-50.jpg" class="img-fluid rounded-pill" alt="...">
+                                    </div>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;div class="text-center"&gt;
+    &lt;img src="../assets/images/media/media-50.jpg" class="img-fluid rounded-pill" alt="..."&gt;
+&lt;/div&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-1 -->
+
+                    <!-- Start:: row-2 -->
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">Image Left Align</div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <img class="rounded float-start" src="../assets/images/media/media-53.jpg" alt="...">
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;img class="rounded float-start" src="../assets/images/media/media-53.jpg" alt="..."&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">Image Center Align</div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <img class="rounded mx-auto d-block" src="../assets/images/media/media-55.jpg" alt="...">
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;img class="rounded mx-auto d-block" src="../assets/images/media/media-55.jpg" alt="..."&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">Image Right Align</div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <img class="rounded float-end" src="../assets/images/media/media-54.jpg" alt="...">
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;img class="rounded float-end" src="../assets/images/media/media-54.jpg" alt="..."&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Figures
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body d-flex justify-content-between gap-2">
+                                    <figure class="figure">
+                                        <img class="figure-img img-fluid rounded card-img" src="../assets/images/media/media-56.jpg" alt="...">
+                                        <figcaption class="figure-caption">A caption for the above image.
+                                        </figcaption>
+                                    </figure>
+                                    <figure class="figure float-end">
+                                        <img class="figure-img img-fluid rounded card-img" src="../assets/images/media/media-57.jpg" alt="...">
+                                        <figcaption class="figure-caption text-end">A caption for the above image.
+                                        </figcaption>
+                                    </figure>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;figure class="figure"&gt;
+    &lt;img class="figure-img img-fluid rounded card-img" src="../assets/images/media/media-56.jpg" alt="..."&gt;
+    &lt;figcaption class="figure-caption"&gt;A caption for the above image.
+    &lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure class="figure float-end"&gt;
+    &lt;img class="figure-img img-fluid rounded card-img" src="../assets/images/media/media-57.jpg" alt="..."&gt;
+    &lt;figcaption class="figure-caption text-end"&gt;A caption for the above image.
+    &lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Image Thumbnail
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title mb-3">Use <code> .img-thumbnail </code>to give an image a rounded 1px border.</p>
+                                    <div class="text-center">
+                                        <img src="../assets/images/media/media-51.jpg" class="img-thumbnail" alt="...">
+                                    </div>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;div class="text-center"&gt;
+    &lt;img src="../assets/images/media/media-51.jpg" class="img-thumbnail" alt="..."&gt;
+&lt;/div&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3">
+                            <div class="card custom-card">
+                                <div class="card-header justify-content-between">
+                                    <div class="card-title">
+                                        Rounded Thumbnail
+                                    </div>
+                                    <div class="prism-toggle">
+                                        <button class="btn btn-sm btn-primary-light">Show Code<i class="ri-code-line ms-2 d-inline-block align-middle"></i></button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title mb-3">Use <code> .rounded-pill </code>along with <code> .img-thummbnail </code> to get radius.</p>
+                                    <div class="text-center">
+                                        <img src="../assets/images/media/media-52.jpg" class="img-thumbnail rounded-pill" alt="...">
+                                    </div>
+                                </div>
+                                <div class="card-footer d-none border-top-0">
+<!-- Prism Code -->
+<pre class="language-html"><code class="language-html">&lt;div class="text-center"&gt;
+    &lt;img src="../assets/images/media/media-52.jpg" class="img-thumbnail rounded-pill" alt="..."&gt;
+&lt;/div&gt;</code></pre>
+<!-- Prism Code -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-2 -->
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Prism JS -->
+    <script src="../assets/libs/prismjs/prism.js"></script>
+    <script src="../assets/js/prism-custom.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

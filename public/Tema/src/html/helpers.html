@@ -1,0 +1,476 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Helpers", "subtitle": 'Utilities'})
+
+                    <!-- Start:: row-1 -->
+                    <div class="row">
+                        <div class="col-xxl-5 col-xl-5 col-lg-12 col-md-12 col-sm-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Colors With backgrounds
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-bg-primary p-3">Primary with contrasting color</div>
+                                    <div class="text-bg-secondary p-3">Secondary with contrasting color</div>
+                                    <div class="text-bg-success p-3">Success with contrasting color</div>
+                                    <div class="text-bg-danger p-3">Danger with contrasting color</div>
+                                    <div class="text-bg-warning p-3">Warning with contrasting color</div>
+                                    <div class="text-bg-info p-3">Info with contrasting color</div>
+                                    <div class="text-bg-light p-3 text-default">Light with contrasting color</div>
+                                    <div class="text-bg-dark p-3 text-white">Dark with contrasting color</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">With Other Components</div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="fw-semibold mb-3">Badges:</h6>
+                                    <span class="badge text-bg-primary">Primary</span>
+                                    <span class="badge text-bg-info mb-4">Info</span>
+                                    <h6 class="fw-semibold mb-3">cards:</h6>
+                                    <div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+                                        <div class="card-header border-bottom-0">
+                                            <div class="card-title text-fixed-white">
+                                                Header
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-0 text-fixed-white">
+                                            <p class="card-text text-fixed-white">Some quick example text to build on the card title
+                                                and
+                                                make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                    <div class="card text-bg-info mb-3" style="max-width: 18rem;">
+                                        <div class="card-header border-bottom-0">
+                                            <div class="card-title text-fixed-white">
+                                                Header
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-0 text-fixed-white">
+                                            <p class="card-text text-fixed-white">Some quick example text to build on the card title
+                                                and
+                                                make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Card With Stretched Links
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <img class="bd-placeholder-img card-img-top card-img" src="../assets/images/media/media-4.jpg" alt="...">
+                                    <div class="card-body pb-0">
+                                        <h5 class="card-title">Card with stretched links</h5>
+                                        <p class="card-text">
+                                            <a href="javascript:void(0);" class="stretched-link text-danger"
+                                                style="position: relative;">Stretched link will not work
+                                                here,
+                                                because <code>position: relative</code> is added to the
+                                                link</a>
+                                        </p>
+                                        <p class="card-text bg-light mb-0 p-1 rounded" style="transform: rotate(0);">
+                                            This <a href="javascript:void(0);" class="text-warning stretched-link">stretched
+                                                link</a>
+                                            will only be spread over the <code>p</code>-tag, because a
+                                            transform is
+                                            applied to it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-1 -->
+
+                    <!-- Start:: row-2 -->
+                    <div class="row">
+                        <div class="col-xxl-6 col-xl-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Clearfix
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="bg-light clearfix">
+                                        <button type="button" class="btn btn-primary float-start m-1">Example Button
+                                            floated left</button>
+                                        <button type="button" class="btn btn-primary float-end m-1">Example Button
+                                            floated
+                                            right</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6 col-xl-12">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Colored links
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-evenly flex-wrap">
+                                        <a href="javascript:void(0);" class="link-primary fw-semibold fs-15 p-1">Primary</a>
+                                        <a href="javascript:void(0);" class="link-secondary fw-semibold fs-15 p-1">Secondary</a>
+                                        <a href="javascript:void(0);" class="link-success fw-semibold fs-15 p-1">Success</a>
+                                        <a href="javascript:void(0);" class="link-danger fw-semibold fs-15 p-1">Danger</a>
+                                        <a href="javascript:void(0);" class="link-warning fw-semibold fs-15 p-1">Warning</a>
+                                        <a href="javascript:void(0);" class="link-info fw-semibold fs-15 p-1">Info</a>
+                                        <a href="javascript:void(0);" class="link-light fw-semibold fs-15 p-1">Light</a>
+                                        <a href="javascript:void(0);" class="link-dark fw-semibold fs-15 p-1">Dark</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-2 -->
+
+                    <!-- Start:: row-3 -->
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Ratio
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="ratio ratio-16x9">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/-lDlbQ7DiCI"
+                                            title="YouTube video player" style="border:0px"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="card custom-card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                Aspect ratios
+                                            </div>
+                                        </div>
+                                        <div class="card-body bd-example-ratios">
+                                            <div class="ratio ratio-1x1">
+                                                <div class="d-flex align-items-center justify-content-center">1x1</div>
+                                            </div>
+                                            <div class="ratio ratio-4x3">
+                                                <div class="d-flex align-items-center justify-content-center">4x3</div>
+                                            </div>
+                                            <div class="ratio ratio-16x9">
+                                                <div class="d-flex align-items-center justify-content-center">16x9</div>
+                                            </div>
+                                            <div class="ratio ratio-21x9">
+                                                <div class="d-flex align-items-center justify-content-center">21x9</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="card custom-card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                Custom ratios
+                                            </div>
+                                        </div>
+                                        <div class="card-body bd-example-ratios bd-example-ratios-breakpoint">
+                                            <div class="ratio" style="--bs-aspect-ratio: 50%;">
+                                                <div class="d-flex align-items-center justify-content-center">2x1</div>
+                                            </div>
+                                            <div class="ratio ratio-4x3">
+                                                <div class="d-flex align-items-center justify-content-center">4x3, then 2x1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- End:: row-3 -->
+
+                    <!-- Start:: row-4 -->
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Vertical Stacking
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="vstack gap-3">
+                                        <div class="bg-light border p-1 px-2 rounded">First item</div>
+                                        <div class="bg-light border p-1 px-2 rounded">Second item</div>
+                                        <div class="bg-light border p-1 px-2 rounded">Third item</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Horizontal Stacking
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="hstack gap-3 mb-3">
+                                        <div class="bg-light border p-1 px-2 rounded">First item</div>
+                                        <div class="bg-light border p-1 px-2 rounded">Second item</div>
+                                        <div class="bg-light border p-1 px-2 rounded">Third item</div>
+                                    </div>
+                                    <div class="hstack gap-3 mb-3">
+                                        <div class="bg-light border p-1 px-2 rounded">First item</div>
+                                        <div class="bg-light border ms-auto p-1 px-2 rounded">Second item</div>
+                                        <div class="bg-light border p-1 px-2 rounded">Third item</div>
+                                    </div>
+                                    <div class="hstack gap-3">
+                                        <div class="bg-light border p-1 px-2 rounded">First item</div>
+                                        <div class="bg-light border ms-auto p-1 px-2 rounded">Second item</div>
+                                        <div class="vr"></div>
+                                        <div class="bg-light border p-1 px-2 rounded">Third item</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-4 -->
+
+                    <!-- Start:: row-5 -->
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Vstack For Buttons
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="vstack gap-2 col-md-5 mx-auto">
+                                        <button type="button" class="btn btn-primary">Save
+                                            changes</button>
+                                        <button type="button" class="btn btn-outline-primary">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Inline Form With Hstack
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="hstack gap-3">
+                                        <input class="form-control me-auto" type="text"
+                                            placeholder="Add your item here..."
+                                            aria-label="Add your item here...">
+                                        <button type="button" class="btn btn-primary">Submit</button>
+                                        <div class="vr"></div>
+                                        <button type="button" class="btn btn-outline-danger">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Text Truncation
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-2 text-truncate">
+                                            This text is quite long, and will be truncated once displayed.
+                                        </div>
+                                    </div>
+                                    <!-- Inline level -->
+                                    <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                                        This text is quite long, and will be truncated once displayed.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-5 -->
+
+                    <!-- Start:: row-6 -->
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        CUSTOM FOCUS RING
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <a href="javascript:void(0);" class="d-inline-flex focus-ring py-1 px-2 text-decoration-none border rounded-2">
+                                        Custom focus ring
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        CSS VARIABLE FOCUS RING
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <a href="javascript:void(0);" class="d-inline-flex focus-ring py-1 px-2 text-decoration-none border rounded-2" style="--bs-focus-ring-color: rgba(var(--success-rgb), .25)">
+                                        Green focus ring
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        BLURRY OFFSET FOCUS RING
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <a href="javascript:void(0);" class="d-inline-flex focus-ring py-1 px-2 text-decoration-none border rounded-2" style="--bs-focus-ring-x: 10px; --bs-focus-ring-y: 10px; --bs-focus-ring-blur: 4px">
+                                        Blurry offset focus ring
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        FOCUS RING UTILITIES
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-primary py-1 px-2 text-decoration-none border rounded-2">Primary focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-secondary py-1 px-2 text-decoration-none border rounded-2">Secondary focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-success py-1 px-2 text-decoration-none border rounded-2">Success focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-danger py-1 px-2 text-decoration-none border rounded-2">Danger focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-warning py-1 px-2 text-decoration-none border rounded-2">Warning focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-info py-1 px-2 text-decoration-none border rounded-2">Info focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-light py-1 px-2 text-decoration-none border rounded-2">Light focus</a></p>
+                                    <p><a href="javascript:void(0);" class="d-inline-flex focus-ring focus-ring-dark py-1 px-2 text-decoration-none border rounded-2">Dark focus</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="card custom-card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                Icon Link
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex gap-3 flex-column">
+                                                <a class="icon-link text-decoration-underline link-primary" href="javascript:void(0);">
+                                                    <i class="bi bi-house"></i>
+                                                    Icon link
+                                                </a>
+                                                <a class="icon-link text-decoration-underline link-secondary" href="javascript:void(0);">
+                                                    Icon link
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="card custom-card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                Icon Link
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex gap-3 flex-column">
+                                                <a class="icon-link text-decoration-underline icon-link-hover link-success" href="javascript:void(0);">
+                                                    Icon link
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="card custom-card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                Scss Utilities
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex gap-3 flex-column">
+                                                <a class="icon-link icon-link-hover link-info text-decoration-underline" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="javascript:void(0);">
+                                                    <i class="bi bi-journal"></i>
+                                                    Icon link
+                                                </a>
+                                                <a class="icon-link icon-link-hover link-success text-decoration-underline link-underline-success link-underline-opacity-25" href="javascript:void(0);">
+                                                    Icon link
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End:: row-6 -->
+                    
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

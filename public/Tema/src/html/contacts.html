@@ -1,0 +1,689 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Contacts", "subtitle": 'Apps'})
+
+                    <!-- Start::row-1 -->
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-5 col-xl-4">
+                            <div class="card custom-card">
+                                <div class="main-content-contacts pt-0">
+                                    <div class="main-content-left main-content-left-contacts">
+                                        <ul class="nav nav-pills nav-style-3 border-bottom px-3" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link active" data-bs-toggle="tab" role="tab" aria-current="page" href="#contacts" aria-selected="true">All Contacts</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#features" aria-selected="false" tabindex="-1">Favorites</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane text-muted p-0 border-0 active show" id="contacts" role="tabpanel">
+                                                <div class="main-contacts-list">
+                                                    <div class="main-contact-label">
+                                                        A
+                                                    </div>
+                                                    <div class="main-contact-item selected">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/2.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Abigail Johnson</h6><span class="phone">+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star text-warning me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/3.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Archie Cantones</h6><span>arch@cantones.com</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar bg-secondary online avatar-md avatar-rounded">
+                                                            <span class="flex-shrink-0">
+                                                                A
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Allan Rey Palban</h6><span>allanr@palban.com</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded bg-secondary">
+                                                            <span class="flex-shrink-0">
+                                                                A
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Aileen Mante</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        B
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/4.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Brandon Dilao</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/5.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Britney Labares</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded bg-danger">
+                                                            <span class="flex-shrink-0">
+                                                                B
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Brateyley Cruz</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        C
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/6.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Camille Audrey</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/7.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Christian Lerio</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/8.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Christopher Segovia</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        D
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/9.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Darius Clayton</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/10.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Dyanne Aceron</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/11.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Divina Gracia</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane text-muted p-0 border-0" id="features" role="tabpanel">
+                                                <div class="main-contacts-list">
+                                                    <div class="main-contact-label">
+                                                        A
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/3.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Archie Cantones</h6><span>arch@cantones.com</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded bg-secondary">
+                                                            <span class="flex-shrink-0">
+                                                                A
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Allan Rey Palban</h6><span>allanr@palban.com</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded bg-secondary">
+                                                            <span class="flex-shrink-0">
+                                                                A
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Aileen Mante</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        B
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/3.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Batty</h6><span>batty@cantones.com</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar avatar-md avatar-rounded "><img alt="avatar"
+                                                                src="../assets/images/faces/4.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Brandon Dilao</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar" class="avatar rounded-circle"
+                                                                src="../assets/images/faces/5.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Britney Labares</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="main-avatar">
+                                                            <span class="avatar offline bg-danger avatar-rounded flex-shrink-0">
+                                                                B
+                                                            </span>
+                                                        </div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Brateyley Cruz</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        C
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded "><img alt="avatar"
+                                                                src="../assets/images/faces/6.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Camille Audrey</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/7.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Christian Lerio</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/8.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Christopher Segovia</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-label">
+                                                        D
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/9.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Darius Clayton</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar offline avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/10.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Dyanne Aceron</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="main-contact-item">
+                                                        <div class="avatar online avatar-md avatar-rounded"><img alt="avatar"
+                                                                src="../assets/images/faces/11.jpg"></div>
+                                                        <div class="main-contact-body">
+                                                            <h6 class="fs-14">Divina Gracia</h6><span>+1-234-567-890</span>
+                                                        </div>
+                                                        <a class="main-contact-star" href="javascript:void(0);">
+                                                            <i class="fe fe-star me-1"></i>
+                                                            <i class="fe fe-edit-2 me-1"></i>
+                                                            <i class="fe fe-more-vertical"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-7 col-xl-8">
+                            <div>
+                                <a class="main-header-arrow" href="" id="ChatBodyHide"><i
+                                        class="icon ion-md-arrow-back"></i></a>
+                                <div class="main-content-body main-content-body-contacts card custom-card">
+                                    <div class="main-contact-info-header pt-3">
+                                        <div class="media">
+                                            <div class="main-img-user mb-2 mb-lg-0">
+                                                <img alt="avatar" class="rounded-circle" src="../assets/images/faces/6.jpg"> <a href=""><i
+                                                        class="fe fe-camera"></i></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5>Petey Cruiser</h5>
+                                                <p>Web Designer</p>
+                                                <nav class="contact-info d-block d-lg-none d-xl-block">
+                                                    <a href="javascript:void(0);" class="contact-icon border text-inverse mb-1"
+                                                        data-bs-toggle="tooltip" title="Call"><i
+                                                            class="fe fe-phone"></i></a>
+                                                    <a href="javascript:void(0);" class="contact-icon border text-inverse mb-1"
+                                                        data-bs-toggle="tooltip" title="Video"><i
+                                                            class="fe fe-video"></i></a>
+                                                    <a href="javascript:void(0);" class="contact-icon border text-inverse mb-1"
+                                                        data-bs-toggle="tooltip" title="message"><i
+                                                            class="fe fe-message-square"></i></a>
+                                                    <a href="javascript:void(0);" class="contact-icon border text-inverse mb-1"
+                                                        data-bs-toggle="tooltip" title="Add to Group"><i
+                                                            class="fe fe-user-plus"></i></a>
+                                                    <a href="javascript:void(0);" class="contact-icon border text-inverse mb-1"
+                                                        data-bs-toggle="tooltip" title="Block"><i
+                                                            class="fe fe-slash"></i></a>
+                                                </nav>
+                                            </div>
+                                            <div class="main-contact-action btn-list ms-auto pt-lg-0 float-end">
+                                                <a href="javascript:void(0);" class="btn ripple btn-primary btn-icon"
+                                                    data-bs-placement="top" data-bs-toggle="tooltip" title="Edit Profile"><i
+                                                        class="fe fe-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn ripple btn-secondary btn-icon"
+                                                    data-bs-placement="top" data-bs-toggle="tooltip" title="Delete Profile"><i
+                                                        class="fe fe-trash-2"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="main-contact-info-body p-4">
+                                        <div>
+                                            <h6>Biography</h6>
+                                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                                                doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+                                                veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
+                                                consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+                                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                                                doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+                                                veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
+                                                consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+                                        </div>
+                                        <div class="media-list pb-0">
+                                            <div class="media">
+                                                <div class="media-body">
+                                                    <div>
+                                                        <label>Work</label> <span>+1 (234) 567 8901</span>
+                                                    </div>
+                                                    <div>
+                                                        <label>Personal</label> <span>+1 (498) 021
+                                                            0090</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media">
+                                                <div class="media-body">
+                                                    <div>
+                                                        <label>Gmail Account</label> <span
+                                                           >sonia.taylor@gmail.com</span>
+                                                    </div>
+                                                    <div>
+                                                        <label>Other Account</label> <span
+                                                           >me@bootstrapdash.me</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media">
+                                                <div class="media-body">
+                                                    <div>
+                                                        <label>Current Address</label> <span>012 Dashboard
+                                                            Apartments, San Francisco, California 13245</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media mb-0">
+                                                <div class="media-body">
+                                                    <div>
+                                                        <label>Call History</label> <span>Duration of last
+                                                            call: 2m 32sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="card custom-card">
+                                    <div class="card-header fw-semibold">Recent Contacts</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/5.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Abigali kelly</h6>
+                                                        <p class="mb-0 text-muted">Front end</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone "></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video "></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/2.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Brenda Crux</h6>
+                                                        <p class="mb-0 text-muted">Angular</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone"></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video"></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/8.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Rach Michelle</h6>
+                                                        <p class="mb-0 text-muted">Php</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone "></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video "></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/9.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Matt Harder</h6>
+                                                        <p class="mb-0 text-muted">Codeignitor</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone "></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video "></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/1.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Micheal Phelps</h6>
+                                                        <p class="mb-0 text-muted">Web Testing</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone "></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video "></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+                                                <div class="border d-flex p-2 rounded-2 mb-2 align-items-center">
+                                                    <div class="avatar online avatar-md avatar-rounded flex-shrink-0 me-3">
+                                                        <img alt="avatar"
+                                                            src="../assets/images/faces/7.jpg">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mt-1 mb-1 fs-14">Azenda Hills</h6>
+                                                        <p class="mb-0 text-muted">Django</p>
+                                                    </div>
+                                                    <div class="my-auto ms-auto d-md-flex">
+                                                        <nav class="contact-info d-flex gap-1">
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Call" aria-label="Call"><i
+                                                                    class="fe fe-phone "></i></a>
+                                                            <a href="javascript:void(0);"
+                                                                class="contact-icon border text-inverse rounded-pill"
+                                                                data-bs-toggle="tooltip" title=""
+                                                                data-bs-original-title="Video" aria-label="Video"><i
+                                                                    class="fe fe-video "></i></a>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End::row-1 -->
+
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

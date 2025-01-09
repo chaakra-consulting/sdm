@@ -1,0 +1,179 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+
+            @SPK@include("partials/header.html")
+            @SPK@include("partials/sidebar.html")
+
+            <!--APP-CONTENT START-->
+            <div class="main-content app-content">
+                <div class="container-fluid">
+
+                    @SPK@include("partials/page-header.html", {"title": "Tags", "subtitle": 'Elements'})
+
+                    <!-- Start:: row-1 -->
+				<div class="row">
+					<div class="col-xl-12 col-lg-12">
+						<!-- div -->
+						<div class="card">
+							<div class="card-body">
+								<div class="card-title">
+									DEFAULT TAG
+								</div>
+								<p class="mb-4">It is Very Easy to Customize and it uses in your website aplication.
+								</p>
+                                <div class="border rounded-2 p-3">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <div class="tags">
+                                                <span class="tag">First tag</span>
+                                                <span class="tag">Second tag</span>
+                                                <span class="tag">Third tag</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+							</div>
+						</div>
+						<!--/div-->
+
+						<!--div-->
+						<div class="card">
+							<div class="card-body">
+								<div class="card-title">
+									Link Tag
+								</div>
+								<p class="mb-4">It is Very Easy to Customize and it uses in your website aplication.
+								</p>
+								<div class="text-wrap">
+									<div class="example">
+										<div class="tags">
+											<a href="javascript:void(0);" class="tag tag-rounded">First tag</a>
+											<a href="javascript:void(0);" class="tag tag-rounded">Second tag</a>
+											<a href="javascript:void(0);" class="tag tag-rounded">Third tag</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--/div-->
+
+						<!--div-->
+						<div class="card">
+							<div class="card-body">
+								<div class="card-title">
+									Default Tags Addon
+								</div>
+								<p class="mb-4">It is Very Easy to Customize and it uses in your website aplication.
+								</p>
+								<div class="text-wrap">
+									<div class="example">
+										<div class="tags">
+											<span class="tag tag-default">
+												One
+												<a href="javascript:void(0);" class="tag-addon"><i
+														class="fe fe-x"></i></a>
+											</span>
+											<span class="tag tag-default">
+												Two
+												<a href="javascript:void(0);" class="tag-addon"><i
+														class="fe fe-x"></i></a>
+											</span>
+											<span class="tag tag-default">
+												Three
+												<a href="javascript:void(0);" class="tag-addon"><i
+														class="fe fe-x"></i></a>
+											</span>
+											<span class="tag tag-default">
+												Four
+												<a href="javascript:void(0);" class="tag-addon"><i
+														class="fe fe-x"></i></a>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--/div-->
+							<div class="card">
+								<div class="card-body">
+									<div class="card-title">
+										Colored tags Addon
+									</div>
+									<p class="mb-4">It is Very Easy to Customize and it uses in your website aplication.</p>
+									<div class="text-wrap">
+										<div class="example">
+											<div class="tags">
+												<span class="tag tag-primary">primary tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+												<span class="tag tag-secondary">secondary tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+												<span class="tag tag-success">success tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+												<span class="tag tag-warning">warning tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+												<span class="tag tag-teal">teal tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+												<span class="tag tag-danger">danger tag<a href="javascript:void(0);" class="tag-addon"><i class="fe fe-x"></i></a> </span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						<!--div-->
+						<div class="card">
+							<div class="card-body">
+								<div class="card-title">
+									Colored tags
+								</div>
+								<p class="mb-4">It is Very Easy to Customize and it uses in your website aplication.
+								</p>
+								<div class="text-wrap">
+									<div class="example">
+										<div class="tags">
+											<span class="tag tag-blue">Blue tag</span>
+											<span class="tag tag-azure">Azure tag</span>
+											<span class="tag tag-indigo">Indigo tag</span>
+											<span class="tag tag-purple">Purple tag</span>
+											<span class="tag tag-pink">Pink tag</span>
+											<span class="tag tag-red">Red tag</span>
+											<span class="tag tag-orange">Orange tag</span>
+											<span class="tag tag-yellow">Yellow tag</span>
+											<span class="tag tag-lime">Lime tag</span>
+											<span class="tag tag-green">Green tag</span>
+											<span class="tag tag-teal">Teal tag</span>
+											<span class="tag tag-cyan">Cyan tag</span>
+											<span class="tag tag-gray">Gray tag</span>
+											<span class="tag tag-gray-dark">Dark gray tag</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--/div-->
+					</div>
+					<!--/div-->
+				</div>
+                    <!-- End:: row-1 -->
+
+                </div>
+            </div>
+            <!--APP-CONTENT CLOSE-->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+    
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+    
+</body>
+
+</html>

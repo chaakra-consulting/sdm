@@ -1,0 +1,174 @@
+@SPK@include("partials/mainhead.html")
+<!-- Quill Editor Css -->
+<link rel="stylesheet" href="../assets/libs/quill/quill.snow.css">
+<link rel="stylesheet" href="../assets/libs/quill/quill.bubble.css">
+
+<!-- File pond Css -->
+<link rel="stylesheet" href="../assets/libs/filepond/filepond.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.css">
+<link rel="stylesheet" href="../assets/libs/dropzone/dropzone.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Blog Post", "subtitle": 'Blog Pages'})
+
+                <!-- Start::row-1 -->
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-md-12">
+						<div class="card blog-edit">
+							<div class="card-body">
+								<div class="form-group mb-3">
+									<label class="form-label text-dark">Course Title</label>
+									<input type="text" class="form-control" value="Advanced Web Development">
+								</div>
+								<div class="form-group mb-3">
+									<label class="form-label text-dark">Category</label>
+									<select class="form-control" data-trigger name="language" id="language">
+										<option>Select</option>
+										<option value="1" selected>IT</option>
+										<option value="2">Language</option>
+										<option value="3">Science</option>
+										<option value="4">Health</option>
+										<option value="5">Humanities</option>
+										<option value="6">Business</option>
+										<option value="7">Maths</option>
+										<option value="8">Marketing</option>
+									</select>
+								</div>
+								<div class="form-group mb-3">
+									<label class="form-label text-dark">Instructor</label>
+									<select class="form-control" data-trigger name="instructor" id="instructor">
+										<option>Select</option>
+										<option value="1" selected>Pedro Cox</option>
+										<option value="2">Vera Guzman</option>
+										<option value="3">Glenda Long</option>
+										<option value="4">Joel Anderson</option>
+										<option value="5">Blanche Henderson</option>
+									</select>
+								</div>
+								<div class="form-group mb-3">
+									<label class="form-label text-dark">Type of mode</label>
+									<div class="d-md-flex ad-post-details">
+										<label class="custom-control form-radio mb-2 me-4">
+											<input type="radio" class="form-check-input" name="radios2" value="option1" checked="">
+											<span class="custom-control-label"><a href="javascript:void(0);" class="">Online </a></span>
+										</label>
+										<label class="custom-control form-radio mb-2">
+											<input type="radio" class="form-check-input" name="radios2" value="option2" >
+											<span class="custom-control-label"><a href="javascript:void(0);" class="">Offline</a></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group mb-3">
+                                    <div class="ql-wrapper ql-wrapper-demo mb-3">
+                                        <label class="form-label">Product Description</label>
+                                        <div id="editor">
+                                            <h4><b class="ql-size-large">Quill Snow</b> is a free, open source <a href="https://github.com/quilljs/quill/" target="_blank">Quill Editor</a> built for the modern web. With its <a href="https://quilljs.com/docs/modules/" target="_blank">modular architecture</a> and expressive API, it is completely customizable to fit any need.</h4>
+                                            <p><br></p>
+                                            <ol>
+                                                <li class="ql-size-normal">Write text select and edit with multiple options.</li>
+                                                <li class="">This is quill snow editor.</li>
+                                                <li class="">Easy to customize and flexible.</li>
+                                            </ol>
+                                            <p><br></p>
+                                            <h4>Quill officially supports a standard toolbar theme <a href="https://github.com/quilljs/quill/" target="_blank">"Snow"</a> and a floating tooltip theme <a href="https://github.com/quilljs/quill/" target="_blank">"Bubble"</a></h4>
+                                        </div>
+                                    </div>
+								</div>
+								<div class="form-group mb-3">
+									<label class="form-label text-dark">Course Type</label>
+									<div class="d-md-flex ad-post-details">
+										<label class="custom-control form-radio mb-2 me-4">
+											<input type="radio" class="form-check-input" name="radios12" value="option1" checked="">
+											<span class="custom-control-label"><a href="javascript:void(0);" class="">Free </a></span>
+										</label>
+										<label class="custom-control form-radio  mb-2">
+											<input type="radio" class="form-check-input" name="radios12" value="option2" >
+											<span class="custom-control-label"><a href="javascript:void(0);" class="">Paid</a></span>
+										</label>
+									</div>
+								</div>
+                                <label class="form-label">Upload File</label>
+                                <div class="p-4 border rounded-6 mb-4 form-group">
+                                    <div>
+                                        <form data-single="true" method="post" action="https://httpbin.org/post" class="dropzone"></form>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Upload Video URL</label>
+                                    <input type="text" class="form-control" placeholder="https://videos.com" value="https://www.youtube.com/embed/tMWkeBIohBs">
+                                </div>
+								<div class="control-group form-group  mb-0">
+									<label class="form-label text-dark">Course Post Package</label>
+									<div class=" border p-3 rounded-7">
+										<div class="d-md-flex ad-post-details">
+											<label class="custom-control form-radio mb-0 me-5">
+												<input type="radio" class="form-check-input" name="radios1" value="option7">
+												<span class="custom-control-label">30 Days Free</span>
+											</label>
+											<label class="custom-control form-radio  mb-0 me-4">
+												<input type="radio" class="form-check-input" name="radios1" value="option8" checked="">
+												<span class="custom-control-label">60 days / <span class="font-weight-bold">$20</span></span>
+											</label>
+											<label class="custom-control form-radio  mb-0 me-4">
+												<input type="radio" class="form-check-input" name="radios1" value="option9">
+												<span class="custom-control-label">6months / <span class="font-weight-bold">$50</span></span>
+											</label>
+											<label class="custom-control form-radio  mb-0">
+												<input type="radio" class="form-check-input" name="radios1" value="option10">
+												<span class="custom-control-label">1 year / <span class="font-weight-bold">$80</span></span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer ">
+								<a href="javascript:void(0);" class="btn btn-secondary">Save to Draft</a>
+								<a href="javascript:void(0);" class="btn btn-primary float-end">Publish Now</a>
+							</div>
+						</div>
+					</div>
+				</div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Quill Editor JS -->
+    <script src="../assets/libs/quill/quill.min.js"></script>
+
+    <!-- Dropzone JS -->
+    <script src="../assets/libs/dropzone/dropzone-min.js"></script>
+
+     <!-- Fileupload JS -->
+    <script src="../assets/js/blog-post.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+@SPK@include("partials/mainhead.html")
+<!-- Full Calendar CSS -->
+<link rel="stylesheet" href="../assets/libs/fullcalendar/main.min.css">
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                @SPK@include("partials/page-header.html", {"title": "Full Calendar", "subtitle": 'Apps'})
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="card custom-card">
+                            <div class="card-header d-grid">
+                                <button class="btn btn-primary-light btn-wave"><i class="ri-add-line align-middle me-1 fw-semibold d-inline-block"></i>Create New Event</button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="external-events" class="p-3">
+                                    <div
+                                      class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-primary border border-primary">
+                                      <div class="fc-event-main">Calendar Events</div>
+                                    </div>
+                                    <div
+                                      class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-secondary border border-secondary"
+                                      data-class="bg-secondary">
+                                      <div class="fc-event-main">Birthday EVents</div>
+                                    </div>
+                                    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-success border border-success"
+                                      data-class="bg-success">
+                                      <div class="fc-event-main">Holiday Calendar</div>
+                                    </div>
+                                    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-info border border-info"
+                                      data-class="bg-info">
+                                      <div class="fc-event-main">Office Events</div>
+                                    </div>
+                                    <div
+                                      class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-warning border border-warning"
+                                      data-class="bg-warning">
+                                      <div class="fc-event-main">Other Events</div>
+                                    </div>
+                                    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-danger border border-danger"
+                                      data-class="bg-danger">
+                                      <div class="fc-event-main">Festival Events</div>
+                                    </div>
+                                    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-teal border border-teal"
+                                      data-class="bg-danger">
+                                      <div class="fc-event-main">Timeline Events</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9">
+                        <div class="card custom-card">
+                            <div class="card-header">
+                                <div class="card-title">Full Calendar</div>
+                            </div>
+                            <div class="card-body">
+                                <div id='calendar2'></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End::row-1 -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+    
+    <!-- Moment JS -->
+    <script src="../assets/libs/moment/moment.js"></script>
+
+    <!-- Fullcalendar JS -->
+    <script src="../assets/libs/fullcalendar/main.min.js"></script>
+    <script src="../assets/js/fullcalendar.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>

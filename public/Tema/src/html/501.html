@@ -1,0 +1,45 @@
+@SPK@include("partials/mainhead.html")
+
+</head>
+
+<body>
+
+    @SPK@include("partials/switcher.html")
+    @SPK@include("partials/loader.html")
+
+    <div class="page">
+        @SPK@include("partials/header.html")
+        @SPK@include("partials/sidebar.html")
+
+        <!-- Start::app-content -->
+        <div class="main-content app-content">
+            <div class="container-fluid">
+
+                <!-- Start::row-1 -->
+                <div class="row">
+                    <div class="main-error-wrapper wrapper-1">
+                        <h1 class="">501<span class="fs-20">error</span></h1>
+                        <h3 class="title">Oopps. The page you were looking for doesn't exist.</h3>
+                        <h6 class="sub_title text-default">You may have mistyped the address or the page may have moved.</h6><a class="btn btn-primary" href="index.html">Back to Home</a>
+                    </div>
+                </div>
+                <!-- row closed -->
+
+            </div>
+        </div>
+        <!-- End::app-content -->
+
+        @SPK@include("partials/footer.html")
+
+    </div>
+
+    @SPK@include("partials/commonjs.html")
+
+    @SPK@include("partials/custom_switcherjs.html")
+
+    <!-- Custom JS -->
+    <script src="../assets/js/custom.js"></script>
+
+</body>
+
+</html>
