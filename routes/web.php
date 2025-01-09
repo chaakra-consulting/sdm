@@ -78,7 +78,7 @@ Route::middleware(['auth', 'role:2'])->group(function () {
 
 Route::middleware(['auth', 'role:3'])->group(function () {
     //Karyawan
-    Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
+    Route::get('/karyawan/dashboard', action: [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
 
     // Karyawan : Pengalaman Kerja
     Route::get('/karyawan/pengalaman_kerja/', [PengalamanKerjaController::class, 'index'])->name('karyawan.pengalaman_kerja');
@@ -88,6 +88,11 @@ Route::middleware(['auth', 'role:3'])->group(function () {
 
     // Karyawan : data diri
     Route::get('/karyawan/datadiri', [DatadiriController::class, 'index'])->name('karyawan.datadiri');
+
+    //Management Datadiri
+    Route::get('/datadiri', [DatadiriController::class, 'index'])->name('datadiri');
+    Route::post('/datadiri/store', [DataDiriController::class, 'store'])->name('datadiri.store');
+    Route::get('/datadiri/update/{id}', [DataDiriController::class, 'create'])->name('datadiri.update');
 
     //KAryawan : Pelatihan
     Route::get('/karyawan/pelatihan/', [PelatihanController::class, 'index'])->name('karyawan.pelatihan');
