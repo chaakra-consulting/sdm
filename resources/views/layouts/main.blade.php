@@ -1877,10 +1877,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="{{ asset('Tema/dist/assets/js/datatables.js') }}"></script>
 
+
     <!-- Sweetalerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js"></script>
     <script>
         $(document).ready(function(){
+
+            tanggal_indo();
+            
+            function tanggal_indo(){
+                const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const bulan = [
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+
+                $('.tanggal_indo').each(function () {
+                    const tanggalAsli = $(this).text().trim(); 
+                    const [tahun, bulanIndex, tanggal] = tanggalAsli.split('-');
+
+                    const tanggalObj = new Date(tahun, bulanIndex - 1, tanggal);
+                    const hariIni = hari[tanggalObj.getDay()];
+                    const bulanNama = bulan[tanggalObj.getMonth()];
+
+                    const tanggalIndonesia = `${hariIni}, ${tanggal} ${bulanNama} ${tahun}`;
+                    $(this).text(tanggalIndonesia);
+                })
+            }
+
             if($('#msg-success').data('msg_success') != null){
                 Swal.fire({
                 position: "top-end",

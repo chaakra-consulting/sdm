@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataKepegawaian;
 use App\Models\SubJabatan;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,8 @@ class SubJabatanController extends Controller
             'sub_jabatan' => $getSubJabatan
         ];
 
-        return view('admin.sub_jabatan', $data);
+        // return view('admin.sub_jabatan', $data);
+        return view('admin_sdm.sub_jabatan', $data);
     }
 
     /**
@@ -85,8 +87,13 @@ class SubJabatanController extends Controller
     public function destroy(string $id)
     {
         //
-
         $getSubJabatan = SubJabatan::findOrFail($id);
+
+        $getKepegawaian = DataKepegawaian::where('sub_jabatan_id', $id)->first();
+
+        if($getKepegawaian){
+            return redirect()->back()->with('error', 'Data jabatan '.$getSubJabatan->nama_sub_jabatan.' gagal di hapus. Terdapat data di dalam ini');
+        }
 
         $getSubJabatan->delete();
         return redirect()->back()->with('success', 'Sub jabatan berhasil di hapus');

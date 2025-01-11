@@ -15,7 +15,7 @@
                         Tambah Role
                     </button>
                     <div class="table-responsive">
-                        <table id="" class="table table-bordered text-nowrap w-100">
+                        <table id="datatable-basic" class="table table-bordered text-nowrap w-100">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -85,7 +85,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal Edit Role -->
 <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

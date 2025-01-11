@@ -27,23 +27,21 @@ class DatadiriController extends Controller
     {
         // Validasi input
         // dd('test');
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'nik' => 'required|numeric|digits:16|unique:tb_datadiris,nik',
             'nama_lengkap' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat_ktp' => 'required|string|max:255',
+            'email_nonchaakra' => 'required',
             'alamat_domisili' => 'nullable|string|max:255',
             'agama' => 'required|string|max:50',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'no_hp' => 'required|numeric',
+            'no_emergency' => 'required|numeric',
             'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
-        if ($validator->fails()) {
-            dd($validator->errors()); // Debug error validasi
-        }
-
         // Simpan foto jika ada
         $fotoPath = null;
         
@@ -57,16 +55,19 @@ class DatadiriController extends Controller
         $data = [
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
+            'nip' => $request->nip,
             'user_id' => Auth::id(),
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
             'alamat_ktp' => $request->alamat_ktp,
+            'email_nonchaakra' => $request->email_nonchaakra,
             'alamat_domisili' => $request->alamat_domisili,
             'agama' => $request->agama,
             'jenis_kelamin' => $request->jenis_kelamin,
             'no_hp' => $request->no_hp,
+            'no_emergency' => $request->no_emergency,
             'foto_user' => $fotoPath,
-            'status_pernikahan' => 'lajang'
+            'status_pernikahan' => $request->status_pernikahan
         ];
 
         //dd($data);
@@ -80,17 +81,16 @@ class DatadiriController extends Controller
     {
         // Validasi input
         $request->validate([
-            'nik' => 'required|numeric|digits:16',
             'nama_lengkap' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'alamat_ktp' => 'required|string',
-            'alamat_domisili' => 'nullable|string',
-            'agama' => 'required|string',
-            'jenis_kelamin' => 'required|string',
-            'instagram' => 'nullable|string|max:255',
-            'linkedin' => 'nullable|string|max:255',
+            'alamat_ktp' => 'required|string|max:255',
+            'email_nonchaakra' => 'required',
+            'alamat_domisili' => 'nullable|string|max:255',
+            'agama' => 'required|string|max:50',
+            'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'no_hp' => 'required|numeric',
+            'no_emergency' => 'required|numeric',
             'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -103,16 +103,18 @@ class DatadiriController extends Controller
 
         // Perbarui data diri pengguna
         $datadiri->nik = $request->nik;
+        $datadiri->nip = $request->nip;
         $datadiri->nama_lengkap = $request->nama_lengkap;
         $datadiri->tempat_lahir = $request->tempat_lahir;
         $datadiri->tanggal_lahir = $request->tanggal_lahir;
         $datadiri->alamat_ktp = $request->alamat_ktp;
+        $datadiri->email_nonchaakra = $request->email_nonchaakra;
         $datadiri->alamat_domisili = $request->alamat_domisili;
         $datadiri->agama = $request->agama;
         $datadiri->jenis_kelamin = $request->jenis_kelamin;
-        // $datadiri->instagram = $request->instagram;
-        // $datadiri->linkedin = $request->linkedin;
         $datadiri->no_hp = $request->no_hp;
+        $datadiri->no_emergency = $request->no_emergency;
+        $datadiri->status_pernikahan = $request->status_pernikahan;
 
         // Jika ada foto baru yang diupload
         if ($request->hasFile('foto_user')) {

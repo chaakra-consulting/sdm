@@ -15,7 +15,7 @@
             @csrf
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="nama_pelatihan">Nama Perusahaan</label>
+                    <label for="nama_pelatihan">Nama Pelatihan</label>
                     <input type="text" name="nama_pelatihan" id="nama_pelatihan" class="form-control" required>
                 </div>
                 <div class="form-group">

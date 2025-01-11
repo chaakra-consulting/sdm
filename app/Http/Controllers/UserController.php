@@ -16,10 +16,9 @@ class UserController extends Controller
         $title = 'List User';
         $users = User::with('role')->get();
         $roles = Role::all();
-        $sub_jabatan = SubJabatan::all();
 
         // Kirim data pengguna ke view
-        return view('admin.index', compact('users', 'roles', 'sub_jabatan','title'));
+        return view('admin.index', compact('users', 'roles','title'));
     }
 
 

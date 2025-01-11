@@ -59,46 +59,81 @@
                                 </div>
                             </div>            
                             <label class="main-content-label fs-15 mb-4">Data Kepegawaian</label>
+                            @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
                             @if($kepegawaian == null)
+                            <div class="container-peringatan">
                                 <div class="card border-0">
                                     <div class="alert custom-alert1 alert-warning">
                                         <div class="text-center px-5 pb-0">
                                             <svg class="custom-alert-icon svg-warning icon-kedip" xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 24 24" width="1.5rem" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
                                             <h5>Peringatan</h5>
-                                            <p class="">Data kepegawaian perlu di update. Admin sdm belum mengupdate data ini.</p>
+                                            <p class="">Data kepegawaian perlu di update. Silahkan klik tombol di bawah untuk update data kepegawaian</p>
+                                            <div class="">
+                                                <button type="button" class="btn btn-sm btn-secondary m-1 update-kepegawaian">Update Sekarang</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            @else
-                            <div class="fs-15">
-                                <div class="form-group">
-                                    <label for="sub_jabatan_id" class="form-label">Jabatan</label>
-                                    <p>{{ $kepegawaian->nama_sub_jabatan }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status_pekerjaan_id" class="form-label">Status Pekerjaan</label>
-                                    <p>{{ $kepegawaian->nama_status_pekerjaan }}</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
+                            </div>
+                            @endif
+                            <div class="container-kepegawaian" {{ ($kepegawaian != null ? '' : 'hidden') }}>
+                                <form action="{{ ($kepegawaian != null ? '/admin_sdm/kepegawaian/update/'. $kepegawaian->id_kepegawaian : '/admin_sdm/kepegawaian/store') }}" method="POST">
+                                    @csrf
+                                    @if($kepegawaian != null)
+                                    @method('put')
+                                    @endif
+                                    <input type="hidden" name="user_id" value="{{ $karyawan->user_id }}">
+                                    <div class="form-group">
+                                        <label for="sub_jabatan_id" class="form-label">Jabatan</label>
+                                        <select name="sub_jabatan_id" id="sub_jabatan_id" class="form-control" {{ ($kepegawaian != null ? 'Update' : 'Simpan') }} {{ ($kepegawaian != null ? 'disabled' : '') }}>
+                                            <option selected disabled>Pilih Jabatan</option>
+                                            @foreach($sub_jabatan as $key => $row)
+                                                <option {{ old('sub_jabatan_id', ($kepegawaian == null ? '' : $kepegawaian->sub_jabatan_id)) == $row->id ? 'selected' : '' }} value="{{ $row->id }}">{{ $row->nama_sub_jabatan }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="status_pekerjaan_id" class="form-label">Status Pekerjaan</label>
+                                        <select name="status_pekerjaan_id" id="status_pekerjaan_id" class="form-control" {{ ($kepegawaian != null ? 'disabled' : '') }}>
+                                            <option selected disabled>Pilih Status Pekerjaan</option>
+                                            @foreach($status_pekerjaan as $key => $row)
+                                                <option {{ old('sub_jabatan_id', ($kepegawaian == null ? '' : $kepegawaian->status_pekerjaan_id)) == $row->id ? 'selected' : '' }} value="{{ $row->id }}">{{ $row->nama_status_pekerjaan }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                  <div class="row">
+                                   <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
-                                            <p class="tanggal_indo">{{ $kepegawaian->tgl_masuk }}</p>
+                                            <input type="date" name="tgl_masuk" id="tgl_masuk" class="form-control" value="{{ old('tgl_masuk', ($kepegawaian == null ? '' : $kepegawaian->tgl_masuk)) }}" {{ ($kepegawaian != null ? 'disabled' : '') }}>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="tgl_berakhir" class="form-label">Tanggal Berakhir</label>
-                                            <p class="tanggal_indo">{{ $kepegawaian->tgl_berakhir }}</p>
+                                            <input type="date" name="tgl_berakhir" id="tgl_berakhir" class="form-control" value="{{ old('tgl_berakhir', ($kepegawaian == null ? '' : $kepegawaian->tgl_berakhir)) }}" {{ ($kepegawaian != null ? 'disabled' : '') }}>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="no_npwp" class="form-label">No NPWP</label>
-                                    <p>{{ ($kepegawaian == null ? 'no npwp kosong' : $kepegawaian->no_npwp) }}</p>
-                                </div> 
+                                    <div class="form-group">
+                                        <label for="no_npwp" class="form-label">No NPWP</label>
+                                        <input type="number" name="no_npwp" id="no_npwp" class="form-control" placeholder="Masukan Nomer NPWP Jika Ada" value="{{ old('no_npwp', ($kepegawaian == null ? '' : $kepegawaian->no_npwp)) }}" {{ ($kepegawaian != null ? 'disabled' : '') }}>
+                                    </div>
+                                  </div>
+                                  @if($kepegawaian != null)
+                                  <button type="button" class="btn btn-danger btn-batal-edit" hidden>Batal</button>
+                                  <button type="button" class="btn btn-warning btn-edit-kepegawaian">Edit</button>
+                                  @endif
+                                  <button type="submit" class="btn btn-primary btn-submit-kepegawaian" {{ ($kepegawaian != null ? 'hidden' : '') }}>{{ ($kepegawaian != null ? 'Update' : 'Simpan') }}</button>
+                                </form>
                             </div>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -435,7 +470,7 @@
         </div>
     </div>
     <div class="mt-1">
-        <a href="/admin/data_karyawan" class="btn btn-secondary">Kembali</a>
+        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">Kembali</a>
     </div>
 </div>
 
@@ -461,6 +496,38 @@
             let dokumen_pdf = $(this).data('dokumen_pdf');
             console.log(dokumen_pdf);
             $('#viewDokumenPdf').attr('src', dokumen_pdf);
+        })
+
+        // $(".container-kepegawaian").hide();
+        $(".update-kepegawaian").click(function(){
+            console.log('test')
+            $(".container-peringatan").slideUp(200);
+            $(".container-kepegawaian").prop('hidden', false).slideDown(200);
+        })
+
+        $('.btn-edit-kepegawaian').click(function(){
+            console.log('test')
+            $('.btn-edit-kepegawaian').hide();
+            $('.btn-batal-edit').prop('hidden', false);
+            $(".btn-submit-kepegawaian").prop('hidden', false);
+
+            $("#sub_jabatan_id").prop('disabled', false);
+            $("#status_pekerjaan_id").prop('disabled', false);
+            $("#tgl_masuk").prop('disabled', false);
+            $("#tgl_berakhir").prop('disabled', false);
+            $("#no_npwp").prop('disabled', false);
+
+            $('.btn-batal-edit').click(function(){
+                $("#sub_jabatan_id").prop('disabled', true);
+                $("#status_pekerjaan_id").prop('disabled', true);
+                $("#tgl_masuk").prop('disabled', true);
+                $("#tgl_berakhir").prop('disabled', true);
+                $("#no_npwp").prop('disabled', true);
+
+                $('.btn-edit-kepegawaian').fadeIn(200);
+                $('.btn-batal-edit').prop('hidden', true);
+                $(".btn-submit-kepegawaian").prop('hidden', true);
+            })
         })
     })
 </script>

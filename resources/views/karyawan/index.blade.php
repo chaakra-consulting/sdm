@@ -1,7 +1,17 @@
 @extends('layouts.main')
 
 @section('content')
+
 <div class="container-fluid">
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     <!-- Start Form Data Diri -->
     <div class="row">
         <div class="col-xl-12">
@@ -29,6 +39,11 @@
                                     <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                                     <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
                                         value="{{ $datadiri->nama_lengkap }}" placeholder="Masukkan Nama Lengkap" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nip" class="form-label">NIP</label>
+                                    <input type="text" class="form-control" id="nip" name="nip"
+                                        value="{{ $datadiri->nip }}" placeholder="Masukkan NIP" >
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
@@ -80,6 +95,21 @@
                                     <label for="no_hp" class="form-label">No HP</label>
                                     <input type="text" class="form-control" id="no_hp" name="no_hp"
                                         value="{{ $datadiri->no_hp }}" placeholder="Masukkan Nomor HP" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="no_emergency" class="form-label">No HP Emergency</label>
+                                    <input type="text" class="form-control" id="no_emergency" name="no_emergency" placeholder="Masukkan Nomor HP" value="{{ $datadiri->no_emergency }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email_nonchaakra" class="form-label">Email Non Chaakra</label>
+                                    <input type="email" class="form-control" id="email_nonchaakra" name="email_nonchaakra" placeholder="Masukkan Email Non Chaakra" value="{{ $datadiri->email_nonchaakra }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="status_pernikahan" class="form-label">Status Pernikahan</label>
+                                    <select name="status_pernikahan" id="status_pernikahan" class="form-control">
+                                        <option {{ ($datadiri->status_pernikahan == 'lajang' ? 'selected' : '') }} value="lajang">Lajang</option>
+                                        <option {{ ($datadiri->status_pernikahan == 'menikah' ? 'selected' : '') }} value="menikah">Menikah</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="foto_user" class="form-label">Foto Diri</label>
@@ -161,14 +191,14 @@
             <div class="row">
                 <div class="card custom-card">
                     <div class="card-header justify-content-between">
-                        <div class="card-title">Form data Pendidikan</div>
+                        <div class="card-title">Form Data Kesehatan</div>
                     </div>
                     <div class="card-body">
                         @if (!$kesehatan)
                             <div class="alert alert-danger">Data kesehatan belum dilengkapi</div>
                         @endif
                         <div class="alert alert-secondary">Beri (-) jika inputan tidak diperlukan</div>
-                        <form action="{{ (!$kesehatan ? '/karyawan/kesehatan/store' : 'karyawan/kesehatan/update/'. $pendidikan->id) }}" method="POST"
+                        <form action="{{ (!$kesehatan ? '/karyawan/kesehatan/store' : 'karyawan/kesehatan/update/'. $kesehatan->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @if ($kesehatan)
@@ -177,22 +207,27 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="golongan_darah" class="form-label">Golongan Darah</label>
-                                    <input type="text" class="form-control @error('golongan_darah') is-invalid @enderror" id="golongan_darah" name="golongan_darah" value="{{ old('golongan_darah', (!$kesehatan ? '' : $kesehatan->golongan_darah)) }}" placeholder="Masukkan Golongan Darah">
+                                    <select name="golongan_darah" id="golongan_darah" class="form-control">
+                                        <option selected disabled>Pilih Golongan Darah</option>
+                                        <option value="A" {{ old('golongan_darah', (!$kesehatan ? '' : $kesehatan->golongan_darah)) == 'A' ? 'selected' : '' }}>A</option>
+                                        <option value="B" {{ old('golongan_darah', (!$kesehatan ? '' : $kesehatan->golongan_darah)) == 'B' ? 'selected' : '' }}>B</option>
+                                        <option value="AB" {{ old('golongan_darah', (!$kesehatan ? '' : $kesehatan->golongan_darah)) == 'AB' ? 'selected' : '' }}>AB</option>
+                                        <option value="O" {{ old('golongan_darah', (!$kesehatan ? '' : $kesehatan->golongan_darah)) == 'O' ? 'selected' : '' }}>O</option>                                        
+                                    </select>
                                     @error('golongan_darah')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="riwayat_alergi" class="form-label">Golongan Darah</label>
+                                    <label for="riwayat_alergi" class="form-label">Riwayat Alergi</label>
                                     <input type="text" class="form-control" id="riwayat_alergi" name="riwayat_alergi" value="{{ (!$kesehatan ? '' : $kesehatan->riwayat_alergi) }}" placeholder="Riwayat Alergi" >
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="riwayat_penyakit" class="form-label">Golongan Darah</label>
+                                    <label for="riwayat_penyakit" class="form-label">Riwayat Penyakit</label>
                                     <input type="text" class="form-control" id="riwayat_penyakit" name="riwayat_penyakit" value="{{ (!$kesehatan ? '' : $kesehatan->riwayat_penyakit) }}" placeholder="Riwayat Penyakit" >
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="riwayat_penyakit_lain" class="form-label">Golongan Darah</label>
+                                    <label for="riwayat_penyakit_lain" class="form-label">Riwayat Penyakit Lain</label>
                                     <input type="text" class="form-control" id="riwayat_penyakit_lain" name="riwayat_penyakit_lain" value="{{ (!$kesehatan ? '' : $kesehatan->riwayat_penyakit_lain) }}" placeholder="Riwayat Penyakit Lain" >
                                 </div>
                                 
@@ -230,6 +265,11 @@
                             <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                             <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
                                 placeholder="Masukkan Nama Lengkap" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nip" class="form-label">NIP</label>
+                            <input type="text" class="form-control" id="nip" name="nip"
+                                placeholder="Masukkan NIP" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
@@ -273,6 +313,21 @@
                         <div class="col-md-6 mb-3">
                             <label for="no_hp" class="form-label">No HP</label>
                             <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="Masukkan Nomor HP" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="no_emergency" class="form-label">No HP Emergency</label>
+                            <input type="text" class="form-control" id="no_emergency" name="no_emergency" placeholder="Masukkan Nomor HP" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email_nonchaakra" class="form-label">Email Non Chaakra</label>
+                            <input type="email" class="form-control" id="email_nonchaakra" name="email_nonchaakra" placeholder="Masukkan Email Non Chaakra" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status_pernikahan" class="form-label">Status Pernikahan</label>
+                            <select name="status_pernikahan" id="status_pernikahan" class="form-control">
+                                <option value="lajang">Lajang</option>
+                                <option value="menikah">Menikah</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="foto_user" class="form-label">Foto Diri</label>

@@ -73,10 +73,10 @@
                                 <a href="{{ route('admin.users') }}"
                                     class="side-menu__item {{ request()->routeIs('admin.users') ? 'active' : '' }}">List User</a>
                             </li>
-                            <li class="slide">
+                            {{-- <li class="slide">
                                 <a href="{{ route('admin.sub_jabatan') }}"
                                     class="side-menu__item {{ request()->routeIs('admin.sub_Jabatan') ? 'active' : '' }}">Sub Jabatan</a>
-                            </li>
+                            </li> --}}
                             <li class="slide">
                                 <a href="{{ route('admin.roles') }}"
                                     class="side-menu__item {{ request()->routeIs('admin.roles') ? 'active' : '' }}">Role User</a>
@@ -94,7 +94,7 @@
 
                     <!-- Start::slide -->
                     <li class="slide">
-                        <a href="{{ route('karyawan.dashboard') }}"
+                        <a href="/karyawan/dashboard"
                             class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0V0z" fill="none" />
@@ -124,25 +124,86 @@
                         </a>
                         <ul class="slide-menu child1">
                             <li class="slide">
-                                <a href="{{ route('karyawan.datadiri') }}"
+                                <a href="{{ route('datadiri') }}"
                                     class="side-menu__item {{ request()->routeIs('datadiri') ? 'active' : '' }}">Data
                                     Diri</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('karyawan.pengalaman_kerja') }}"
+                                <a href="/karyawan/pengalaman_kerja"
                                     class="side-menu__item {{ request()->routeIs('karyawan/pengalaman_kerja') ? 'active' : '' }}">Pengalaman Kerja</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('karyawan.pelatihan') }}"
+                                <a href="/karyawan/pelatihan"
                                     class="side-menu__item {{ request()->routeIs('karyawan/pelatihan') ? 'active' : '' }}">Pelatihan</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('karyawan.social_media') }}"
+                                <a href="/karyawan/social_media"
                                     class="side-menu__item {{ request()->routeIs('karyawan/social_media') ? 'active' : '' }}">Sosial Media</a>
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
                 </ul>
+            @endif
+            @if(Auth::check() && Auth::user()->role_id == 4)
+            <ul class="main-menu">
+                <!-- Start::slide__category -->
+                <li class="slide__category"><span class="category-name">Main</span></li>
+                <!-- End::slide__category -->
+
+                <!-- Start::slide -->
+                <li class="slide">
+                    <a href="/admin_sdm/dashboard"
+                        class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3" />
+                            <path
+                                d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z" />
+                        </svg>
+                        <span class="side-menu__label">Dashboard</span>
+                    </a>
+                </li>
+                <!-- End::slide -->
+
+                <!-- Start::slide__category -->
+                <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
+                <!-- End::slide__category -->
+                <!-- Start::slide -->
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);"
+                        class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                        <span class="side-menu__label">Management Karyawan</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1">
+                        <li class="slide">
+                            <a href="/admin_sdm/kepegawaian"
+                                class="side-menu__item {{ request()->routeIs('/admin_sdm/kepegawaian') ? 'active' : '' }}">Data Kepegawaian</a>
+                        </li>
+                    </ul>
+                </li> <!-- End::slide -->
+
+                <li class="slide__category"><span class="category-name">Data Master</span></li>
+                <li class="slide">
+                    <a href="{{ route('admin_sdm.sub_jabatan') }}"
+                        class="side-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M5 9h14V5H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5S7.83 8.5 7 8.5 5.5 7.83 5.5 7 6.17 5.5 7 5.5zM5 19h14v-4H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z" opacity=".3"></path><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H5v-4h14v4zm-12-.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 6H5V5h14v4zM7 8.5c.83 0 1.5-.67 1.5-1.5S7.83 5.5 7 5.5 5.5 6.17 5.5 7 6.17 8.5 7 8.5z"></path></svg>
+                        <span class="side-menu__label">Master Jabatan</span>
+                    </a>
+                </li>
+                <li class="slide">
+                    <a href="{{ route('admin_sdm.status_pekerjaan') }}"
+                        class="side-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M5 9h14V5H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5S7.83 8.5 7 8.5 5.5 7.83 5.5 7 6.17 5.5 7 5.5zM5 19h14v-4H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z" opacity=".3"></path><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H5v-4h14v4zm-12-.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 6H5V5h14v4zM7 8.5c.83 0 1.5-.67 1.5-1.5S7.83 5.5 7 5.5 5.5 6.17 5.5 7 6.17 8.5 7 8.5z"></path></svg>
+                        <span class="side-menu__label">Master Status Pekerjaan</span>
+                    </a>
+                </li>
+            </ul>
             @endif
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
                     height="24" viewBox="0 0 24 24">

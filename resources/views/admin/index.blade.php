@@ -21,7 +21,6 @@
                                     <th>Role</th>
                                     <th>tgl Daftar</th>
                                     <th>Jabatan (Role User)</th>
-                                    <th>Sub Jabatan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -52,23 +51,6 @@
                                                         <button type="submit" class="btn btn-primary ms-2">Update</button>
                                                     </div>
                                                 </form>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($user->role_id != 1)
-                                            <form action="{{ route('admin.users.updateSubJabatan', $user->id) }}" method="POST">
-                                                @csrf
-                                                @method('put')
-                                                <div class="input-group">
-                                                    <select name="sub_jabatan_id" id="" class="form-select">
-                                                        <option disabled selected>Pilih Sub Jabatan</option>
-                                                        @foreach ($sub_jabatan as $row)
-                                                            <option {{ ($user->sub_jabatan_id == $row->id ? 'selected' : '') }} value="{{ $row->id }}">{{ $row->nama_sub_jabatan }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <button type="submit" class="btn btn-primary ms-2">Update</button>
-                                                </div>
-                                            </form>
                                             @endif
                                         </td>
                                     </tr>

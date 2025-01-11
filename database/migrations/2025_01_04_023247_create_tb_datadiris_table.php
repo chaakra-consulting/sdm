@@ -16,15 +16,18 @@ return new class extends Migration
             $table->id();
             $table->string('nik', 16)->unique();
             $table->string('nama_lengkap', 100);
+            $table->string('nip', 50)->nullable();
             $table->foreignIdFor(User::class)->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('foto_user')->nullable();
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('alamat_ktp');
+            $table->string('email_nonchaakra')->nullable();
             $table->string('alamat_domisili');
             $table->string('agama');
             $table->string('jenis_kelamin');
             $table->string('no_hp');
+            $table->string('no_emergency')->nullable();
             $table->string('status_pernikahan');
             $table->timestamps();
         });
