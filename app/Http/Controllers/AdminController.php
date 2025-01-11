@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\SubJabatan;
+use App\Models\SocialMedia;
 use App\Models\DatadiriUser;
+use Illuminate\Http\Request;
 use App\Models\DataKesehatan;
 use App\Models\DataPelatihan;
-use App\Models\DataStatusPekerjaan;
 use App\Models\PendidikanUser;
 use App\Models\PengalamanKerja;
-use App\Models\SubJabatan;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\DataStatusPekerjaan;
 
 class AdminController extends Controller
 {
@@ -60,6 +61,7 @@ class AdminController extends Controller
             $kesehatan = DataKesehatan::where('user_id', $getKaryawan->user_id)->first();
             $pengalaman_kerja = PengalamanKerja::where('user_id', $getKaryawan->user_id)->get();
             $pelatihan = DataPelatihan::where('user_id', $getKaryawan->user_id)->get();
+            $social_media = SocialMedia::where('user_id', $getKaryawan->user_id)->get();
             $sub_jabatan = SubJabatan::all();
             $status_pekerjaan = DataStatusPekerjaan::all();
 
@@ -72,7 +74,8 @@ class AdminController extends Controller
             'pelatihan' => $pelatihan,
             'kepegawaian' => $kepegawaian,
             'sub_jabatan' => $sub_jabatan,
-            'status_pekerjaan' => $status_pekerjaan
+            'status_pekerjaan' => $status_pekerjaan,
+            'social_media' => $social_media
         ];
 
         return view('admin.detail_karyawan', $data);

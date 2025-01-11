@@ -93,7 +93,7 @@ Route::middleware(['auth', 'role:3'])->group(function () {
     Route::get('/datadiri/update/{id}', [DataDiriController::class, 'create'])->name('datadiri.update');
     //Route::post('/datadiri', [DataDiriController::class, 'store'])->name('datadiri.store');
     
-    Route::put('/datadiri/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
+    // Route::put('/datadiri/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
     Route::post('/datadiri/pendidikan', [DataDiriController::class, 'pendidikanstore'])->name('pendidikan.store');
     Route::put('/datadiri/pendidikan/{id}', [DatadiriController::class, 'pendidikanupdate'])->name('pendidikan.update');
 

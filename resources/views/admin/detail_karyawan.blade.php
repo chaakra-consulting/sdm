@@ -395,38 +395,16 @@
                         </div>
                         <div class="tab-pane border-0 p-0" id="social">
                             <div class="main-profile-social-list">
-                                <div class="media">
-                                    <div class="media-icon bg-primary-transparent text-primary">
-                                        <i class="icon ion-logo-github"></i>
+                                @foreach ($social_media as $item)
+                                    <div class="media">
+                                        <div class="media-icon bg-primary-transparent text-black">
+                                            <i class="icon ion-logo-{{ $item->nama_social_media }}"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <span>{{ $item->nama_social_media }}</span> <a href="{{ $item->link }}" class="text-primary">{{ $item->link }}</a>
+                                        </div>
                                     </div>
-                                    <div class="media-body">
-                                        <span>Github</span> <a href="javascript:void(0);" class="text-primary">github.com/spruko</a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-icon bg-success-transparent text-success">
-                                        <i class="ri-twitter-x-fill"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <span>Twitter</span> <a href="javascript:void(0);" class="text-primary">twitter.com/spruko.me</a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-icon bg-info-transparent text-info">
-                                        <i class="icon ion-logo-linkedin"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <span>Linkedin</span> <a href="javascript:void(0);" class="text-primary">linkedin.com/in/spruko</a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-icon bg-danger-transparent text-danger">
-                                        <i class="icon ion-md-link"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <span>My Portfolio</span> <a href="javascript:void(0);" class="text-primary">spruko.com/</a>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
