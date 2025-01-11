@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -43,6 +44,7 @@ class RoleController extends Controller
 
         // Update nama role
         $role->name = $request->name;
+        $role->slug = Str::slug($request->name);
         $role->save();
 
         // Redirect atau kembalikan response
