@@ -24,6 +24,9 @@ class UserSeeder extends Seeder
         Role::create([
             'name' => 'Karyawan',
         ]);
+        Role::create([
+            'name' => 'Admin SDM',
+        ]);
 
         User::create([
             'name' => 'Ahmad Maulana Subandrio',
@@ -42,6 +45,12 @@ class UserSeeder extends Seeder
             'email' => 'karyawan@gmail.com',
             'password' => Hash::make('karyawan123'),
             'role_id' => 3
+        ]);
+        User::create([
+            'name' => 'admin sdm',
+            'email' => 'sdm@gmail.com',
+            'password' => Hash::make('adminsdm'),
+            'role_id' => 4
         ]);
     }
 }
