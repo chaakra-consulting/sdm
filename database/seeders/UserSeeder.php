@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -17,15 +18,27 @@ class UserSeeder extends Seeder
     {
         Role::create([
             'name' => 'Super Admin',
+            'slug' => Str::slug('Super Admin'),
         ]);
         Role::create([
             'name' => 'Admin',
+            'slug' => Str::slug('Admin'),
         ]);
         Role::create([
             'name' => 'Karyawan',
+            'slug' => Str::slug('Karyawan'),
         ]);
         Role::create([
             'name' => 'Admin SDM',
+            'slug' => Str::slug('Admin SDM'),
+        ]);
+        Role::create([
+            'name' => 'Direktur',
+            'slug' => Str::slug('Direktur'),
+        ]);
+        Role::create([
+            'name' => 'Manager',
+            'slug' => Str::slug('Manager'),
         ]);
 
         User::create([
