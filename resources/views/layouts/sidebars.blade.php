@@ -19,7 +19,7 @@
                     <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
                 </svg>
             </div>
-            @if(Auth::check() && Auth::user()->role_id == 2)
+            @if(Auth::check() && Auth::user()->role->slug == 'admin')
                 <ul class="main-menu">
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Main</span></li>
@@ -86,7 +86,7 @@
                 </ul>
             @endif
 
-            @if(Auth::check() && Auth::user()->role_id == 3)
+            @if(Auth::check() && Auth::user()->role->slug == 'karyawan')
                 <ul class="main-menu">
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Main</span></li>
@@ -144,7 +144,7 @@
                     </li> <!-- End::slide -->
                 </ul>
             @endif
-            @if(Auth::check() && Auth::user()->role_id == 4)
+            @if(Auth::check() && Auth::user()->role->slug == 'admin-sdm')
             <ul class="main-menu">
                 <!-- Start::slide__category -->
                 <li class="slide__category"><span class="category-name">Main</span></li>
