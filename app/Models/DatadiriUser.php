@@ -19,6 +19,7 @@ class DatadiriUser extends Model
         'nip',
         'user_id',
         'foto_user',
+        'foto_ktp',
         'tempat_lahir',
         'tanggal_lahir',
         'alamat_ktp',
@@ -27,6 +28,8 @@ class DatadiriUser extends Model
         'agama',
         'jenis_kelamin',
         'no_hp',
+        'hubungan_emergency',
+        'nama_emergency',
         'no_emergency',
         'status_pernikahan'
     ];
