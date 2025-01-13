@@ -21,10 +21,12 @@ return new class extends Migration
             $table->bigInteger('potongan_pajak')->nullable();
             $table->bigInteger('potongan_kasbon')->nullable();
             $table->bigInteger('potongan_lainnya')->nullable();
-            $table->text('keterangan_lainnya')->nullable();
+            $table->text('keterangan_potongan_lainnya')->nullable();
             $table->bigInteger('insentif_kinerja')->nullable();
             $table->bigInteger('insentif_tugas')->nullable();
             $table->bigInteger('insentif_penjualan')->nullable();
+            $table->bigInteger('insentif_lainnya')->nullable();
+            $table->text('keterangan_insentif_lainnya')->nullable();
             $table->timestamps();
 
             $table->foreign(['user_id'], 'FK_gaji_bulanans_users')->references(['id'])->on('users')->onUpdate('CASCADE');
