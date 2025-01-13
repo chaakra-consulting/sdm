@@ -32,7 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 //     Route::get('/superadmin/dashboard', [::class, 'dashboard'])->name('superadmin.dashboard');
 // });
 
-Route::middleware(['auth', 'role:2'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     // Data Karyawan
@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ajax/get_karyawan', [AjaxController::class, 'get_karyawan']);
 });
 
-Route::middleware(['auth', 'role:4'])->group(function (){
+Route::middleware(['auth', 'role:admin-sdm'])->group(function (){
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class ,'dashboard'])->name('admin_sdm.dashboard');
 
     // Aadmin SDM : Kepegawaian
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'role:4'])->group(function (){
      Route::delete('/admin_sdm/status_pekerjaan/delete/{id}', [StatusPekerjaanController::class, 'destroy'])->name('admin.status_pekerjaan.delete'); // Delete a role
 });
 
-Route::middleware(['auth', 'role:3'])->group(function () {
+Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Karyawan
     Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
     
