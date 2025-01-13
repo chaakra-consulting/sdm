@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nip', 50)->nullable();
             $table->foreignIdFor(User::class)->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('foto_user')->nullable();
+            $table->string('foto_ktp')->nullable();
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('alamat_ktp');
@@ -27,6 +28,8 @@ return new class extends Migration
             $table->string('agama');
             $table->string('jenis_kelamin');
             $table->string('no_hp');
+            $table->enum('hubungan_emergency',['Bapak','Ibu','Suami','Istri','Saudara Kandung','Lainnya'])->nullable();
+            $table->string('nama_emergency')->nullable();
             $table->string('no_emergency')->nullable();
             $table->string('status_pernikahan');
             $table->timestamps();
