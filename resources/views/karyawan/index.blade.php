@@ -109,25 +109,30 @@
                                             value="{{ $datadiri->no_hp }}" placeholder="Masukkan Nomor HP" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="agama" class="form-label">Agama</label>
-                                        <select class="form-select" id="agama" name="agama" required>
-                                            <option value="">Pilih Agama</option>
-                                            <option value="Bapak" {{ $datadiri->hubungan_emergency == 'Bapak' ? 'selected' : '' }}>Bapak
+                                        <label for="hubungan_emergency" class="form-label">Hubungan Emergency</label>
+                                        <select class="form-select" id="hubungan_emergency" name="hubungan_emergency"
+                                            required>
+                                            <option value="">Pilih Hubungan Emergency</option>
+                                            <option value="Bapak"
+                                                {{ $datadiri->hubungan_emergency == 'Bapak' ? 'selected' : '' }}>Bapak
                                             </option>
-                                            <option value="Ibu" {{ $datadiri->hubungan_emergency == 'Ibu' ? 'selected' : '' }}>
+                                            <option value="Ibu"
+                                                {{ $datadiri->hubungan_emergency == 'Ibu' ? 'selected' : '' }}>
                                                 Ibu
                                             </option>
-                                            <option value="Suami" {{ $datadiri->hubungan_emergency == 'Suami' ? 'selected' : '' }}>
+                                            <option value="Suami"
+                                                {{ $datadiri->hubungan_emergency == 'Suami' ? 'selected' : '' }}>
                                                 Suami
                                             </option>
-                                            <option value="Istri" {{ $datadiri->hubungan_emergency == 'Istri' ? 'selected' : '' }}>
+                                            <option value="Istri"
+                                                {{ $datadiri->hubungan_emergency == 'Istri' ? 'selected' : '' }}>
                                                 Istri
                                             </option>
-                                            <option value="Saudara Kandung" {{ $datadiri->hubungan_emergency == 'Saudara Kandung' ? 'selected' : '' }}>
+                                            <option value="Saudara Kandung"
+                                                {{ $datadiri->hubungan_emergency == 'Saudara Kandung' ? 'selected' : '' }}>
                                                 Saudara Kandung
                                             </option>
-                                            <option value="Lainnya"
-                                                {{ $datadiri->agama == 'Lainnya' ? 'selected' : '' }}>
+                                            <option value="Lainnya" {{ $datadiri->agama == 'Lainnya' ? 'selected' : '' }}>
                                                 Lainnya</option>
                                         </select>
                                     </div>
@@ -161,18 +166,18 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="foto_user" class="form-label">Foto Diri</label>
                                         <input type="file" class="form-control" id="foto_user" name="foto_user"
-                                            accept="image/*" onchange="previewImage(this)">
-                                        <img id="preview"
+                                            accept="image/*" onchange="previewImage(this, 'preview_user')">
+                                        <img id="preview_user"
                                             src="{{ $datadiri->foto_user != null ? asset('uploads/' . $datadiri->foto_user) : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg' }}"
-                                            alt="Preview" style="max-width: 150px; margin-top: 10px;">
+                                            alt="Preview Foto User" style="max-width: 150px; margin-top: 10px;">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="foto_ktp" class="form-label">Foto KTP</label>
                                         <input type="file" class="form-control" id="foto_ktp" name="foto_ktp"
-                                            accept="image/*" onchange="previewImage(this)">
-                                        <img id="preview"
+                                            accept="image/*" onchange="previewImage(this, 'preview_ktp')">
+                                        <img id="preview_ktp"
                                             src="{{ $datadiri->foto_ktp != null ? asset('uploads/' . $datadiri->foto_ktp) : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg' }}"
-                                            alt="Preview" style="max-width: 150px; margin-top: 10px;">
+                                            alt="Preview Foto KTP" style="max-width: 150px; margin-top: 10px;">
                                     </div>
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary">Update</button>
@@ -180,14 +185,15 @@
                                 </div>
                             </form>
                             <script>
-                                function previewImage(input) {
-                                    var preview = document.getElementById('preview');
-                                    if (input.files && input.files[0]) {
-                                        var reader = new FileReader();
+                                function previewImage(input, previewId) {
+                                    const file = input.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
                                         reader.onload = function(e) {
+                                            const preview = document.getElementById(previewId);
                                             preview.src = e.target.result;
-                                        }
-                                        reader.readAsDataURL(input.files[0]);
+                                        };
+                                        reader.readAsDataURL(file);
                                     }
                                 }
                             </script>

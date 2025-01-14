@@ -90,10 +90,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Management Datadiri
     Route::get('/datadiri', [DatadiriController::class, 'index'])->name('datadiri');
     Route::post('/datadiri/store', [DataDiriController::class, 'store'])->name('datadiri.store');
-    Route::get('/datadiri/update/{id}', [DataDiriController::class, 'create'])->name('datadiri.update');
+    //Route::put('/datadiri/update/{id}', [DataDiriController::class, 'update'])->name('datadiri.update');
     //Route::post('/datadiri', [DataDiriController::class, 'store'])->name('datadiri.store');
-    
-    // Route::put('/datadiri/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
+    Route::put('/datadiri/update/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
     Route::post('/datadiri/pendidikan', [DataDiriController::class, 'pendidikanstore'])->name('pendidikan.store');
     Route::put('/datadiri/pendidikan/{id}', [DatadiriController::class, 'pendidikanupdate'])->name('pendidikan.update');
 
