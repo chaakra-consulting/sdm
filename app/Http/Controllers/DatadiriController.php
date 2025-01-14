@@ -55,29 +55,30 @@ class DatadiriController extends Controller
 
         if ($request->hasFile('foto_user')) {
             $file = $request->file('foto_user');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_user_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $fotoPath = $filename;
         }
-
+    
         if ($request->hasFile('foto_ktp')) {
             $file = $request->file('foto_ktp');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_ktp_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $fotoPath2 = $filename;
         }
-
+    
+        // Validasi jika kedua foto diunggah dan hash-nya sama
         if ($fotoPath && $fotoPath2) {
             $fotoUserHash = md5_file(public_path('uploads/' . $fotoPath));
             $fotoKtpHash = md5_file(public_path('uploads/' . $fotoPath2));
-
+    
             if ($fotoUserHash == $fotoKtpHash) {
-                // unlink(public_path('uploads/' . $fotoPath));
-                // unlink(public_path('uploads/' . $fotoPath2));
+                unlink(public_path('uploads/' . $fotoPath));
+                unlink(public_path('uploads/' . $fotoPath2));
                 return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
             }
         }
-
+        
         $data = [
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
@@ -98,7 +99,7 @@ class DatadiriController extends Controller
             'foto_ktp' => $fotoPath2,
             'status_pernikahan' => $request->status_pernikahan
         ];
-
+        
         // dd($data);
 
         // Simpan data ke database
