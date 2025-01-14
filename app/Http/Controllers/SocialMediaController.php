@@ -14,7 +14,7 @@ class SocialMediaController extends Controller
     public function index()
     {
         //
-        $getSocialMedia = SocialMedia::all();
+        $getSocialMedia = SocialMedia::where('user_id', Auth::id())->get();
         $data = [
             'title' => 'Sosial Media',
             'social_media' => $getSocialMedia
