@@ -261,7 +261,7 @@
                                     <td>{{ $karyawan->no_emergency }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Nama</th>
+                                    <th>Nama Emergency</th>
                                     <td class="px-2">:</td>
                                     <td>{{ $karyawan->nama_emergency }} ( {{ $karyawan->hubungan_emergency }} )</td>
                                 </tr>
