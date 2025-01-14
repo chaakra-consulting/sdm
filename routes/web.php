@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\AjaxController;
@@ -49,6 +50,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/admin/roles/store', [RoleController::class, 'store'])->name('admin.roles.store'); // Store a new role
     Route::put('/admin/roles/update/{id}', [RoleController::class, 'update'])->name('admin.roles.update'); // Update an existing role
     Route::delete('/admin/roles/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy'); // Delete a role
+
+    // Admin : Absensi
+    Route::get('/admin/absensi', [AbsensiController::class, 'index']);
+    Route::put('/admin/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin.absensi.update'); // Update an existing role
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -81,6 +87,11 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function (){
      Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
      Route::put('/admin_sdm/status_pekerjaan/update/{id}', [StatusPekerjaanController::class, 'update'])->name('admin_sdm.status_pekerjaan.update'); // Update an existing role
      Route::delete('/admin_sdm/status_pekerjaan/delete/{id}', [StatusPekerjaanController::class, 'destroy'])->name('admin.status_pekerjaan.delete'); // Delete a role
+
+    // Admin SDM : Absensi
+    Route::get('/admin_sdm/absensi', [AbsensiController::class, 'index'])->name('admin_sdm.absensi.index'); 
+    Route::put('/admin_sdm/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin_sdm.absensi.update'); // Update an existing role
+
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
