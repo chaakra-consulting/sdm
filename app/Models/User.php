@@ -46,6 +46,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeNotAdminRole($query,$roleSlug)
+    {
+        return $query->whereHas('role', function ($query) use ($roleSlug) {
+            $query->where('slug', $roleSlug);
+        });
+    }
+
+    // Relasi many-to-many dengan Role
+    public function gaji()
+    {
+        return $this->belongsTo(Gaji::class, 'role_id', 'id'); // 'role_id' adalah foreign key di tabel users
+    }
+
     // Relasi many-to-many dengan Role
     public function role()
     {
