@@ -21,7 +21,7 @@ return new class extends Migration
             $table->bigInteger('uang_bensin')->nullable();
             $table->bigInteger('bpjs_ketenagakerjaan')->nullable();
             $table->bigInteger('bpjs_kesehatan')->nullable();
-            $table->boolean('is_active')->default(0);
+            $table->boolean('is_active')->default();
             $table->timestamps();
 
             $table->foreign(['user_id'], 'FK_m_gajis_users')->references(['id'])->on('users')->onUpdate('CASCADE');
