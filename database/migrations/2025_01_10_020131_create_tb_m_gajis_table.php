@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tb_m_gajis', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable()->index('FK_ma_gajis_users');
+            $table->unsignedBigInteger('user_id')->nullable()->index('FK_m_gajis_users');
             $table->date('tanggal_berlaku')->nullable();
             $table->date('tanggal_berakhir')->nullable();
             $table->bigInteger('gaji_pokok')->nullable();
