@@ -1,14 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Http\Request;
+use App\Models\User;
+
 use App\Models\DatadiriUser;
+use Illuminate\Http\Request;
 use App\Models\DataKesehatan;
 use App\Models\DataPelatihan;
 use App\Models\PendidikanUser;
-use App\Models\User;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class DatadiriController extends Controller
@@ -20,7 +22,7 @@ class DatadiriController extends Controller
         $datadiri = DatadiriUser::where('user_id', $idUser)->first(); // Ambil data diri pengguna
         $pendidikan = PendidikanUser::where('user_id', $idUser)->first(); // Ambil data pendidikan pengguna
         $kesehatan = DataKesehatan::where('user_id', $idUser)->first();
-        return view('karyawan.index', compact('datadiri', 'pendidikan', 'kesehatan' ,'title'));
+        return view('karyawan.index', compact('datadiri', 'pendidikan', 'kesehatan', 'title'));
     }
 
     public function store(Request $request)
@@ -38,20 +40,45 @@ class DatadiriController extends Controller
             'agama' => 'required|string|max:50',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'no_hp' => 'required|numeric',
-            'no_emergency' => 'required|numeric',
+            'hubungan_emergency' => 'nullable|string|max:255',
+            'nama_emergency' => 'nullable|string|max:255',
+            'no_emergency' => ['required', 'numeric', Rule::notIn([$request->no_hp])],
             'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'no_emergency.not_in' => 'Nomor HP dan Nomor Emergency tidak boleh sama!',
         ]);
-        
+
         // Simpan foto jika ada
         $fotoPath = null;
-        
+        $fotoPath2 = null;
+
         if ($request->hasFile('foto_user')) {
             $file = $request->file('foto_user');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_user_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $fotoPath = $filename;
         }
-
+    
+        if ($request->hasFile('foto_ktp')) {
+            $file = $request->file('foto_ktp');
+            $filename = uniqid() . '_ktp_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $fotoPath2 = $filename;
+        }
+    
+        // Validasi jika kedua foto diunggah dan hash-nya sama
+        if ($fotoPath && $fotoPath2) {
+            $fotoUserHash = md5_file(public_path('uploads/' . $fotoPath));
+            $fotoKtpHash = md5_file(public_path('uploads/' . $fotoPath2));
+    
+            if ($fotoUserHash == $fotoKtpHash) {
+                unlink(public_path('uploads/' . $fotoPath));
+                unlink(public_path('uploads/' . $fotoPath2));
+                return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
+            }
+        }
+        
         $data = [
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
@@ -65,12 +92,15 @@ class DatadiriController extends Controller
             'agama' => $request->agama,
             'jenis_kelamin' => $request->jenis_kelamin,
             'no_hp' => $request->no_hp,
+            'hubungan_emergency' => $request->hubungan_emergency,
+            'nama_emergency' => $request->nama_emergency,
             'no_emergency' => $request->no_emergency,
             'foto_user' => $fotoPath,
+            'foto_ktp' => $fotoPath2,
             'status_pernikahan' => $request->status_pernikahan
         ];
-
-        //dd($data);
+        
+        // dd($data);
 
         // Simpan data ke database
         DatadiriUser::create($data);
@@ -81,6 +111,7 @@ class DatadiriController extends Controller
     {
         // Validasi input
         $request->validate([
+            'nik' => ['required', 'numeric', 'digits:16', Rule::unique('tb_datadiris', 'nik')->ignore($request->id),],
             'nama_lengkap' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
@@ -90,8 +121,13 @@ class DatadiriController extends Controller
             'agama' => 'required|string|max:50',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'no_hp' => 'required|numeric',
-            'no_emergency' => 'required|numeric',
+            'hubungan_emergency' => 'nullable|string|max:255',
+            'nama_emergency' => 'nullable|string|max:255',
+            'no_emergency' => ['required', 'numeric', Rule::notIn([$request->no_hp])],
             'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'no_emergency.not_in' => 'Nomor HP dan Nomor Emergency tidak boleh sama!',
         ]);
 
         // Cari data diri berdasarkan id
@@ -113,9 +149,13 @@ class DatadiriController extends Controller
         $datadiri->agama = $request->agama;
         $datadiri->jenis_kelamin = $request->jenis_kelamin;
         $datadiri->no_hp = $request->no_hp;
+        $datadiri->hubungan_emergency = $request->hubungan_emergency;
+        $datadiri->nama_emergency = $request->nama_emergency;
         $datadiri->no_emergency = $request->no_emergency;
         $datadiri->status_pernikahan = $request->status_pernikahan;
 
+        $datadiri->fill($request->except(['foto_user', 'foto_ktp']));
+        
         // Jika ada foto baru yang diupload
         if ($request->hasFile('foto_user')) {
             // Hapus foto lama jika ada
@@ -125,15 +165,40 @@ class DatadiriController extends Controller
                     unlink($oldPhotoPath);
                 }
             }
-
             $file = $request->file('foto_user');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $datadiri->foto_user = $filename;
         }
 
+        if ($request->hasFile('foto_ktp')) {
+            // Hapus foto lama jika ada
+            if ($datadiri->foto_ktp) {
+                $oldPhotoPath = public_path('uploads/' . $datadiri->foto_ktp);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
+            }
+            $file = $request->file('foto_ktp');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $datadiri->foto_ktp = $filename;
+        }
+        
+        // dd($datadiri);
+        if ($datadiri->foto_user && $datadiri->foto_ktp) {
+            $fotoUserHash = md5_file(public_path('uploads/' . $datadiri->foto_user));
+            $fotoKtpHash = md5_file(public_path('uploads/' . $datadiri->foto_ktp));
+
+            if ($fotoUserHash === $fotoKtpHash) {
+                // unlink(public_path('uploads/' . $fotoPath));
+                // unlink(public_path('uploads/' . $fotoPath2));
+                return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
+            }
+        }
+
         // Simpan perubahan ke database
-        $datadiri->save();
+        $datadiri->update();
 
         return redirect()->route('datadiri')->with('success', 'Data diri berhasil diperbarui.');
     }

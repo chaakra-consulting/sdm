@@ -15,7 +15,7 @@ class PengalamanKerjaController extends Controller
     public function index()
     {
         //
-        $getPengalamanKerja = PengalamanKerja::get();
+        $getPengalamanKerja = PengalamanKerja::where('user_id', Auth::id())->get();
         
         $data = [
             'title' => 'Pengalaman Kerja',

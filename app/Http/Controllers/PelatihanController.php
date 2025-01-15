@@ -22,7 +22,7 @@ class PelatihanController extends Controller
     public function index()
     {
         //
-        $getPelatihan = DataPelatihan::all();
+        $getPelatihan = DataPelatihan::where('user_id', $this->getUSer()->id)->get();
         $data = [
             'title' => 'Pelatihan',
             'pelatihan' => $getPelatihan

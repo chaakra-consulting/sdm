@@ -202,6 +202,15 @@
                         <div class="tab-pane border-0 p-0 active" id="data_diri">
                             <table style="text-align: left;" class="fs-18">
                                 <tr>
+                                    <th>Foto KTP</th>
+                                    <td class="px-2">:</td>
+                                    <td>
+                                        <span class="main-img">
+                                            <img src="{{ ($karyawan->foto_ktp != null ? asset('uploads/' . $karyawan->foto_ktp) : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg') }}" alt="" class="img-thumbnail rounded w-50">
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>Nama Lengkap</th>
                                     <td class="px-2">:</td>
                                     <td>{{ $karyawan->nama_lengkap }}</td>
@@ -250,6 +259,11 @@
                                     <th>No Emergency</th>
                                     <td class="px-2">:</td>
                                     <td>{{ $karyawan->no_emergency }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nama Emergency</th>
+                                    <td class="px-2">:</td>
+                                    <td>{{ $karyawan->nama_emergency }} ( {{ $karyawan->hubungan_emergency }} )</td>
                                 </tr>
                                 <tr>
                                     <th>Email Non Chaakra</th>

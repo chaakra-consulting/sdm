@@ -44,7 +44,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
     Route::post('/admin/users/{id}/update-role', [UserController::class, 'updateRole'])->name('admin.users.update-role');
     Route::put('/admin/users/{id}/updateSubJabatan', [UserController::class, 'updateSubJabatan'])->name('admin.users.updateSubJabatan');
-    
+
     //Management Role
     Route::get('/admin/roles', [RoleController::class, 'create'])->name('admin.roles'); // Display all roles
     Route::post('/admin/roles/store', [RoleController::class, 'store'])->name('admin.roles.store'); // Store a new role
@@ -61,19 +61,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         $title = 'title';
         return view('home', compact('title'));
-    })->name('home');    
+    })->name('home');
 
     Route::get('/ajax/get_karyawan', [AjaxController::class, 'get_karyawan']);
 });
 
-Route::middleware(['auth', 'role:admin-sdm'])->group(function (){
-    Route::get('/admin_sdm/dashboard', [AdminSdmController::class ,'dashboard'])->name('admin_sdm.dashboard');
+Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
+    Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
 
     // Aadmin SDM : Kepegawaian
     Route::get('/admin_sdm/kepegawaian', [KepegawaianController::class, 'index']);
     Route::get('/admin_sdm/detail_kepegawaian/{id}', [KepegawaianController::class, 'show']);
 
-    Route::post('/admin_sdm/kepegawaian/store' ,[KepegawaianController::class, 'store']);
+    Route::post('/admin_sdm/kepegawaian/store', [KepegawaianController::class, 'store']);
     Route::put('/admin_sdm/kepegawaian/update/{id}', [KepegawaianController::class, 'update']);
 
     // Admin SDM : Master Sub Jabatan
@@ -82,31 +82,59 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function (){
     Route::put('/admin_sdm/sub_jabatan/update/{id}', [SubJabatanController::class, 'update'])->name('admin_sdm.sub_jabatan.update'); // Update an existing role
     Route::delete('/admin_sdm/sub_jabatan/delete/{id}', [SubJabatanController::class, 'destroy'])->name('admin.sub_jabatan.delete'); // Delete a role
 
-     // Admin SDM : Master Status Pekerjaan
-     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
-     Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
-     Route::put('/admin_sdm/status_pekerjaan/update/{id}', [StatusPekerjaanController::class, 'update'])->name('admin_sdm.status_pekerjaan.update'); // Update an existing role
-     Route::delete('/admin_sdm/status_pekerjaan/delete/{id}', [StatusPekerjaanController::class, 'destroy'])->name('admin.status_pekerjaan.delete'); // Delete a role
-
     // Admin SDM : Absensi
     Route::get('/admin_sdm/absensi', [AbsensiController::class, 'index'])->name('admin_sdm.absensi.index'); 
     Route::put('/admin_sdm/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin_sdm.absensi.update'); // Update an existing role
 
+    // Admin SDM : Master Status Pekerjaan
+    Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
+    Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
+    Route::put('/admin_sdm/status_pekerjaan/update/{id}', [StatusPekerjaanController::class, 'update'])->name('admin_sdm.status_pekerjaan.update'); // Update an existing role
+    Route::delete('/admin_sdm/status_pekerjaan/delete/{id}', [StatusPekerjaanController::class, 'destroy'])->name('admin.status_pekerjaan.delete'); // Delete a role
+
+
+    Route::get('/admin_sdm/datadiri', [DatadiriController::class, 'index'])->name('datadiri');
+    Route::post('/admin_sdm/datadiri/store', [DataDiriController::class, 'store'])->name('datadiri.store');
+    Route::put('/admin_sdm/datadiri/update/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
+    Route::post('/admin_sdm/datadiri/pendidikan', [DataDiriController::class, 'pendidikanstore'])->name('pendidikan.store');
+    Route::put('/admin_sdm/datadiri/pendidikan/{id}', [DatadiriController::class, 'pendidikanupdate'])->name('pendidikan.update');
+
+    // admin SDM : Pengalaman Kerja
+    Route::get('/admin_sdm/pengalaman_kerja/', [PengalamanKerjaController::class, 'index']);
+    Route::post('/admin_sdm/pengalaman_kerja/store', [PengalamanKerjaController::class, 'store']);
+    Route::put('/admin_sdm/pengalaman_kerja/update/{id}', [PengalamanKerjaController::class, 'update']);
+    Route::delete('/admin_sdm/pengalaman_kerja/delete/{id}', [PengalamanKerjaController::class, 'destroy']);
+
+    //admin SDM : PElatihan
+    Route::get('/admin_sdm/pelatihan/', [PelatihanController::class, 'index']);
+    Route::post('/admin_sdm/pelatihan/store', [PelatihanController::class, 'store']);
+    Route::put('/admin_sdm/pelatihan/update/{id}', [PelatihanController::class, 'update']);
+    Route::delete('/admin_sdm/pelatihan/delete/{id}', [PelatihanController::class, 'destroy']);
+
+    // admin SDM: Kesehatan
+    Route::post('/admin_sdm/kesehatan/store', [KesahatanController::class, 'store']);
+    Route::put('/admin_sdm/kesehatan/update/{id}', [KesahatanController::class, 'update']);
+    Route::delete('/admin_sdm/kesehatan/delete/{id}', [KesahatanController::class, 'destroy']);
+
+    // admin SDM: Social Media
+    Route::get('/admin_sdm/social_media/', [SocialMediaController::class, 'index']);
+    Route::post('/admin_sdm/social_media/store', [SocialMediaController::class, 'store']);
+    Route::put('/admin_sdm/social_media/update/{id}', [SocialMediaController::class, 'update']);
+    Route::delete('/admin_sdm/social_media/delete/{id}', [SocialMediaController::class, 'destroy']);
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Karyawan
     Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
-    
+
     //Management Datadiri
     Route::get('/datadiri', [DatadiriController::class, 'index'])->name('datadiri');
     Route::post('/datadiri/store', [DataDiriController::class, 'store'])->name('datadiri.store');
-    Route::get('/datadiri/update/{id}', [DataDiriController::class, 'create'])->name('datadiri.update');
-    //Route::post('/datadiri', [DataDiriController::class, 'store'])->name('datadiri.store');
-    
-    // Route::put('/datadiri/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
+    Route::put('/datadiri/update/{id}', [DatadiriController::class, 'update'])->name('datadiri.update');
     Route::post('/datadiri/pendidikan', [DataDiriController::class, 'pendidikanstore'])->name('pendidikan.store');
     Route::put('/datadiri/pendidikan/{id}', [DatadiriController::class, 'pendidikanupdate'])->name('pendidikan.update');
+    //Route::put('/datadiri/update/{id}', [DataDiriController::class, 'update'])->name('datadiri.update');
+    //Route::post('/datadiri', [DataDiriController::class, 'store'])->name('datadiri.store');
 
     // Karyawan : Pengalaman Kerja
     Route::get('/karyawan/pengalaman_kerja/', [PengalamanKerjaController::class, 'index']);

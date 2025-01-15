@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('data_status_pekerjaans', function (Blueprint $table) {
+        Schema::create('tb_m_perusahaans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_status_pekerjaan', 50);
-            $table->string('slug')->unique()->nullable();
+            $table->string('nama_perusahaan')->unique();
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('data_status_pekerjaans');
+        Schema::dropIfExists('tb_m_perusahaans');
     }
 };
