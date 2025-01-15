@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('data_status_pekerjaans', function (Blueprint $table) {
             $table->id();
             $table->string('nama_status_pekerjaan', 50);
+            $table->string('slug')->unique()->nullable();
             $table->timestamps();
         });
     }
