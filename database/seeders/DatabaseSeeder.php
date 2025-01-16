@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AbsensiSeeder::class,
             StatusPekerjaanSeeder::class,
+            PerusahaanSeeder::class,
         ]);
 
         // User::factory()->create([

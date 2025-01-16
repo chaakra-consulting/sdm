@@ -39,7 +39,7 @@
     <div class="card custom-card">
         <div class="card-header">
             <div class="card-title">
-                Data Pengalaman
+                Data Status Pekerjaan
             </div>
         </div>
         <div class="card-body">
@@ -51,7 +51,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Sub Jabatan</th>
+                            <th>Nama Status Pekerjaan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
