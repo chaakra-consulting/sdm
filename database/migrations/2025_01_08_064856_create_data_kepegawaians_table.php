@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->integer('sub_jabatan_id');
             $table->integer('status_pekerjaan_id');
+            $table->integer('divisi_id');
             $table->date('tgl_masuk');
             $table->date('tgl_berakhir');
             $table->bigInteger('no_npwp')->nullable();
