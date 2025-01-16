@@ -55,14 +55,14 @@ class DatadiriUser extends Model
         return $this->belongsTo(PendidikanUser::class, 'user_id', 'user_id');
     }
 
-    public function pengalamanKerja()
+    public function pengalamanKerjas()
     {
-        return $this->belongsTo(PendidikanUser::class, 'user_id', 'user_id');
+        return $this->hasMany(PengalamanKerja::class, 'user_id', 'user_id');
     }
 
-    public function pelatihan()
+    public function pelatihans()
     {
-        return $this->belongsTo(DataPelatihan::class, 'user_id', 'user_id');
+        return $this->hasMany(DataPelatihan::class, 'user_id', 'user_id');
     }
 
     public function socialMedias()
