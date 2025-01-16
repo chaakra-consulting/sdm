@@ -46,7 +46,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="nip" class="form-label">NIP</label>
                                         <input type="text" class="form-control" id="nip" name="nip"
-                                            value="{{ $datadiri->nip }}" placeholder="Masukkan NIP">
+                                            value="{{ $datadiri->nip }}" disabled >
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
@@ -357,11 +357,6 @@
                                 <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
                                     placeholder="Masukkan Nama Lengkap" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="nip" class="form-label">NIP</label>
-                                <input type="text" class="form-control" id="nip" name="nip"
-                                    placeholder="Masukkan NIP" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
