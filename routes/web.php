@@ -1,22 +1,23 @@
 <?php
 
-use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminSdmController;
-use App\Http\Controllers\AjaxController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DivisiController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\KaryawanController;
-use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
-use App\Http\Controllers\PengalamanKerjaController;
-use App\Http\Controllers\SocialMediaController;
-use App\Http\Controllers\StatusPekerjaanController;
 use App\Http\Controllers\SubJabatanController;
+use App\Http\Controllers\KepegawaianController;
+use App\Http\Controllers\SocialMediaController;
+use App\Http\Controllers\PengalamanKerjaController;
+use App\Http\Controllers\StatusPekerjaanController;
 
 //Auth Register & Login 
 // Route::get('/register', function () {
@@ -126,6 +127,12 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/social_media/store', [SocialMediaController::class, 'store']);
     Route::put('/admin_sdm/social_media/update/{id}', [SocialMediaController::class, 'update']);
     Route::delete('/admin_sdm/social_media/delete/{id}', [SocialMediaController::class, 'destroy']);
+
+    // admin SDM: Divisi
+    Route::get('/admin_sdm/divisi/', [DivisiController::class, 'index'])->name('admin_sdm.divisi');
+    Route::post('/admin_sdm/divisi/store', [DivisiController::class, 'store'])->name('admin_sdm.divisi.store');
+    Route::put('/admin_sdm/divisi/update/{id}', [DivisiController::class, 'update'])->name('admin_sdm.divisi.update');
+    Route::delete('/admin_sdm/divisi/delete/{id}', [DivisiController::class, 'destroy'])->name('admin_sdm.divisi.destroy');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
