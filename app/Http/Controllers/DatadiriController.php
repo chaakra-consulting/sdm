@@ -82,7 +82,6 @@ class DatadiriController extends Controller
         $data = [
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
-            'nip' => $request->nip,
             'user_id' => Auth::id(),
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
