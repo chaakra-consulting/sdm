@@ -10,6 +10,7 @@ use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
@@ -33,6 +34,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 // Route::middleware(['auth', 'role:1'])->group(function () {
 //     Route::get('/superadmin/dashboard', [::class, 'dashboard'])->name('superadmin.dashboard');
 // });
+
+Route::controller(ExportController::class)->group(function () {
+    Route::get('/report/excel-kepegawaian', 'exportKepegawaian')->name('api.export.excel_kepegawaian');
+});
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin
@@ -107,20 +112,20 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
 
     // admin SDM : Pengalaman Kerja
     Route::get('/admin_sdm/pengalaman_kerja/', [PengalamanKerjaController::class, 'index']);
-    Route::post('/admin_sdm/pengalaman_kerja/store', [PengalamanKerjaController::class, 'store']);
-    Route::put('/admin_sdm/pengalaman_kerja/update/{id}', [PengalamanKerjaController::class, 'update']);
-    Route::delete('/admin_sdm/pengalaman_kerja/delete/{id}', [PengalamanKerjaController::class, 'destroy']);
+    Route::post('/karyawan/pengalaman_kerja/store', [PengalamanKerjaController::class, 'store']);
+    Route::put('/karyawan/pengalaman_kerja/update/{id}', [PengalamanKerjaController::class, 'update']);
+    Route::delete('/karyawan/pengalaman_kerja/delete/{id}', [PengalamanKerjaController::class, 'destroy']);
 
     //admin SDM : PElatihan
     Route::get('/admin_sdm/pelatihan/', [PelatihanController::class, 'index']);
-    Route::post('/admin_sdm/pelatihan/store', [PelatihanController::class, 'store']);
-    Route::put('/admin_sdm/pelatihan/update/{id}', [PelatihanController::class, 'update']);
-    Route::delete('/admin_sdm/pelatihan/delete/{id}', [PelatihanController::class, 'destroy']);
+    Route::post('/karyawan/pelatihan/store', [PelatihanController::class, 'store']);
+    Route::put('/karyawan/pelatihan/update/{id}', [PelatihanController::class, 'update']);
+    Route::delete('/karyawan/pelatihan/delete/{id}', [PelatihanController::class, 'destroy']);
 
     // admin SDM: Kesehatan
-    Route::post('/admin_sdm/kesehatan/store', [KesahatanController::class, 'store']);
-    Route::put('/admin_sdm/kesehatan/update/{id}', [KesahatanController::class, 'update']);
-    Route::delete('/admin_sdm/kesehatan/delete/{id}', [KesahatanController::class, 'destroy']);
+    Route::post('/karyawan/kesehatan/store', [KesahatanController::class, 'store']);
+    Route::put('/karyawan/kesehatan/update/{id}', [KesahatanController::class, 'update']);
+    Route::delete('/karyawan/kesehatan/delete/{id}', [KesahatanController::class, 'destroy']);
 
     // admin SDM: Social Media
     Route::get('/admin_sdm/social_media/', [SocialMediaController::class, 'index']);
