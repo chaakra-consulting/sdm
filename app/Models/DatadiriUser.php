@@ -39,4 +39,34 @@ class DatadiriUser extends Model
     {
         return $this->belongsTo(User::class, 'id', 'id');
     }
+
+    public function kepegawaian()
+    {
+        return $this->belongsTo(DataKepegawaian::class, 'user_id', 'user_id');
+    }
+
+    public function kesehatan()
+    {
+        return $this->belongsTo(DataKesehatan::class, 'user_id', 'user_id');
+    }
+
+    public function pendidikan()
+    {
+        return $this->belongsTo(PendidikanUser::class, 'user_id', 'user_id');
+    }
+
+    public function pengalamanKerja()
+    {
+        return $this->belongsTo(PendidikanUser::class, 'user_id', 'user_id');
+    }
+
+    public function pelatihan()
+    {
+        return $this->belongsTo(DataPelatihan::class, 'user_id', 'user_id');
+    }
+
+    public function socialMedias()
+    {
+        return $this->hasMany(SocialMedia::class, 'user_id', 'user_id');
+    }
 }
