@@ -15,14 +15,12 @@ class PengalamanKerjaController extends Controller
     public function index()
     {
         //
-        $getPengalamanKerja = PengalamanKerja::where('user_id', Auth::id())->get();
-        
-        $data = [
-            'title' => 'Pengalaman Kerja',
-            'pengalaman_kerja' => $getPengalamanKerja
-        ];
+        $title = "Pengalaman Kerja";
+        $idUser = Auth::id();
+        $pengalaman_kerja = PengalamanKerja::where('user_id', $idUser)->get();
 
-        return view('karyawan.pengalaman_kerja', $data);
+        // dd($pengalaman_kerja);
+        return view('karyawan.pengalaman_kerja', compact('pengalaman_kerja', 'title', 'idUser'));
     }
 
     /**
@@ -39,8 +37,20 @@ class PengalamanKerjaController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'nama_perusahaan' => 'required',
+            'tgl_mulai' => 'required|date',
+            'tgl_selesai' => 'nullable|date|after_or_equal:tgl_mulai',
+            'jabatan_akhir' => 'required',
+            'alasan_keluar' => 'nullable',
+            'no_hp_referensi' => 'nullable|numeric',
+            'upload_surat_referensi' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        // dd($request->all());
+
         $surat_referensi = null;
-        
+
         if ($request->hasFile('upload_surat_referensi')) {
             $file = $request->file('upload_surat_referensi');
             $filename = time() . '_surat_referensi.' . $file->getClientOriginalExtension();
@@ -51,7 +61,8 @@ class PengalamanKerjaController extends Controller
         $data = [
             'user_id' => Auth::id(),
             'nama_perusahaan' => $request->nama_perusahaan,
-            'periode' => $request->periode,
+            'tgl_mulai' => $request->tgl_mulai,
+            'tgl_selesai' => $request->tgl_selesai,
             'jabatan_akhir' => $request->jabatan_akhir,
             'alasan_keluar' => $request->alasan_keluar,
             'no_hp_referensi' => $request->no_hp_referensi,
@@ -59,6 +70,7 @@ class PengalamanKerjaController extends Controller
 
         ];
 
+        // dd($data);
         // DB::table('tb_data_pengalaman_kerja')->insert($data);
         PengalamanKerja::create($data);
 
@@ -86,25 +98,40 @@ class PengalamanKerjaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        
-        $pengalaman_kerja = PengalamanKerja::findOrFail($id);
-        
-        $surat_referensi = null;
+        $pengalaman_kerja = PengalamanKerja::find($id);
+
+        $request->validate([
+            'nama_perusahaan' => 'required',
+            'tgl_mulai' => 'required',
+            'tgl_selesai' => 'required',
+            'jabatan_akhir' => 'required',
+            'alasan_keluar' => 'nullable',
+            'no_hp_referensi' => 'nullable|numeric',
+            'upload_surat_referensi' => 'nullable|file|mimes:pdf|max:2048',
+        ]);
+
+        // dd($request->all());
+        $surat_referensi = $pengalaman_kerja->upload_surat_referensi;
+
         if ($request->hasFile('upload_surat_referensi')) {
             $file = $request->file('upload_surat_referensi');
             $filename = time() . '_surat_referensi.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $surat_referensi = $filename;
 
-            if($pengalaman_kerja->upload_surat_referensi != null){
-                unlink('uploads/'. $pengalaman_kerja->upload_surat_referensi);
+            if (!empty($pengalaman_kerja->upload_surat_referensi)) {
+                @unlink(public_path('uploads/' . $pengalaman_kerja->upload_surat_referensi));
             }
+        } else {
+            $surat_referensi = $pengalaman_kerja->upload_surat_referensi;
         }
+
+
 
         $data = [
             'nama_perusahaan' => $request->nama_perusahaan,
-            'periode' => $request->periode,
+            'tgl_mulai' => $request->tgl_mulai,
+            'tgl_selesai' => $request->tgl_selesai,
             'jabatan_akhir' => $request->jabatan_akhir,
             'alasan_keluar' => $request->alasan_keluar,
             'no_hp_referensi' => $request->no_hp_referensi,
@@ -123,8 +150,8 @@ class PengalamanKerjaController extends Controller
     {
         //
         $pengalaman_kerja = PengalamanKerja::findOrFail($id);
-        if($pengalaman_kerja->upload_surat_referensi != null){
-            unlink('uploads/'. $pengalaman_kerja->upload_surat_referensi);
+        if ($pengalaman_kerja->upload_surat_referensi != null) {
+            unlink('uploads/' . $pengalaman_kerja->upload_surat_referensi);
         }
         $pengalaman_kerja->delete();
 

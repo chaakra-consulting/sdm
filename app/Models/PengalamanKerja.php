@@ -13,7 +13,8 @@ class PengalamanKerja extends Model
     protected $fillable = [
         'user_id',
         'nama_perusahaan',
-        'periode',
+        'tgl_mulai',
+        'tgl_selesai',
         'jabatan_akhir',
         'alasan_keluar',
         'no_hp_referensi',

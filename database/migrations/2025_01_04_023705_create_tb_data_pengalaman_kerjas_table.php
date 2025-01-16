@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('nama_perusahaan');
-            $table->string('periode');
+            $table->date('tgl_mulai');
+            $table->date('tgl_selesai');
             $table->string('jabatan_akhir');
             $table->string('alasan_keluar');
             $table->string('no_hp_referensi')->nullable();
