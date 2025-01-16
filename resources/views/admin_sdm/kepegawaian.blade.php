@@ -21,7 +21,7 @@
 </style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between mb-2">
-        <a href="/ajax/get_karyawan" class="btn btn-success btn-download-karyawan"><i class="fas fa-file-excel"></i> Download Excel</a>
+        <a href="/report/excel-kepegawaian" class="btn btn-success btn-download-karyawan"><i class="fas fa-file-excel"></i> Download Excel</a>
     </div>
     <div class="card custom-card">
         <div class="card-header">
@@ -99,4 +99,12 @@
     </div>
 </div>
 
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function(){
+        
+    })
+</script>
 @endsection
