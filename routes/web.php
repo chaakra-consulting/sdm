@@ -69,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
 
+    //Management User 
+    Route::get('/admin_sdm/users', [UserController::class, 'index'])->name('admin.users');
+    Route::post('/admin_sdm/users/{id}/update-role', [UserController::class, 'updateRole'])->name('admin.users.update-role');
+    Route::put('/admin_sdm/users/{id}/updateSubJabatan', [UserController::class, 'updateSubJabatan'])->name('admin.users.updateSubJabatan');
+
     // Aadmin SDM : Kepegawaian
     Route::get('/admin_sdm/kepegawaian', [KepegawaianController::class, 'index']);
     Route::get('/admin_sdm/detail_kepegawaian/{id}', [KepegawaianController::class, 'show']);
