@@ -46,7 +46,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="nip" class="form-label">NIP</label>
                                         <input type="text" class="form-control" id="nip" name="nip"
-                                            value="{{ $kepegawaian->nip }}" disabled >
+                                            value="{{ $kepegawaian && $kepegawaian->nip ? $kepegawaian->nip : '-' }}" disabled >
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="tempat_lahir" class="form-label">Tempat Lahir</label>

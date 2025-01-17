@@ -50,7 +50,19 @@
                         @foreach($data_diri as $row)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $row->nip }}</td>
+                                <td>   
+                                    <?php
+                                    $kepegawaian = DB::table('data_kepegawaians')
+                                                ->select(
+                                                    'data_kepegawaians.*', 
+                                                )
+                                                ->where('data_kepegawaians.user_id', $row->user_id)
+                                                ->first();
+                                    ?>                     
+                                    {{ ($kepegawaian != null ? $kepegawaian->nip : 'Belum di tetapkan') }}
+                                    @if($kepegawaian == null)
+                                        <span class="text-danger msg-update">(Perlu Update)</span>
+                                    @endif</td>
                                 <td>{{ $row->nama_lengkap }}</td>
                                 <td>   
                                     <?php

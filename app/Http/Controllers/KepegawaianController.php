@@ -66,7 +66,7 @@ class KepegawaianController extends Controller
         $lastNIP = DataKepegawaian::where('sub_jabatan_id', $request->sub_jabatan_id)->orderBy('created_at', 'desc')->first();
         
         if (!$lastNIP) {
-            $lastKode = $kodeNIP . '01';
+            $lastKode = $kodeNIP . "." . '01';
             $kode = $lastKode;
         } else {
             $lastKode = substr($lastNIP->nip, -2) + 1;
