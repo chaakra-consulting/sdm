@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(DataKepegawaian::class)
             ->nullable()
             ->after('user_id')
-            ->constrained();
+            ->constrained()->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
