@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DataKepegawaian;
 use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('nik', 16)->unique();
             $table->string('nama_lengkap', 100);
-            $table->string('nip', 50)->nullable();
             $table->foreignIdFor(User::class)->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('foto_user')->nullable();
             $table->string('foto_ktp')->nullable();

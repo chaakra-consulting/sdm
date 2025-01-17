@@ -109,6 +109,15 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="divisi_id" class="form-label">Divisi</label>
+                                        <select name="divisi_id" id="divisi_id" class="form-control" {{ ($kepegawaian != null ? 'disabled' : '') }}>
+                                            <option selected disabled>Pilih Divisi</option>
+                                            @foreach($divisi as $key => $row)
+                                                <option {{ old('divisi_id', ($kepegawaian == null ? '' : $kepegawaian->divisi_id)) == $row->id ? 'selected' : '' }} value="{{ $row->id }}">{{ $row->nama_divisi }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                   <div class="row">
                                    <div class="col-sm-6">
                                         <div class="form-group">
@@ -253,7 +262,7 @@
                                 <tr>
                                     <th>NIP</th>
                                     <td class="px-2">:</td>
-                                    <td>{{ $karyawan->nip }}</td>
+                                    <td>{{ $kepegawaian && $kepegawaian->nip ? $kepegawaian->nip : '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Tempat Lahir</th>

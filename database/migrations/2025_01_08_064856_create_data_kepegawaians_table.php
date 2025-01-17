@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('tgl_masuk');
             $table->date('tgl_berakhir');
             $table->bigInteger('no_npwp')->nullable();
+            $table->string('nip')->nullable();
             $table->timestamps();
         });
     }

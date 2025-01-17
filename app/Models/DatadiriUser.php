@@ -16,7 +16,7 @@ class DatadiriUser extends Model
     protected $fillable = [
         'nik',
         'nama_lengkap',
-        'nip',
+        'data_kepegawaian_id',
         'user_id',
         'foto_user',
         'foto_ktp',

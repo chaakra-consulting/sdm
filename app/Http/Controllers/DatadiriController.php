@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 
 use App\Models\DatadiriUser;
+use App\Models\DataKepegawaian;
 use Illuminate\Http\Request;
 use App\Models\DataKesehatan;
 use App\Models\DataPelatihan;
@@ -22,7 +23,8 @@ class DatadiriController extends Controller
         $datadiri = DatadiriUser::where('user_id', $idUser)->first(); // Ambil data diri pengguna
         $pendidikan = PendidikanUser::where('user_id', $idUser)->first(); // Ambil data pendidikan pengguna
         $kesehatan = DataKesehatan::where('user_id', $idUser)->first();
-        return view('karyawan.index', compact('datadiri', 'pendidikan', 'kesehatan', 'title'));
+        $kepegawaian = DataKepegawaian::where('user_id', $idUser)->first();
+        return view('karyawan.index', compact('datadiri', 'pendidikan', 'kesehatan', 'title', 'kepegawaian'));
     }
 
     public function store(Request $request)

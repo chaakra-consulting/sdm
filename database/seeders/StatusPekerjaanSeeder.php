@@ -6,6 +6,7 @@ use App\Models\Absensi;
 use App\Models\DataStatusPekerjaan;
 use App\Models\Divisi;
 use App\Models\Role;
+use App\Models\SubJabatan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -31,6 +32,26 @@ class StatusPekerjaanSeeder extends Seeder
         DataStatusPekerjaan::create([
             'nama_status_pekerjaan' => 'Magang',
             'slug' => 'magang',
+        ]);
+
+        SubJabatan::create([
+            'nama_sub_jabatan' => 'Asisten Konsultan Kebijakan Publik',
+        ]);
+
+        SubJabatan::create([
+            'nama_sub_jabatan' => 'Asisten Konsultan SDM',
+        ]);
+
+        SubJabatan::create([
+            'nama_sub_jabatan' => 'Sales',
+        ]);
+
+        SubJabatan::create([
+            'nama_sub_jabatan' => 'Administrasi Umum',
+        ]);
+
+        SubJabatan::create([
+            'nama_sub_jabatan' => 'Programmer',
         ]);
 
         Divisi::create([

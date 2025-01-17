@@ -12,9 +12,11 @@ class DataKepegawaian extends Model
         'user_id',
         'sub_jabatan_id',
         'status_pekerjaan_id',
+        'divisi_id',
         'tgl_masuk',
         'tgl_berakhir',
-        'no_npwp'
+        'no_npwp',
+        'nip'
     ];
 
     public function subJabatan()
@@ -25,5 +27,10 @@ class DataKepegawaian extends Model
     public function statusPekerjaan()
     {
         return $this->belongsTo(DataStatusPekerjaan::class, 'status_pekerjaan_id', 'id');
+    }
+
+    public function divisi()
+    {
+        return $this->belongsTo(Divisi::class, 'divisi_id');
     }
 }
