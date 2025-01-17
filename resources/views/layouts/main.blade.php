@@ -969,7 +969,7 @@
                     </div> --}}
                     <!-- End::header-element -->
 
-                    <!-- Start::header-element -->
+                    {{-- <!-- Start::header-element -->
                     <div class="header-element header-fullscreen">
                         <!-- Start::header-link -->
                         <a onclick="openFullscreen();" href="javascript:void(0);" class="header-link">
@@ -989,7 +989,7 @@
                         </a>
                         <!-- End::header-link -->
                     </div>
-                    <!-- End::header-element -->
+                    <!-- End::header-element --> --}}
 
                     <!-- Start::header-element -->
                     {{-- <div class="header-element header-sidebar">
@@ -1017,8 +1017,17 @@
                                 $user = Auth::user();
                                 $datadiri = $user->dataDiri ? $user->dataDiri : null;
                             ?>
-                            <img src="{{ $datadiri && $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-profile.jpg') }}" 
+                            @if($datadiri && $datadiri->foto_user )
+                            <img src="{{ $datadiri && $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-images.svg') }}" 
                             alt="img" width="37" height="37" class="rounded-circle">
+                            @else
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                width="27" height="27" fill="currentColor" class="bi bi-person-circle"viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                              </svg>
+                            @endif
                         </a>
                         <!-- End::header-link|dropdown-toggle -->
                         <ul class="main-header-dropdown dropdown-menu pt-0 header-profile-dropdown dropdown-menu-end main-profile-menu"
