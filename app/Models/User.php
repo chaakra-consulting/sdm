@@ -73,10 +73,10 @@ class User extends Authenticatable
 
     public function dataDiri()
     {
-        return $this->hasOne(DatadiriUser::class, 'id_users', 'id');
+        return $this->hasOne(DatadiriUser::class, 'user_id', 'id');
     }
     public function pendidikan()
     {
-        return $this->hasOne(PendidikanUser::class, 'id_users', 'id');
+        return $this->hasOne(PendidikanUser::class, 'user_id', 'id');
     }
 }

@@ -568,10 +568,10 @@
                             data-bs-toggle="sidebar" href="javascript:void(0);">
                             <i class="header-icon fe fe-align-left"></i>
                         </a>
-                        <div class="main-header-center d-none d-lg-block">
+                        {{-- <div class="main-header-center d-none d-lg-block">
                             <input class="form-control" placeholder="Search for anything..." type="search"> <button
                                 class="btn"><i class="fa fa-search d-none d-md-block"></i></button>
-                        </div>
+                        </div> --}}
                         <!-- End::header-link -->
                     </div>
                     <!-- End::header-element -->
@@ -606,7 +606,7 @@
                     </div>
 
                     <!-- Start::header-element -->
-                    <div class="header-element country-selector">
+                    {{-- <div class="header-element country-selector">
                         <!-- Start::header-link|dropdown-toggle -->
                         <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown">
@@ -676,7 +676,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </div> --}}
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
@@ -707,9 +707,9 @@
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
-                    <div class="header-element messages-dropdown">
+                    {{-- <div class="header-element messages-dropdown"> --}}
                         <!-- Start::header-link|dropdown-toggle -->
-                        <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
+                        {{-- <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown">
                             <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" height="24px"
                                 viewBox="0 0 24 24" width="24px" fill="currentColor">
@@ -821,13 +821,13 @@
                             <div class="text-center dropdown-footer">
                                 <a href="chat.html" class="text-primary fs-13">VIEW ALL</a>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- End::main-header-dropdown -->
-                    </div>
+                    {{-- </div> --}}
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
-                    <div class="header-element notifications-dropdown main-header-notification">
+                    {{-- <div class="header-element notifications-dropdown main-header-notification">
                         <!-- Start::header-link|dropdown-toggle -->
                         <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
                             data-bs-auto-close="outside" id="messageDropdown" aria-expanded="false">
@@ -966,7 +966,7 @@
                             </div>
                         </div>
                         <!-- End::main-header-dropdown -->
-                    </div>
+                    </div> --}}
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
@@ -992,7 +992,7 @@
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
-                    <div class="header-element header-sidebar">
+                    {{-- <div class="header-element header-sidebar">
                         <!-- Start::header-link-->
                         <a href="javascript:void(0);" class="header-link" data-bs-toggle="offcanvas"
                             data-bs-target="#header-sidebar">
@@ -1005,7 +1005,7 @@
                             </svg>
                         </a>
                         <!-- End::header-link-->
-                    </div>
+                    </div> --}}
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
@@ -1013,8 +1013,12 @@
                         <!-- Start::header-link|dropdown-toggle -->
                         <a href="javascript:void(0);" class="header-link dropdown-toggle" id="mainHeaderProfile"
                             data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                            <img src="{{ asset('/Tema/dist/assets/images/faces/6.jpg') }}" alt="img" width="37" height="37"
-                                class="rounded-circle">
+                            <?php
+                                $user = Auth::user();
+                                $datadiri = $user->dataDiri ? $user->dataDiri : null;
+                            ?>
+                            <img src="{{ $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-profile.jpg') }}" 
+                            alt="img" width="37" height="37" class="rounded-circle">
                         </a>
                         <!-- End::header-link|dropdown-toggle -->
                         <ul class="main-header-dropdown dropdown-menu pt-0 header-profile-dropdown dropdown-menu-end main-profile-menu"
@@ -1022,21 +1026,11 @@
                             <li>
                                 <div class="main-header-profile bg-primary menu-header-content text-fixed-white">
                                     <div class="my-auto">
-                                        <h6 class="mb-0 lh-1 text-fixed-white">Petey Cruiser</h6><span
-                                            class="fs-11 op-7 lh-1">Premium Member</span>
+                                        <h6 class="mb-0 lh-1 text-fixed-white">{{ $user->name }}</h6>
+                                        {{-- <span class="fs-11 op-7 lh-1">Premium Member</span> --}}
                                     </div>
                                 </div>
                             </li>
-                            <li><a class="dropdown-item d-flex" href="profile.html"><i
-                                        class="bx bx-user-circle fs-18 me-2 op-7"></i>Profile</a></li>
-                            <li><a class="dropdown-item d-flex" href="editprofile.html"><i
-                                        class="bx bx-cog fs-18 me-2 op-7"></i>Edit Profile </a></li>
-                            <li><a class="dropdown-item d-flex border-block-end" href="mail.html"><i
-                                        class="bx bxs-inbox fs-18 me-2 op-7"></i>Inbox</a></li>
-                            <li><a class="dropdown-item d-flex" href="chat.html"><i
-                                        class="bx bx-envelope fs-18 me-2 op-7"></i>Messages</a></li>
-                            <li><a class="dropdown-item d-flex border-block-end" href="editprofile.html"><i
-                                        class="bx bx-slider-alt fs-18 me-2 op-7"></i>Account Settings</a></li>
                             <li>
                                <form action="{{ route('logout') }}" method="POST">
                                 @csrf
@@ -1048,7 +1042,7 @@
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
-                    <div class="header-element">
+                    {{-- <div class="header-element">
                         <!-- Start::header-link|switcher-icon -->
                         <a href="javascript:void(0);" class="header-link switcher-icon" data-bs-toggle="offcanvas"
                             data-bs-target="#switcher-canvas">
@@ -1063,7 +1057,7 @@
                             </svg>
                         </a>
                         <!-- End::header-link|switcher-icon -->
-                    </div>
+                    </div> --}}
                     <!-- End::header-element -->
 
                 </div>
