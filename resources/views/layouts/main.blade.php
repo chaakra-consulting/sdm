@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> Valex - Bootstrap 5 Premium Admin & Dashboard Template </title>
+    <title>SDM Chaakra - {{ $title }}</title>
     <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard HTML5 Template">
     <meta name="Author" content="Spruko Technologies Private Limited">
     <meta name="keywords"
@@ -1803,12 +1803,12 @@
         <footer class="footer mt-auto py-3 bg-white text-center">
             <div class="container">
                 <span class="text-muted"> Copyright © <span id="year"></span> <a href="javascript:void(0);"
-                        class="text-dark fw-semibold">Valex</a>.
-                    Designed with <span class="bi bi-heart-fill text-danger"></span> by <a href="javascript:void(0);">
+                        class="text-dark fw-semibold">Chaakra Consulting</a>.
+                    {{-- Designed with <span class="bi bi-heart-fill text-danger"></span> by <a href="javascript:void(0);">
                         <span class="fw-semibold text-primary text-decoration-underline">Spruko</span>
                     </a> All
                     rights
-                    reserved
+                    reserved --}}
                 </span>
             </div>
         </footer>
