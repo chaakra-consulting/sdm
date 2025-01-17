@@ -1017,7 +1017,7 @@
                                 $user = Auth::user();
                                 $datadiri = $user->dataDiri ? $user->dataDiri : null;
                             ?>
-                            <img src="{{ $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-profile.jpg') }}" 
+                            <img src="{{ $datadiri && $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-profile.jpg') }}" 
                             alt="img" width="37" height="37" class="rounded-circle">
                         </a>
                         <!-- End::header-link|dropdown-toggle -->
