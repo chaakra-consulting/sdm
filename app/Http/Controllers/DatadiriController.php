@@ -140,7 +140,6 @@ class DatadiriController extends Controller
 
         // Perbarui data diri pengguna
         $datadiri->nik = $request->nik;
-        $datadiri->nip = $request->nip;
         $datadiri->nama_lengkap = $request->nama_lengkap;
         $datadiri->tempat_lahir = $request->tempat_lahir;
         $datadiri->tanggal_lahir = $request->tanggal_lahir;
