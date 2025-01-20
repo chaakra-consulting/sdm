@@ -56,22 +56,18 @@ class StatusPekerjaanSeeder extends Seeder
 
         Divisi::create([
             'nama_divisi' => 'Divisi Konsultansi',
-            'slug' => 'divisi-konsultansi',
         ]);
 
         Divisi::create([
             'nama_divisi' => 'Divisi SDM & Asesmen',
-            'slug' => 'divisi-sdm-asesmen',
         ]);
 
         Divisi::create([
             'nama_divisi' => 'Divisi Administrasi Umum',
-            'slug' => 'divisi-administrasi-umum',
         ]);
 
         Divisi::create([
             'nama_divisi' => 'Divisi IT',
-            'slug' => 'divisi-it',
         ]);
     }
 }
