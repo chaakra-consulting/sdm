@@ -27,7 +27,7 @@ class KepegawaianController extends Controller
         //
         $data_diri = DatadiriUser::all();
         $getKepegawaian = DataKepegawaian::with('subJabatan', 'statusPekerjaan', 'divisi')->get();
-        $title = 'Data Kepagawaian';
+        $title = 'Data Kepegawaian';
 
         return view('admin_sdm.kepegawaian', compact('data_diri', 'title', 'getKepegawaian'));
     }
