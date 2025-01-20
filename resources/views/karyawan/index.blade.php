@@ -165,20 +165,22 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="foto_user" class="form-label">Foto Diri</label>
-                                        <input type="file" class="form-control" id="foto_user" name="foto_user"
-                                            accept="image/*" onchange="previewImage(this, 'preview_user')">
+                                        <input type="file" class="form-control" id="foto_user" name="foto_user" accept="image/*" 
+                                            onchange="validateFile(this, 'preview_user', 'error_user')">
                                         <img id="preview_user"
                                             src="{{ $datadiri->foto_user != null ? asset('uploads/' . $datadiri->foto_user) : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg' }}"
                                             alt="Preview Foto User" style="max-width: 150px; margin-top: 10px;">
-                                    </div>
+                                        <small id="error_user" class="text-danger" style="display: none;"></small>
+                                    </div>   
                                     <div class="col-md-6 mb-3">
                                         <label for="foto_ktp" class="form-label">Foto KTP</label>
-                                        <input type="file" class="form-control" id="foto_ktp" name="foto_ktp"
-                                            accept="image/*" onchange="previewImage(this, 'preview_ktp')">
+                                        <input type="file" class="form-control" id="foto_ktp" name="foto_ktp" accept="image/*" 
+                                            onchange="validateFile(this, 'preview_ktp', 'error_ktp')">
                                         <img id="preview_ktp"
                                             src="{{ $datadiri->foto_ktp != null ? asset('uploads/' . $datadiri->foto_ktp) : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg' }}"
                                             alt="Preview Foto KTP" style="max-width: 150px; margin-top: 10px;">
-                                    </div>
+                                        <small id="error_ktp" class="text-danger" style="display: none;"></small>
+                                    </div>                                    
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
@@ -432,13 +434,19 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="foto_user" class="form-label">Foto Diri</label>
-                                <input type="file" class="form-control" id="foto_user" name="foto_user"
-                                    accept="image/*">
+                                <input type="file" class="form-control" id="foto_user" name="foto_user" accept="image/*" 
+                                    onchange="validateFile(this, 'preview_user', 'error_user')">
+                                <!-- Preview gambar akan diupdate setelah pengguna memilih file -->
+                                <img id="preview_user" alt="Preview Foto User" style="max-width: 150px; margin-top: 10px; display: none;">
+                                <small id="error_user" class="text-danger" style="display: none;"></small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="foto_ktp" class="form-label">Foto KTP</label>
-                                <input type="file" class="form-control" id="foto_ktp" name="foto_ktp"
-                                    accept="image/*">
+                                <input type="file" class="form-control" id="foto_ktp" name="foto_ktp" accept="image/*" 
+                                    onchange="validateFile(this, 'preview_ktp', 'error_ktp')">
+                                <!-- Preview gambar akan diupdate setelah pengguna memilih file -->
+                                <img id="preview_ktp" alt="Preview Foto KTP" style="max-width: 150px; margin-top: 10px; display: none;">
+                                <small id="error_ktp" class="text-danger" style="display: none;"></small>
                             </div>
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -498,3 +506,35 @@
         </div>
     </div>
 @endsection
+
+<script>
+    function validateFile(input, previewId, errorId) {
+        const file = input.files[0];
+        const maxSize = 2 * 1024 * 1024; 
+        const errorElement = document.getElementById(errorId);
+        const previewElement = document.getElementById(previewId);
+
+        // Reset pesan error dan preview gambar
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+        previewElement.style.display = 'none';
+        previewElement.src = '';
+
+        if (file) {
+            if (file.size > maxSize) {
+                // Jika ukuran file lebih dari 2MB
+                errorElement.style.display = 'block';
+                errorElement.textContent = 'Ukuran file tidak boleh lebih dari 2MB.';
+                input.value = ''; // Reset input file
+            } else {
+                // Jika ukuran file valid, tampilkan preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewElement.style.display = 'block'; // Tampilkan elemen gambar
+                    previewElement.src = e.target.result; // Setel sumber gambar
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+</script>
