@@ -16,6 +16,7 @@ use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\KepegawaianController;
+use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
@@ -175,4 +176,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::post('/karyawan/social_media/store', [SocialMediaController::class, 'store']);
     Route::put('/karyawan/social_media/update/{id}', [SocialMediaController::class, 'update']);
     Route::delete('/karyawan/social_media/delete/{id}', [SocialMediaController::class, 'destroy']);
+});
+
+Route::middleware(['auth', 'role:manager'])->group(function () {
+    // Manajer
+    Route::get('/manajer', [ManajerController::class, 'index'])->name('manajer.dahsboard');
 });
