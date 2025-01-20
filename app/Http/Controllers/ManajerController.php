@@ -36,7 +36,7 @@ class ManajerController extends Controller
         $data = [
             'nama_perusahaan' => $request->nama_perusahaan,
         ];
-
+        
         Perusahaan::create($data);
 
         return redirect()->back()->with('success', 'Perusahaan berhasil di tambahkan');

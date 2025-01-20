@@ -181,4 +181,8 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
 Route::middleware(['auth', 'role:manager'])->group(function () {
     // Manajer
     Route::get('/manajer', [ManajerController::class, 'index'])->name('manajer.dahsboard');
+    Route::get('/manajer/perusahaan', [ManajerController::class, 'show'])->name('manajer.perusahaan');
+    Route::post('/manajer/perusahaan/store', [ManajerController::class, 'store'])->name('manajer.perusahaan.store');
+    Route::put('/manajer/perusahaan/update/{id}', [ManajerController::class, 'update'])->name('manajer.perusahaan.update');
+    Route::delete('/manajer/perusahaan/delete/{id}', [ManajerController::class, 'destroy'])->name('manajer.perusahaan.delete');
 });

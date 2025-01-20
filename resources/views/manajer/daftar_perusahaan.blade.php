@@ -60,7 +60,7 @@
                                             data-nama_perusahaan="{{ $item->nama_perusahaan }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="/manajer/daftar-perusahaan/delete/{{ $item->id }}" method="POST"
+                                        <form action="/manajer/perusahaan/delete/{{ $item->id }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -84,7 +84,7 @@
             $(".tambahDaftarPerusahaan").click(function() {
                 $(".modal-title").text('Tambah Daftar Perusahaan');
                 $("#nama_perusahaan").val('');
-                $("#formDaftarPerusahaan").attr('action', '/manajer/daftar-perusahaan/store');
+                $("#formDaftarPerusahaan").attr('action', '/manajer/perusahaan/store');
             })
 
             $(".editDaftarPerusahaan").click(function(e) {
@@ -93,7 +93,7 @@
                 $("#nama_perusahaan").val($(this).data('nama_perusahaan'));
 
                 $("#formDaftarPerusahaan").append('<input type="hidden" name="_method" value="PUT">');
-                $("#formDaftarPerusahaan").attr('action', '/manajer/daftar-perusahaan/update/' + $(this)
+                $("#formDaftarPerusahaan").attr('action', '/manajer/perusahaan/update/' + $(this)
                     .data('id'));
             })
         })
