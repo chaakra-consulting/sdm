@@ -22,4 +22,14 @@ class Gaji extends Model
      * @var array<int, string>
      */
     protected $guarded = ['id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(DatadiriUser::class, 'pegawai_id', 'id');
+    }
 }

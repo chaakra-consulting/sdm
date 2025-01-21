@@ -2,6 +2,7 @@
 
 @section('content')
 
+
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -14,39 +15,47 @@
             <form action="" method="POST" id="formGaji">
             @csrf
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="user_id" class="form-label">Pilih Karyawan</label>
-                    <select name="user_id" id="user_id" class="form-control">
+                <!-- Dropdown untuk Tambah Gaji -->
+                <div class="form-group tambahGajiDropdown">
+                    <label for="pegawai_id_tambah" class="form-label">Pilih Karyawan</label>
+                    <select name="pegawai_id" id="pegawai_id_tambah" class="form-control">
                         <option selected disabled>Pilih Karyawan</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->id }}">
-                                {{ $user->name }}
+                        @foreach ($pegawais as $pegawai)
+                            <option value="{{ $pegawai->id }}">
+                                {{ $pegawai->nama_lengkap }}
                             </option>
                         @endforeach
                     </select>
-                    
+                </div>
+                <!-- Dropdown untuk Edit Gaji -->
+                <div class="form-group editGajiDropdown" style="display: none;">
+                    <label for="pegawai_id_edit" class="form-label">Pilih Karyawan</label>
+                    <input type="string" name="pegawai_nama" id="pegawai_nama" value= "pegawai_nama"class="form-control" disabled>
                 </div>
                 <div class="form-group">
-                    <label for="is_libur">Apakah Libur?</label>
-                    <input type="checkbox" name="is_libur" id="is_libur" class="form-check-input">
-                    <small id="liburStatus" class="text"></small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="waktu_masuk">Waktu Masuk</label>
-                    <input type="time" name="waktu_masuk" id="waktu_masuk" value= "waktu_masuk" class="form-control" required>
+                    <label for="gaji_pokok">Gaji Pokok</label>
+                    {{-- <input type="number" name="gaji_pokok" id="gaji_pokok" value= "gaji_pokok" class="form-control" required> --}}
+                    <input type="number" name="gaji_pokok" id="gaji_pokok" value="{{ old('gaji_pokok') }}" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="waktu_pulang">Waktu Pulang</label>
-                    <input type="time" name="waktu_pulang" id="waktu_pulang" value= "waktu_pulang"class="form-control" required>
+                    <label for="uang_makan">Uang Makan</label>
+                    {{-- <input type="number" name="uang_makan" id="uang_makan" value= "uang_makan"class="form-control" required> --}}
+                    <input type="number" name="uang_makan" id="uang_makan" value="{{ old('uang_makan') }}"class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="batas_waktu_terlambat">Batas Waktu Terlambat</label>
-                    <input type="time" name="batas_waktu_terlambat" id="batas_waktu_terlambat" value= "batas_waktu_terlambat"class="form-control" required>
+                    <label for="uang_bensin">Uang Bensin</label>
+                    {{-- <input type="number" name="uang_bensin" id="uang_bensin" value= "uang_bensin"class="form-control" required> --}}
+                    <input type="number" name="uang_bensin" id="uang_bensin" value="{{ old('uang_bensin') }}"class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="denda_terlambat">Denda Terlambat</label>
-                    <input type="number" name="denda_terlambat" id="denda_terlambat" value= "denda_terlambat"class="form-control" required>
+                    <label for="bpjs_ketenagakerjaan">BPJS Ketenagakerjaan</label>
+                    {{-- <input type="number" name="bpjs_ketenagakerjaan" id="bpjs_ketenagakerjaan" value= "bpjs_ketenagakerjaan"class="form-control" required> --}}
+                    <input type="number" name="bpjs_ketenagakerjaan" id="bpjs_ketenagakerjaan" value="{{ old('bpjs_ketenagakerjaan') }}"class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="bpjs_kesehatan">BPJS Kesehatan</label>
+                    {{-- <input type="number" name="bpjs_kesehatan" id="bpjs_kesehatan" value= "bpjs_kesehatan"class="form-control" required> --}}
+                    <input type="number" name="bpjs_kesehatan" id="bpjs_kesehatan" value="{{ old('bpjs_kesehatan') }}"class="form-control">
                 </div>
             </div>
             <div class="modal-footer">
@@ -60,16 +69,16 @@
 </div>
 
 <div class="container-fluid">
-    {{-- <div class="mb-2">
-        <button type="button" class="btn btn-primary tambahAbsensi" data-bs-toggle="modal"
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary tambahGaji" data-bs-toggle="modal"
         data-bs-target="#staticBackdrop">
-        Tambah Jabatan
+        Tambah Data Gaji
         </button>
-    </div> --}}
+    </div>
     <div class="card custom-card">
         <div class="card-header">
             <div class="card-title">
-                Master Gaji Karyawan
+                Gaji Karyawan
             </div>
         </div>
         <div class="card-body">
@@ -91,18 +100,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($absensi as $row)
+                        @foreach($gajis as $row)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $row->user-> }}</td>
-                                <td>{{ $row->waktu_masuk }}</td>
-                                <td>{{ $row->waktu_pulang }}</td>
-                                <td>{{ $row->batas_waktu_terlambat }}</td>
-                                <td>{{ $row->denda_terlambat }}</td>
-                                <td>{{ $row->is_libur ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}</td>
+                                <td>{{ $row->gaji_pokok ?? '-'}}</td>
+                                <td>{{ $row->uang_makan ?? '-' }}</td>
+                                <td>{{ $row->uang_bensin ?? '-' }}</td>
+                                <td>{{ $row->bpjs_ketenagakerjaan ?? '-' }}</td>
+                                <td>{{ $row->bpjs_kesehatan ?? '-' }}</td>
                                 <td>
-                                    <a href="" class="btn btn-warning editAbsensi" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdrop" data-id="{{ $row->id }}" data-hari="{{ $row->hari }}" data-waktu_masuk="{{ $row->waktu_masuk }}" data-waktu_pulang="{{ $row->waktu_pulang }}" data-batas_waktu_terlambat="{{ $row->batas_waktu_terlambat }}" data-denda_terlambat="{{ $row->denda_terlambat }}" data-is_libur="{{ $row->is_libur }}"><i class="fas fa-edit"></i>
+                                    <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdrop" data-id="{{ $row->id }}" data-pegawai_id="{{ $row->pegawai_id }}" data-pegawai_nama="{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}" data-gaji_pokok="{{ $row->gaji_pokok }}" data-uang_makan="{{ $row->uang_makan }}" data-uang_bensin="{{ $row->uang_bensin }}" data-bpjs_ketenagakerjaan="{{ $row->bpjs_ketenagakerjaan }}" data-bpjs_kesehatan="{{ $row->bpjs_kesehatan }}"><i class="fas fa-edit"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -119,75 +128,30 @@
 @section('script')
 <script>
     $(document).ready(function(){
-      $(".editAbsensi").click(function(e){
-          e.preventDefault();
-        $(".modal-title").text('Edit Sub Jabatan');
-        $("#hari").val($(this).data('hari').charAt(0).toUpperCase()+ $(this).data('hari').slice(1));
-        $("#waktu_masuk").val($(this).data('waktu_masuk'));
-        $("#waktu_pulang").val($(this).data('waktu_pulang'));
-        $("#batas_waktu_terlambat").val($(this).data('batas_waktu_terlambat'));
-        $("#denda_terlambat").val($(this).data('denda_terlambat'));
+        $(".tambahGaji").click(function(){
+            $(".modal-title").text('Tambah Gaji Karyawan');
+            $(".tambahGajiDropdown").show();
+            $(".editGajiDropdown").hide(); 
+            $("#formGaji").attr('action', '/admin_sdm/gaji/store');
+        })
 
-        const isLibur = $(this).data('is_libur');
-        $("#is_libur").prop('checked', isLibur);
-
-        $("#formGaji").append('<input type="hidden" name="_method" value="PUT">');
-        $("#formGaji").attr('action', '/admin_sdm/absensi/update/' + $(this).data('id'));
-      })
-    })
-
-    $(document).ready(function () {
-        $(".editAbsensi").click(function (e) {
+        $(".editGaji").click(function(e){
             e.preventDefault();
+            $(".modal-title").text('Edit Sub Jabatan');
+            $(".editGajiDropdown").show();
+            $(".tambahGajiDropdown").hide();
+            $("#pegawai_id_edit").val($(this).data('pegawai_id'));
+            $("#pegawai_nama").val($(this).data('pegawai_nama'));
+            $("#gaji_pokok").val($(this).data('gaji_pokok'));
+            $("#uang_makan").val($(this).data('uang_makan'));
+            $("#uang_bensin").val($(this).data('uang_bensin'));
+            $("#bpjs_ketenagakerjaan").val($(this).data('bpjs_ketenagakerjaan'));
+            $("#bpjs_kesehatan").val($(this).data('bpjs_kesehatan'));
+            $("#pegawai_id").prop('disabled', true);
 
-            const isLibur = $(this).data('is_libur');
-            $("#is_libur").prop('checked', isLibur);
-
-            const statusText = isLibur ? 'Ya' : 'Tidak';
-            $("#liburStatus").text(statusText);
-        });
-
-        $("#is_libur").on('change', function () {
-            const statusText = $(this).is(':checked') ? 'Ya' : 'Tidak';
-            $("#liburStatus").text(statusText);
-        });
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.editAbsensi').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const modal = document.querySelector('#staticBackdrop');
-                const isLiburCheckbox = modal.querySelector('#is_libur');
-                
-                const formFields = [
-                    'waktu_masuk', 'waktu_pulang', 'batas_waktu_terlambat', 'denda_terlambat'
-                ];
-
-                modal.querySelector('#waktu_masuk').value = button.getAttribute('data-waktu_masuk');
-                modal.querySelector('#waktu_pulang').value = button.getAttribute('data-waktu_pulang');
-                modal.querySelector('#batas_waktu_terlambat').value = button.getAttribute('data-batas_waktu_terlambat');
-                modal.querySelector('#denda_terlambat').value = button.getAttribute('data-denda_terlambat');
-                modal.querySelector('#is_libur').checked = button.getAttribute('data-is_libur') === '1';
-                
-                function toggleFormFields() {
-                    formFields.forEach(fieldId => {
-                        const field = modal.querySelector(`#${fieldId}`);
-                        if (isLiburCheckbox.checked) {
-                            field.disabled = true;
-                            field.closest('.form-group').style.display = 'none';
-                        } else {
-                            field.disabled = false;
-                            field.closest('.form-group').style.display = '';
-                        }
-                    });
-                }
-
-                isLiburCheckbox.addEventListener('change', toggleFormFields);
-
-                toggleFormFields();
-            });
-        });
-    });  
+            $("#formGaji").append('<input type="hidden" name="_method" value="PUT">');
+            $("#formGaji").attr('action', '/admin_sdm/gaji/update/' + $(this).data('id'));
+        })
+    })
 </script>
 @endsection
