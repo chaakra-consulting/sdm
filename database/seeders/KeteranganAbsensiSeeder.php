@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Absensi;
-use App\Models\KeteranganAbsensi;
 use App\Models\Divisi;
 use App\Models\KeteranganAbsensi;
 use App\Models\Role;

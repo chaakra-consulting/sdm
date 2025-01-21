@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::table('tb_absensi_harians', function (Blueprint $table) {
             $table->dropColumn('jenis_keterangan');
+            $table->unsignedBigInteger('pegawai_id')->index('FK_absensi_harians_pegawais')->after('user_id');
             $table->unsignedBigInteger('keterangan_id')->index('FK_absensi_harians_keterangans')->after('upload_surat_dokter');
             $table->bigInteger('durasi_lembur')->nullable()->after('keterangan');
             $table->json('data')->nullable()->after('durasi_lembur');
 
+            $table->foreign(['pegawai_id'], 'FK_absensi_harians_pegawais')->references(['id'])->on('tb_datadiris')->onUpdate('CASCADE');
             $table->foreign(['keterangan_id'], 'FK_absensi_harians_keterangans')->references(['id'])->on('tb_keterangan_absensis')->onUpdate('CASCADE');
         });
     }
@@ -27,7 +29,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tb_absensi_harians', function (Blueprint $table) {
+            $table->dropForeign('FK_absensi_harians_pegawais');
             $table->dropForeign('FK_absensi_harians_keterangans');
+            $table->dropColumn('pegawai_id');
             $table->dropColumn('durasi_lembur');
             $table->dropColumn('keterangan_id');
             $table->dropColumn('data');
