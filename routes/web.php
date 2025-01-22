@@ -6,8 +6,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+<<<<<<< Updated upstream
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\AbsensiController;
+=======
+use App\Http\Controllers\ManajerController;
+>>>>>>> Stashed changes
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\ExportController;
@@ -16,7 +20,10 @@ use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\KepegawaianController;
+<<<<<<< Updated upstream
 use App\Http\Controllers\ManajerController;
+=======
+>>>>>>> Stashed changes
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
@@ -178,6 +185,7 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::delete('/karyawan/social_media/delete/{id}', [SocialMediaController::class, 'destroy']);
 });
 
+<<<<<<< Updated upstream
 Route::middleware(['auth', 'role:manager'])->group(function () {
     // Manajer
     Route::get('/manajer', [ManajerController::class, 'index'])->name('manajer.dahsboard');
@@ -190,4 +198,16 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/project/store', [ManajerController::class, 'store_project'])->name('manajer.project.store');
 
     Route::get('/manajer/detail_project/{id}', [ManajerController::class, 'detail_project'])->name('manajer.project.detail');
+=======
+Route::middleware(['auth', 'role:Manajer'])->group(function () {
+    // manajamen perusahaan : data perusahaan
+    Route::get('/manajer/dashboard', [ManajerController::class, 'index'])->name('manajer.dashboard');
+    Route::get('/manajer/daftar-perusahaan', [ManajerController::class, 'show'])->name('manajer.daftar-perusahaan');
+    Route::post('/manajer/daftar-perusahaan/store', [ManajerController::class, 'store'])->name('manajer.tambah.daftar-perusahaan');
+    Route::put('/manajer/daftar-perusahaan/update/{id}', [ManajerController::class, 'update'])->name('manajer.update.daftar-perusahaan');
+    Route::delete('/manajer/daftar-perusahaan/delete/{id}', [ManajerController::class, 'destroy'])->name('manajer.delete.daftar-perusahaan');
+
+    Route::get('/manajer/daftar-project', [ManajerController::class, 'show_project'])->name('manajer.daftar-project');
+    Route::post('/manajer/daftar-project/store', [ManajerController::class, 'store_project'])->name('manajer.tambah.daftar-project');
+>>>>>>> Stashed changes
 });

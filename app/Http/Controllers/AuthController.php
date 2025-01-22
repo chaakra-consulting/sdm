@@ -46,6 +46,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        // dd($credentials);
 
         // Cek apakah kredensial valid dan login berhasil
         if (Auth::attempt($credentials)) {
@@ -59,8 +60,15 @@ class AuthController extends Controller
                 return redirect()->route('karyawan.dashboard')->with('success', 'Login successful.');
             } elseif($user->role_id == 4){
                 return redirect()->route('admin_sdm.dashboard')->with('success', 'Login successful');
+<<<<<<< Updated upstream
             } elseif ($user->role_id = 6){
                 return redirect()->route('manajer.dahsboard')->with('success', 'Login successful');
+=======
+            } elseif($user->role_id == 5){
+                return redirect()->route('home')->with('success', 'Login successful');
+            } elseif($user->role_id == 6){
+                return redirect()->route('manajer.dashboard')->with('success', 'Login successful');
+>>>>>>> Stashed changes
             }
         }
 

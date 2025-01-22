@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Perusahaan;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,7 +17,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             AbsensiSeeder::class,
+<<<<<<< Updated upstream
             StatusPekerjaanSeeder::class,
+=======
+>>>>>>> Stashed changes
             PerusahaanSeeder::class,
         ]);
 

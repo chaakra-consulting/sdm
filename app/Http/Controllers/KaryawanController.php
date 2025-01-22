@@ -19,5 +19,4 @@ class KaryawanController extends Controller
 
         return view('karyawan.dashboard', $data);
     }
-
 }
