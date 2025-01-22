@@ -9,7 +9,7 @@
                     <h6 class="modal-title" id="staticBackdropLabel"></h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="" method="POST" id="formDaftarProject">
+                <form action="" method="POST" id="formProject">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -69,10 +69,7 @@
                                 <th>Nama Perusahaan</th>
                                 <th>Nama Project</th>
                                 <th>Skala Project</th>
-                                <th>Waktu Mulai</th>
-                                <th>Waktu Berakhir</th>
                                 <th>Deadline</th>
-                                <th>Progres</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -81,29 +78,21 @@
                             @foreach ($project as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->perusahaan->nama_perusahaan }}</td>
+                                    <td>{{ $item->perusahaan?->nama_perusahaan ?? 'Tidak ada data' }}</td>
                                     <td>{{ $item->nama_project }}</td>
                                     <td>{{ $item->skala_project }}</td>
-                                    <td>{{ $item->waktu_mulai }}</td>
-                                    <td>{{ $item->waktu_berakhir }}</td>
                                     <td>{{ $item->deadline }}</td>
-                                    <td>{{ $item->progres }}</td>
                                     <td>{{ $item->status }}</td>
                                     <td>
-                                        <a href="" class="btn btn-warning editDaftarPerusahaan"
-                                            data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                                            data-id="{{ $item->id }}"
-                                            data-nama_perusahaan="{{ $item->perusahaan->nama_perusahaan }}">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="#" class="btn btn-secondary detailProject" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
+                                            data-nama_perusahaan="{{ $item->perusahaan?->nama_perusahaan ?? 'Tidak ada data' }}"
+                                            data-nama_project="{{ $item->nama_project }}"
+                                            data-skala_project="{{ $item->skala_project }}"
+                                            data-deadline="{{ $item->deadline }}">
+                                            Detail
                                         </a>
-                                        <form action="/manajer/daftar-perusahaan/delete/{{ $item->id }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Hapus Data?')"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -123,7 +112,7 @@
                 $("#nama_project").val('');
                 $("#skala_project").change().val('Pilih Skala Project');
                 $("#deadline").val('');
-                $("#formDaftarProject").attr('action', '/manajer/daftar-project/store');
+                $("#formProject").attr('action', '/manajer/project/store');
             })
 
             $(".editDaftarPerusahaan").click(function(e) {
@@ -131,10 +120,23 @@
                 $(".modal-title").text('Edit Daftar Perusahaan');
                 $("#nama_perusahaan").val($(this).data('nama_perusahaan'));
 
-                $("#formDaftarProject").append('<input type="hidden" name="_method" value="PUT">');
-                $("#formDaftarProject").attr('action', '/manajer/daftar-perusahaan/update/' + $(this)
+                $("#formProject").append('<input type="hidden" name="_method" value="PUT">');
+                $("#formProject").attr('action', '/manajer/daftar-perusahaan/update/' + $(this)
                     .data('id'));
             })
+            $(".detailProject").click(function(e) {
+                e.preventDefault();
+                console.log($(this).data('nama_perusahaan'));
+                console.log($(this).data('skala_project'));
+                $(".modal-title").text('Detail Project');
+                $("#nama_perusahaan").val($(this).data('nama_perusahaan')).change('');
+                $("#nama_project").val($(this).data('nama_project'));
+                $("#skala_project").val($(this).data('skala_project')).change('');
+                $("#deadline").val($(this).data('deadline'));
+                $("#formProject").append('<input type="hidden" name="_method" value="PUT">');
+                $("#formProject").attr('action', '/manajer/project/update/' + $(this).data('id'));
+            });
+
         })
     </script>
 @endsection

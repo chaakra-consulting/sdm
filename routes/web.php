@@ -185,4 +185,9 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/perusahaan/store', [ManajerController::class, 'store'])->name('manajer.perusahaan.store');
     Route::put('/manajer/perusahaan/update/{id}', [ManajerController::class, 'update'])->name('manajer.perusahaan.update');
     Route::delete('/manajer/perusahaan/delete/{id}', [ManajerController::class, 'destroy'])->name('manajer.perusahaan.delete');
+    
+    Route::get('/manajer/project', [ManajerController::class, 'show_project'])->name('manajer.project');
+    Route::post('/manajer/project/store', [ManajerController::class, 'store_project'])->name('manajer.project.store');
+
+    Route::get('/manajer/detail_project/{id}', [ManajerController::class, 'detail_project'])->name('manajer.project.detail');
 });
