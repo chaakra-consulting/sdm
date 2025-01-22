@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 =======
 >>>>>>> Stashed changes
             PerusahaanSeeder::class,
+            KeteranganAbsensiSeeder::class,
         ]);
 
         // User::factory()->create([

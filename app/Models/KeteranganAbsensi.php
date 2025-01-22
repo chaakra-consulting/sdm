@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Gaji extends Model
+class KeteranganAbsensi extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class Gaji extends Model
      *
      * @var string
      */
-    protected $table = 'tb_m_gajis';
+    protected $table = 'tb_keterangan_absensis';
 
     /**
      * The attributes that are mass assignable.
@@ -22,14 +22,4 @@ class Gaji extends Model
      * @var array<int, string>
      */
     protected $guarded = ['id'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function pegawai()
-    {
-        return $this->belongsTo(DatadiriUser::class, 'pegawai_id', 'id');
-    }
 }

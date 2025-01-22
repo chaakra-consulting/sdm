@@ -15,6 +15,7 @@ use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\GajiController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
@@ -104,6 +105,11 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     // Admin SDM : Absensi
     Route::get('/admin_sdm/absensi', [AbsensiController::class, 'index'])->name('admin_sdm.absensi.index'); 
     Route::put('/admin_sdm/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin_sdm.absensi.update'); // Update an existing role
+
+    // Admin SDM : Gaji
+    Route::get('/admin_sdm/gaji', [GajiController::class, 'index'])->name('admin_sdm.gaji.index'); 
+    Route::post('/admin_sdm/gaji/store', [GajiController::class, 'store'])->name('admin_sdm.gaji.store');
+    Route::put('/admin_sdm/gaji/update/{id}', [GajiController::class, 'update'])->name('admin_sdm.gaji.update');
 
     // Admin SDM : Master Status Pekerjaan
     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan

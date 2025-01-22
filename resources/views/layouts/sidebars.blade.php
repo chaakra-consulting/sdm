@@ -3,9 +3,19 @@
 
     <!-- Start::main-sidebar-header -->
     <div class="main-sidebar-header">
-        <a href="index.html" class="header-logo">
+        @if (Auth::check() && Auth::user()->role->slug == 'admin')
+        <a href="/admin/dashboard" class="header-logo">
             <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
         </a>
+        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+        <a href="/admin_sdm/dashboard" class="header-logo">
+            <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
+        </a>
+        @else
+        <a href="/karyawan/dashboard" class="header-logo">
+            <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
+        </a>
+        @endif
     </div>
     <!-- End::main-sidebar-header -->
 
@@ -230,6 +240,27 @@
                         </ul>
                     </li> <!-- End::slide -->
 
+                    {{-- <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span class="side-menu__label">Management Gaji</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/admin_sdm/gaji"
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji') ? 'active' : '' }}">Data
+                                    Gaji Karyawan</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide --> --}}
+
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">General</span></li>
                     <!-- Start::slide -->
@@ -299,6 +330,20 @@
                             <span class="side-menu__label">Master Divisi</span>
                         </a>
                     </li>
+                    {{-- <li class="slide">
+                        <a href="{{ route('admin_sdm.absensi.index') }}" class="side-menu__item">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0V0z" fill="none"></path>
+                                <path
+                                    d="M5 9h14V5H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5S7.83 8.5 7 8.5 5.5 7.83 5.5 7 6.17 5.5 7 5.5zM5 19h14v-4H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"
+                                    opacity=".3"></path>
+                                <path
+                                    d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H5v-4h14v4zm-12-.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 6H5V5h14v4zM7 8.5c.83 0 1.5-.67 1.5-1.5S7.83 5.5 7 5.5 5.5 6.17 5.5 7 6.17 8.5 7 8.5z">
+                                </path>
+                            </svg>
+                            <span class="side-menu__label">Master Absensi</span>
+                        </a>
+                    </li> --}}
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'manager')
