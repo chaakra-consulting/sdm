@@ -74,8 +74,8 @@ class ProjectController extends Controller
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
-            // 'progres' => $request->progres,
-            // 'status' => $request->status
+            'progres' => $request->progres,
+            'status' => $request->status
         ];
 
         // dd($data);

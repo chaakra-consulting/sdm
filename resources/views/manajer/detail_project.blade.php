@@ -144,18 +144,18 @@
                                                 <div class="form-group">
                                                     <label for="waktu_mulai" class="form-label">Waktu Mulai</label>
                                                     <input type="date" name="waktu_mulai" id="waktu_mulai"
-                                                        class="form-control"
+                                                        class="form-control border-0"
                                                         value="{{ old('waktu_mulai', $project == null ? '' : $project->waktu_mulai) }}"
-                                                        disabled>
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="waktu_berakhir" class="form-label">Waktu Berakhir</label>
                                                     <input type="date" name="waktu_berakhir" id="waktu_berakhir"
-                                                        class="form-control"
+                                                        class="form-control border-0"
                                                         value="{{ old('waktu_berakhir', $project == null ? '' : $project->waktu_berakhir) }}"
-                                                        disabled>
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -169,9 +169,9 @@
                                                 <div class="form-group">
                                                     <label for="status" class="form-label">Status</label>
                                                     <input type="text" name="status" id="status"
-                                                        class="form-control"
+                                                        class="form-control border-0"
                                                         value="{{ old('status', $project == null ? '' : $project->status) }}"
-                                                        disabled>
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
@@ -186,9 +186,9 @@
                                                     <div class="progress" style="height: 35px">
                                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
                                                             aria-valuemin="0" aria-valuemax="100"
-                                                            style="width: {{ $project->progres == null ? 20 : $project->progres }}%">
+                                                            style="width: {{ $project->progres == null ? 0 : $project->progres }}%">
                                                             <strong>
-                                                                {{ $project->progres == null ? 20 : $project->progres }}%
+                                                                {{ $project->progres == null ? 0 : $project->progres }}%
                                                             </strong>
                                                         </div>
                                                     </div>
