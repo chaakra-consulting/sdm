@@ -238,7 +238,8 @@
                                     Media</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide -->
+                    </li>
+                    <!-- End::slide -->
 
                     {{-- <!-- Start::slide -->
                     <li class="slide has-sub">
@@ -370,6 +371,41 @@
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Manajer</span></li>
+                    <!-- End::slide__category -->
+
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span class="side-menu__label">Management Data Diri</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="{{ route('manajer.datadiri') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.datadiri') ? 'active' : '' }}">Data Diri</a>
+                            </li>
+                            <li class="slide">
+                                <a href="{{ route('manajer.pengalaman_kerja') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.pengalaman_kerja') ? 'active' : '' }}">Pengalaman Kerja</a>
+                            </li>
+                            <li class="slide">
+                                <a href="{{ route('manajer.pelatihan') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.pelatihan') ? 'active' : '' }}">Pelatihan</a>
+                            </li>
+                            <li class="slide">
+                                <a href="{{ route('manajer.social_media') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.social_media') ? 'active' : '' }}">Sosial Media</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- End::slide -->
+
                     <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
@@ -392,12 +428,12 @@
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.perusahaan') }}"
-                                    class="side-menu__item {{ request()->routeIs('admin.users') ? 'active' : '' }}">List
+                                    class="side-menu__item {{ request()->routeIs('manajer.perusahaan') ? 'active' : '' }}">List
                                     Perusahaan</a>
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.project') }}"
-                                    class="side-menu__item {{ request()->routeIs('admin.users') ? 'active' : '' }}">List
+                                    class="side-menu__item {{ request()->routeIs('manajer.project') ? 'active' : '' }}">List
                                     Project</a>
                             </li>
                         </ul>
