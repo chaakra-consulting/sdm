@@ -29,9 +29,9 @@
                             <label for="skala_project">Skala Project</label>
                             <select name="skala_project" id="skala_project" class="form-control" required>
                                 <option selected disabled>Pilih Skala Project</option>
-                                <option value="Kecil">Kecil</option>
-                                <option value="Sedang">Sedang</option>
-                                <option value="Besar">Besar</option>
+                                <option value="kecil">Kecil</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="besar">Besar</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -80,18 +80,11 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->perusahaan?->nama_perusahaan ?? 'Tidak ada data' }}</td>
                                     <td>{{ $item->nama_project }}</td>
-                                    <td>{{ $item->skala_project }}</td>
+                                    <td>{{ ucwords($item->skala_project) }}</td>
                                     <td>{{ $item->deadline }}</td>
-                                    <td>{{ $item->status }}</td>
+                                    <td>{{ ucwords($item->status) }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-secondary detailProject" data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
-                                            data-nama_perusahaan="{{ $item->perusahaan?->nama_perusahaan ?? 'Tidak ada data' }}"
-                                            data-nama_project="{{ $item->nama_project }}"
-                                            data-skala_project="{{ $item->skala_project }}"
-                                            data-deadline="{{ $item->deadline }}">
-                                            Detail
-                                        </a>
+                                        <a href="{{ route('manajer.detail.project', $item->id) }}" class="btn btn-secondary">Detail</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -114,29 +107,6 @@
                 $("#deadline").val('');
                 $("#formProject").attr('action', '/manajer/project/store');
             })
-
-            $(".editDaftarPerusahaan").click(function(e) {
-                e.preventDefault();
-                $(".modal-title").text('Edit Daftar Perusahaan');
-                $("#nama_perusahaan").val($(this).data('nama_perusahaan'));
-
-                $("#formProject").append('<input type="hidden" name="_method" value="PUT">');
-                $("#formProject").attr('action', '/manajer/daftar-perusahaan/update/' + $(this)
-                    .data('id'));
-            })
-            $(".detailProject").click(function(e) {
-                e.preventDefault();
-                console.log($(this).data('nama_perusahaan'));
-                console.log($(this).data('skala_project'));
-                $(".modal-title").text('Detail Project');
-                $("#nama_perusahaan").val($(this).data('nama_perusahaan')).change('');
-                $("#nama_project").val($(this).data('nama_project'));
-                $("#skala_project").val($(this).data('skala_project')).change('');
-                $("#deadline").val($(this).data('deadline'));
-                $("#formProject").append('<input type="hidden" name="_method" value="PUT">');
-                $("#formProject").attr('action', '/manajer/project/update/' + $(this).data('id'));
-            });
-
         })
     </script>
 @endsection

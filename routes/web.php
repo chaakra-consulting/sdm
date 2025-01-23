@@ -20,7 +20,9 @@ use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PengalamanKerjaController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StatusPekerjaanController;
+use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 //Auth Register & Login 
 // Route::get('/register', function () {
@@ -191,7 +193,9 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/perusahaan/store', [ManajerController::class, 'store'])->name('manajer.tambah.perusahaan');
     Route::put('/manajer/perusahaan/update/{id}', [ManajerController::class, 'update'])->name('manajer.update.perusahaan');
     Route::delete('/manajer/perusahaan/delete/{id}', [ManajerController::class, 'destroy'])->name('manajer.delete.perusahaan');
-
-    Route::get('/manajer/project', [ManajerController::class, 'show_project'])->name('manajer.project');
-    Route::post('/manajer/project/store', [ManajerController::class, 'store_project'])->name('manajer.tambah.project');
+    
+    Route::get('/manajer/project', [ProjectController::class, 'show'])->name('manajer.project');
+    Route::post('/manajer/project/store', [ProjectController::class, 'store'])->name('manajer.tambah.project');
+    Route::get('/manajer/project/detail/{id}', [ProjectController::class, 'detail'])->name('manajer.detail.project');
+    Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
 });
