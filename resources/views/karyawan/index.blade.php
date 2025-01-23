@@ -26,7 +26,7 @@
                                     Tambah Data
                                 </a></div>
                         @else
-                            <form action="{{ route('datadiri.update', $datadiri->id) }}" method="POST"
+                            <form action="{{ route('karyawan.datadiri.update', $datadiri->id) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('put')
@@ -347,7 +347,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('datadiri.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('karyawan.datadiri.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">

@@ -4,17 +4,17 @@
     <!-- Start::main-sidebar-header -->
     <div class="main-sidebar-header">
         @if (Auth::check() && Auth::user()->role->slug == 'admin')
-        <a href="/admin/dashboard" class="header-logo">
-            <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
-        </a>
+            <a href="/admin/dashboard" class="header-logo">
+                <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
+            </a>
         @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-        <a href="/admin_sdm/dashboard" class="header-logo">
-            <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
-        </a>
+            <a href="/admin_sdm/dashboard" class="header-logo">
+                <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
+            </a>
         @else
-        <a href="/karyawan/dashboard" class="header-logo">
-            <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
-        </a>
+            <a href="/karyawan/dashboard" class="header-logo">
+                <img src="{{ asset('Tema/dist/assets/images/media/logo.png') }}" alt="logo" class="desktop-logo">
+            </a>
         @endif
     </div>
     <!-- End::main-sidebar-header -->
@@ -100,7 +100,6 @@
                     </li> <!-- End::slide -->
                 </ul>
             @endif
-
             @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                 <ul class="main-menu">
                     <!-- Start::slide__category -->
@@ -139,22 +138,22 @@
                         </a>
                         <ul class="slide-menu child1">
                             <li class="slide">
-                                <a href="{{ route('datadiri') }}"
-                                    class="side-menu__item {{ request()->routeIs('datadiri') ? 'active' : '' }}">Data
+                                <a href="{{ route('karyawan.datadiri') }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.datadiri') ? 'active' : '' }}">Data
                                     Diri</a>
                             </li>
                             <li class="slide">
-                                <a href="/karyawan/pengalaman_kerja"
-                                    class="side-menu__item {{ request()->routeIs('karyawan/pengalaman_kerja') ? 'active' : '' }}">Pengalaman
+                                <a href="{{ route('karyawan.pengalaman_kerja') }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.pengalaman_kerja') ? 'active' : '' }}">Pengalaman
                                     Kerja</a>
                             </li>
                             <li class="slide">
-                                <a href="/karyawan/pelatihan"
-                                    class="side-menu__item {{ request()->routeIs('karyawan/pelatihan') ? 'active' : '' }}">Pelatihan</a>
+                                <a href="{{ route('karyawan.pelatihan') }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.pelatihan') ? 'active' : '' }}">Pelatihan</a>
                             </li>
                             <li class="slide">
-                                <a href="/karyawan/social_media"
-                                    class="side-menu__item {{ request()->routeIs('karyawan/social_media') ? 'active' : '' }}">Sosial
+                                <a href="{{ route('karyawan.social_media') }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.social_media') ? 'active' : '' }}">Sosial
                                     Media</a>
                             </li>
                         </ul>
@@ -347,7 +346,6 @@
                     </li> --}}
                 </ul>
             @endif
-
             @if (Auth::check() && Auth::user()->role->slug == 'manager')
                 <ul class="main-menu">
                     <!-- Start::slide__category -->
@@ -388,11 +386,13 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="{{ route('manajer.datadiri') }}"
-                                    class="side-menu__item {{ request()->routeIs('manajer.datadiri') ? 'active' : '' }}">Data Diri</a>
+                                    class="side-menu__item {{ request()->routeIs('manajer.datadiri') ? 'active' : '' }}">Data
+                                    Diri</a>
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.pengalaman_kerja') }}"
-                                    class="side-menu__item {{ request()->routeIs('manajer.pengalaman_kerja') ? 'active' : '' }}">Pengalaman Kerja</a>
+                                    class="side-menu__item {{ request()->routeIs('manajer.pengalaman_kerja') ? 'active' : '' }}">Pengalaman
+                                    Kerja</a>
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.pelatihan') }}"
@@ -400,7 +400,8 @@
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.social_media') }}"
-                                    class="side-menu__item {{ request()->routeIs('manajer.social_media') ? 'active' : '' }}">Sosial Media</a>
+                                    class="side-menu__item {{ request()->routeIs('manajer.social_media') ? 'active' : '' }}">Sosial
+                                    Media</a>
                             </li>
                         </ul>
                     </li>
@@ -437,7 +438,7 @@
                                     Project</a>
                             </li>
                         </ul>
-                    </li> 
+                    </li>
                     <!-- End::slide__category -->
                 </ul>
             @endif
