@@ -17,10 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             AbsensiSeeder::class,
-<<<<<<< Updated upstream
             StatusPekerjaanSeeder::class,
-=======
->>>>>>> Stashed changes
             PerusahaanSeeder::class,
             KeteranganAbsensiSeeder::class,
         ]);
