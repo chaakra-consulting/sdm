@@ -30,7 +30,7 @@ class DivisiController extends Controller
 
         Divisi::create($data);
 
-        return redirect()->back()->with('success', 'Nama divisi berhasil disimpan.');
+        return redirect()->back()->with('success', 'Divisi berhasil disimpan.');
     }
 
     public function update(Request $request, $id) 
@@ -43,7 +43,7 @@ class DivisiController extends Controller
 
         $getDivisi->update($data);
 
-        return redirect()->back()->with('success', 'Nama status pekerjaan berhasil di update');
+        return redirect()->back()->with('success', 'Divisi berhasil di update');
     }
 
     public function destroy(string $id)
@@ -54,11 +54,11 @@ class DivisiController extends Controller
         $getKepegawaian = DataKepegawaian::where('divisi_id', $id)->first();
 
         if($getKepegawaian){
-            return redirect()->back()->with('error', 'Nama Divisi '.$getDivisi->nama_divisi.' gagal di hapus. Terdapat data di dalam ini');
+            return redirect()->back()->with('error', $getDivisi->nama_divisi.' gagal di hapus. Terdapat data di dalam ini');
         }
 
         $getDivisi->delete();
 
-        return redirect()->back()->with('success', 'Nama Divisi '. $getDivisi->nama_divisi .' berhasil di hapus');
+        return redirect()->back()->with('success',  $getDivisi->nama_divisi .' berhasil di hapus');
     }
 }

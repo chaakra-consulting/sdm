@@ -18,7 +18,7 @@ class PelatihanController extends Controller
 
         return $getUser;
     }
-    
+
     public function index()
     {
         //
@@ -46,7 +46,7 @@ class PelatihanController extends Controller
     {
         //
         $upload_sertifikat = null;
-        
+
         if ($request->hasFile('upload_sertifikat')) {
             $file = $request->file('upload_sertifikat');
             $filename = time() . '_sertifikat.' . $file->getClientOriginalExtension();
@@ -92,19 +92,29 @@ class PelatihanController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $getPelatihan = DataPelatihan::findOrFail($id);
+        $getPelatihan = DataPelatihan::find($id);
 
-        $upload_sertifikat = null;
-        
+        $request->validate([
+            'nama_pelatihan' => 'required',
+            'tujuan_pelatihan' => 'required',
+            'tahun_pelatihan' => 'required',
+            'nomor_sertifikat' => 'required',
+            'upload_sertifikat' => 'nullable|file|mimes:pdf|max:2048',
+        ]);
+        // $upload_sertifikat = null;
+        $upload_sertifikat = $getPelatihan->upload_sertifikat;
+
         if ($request->hasFile('upload_sertifikat')) {
             $file = $request->file('upload_sertifikat');
             $filename = time() . '_sertifikat.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $upload_sertifikat = $filename;
 
-            if($getPelatihan->upload_sertifikat != null){
-                unlink('uploads/'. $getPelatihan->upload_sertifikat);
+            if (!empty($getPelatihan->upload_sertifikat)) {
+                @unlink(public_path('uploads/' . $getPelatihan->upload_sertifikat));
             }
+        } else {
+            $upload_sertifikat = $getPelatihan->upload_sertifikat;
         }
 
         $data = [
@@ -117,7 +127,6 @@ class PelatihanController extends Controller
 
         $getPelatihan->update($data);
         return redirect()->back()->with('success', 'Data pelatihan berhasil di update');
-
     }
 
     /**
@@ -127,12 +136,11 @@ class PelatihanController extends Controller
     {
         //
         $getPelatihan = DataPelatihan::findOrFail($id);
-        if($getPelatihan->upload_sertifikat != null){
-            unlink('uploads/'. $getPelatihan->upload_sertifikat);
+        if ($getPelatihan->upload_sertifikat != null) {
+            unlink('uploads/' . $getPelatihan->upload_sertifikat);
         }
         $getPelatihan->delete();
 
         return redirect()->back()->with('success', 'Data pelatihan berhasil di hapus');
-
     }
 }

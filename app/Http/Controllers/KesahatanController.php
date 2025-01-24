@@ -99,7 +99,7 @@ class KesahatanController extends Controller
 
         $getKesehatan->update($data);
 
-        return redirect()->back()->with('success', 'Data berhasil di tambahkan');
+        return redirect()->back()->with('success', 'Data Kesehatan berhasil di update');
     }
 
     /**
