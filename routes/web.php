@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AbsensiHarianController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\ExportController;
@@ -17,11 +18,13 @@ use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\KepegawaianController;
+use App\Http\Controllers\LoginSSOController;
 use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StatusPekerjaanController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 //Auth Register & Login 
@@ -34,6 +37,10 @@ Route::post('/register_process', [AuthController::class, 'register_process'])->n
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login-proses', [AuthController::class, 'login'])->name('login-proses');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::post('/sso/login', [LoginSSOController::class, 'loginSSO'])->withoutMiddleware([VerifyCsrfToken::class])->name('sso.login');
+Route::get('/csrf-token', function () {
+    return response()->json(['csrf_token' => csrf_token()]);
+});
 
 // Route::middleware(['auth', 'role:1'])->group(function () {
 //     Route::get('/superadmin/dashboard', [::class, 'dashboard'])->name('superadmin.dashboard');
@@ -100,6 +107,9 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     // Admin SDM : Absensi
     Route::get('/admin_sdm/absensi', [AbsensiController::class, 'index'])->name('admin_sdm.absensi.index');
     Route::put('/admin_sdm/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin_sdm.absensi.update'); // Update an existing role
+
+    // Admin SDM : Absensi Harian
+    Route::get('/admin_sdm/absensi_harian/{id}', [AbsensiHarianController::class, 'show'])->name('admin_sdm.absensi_harian.show');
 
     // Admin SDM : Gaji
     Route::get('/admin_sdm/gaji', [GajiController::class, 'index'])->name('admin_sdm.gaji.index');
@@ -229,4 +239,10 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/project/store', [ProjectController::class, 'store'])->name('manajer.tambah.project');
     Route::get('/manajer/project/detail/{id}', [ProjectController::class, 'detail'])->name('manajer.detail.project');
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // sso
+    Route::get('/sso/get', [LoginSSOController::class, 'index'])->name('sso');
+    Route::post('/sso/store', [LoginSSOController::class, 'storeSSO'])->name('sso.store');
 });
