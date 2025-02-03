@@ -4,7 +4,7 @@
 
 <div class="container-fluid">
     <div class="card custom-card">
-        @if ( is_null($ssoData) || $ssoData->success == false)
+        @if ($ssoData && $ssoData->success == false)
         <div class="card-body">
             <div class="alert alert-warning text-center">Silahkan sync menggunakan akun SSO yang terdaftar</div>
             <form action="/sso/store" method="POST">

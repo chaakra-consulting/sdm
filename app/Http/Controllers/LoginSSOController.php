@@ -19,7 +19,8 @@ class LoginSSOController extends Controller
         $title = 'Sync SSO';
         
         //$url = 'http://localhost/loginsso/api/getUserApp/' . $userId . '/sdm';
-        $url = 'https://loginsso.chaakra-consulting.com/api/getUserApp/' . $userId . '/sdm';
+        //$url = 'https://loginsso.chaakra-consulting.com/api/getUserApp/' . $userId . '/sdm';
+        $url = 'https://loginsso.chaakra-consulting.com/api/AppController/getUserApp/' . $userId . '/sdm';
         $response = Http::get($url);
 
         $ssoData = json_decode($response);
