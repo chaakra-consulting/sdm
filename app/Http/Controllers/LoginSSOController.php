@@ -44,8 +44,8 @@ class LoginSSOController extends Controller
         if ($ssoData->success == false) {
             return redirect()->back()->with('error', 'Akun SSO tidak ada.');
         } else {
-            //$url = 'https://loginsso.chaakra-consulting.com/api/AppController/createUserApp';
-            $url = 'http://localhost/loginsso/api/AppController/createUserApp';
+            $url = 'https://loginsso.chaakra-consulting.com/api/AppController/createUserApp';
+            //$url = 'http://localhost/loginsso/api/AppController/createUserApp';
 
             $response = Http::asForm()->post($url, [
                 'user_id' => $ssoData->data_user->id,
