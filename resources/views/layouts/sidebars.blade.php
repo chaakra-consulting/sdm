@@ -442,6 +442,16 @@
                     <!-- End::slide__category -->
                 </ul>
             @endif
+            <li class="slide__category"><span class="category-name">Sync SSO Login</span></li>
+            <li class="slide">
+                <a href="{{ route('sso') }}" class="side-menu__item">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path d="M19.14,12.94a7.14,7.14,0,0,0,0-1.88l2-1.56a.5.5,0,0,0,.11-.62L19.66,5.62a.5.5,0,0,0-.61-.22l-2.37.95a7.23,7.23,0,0,0-1.62-.95L14.1,3a.5.5,0,0,0-.5-.41H10.4a.5.5,0,0,0-.5.41L9.36,5.4a7.23,7.23,0,0,0-1.62.95L5.37,5.4a.5.5,0,0,0-.61.22L2.71,9.88a.5.5,0,0,0,.11.62l2,1.56a7.14,7.14,0,0,0,0,1.88l-2,1.56a.5.5,0,0,0-.11.62l2.65,4.26a.5.5,0,0,0,.61.22l2.37-.95a7.23,7.23,0,0,0,1.62.95l.54,2.42a.5.5,0,0,0,.5.41h3.2a.5.5,0,0,0,.5-.41l.54-2.42a7.23,7.23,0,0,0,1.62-.95l2.37.95a.5.5,0,0,0,.61-.22l2.65-4.26a.5.5,0,0,0-.11-.62ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.51,3.51,0,0,1,12,15.5Z"></path>
+                    </svg>
+                    <span class="side-menu__label">Sync SSO</span>
+                </a>
+            </li>            
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
                     width="24" height="24" viewBox="0 0 24 24">
                     <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path>
