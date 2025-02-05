@@ -38,6 +38,8 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login-proses', [AuthController::class, 'login'])->name('login-proses');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::post('/sso/login', [LoginSSOController::class, 'loginSSO'])->withoutMiddleware([VerifyCsrfToken::class])->name('sso.login');
+Route::post('/sso/login/form', [LoginSSOController::class, 'loginSSOForm'])->name('sso.login.form');
+
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
 });

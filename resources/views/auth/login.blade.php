@@ -57,36 +57,41 @@
                                         <div class="main-signup-header">
                                             <h3>Sdm Chaakra</h3>
                                             <h6 class="fw-medium mb-4 fs-17">Silahkan login untuk melanjutkan.</h6>
-
                                             <!-- Laravel Login Form -->
-                                            <form action="{{ route('login-proses') }}" method="POST">
-                                                @csrf
+                                            <div id="login-form-wrapper">
+                                                <!-- Form Login Biasa -->
+                                                <form id="login-form" action="{{ route('login-proses') }}" method="POST">
+                                                    @csrf
 
-                                                <!-- Email Input -->
-                                                <div class="form-group mb-3">
-                                                    <label class="form-label">Email</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror"
-                                                        placeholder="Masukkan email" type="email" name="email" required>
-                                                    @error('email')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+                                                    <!-- Email Input -->
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input class="form-control @error('email') is-invalid @enderror"
+                                                            placeholder="Masukkan email" type="email" name="email" required>
+                                                        @error('email')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
 
-                                                <!-- Password Input -->
-                                                <div class="form-group mb-3">
-                                                    <label class="form-label">Password</label>
-                                                    <input class="form-control @error('password') is-invalid @enderror"
-                                                        placeholder="Masukkan password" type="password" name="password"
-                                                        required>
-                                                    @error('password')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+                                                    <!-- Password Input -->
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">Password</label>
+                                                        <input class="form-control @error('password') is-invalid @enderror"
+                                                            placeholder="Masukkan password" type="password" name="password" required>
+                                                        @error('password')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
 
-                                                <!-- Submit Button -->
-                                                <button type="submit" class="btn btn-primary btn-block w-100">Sign
-                                                    In</button>
-                                            </form>
+                                                    <!-- Submit Button -->
+                                                    <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
+                                                </form>
+
+                                                <!-- Button Login SSO -->
+                                                <button type="button" id="btn-login-sso" class="btn btn-primary-transparent btn-block w-100 mt-3">
+                                                    Sign In SSO
+                                                </button>
+                                            </div>
 
                                             <!-- Footer Links -->
                                             <div class="main-signin-footer mt-5">
@@ -110,6 +115,138 @@
 
     <!-- Show Password JS -->
     <script src="{{ asset('Tema/dist/assets/js/show-password.js') }}"></script>
+
+    <script>
+        const formWrapper = document.getElementById('login-form-wrapper');
+    
+        // Event listener untuk tombol Login SSO
+        document.getElementById('btn-login-sso').addEventListener('click', function () {
+            formWrapper.innerHTML = `
+                <form id="sso-form" action="{{ route('sso.login.form') }}" method="POST">
+                    @csrf
+    
+                    <!-- SSO Description -->
+                    <p class="text-center mb-4">Login menggunakan akun SSO Anda.</p>
+    
+                    <!-- Email Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control @error('email') is-invalid @enderror"
+                            placeholder="Masukkan email" type="email" name="email" required>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                    <!-- Password Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Password</label>
+                        <input class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Masukkan password" type="password" name="password" required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-block w-100">Sign In SSO</button>
+    
+                    <!-- Button Kembali ke Login Biasa -->
+                    <button type="button" id="btn-back-to-login" class="btn btn-primary-transparent btn-block w-100 mt-3">
+                        Login Primary
+                    </button>
+                </form>
+            `;
+    
+            // Event listener untuk tombol Kembali ke Login Biasa
+            document.getElementById('btn-back-to-login').addEventListener('click', function () {
+                renderLoginForm();
+            });
+        });
+    
+        // Fungsi untuk merender ulang form login biasa
+        function renderLoginForm() {
+            formWrapper.innerHTML = `
+                <form id="login-form" action="{{ route('login-proses') }}" method="POST">
+                    @csrf
+    
+                    <!-- Email Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control @error('email') is-invalid @enderror"
+                            placeholder="Masukkan email" type="email" name="email" required>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                    <!-- Password Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Password</label>
+                        <input class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Masukkan password" type="password" name="password" required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
+    
+                    <!-- Button Login SSO -->
+                    <button type="button" id="btn-login-sso" class="btn btn-primary-transparent btn-block w-100 mt-3">
+                        Sign In SSO
+                    </button>
+                </form>
+            `;
+    
+            // Pasang kembali event listener untuk tombol Login SSO
+            document.getElementById('btn-login-sso').addEventListener('click', function () {
+                formWrapper.innerHTML = `
+                    <form id="sso-form" action="{{ route('sso.login.form') }}" method="POST">
+                        @csrf
+    
+                        <!-- SSO Description -->
+                        <p class="text-center mb-4">Login menggunakan akun SSO Anda.</p>
+    
+                        <!-- Email Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control @error('email') is-invalid @enderror"
+                            placeholder="Masukkan email" type="email" name="email" required>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                    <!-- Password Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Password</label>
+                        <input class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Masukkan password" type="password" name="password" required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+    
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-block w-100">Sign In SSO</button>
+    
+                        <!-- Button Kembali ke Login Biasa -->
+                        <button type="button" id="btn-back-to-login" class="btn btn-primary-transparent btn-block w-100 mt-3">
+                            Login Primary
+                        </button>
+                    </form>
+                `;
+    
+                // Pasang kembali event listener untuk tombol Kembali ke Login Biasa
+                document.getElementById('btn-back-to-login').addEventListener('click', function () {
+                    renderLoginForm();
+                });
+            });
+        }
+    </script>
+    
 </body>
 
 </html>

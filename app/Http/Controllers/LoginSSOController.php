@@ -93,13 +93,55 @@ class LoginSSOController extends Controller
             } elseif($user->role_id == 6){
                 return redirect()->route('manajer.dashboard')->with('success', 'Login successful');
             }
-        }else{
-            return redirect()->back()->withInput()->with('error', 'The provided credentials do not match our records.');
         }
 
         // // Jika kredensial tidak valid, tampilkan pesan error
         // return back()->withErrors([
         //     'email' => 'The provided credentials do not match our records.',
         // ]);
+    }
+
+        /**
+     * Login SSO user.
+     */
+    public function loginSSOForm(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+        $validated['app_key'] = 'sdm';
+        $response = Http::asForm()->post('http://localhost/loginsso/api/UserController/cek_login', $validated);
+        //$response = Http::asForm()->post('https://loginsso.chaakra-consulting.com/api/UserController/cek_login', $validated);
+
+        $ssoData = json_decode($response);
+
+        if ($ssoData->success == true) {
+            $user = User::find($ssoData->data_app->user_app_id);
+            if(!$user) return redirect()->back()->withInput()->with('error', 'Akun tidak terdaftar');
+            
+            if(Auth::loginUsingId($user->id)){
+                if($user->role_id == 1){
+                    return redirect()->route('home')->with('success', 'Login successful.');
+                } elseif ($user->role_id == 2){
+                    return redirect()->route('home')->with('success', 'Login successful.');
+                } elseif ($user->role_id == 3){
+                    return redirect()->route('karyawan.dashboard')->with('success', 'Login successful.');
+                } elseif($user->role_id == 4){
+                    return redirect()->route('admin_sdm.dashboard')->with('success', 'Login successful');
+                } elseif($user->role_id == 5){
+                    return redirect()->route('home')->with('success', 'Login successful');
+                } elseif($user->role_id == 6){
+                    return redirect()->route('manajer.dashboard')->with('success', 'Login successful');
+                }
+            }else{
+                return redirect()->back()->withInput()->with('error', 'The provided credentials do not match our records.');
+            }
+        }
+
+        // Jika kredensial tidak valid, tampilkan pesan error
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
     }
 }
