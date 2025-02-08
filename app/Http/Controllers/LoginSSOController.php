@@ -111,8 +111,8 @@ class LoginSSOController extends Controller
             'password' => 'required',
         ]);
         $validated['app_key'] = 'sdm';
-        $response = Http::asForm()->post('http://localhost/loginsso/api/UserController/cek_login', $validated);
-        //$response = Http::asForm()->post('https://loginsso.chaakra-consulting.com/api/UserController/cek_login', $validated);
+        //$response = Http::asForm()->post('http://localhost/loginsso/api/UserController/cek_login', $validated);
+        $response = Http::asForm()->post('https://loginsso.chaakra-consulting.com/api/UserController/cek_login', $validated);
 
         $ssoData = json_decode($response);
 
