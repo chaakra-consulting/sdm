@@ -18,9 +18,9 @@ class LoginSSOController extends Controller
         $userId = $user->id;
         $title = 'Sync SSO';
         
-        //$url = 'http://localhost/loginsso/api/getUserApp/' . $userId . '/sdm';
+        $url = 'http://localhost/loginsso/api/getUserApp/' . $userId . '/sdm';
         //$url = 'https://loginsso.chaakra-consulting.com/api/getUserApp/' . $userId . '/sdm';
-        $url = 'https://loginsso.chaakra-consulting.com/api/AppController/getUserApp/' . $userId . '/sdm';
+        //$url = 'https://loginsso.chaakra-consulting.com/api/AppController/getUserApp/' . $userId . '/sdm';
         $response = Http::get($url);
 
         $ssoData = json_decode($response);
@@ -37,16 +37,16 @@ class LoginSSOController extends Controller
             'password' => 'required',
         ]);
 
-        //$response = Http::asForm()->post('http://localhost/loginsso/api/UserController/cek_login', $validated);
-        $response = Http::asForm()->post('https://loginsso.chaakra-consulting.com/api/UserController/cek_login', $validated);
+        $response = Http::asForm()->post('http://localhost/loginsso/api/UserController/cek_login', $validated);
+        //$response = Http::asForm()->post('https://loginsso.chaakra-consulting.com/api/UserController/cek_login', $validated);
 
         $ssoData = json_decode($response);
 
         if ($ssoData->success == false) {
             return redirect()->back()->with('error', 'Akun SSO tidak ada.');
         } else {
-            $url = 'https://loginsso.chaakra-consulting.com/api/AppController/createUserApp';
-            //$url = 'http://localhost/loginsso/api/AppController/createUserApp';
+            //$url = 'https://loginsso.chaakra-consulting.com/api/AppController/createUserApp';
+            $url = 'http://localhost/loginsso/api/AppController/createUserApp';
 
             $response = Http::asForm()->post($url, [
                 'user_id' => $ssoData->data_user->id,
@@ -116,7 +116,7 @@ class LoginSSOController extends Controller
 
         $ssoData = json_decode($response);
 
-        if ($ssoData->success == true) {
+        if ($ssoData && $ssoData->success == true) {
             $user = User::find($ssoData->data_app->user_app_id);
             if(!$user) return redirect()->back()->withInput()->with('error', 'Akun tidak terdaftar');
             
