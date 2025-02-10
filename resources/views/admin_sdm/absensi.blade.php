@@ -113,7 +113,7 @@
     $(document).ready(function(){
       $(".editAbsensi").click(function(e){
           e.preventDefault();
-        $(".modal-title").text('Edit Sub Jabatan');
+        $(".modal-title").text('Edit Master Absensi');
         $("#hari").val($(this).data('hari').charAt(0).toUpperCase()+ $(this).data('hari').slice(1));
         $("#waktu_masuk").val($(this).data('waktu_masuk'));
         $("#waktu_pulang").val($(this).data('waktu_pulang'));
