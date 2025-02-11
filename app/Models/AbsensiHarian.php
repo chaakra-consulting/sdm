@@ -22,4 +22,9 @@ class AbsensiHarian extends Model
      * @var array<int, string>
      */
     protected $guarded = ['id'];
+
+    public function keteranganAbsensi()
+    {
+        return $this->belongsTo(KeteranganAbsensi::class, 'keterangan_id', 'id');
+    }
 }

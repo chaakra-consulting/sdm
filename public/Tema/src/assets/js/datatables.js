@@ -10,6 +10,14 @@ $(function (e) {
         // scrollX: true
     });
     // basic datatable
+    $('#datatable-basic-month').DataTable({
+        language: {
+            searchPlaceholder: 'Search...',
+            sSearch: '',
+        },
+        "pageLength": 31,
+        // scrollX: true
+    });
 
     // responsive datatable
     $('#responsiveDataTable').DataTable({

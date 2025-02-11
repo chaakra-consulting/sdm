@@ -111,7 +111,11 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/absensi/update/{id}', [AbsensiController::class, 'update'])->name('admin_sdm.absensi.update'); // Update an existing role
 
     // Admin SDM : Absensi Harian
+    Route::get('/admin_sdm/absensi_harian', [AbsensiHarianController::class, 'index'])->name('admin_sdm.absensi_harian.index');
     Route::get('/admin_sdm/absensi_harian/{id}', [AbsensiHarianController::class, 'show'])->name('admin_sdm.absensi_harian.show');
+    Route::post('/admin_sdm/absensi_harian/store/{id}', [AbsensiHarianController::class, 'store'])->name('admin_sdm.absensi_harian.store');
+    Route::put('/admin_sdm/absensi_harian/update/{pegawai_id}/{id}', [AbsensiHarianController::class, 'update'])->name('admin_sdm.absensi_harian.update');
+    Route::delete('/admin_sdm/absensi_harian/delete/{id}', [AbsensiHarianController::class, 'destroy'])->name('admin_sdm.absensi_harian.delete'); // Delete a role
 
     // Admin SDM : Gaji
     Route::get('/admin_sdm/gaji', [GajiController::class, 'index'])->name('admin_sdm.gaji.index');
