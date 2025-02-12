@@ -164,6 +164,148 @@
 </div>
 
 <div class="container-fluid">
+    <div class="mt-1">
+        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">
+            <i class="bi bi-arrow-left">Kembali</i>
+        </a>
+    </div>
+    <br>
+    <div class="card custom-card border">
+        {{-- <a href="javascript:void(0);" class="card-anchor"></a> --}}
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <span class="avatar avatar-xl">
+                        <img src="{{ asset('uploads/' . $foto_user) }}" alt="img">
+                    </span>
+                </div>
+                <div>
+                    <p class="card-text mb-1 fs-14 fw-semibold">{{ $nama }}</p>
+                    <div class="card-title fs-12 mb-1">{{ $nip }}</div>
+                    <div class="card-title text-muted fs-11 mb-0">{{ $jabatan }} / {{ $divisi }}</div>
+                </div>    
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="" method="GET" class="ms-auto" style="max-width: 400px;">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                            <input type="text" class="form-control" id="date_range" name="date_range" value="{{ old('date_range', $default_range) }} placeholder="Pilih Range Tanggal">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" id="applyFilter" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>        
+        <div class="container">
+            <div class="row">             
+                <div class="col-lg-6">
+                    <div class="card bg-success-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[0]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[0]->count }}</h3>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-warning-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[1]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[1]->count }}</h3>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="card bg-danger-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[2]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[2]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="card bg-primary-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[3]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[3]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="card bg-teal-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[4]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[4]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="card bg-purple-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[5]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[5]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="card bg-dark-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[6]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[6]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="card bg-secondary-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- <div class="card custom-card">
+    </div> --}}
     {{-- <div class="d-flex justify-content-between mb-2">
         <a href="/report/excel-kepegawaian" class="btn btn-success btn-download-karyawan"><i class="fas fa-file-excel"></i> Download Excel</a>
     </div> --}}
@@ -172,7 +314,7 @@
             <div class="card-title">
                 Data Absensi Harian Bulan {{ $month_text }} Tahun {{ $filter_year }}
             </div>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <button class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#filterModal">
                 Filter
             </button>
         </div>
@@ -264,9 +406,6 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="mt-1">
-                    <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">Kembali</a>
-                </div>
             </div>
         </div>
     </div>
@@ -294,6 +433,7 @@
     document.getElementById('applyFilter').addEventListener('click', function () {
         const year = document.getElementById('filter-year').value;
         const month = document.getElementById('filter-month').value;
+        const dateRange = document.getElementById('date_range').value;
         const id = "{{ $pegawai_id }}"; // Ambil id dari Blade variable
         const baseUrl = `/admin_sdm/absensi_harian/${id}`; // Bangun URL dinamis
 
@@ -303,6 +443,9 @@
         }
         if (month) {
             queryParams.push(`month=${month}`);
+        }
+        if (dateRange) {
+            queryParams.push(`date_range=${dateRange}`);
         }
 
         const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
@@ -491,5 +634,10 @@
         }
     }
 
+    flatpickr("#date_range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        allowInput: true
+    });
 </script>
 @endsection

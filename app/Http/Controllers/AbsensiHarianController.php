@@ -35,14 +35,48 @@ class AbsensiHarianController extends Controller
             //'pegawai_id'              => 'required|exists:\App\Models\DatadiriUser,id',
             'year'                    => 'nullable|string|in:' . implode(',', range(1900, date('Y') + 1)),
             'month'                   => 'nullable|string|in:01,02,03,04,05,06,07,08,09,10,11,12',
+            'date_range'                   => 'nullable|string',
         ]);
 
         $startDate = Carbon::createFromDate($request->year, $request->month, 1); 
         $endDate = $startDate->copy()->endOfMonth();
 
-        $keteranganAbsensi = KeteranganAbsensi::all();
-        $absensiCollection = collect();
+        $keteranganAbsensis = KeteranganAbsensi::all();
 
+        $widgetCollection = collect();
+        if ($request->date_range) {
+            [$startDateRange, $endDateRange] = explode(" to ", $request->date_range . " to ");
+            $endDateRange = $endDateRange ?: $startDateRange;
+        }else{
+            $startDateRange = Carbon::now()->startOfMonth();
+            $endDateRange = Carbon::now()->endOfMonth();        
+        }
+
+        $widget = AbsensiHarian::where('pegawai_id',$id)->whereBetween('tanggal_kerja', [$startDateRange, $endDateRange])->get();
+
+        $widgetCollection->push((object)[
+            'nama' => 'Hari Masuk Kerja',
+            'count'    => $widget ? $widget->count() : 0,
+        ]);
+
+        $terlambatCount = $widget->filter(function ($item) {
+            $data = json_decode($item->data ?? null, true);
+            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'];
+        })->count();
+
+        $widgetCollection->push((object)[
+            'nama' => 'Terlambat',
+            'count'    => $widget ? $terlambatCount : 0,
+        ]);
+
+        foreach($keteranganAbsensis as $keterangan){
+            $widgetCollection->push((object)[
+                'nama' => $keterangan->nama ?? '-',
+                'count'    => $widget ? $widget->where('keterangan_id', $keterangan->id)->count() : 0,
+            ]);
+        }
+
+        $absensiCollection = collect();
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';
             $absensiHarian = AbsensiHarian::where('pegawai_id',$id)->where('tanggal_kerja', $date->toDateString())->first();           
@@ -51,8 +85,8 @@ class AbsensiHarianController extends Controller
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
 
-            if($batasWaktuTerlambat && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
-            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "Tidak Terlambat";
+            if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
+            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "Tidak Terlambat";
             else $isTelat = "-";
     
             $absensiCollection->push((object)[
@@ -73,15 +107,26 @@ class AbsensiHarianController extends Controller
         }
 
         $roleSlug = Auth::user()->role->slug;
+        $pegawai = DatadiriUser::where('id',$id)->first();
+        $kepegawaian = $pegawai ? $pegawai->kepegawaian : null;
+        $jabatan = $kepegawaian ? $kepegawaian->subJabatan : null;
+        $divisi = $kepegawaian ? $kepegawaian->divisi : null;
         
         $data = [
             'title' => 'Detail Absensi',
             'pegawai_id'=>$id,
+            'nama'=> $pegawai ? $pegawai->nama_lengkap : null,
+            'foto_user'=> $pegawai ? $pegawai->foto_user : null,
+            'nip'=> $kepegawaian ? $kepegawaian->nip : '-',
+            'jabatan'=> $jabatan ? $jabatan->nama_sub_jabatan : '-',
+            'divisi'=> $divisi ? $divisi->nama_divisi : '-',
             'filter_year' => $request->year ? $request->year : Carbon::now()->format('Y'),
             'filter_month' => $request->month ? $request->month : Carbon::now()->format('m'),
             'month_text' => $request->month ? $request->month : Carbon::now()->translatedFormat('F'),
             'absensi_harian' => $absensiCollection,
-            'keterangan_absensi' => $keteranganAbsensi
+            'keterangan_absensi' => $keteranganAbsensis,
+            'widget' => $widgetCollection,
+            'default_range' => $startDateRange . ' to ' . $endDateRange,
         ];
         //dd($data);
         // return view('admin.sub_jabatan', $data);
