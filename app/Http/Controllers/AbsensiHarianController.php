@@ -122,7 +122,7 @@ class AbsensiHarianController extends Controller
             'divisi'=> $divisi ? $divisi->nama_divisi : '-',
             'filter_year' => $request->year ? $request->year : Carbon::now()->format('Y'),
             'filter_month' => $request->month ? $request->month : Carbon::now()->format('m'),
-            'month_text' => $request->month ? $request->month : Carbon::now()->translatedFormat('F'),
+            'month_text' => $request->month ? Carbon::createFromFormat('m', $request->month)->translatedFormat('F') : Carbon::now()->translatedFormat('F'),
             'absensi_harian' => $absensiCollection,
             'keterangan_absensi' => $keteranganAbsensis,
             'widget' => $widgetCollection,
