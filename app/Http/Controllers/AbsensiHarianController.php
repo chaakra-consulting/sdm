@@ -16,16 +16,16 @@ use Illuminate\Validation\Rule;
 
 class AbsensiHarianController extends Controller
 {
-        /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $data_diri = DatadiriUser::all();
-        $title = 'Data Kepegawaian';
+    //  /**
+    //  * Display a listing of the resource.
+    //  */
+    // public function index()
+    // {
+    //     $data_diri = DatadiriUser::all();
+    //     $title = 'Data Kepegawaian';
 
-        return view('admin_sdm.absensi_harian', compact('data_diri', 'title', 'getKepegawaian'));
-    }
+    //     return view('admin_sdm.index_absensi_harian', compact('data_diri', 'title'));
+    // }
     /**
      * Display a listing of the resource.
      */

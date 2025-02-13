@@ -43,6 +43,12 @@
 </div>
 
 <div class="container-fluid">
+    <div class="mt-1">
+        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">
+            <i class="bi bi-arrow-left">Kembali</i>
+        </a>
+    </div>
+    <br>
     <div class="row row-sm">
         <div class="col-xl-4">
             <div class="card mb-4">
@@ -149,7 +155,7 @@
             </div>
         </div>
         <div class="col-xl-8">
-            <div class="row row-sm">
+            {{-- <div class="row row-sm">
                 <div class="col-sm-12 col-lg-4 col-md-12">
                     <div class="card ">
                         <div class="card-body">
@@ -201,7 +207,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="card">
                 <div class="card-body">
                     <div class="tabs-menu ">
@@ -469,9 +475,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="mt-1">
-        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">Kembali</a>
     </div>
 </div>
 
