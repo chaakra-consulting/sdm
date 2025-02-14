@@ -79,4 +79,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(PendidikanUser::class, 'user_id', 'id');
     }
+    public function users_project()
+    {
+        return $this->hasMany(UsersProject::class, 'user_id', 'id');
+    }
 }

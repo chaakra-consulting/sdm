@@ -22,7 +22,6 @@ class ManajerController extends Controller
     {
 
         $getDataPerusahaan = Perusahaan::all();
-
         $data = [
             'title' => 'Daftar Perusahaan',
             'perusahaan' => $getDataPerusahaan
@@ -36,7 +35,6 @@ class ManajerController extends Controller
         $data = [
             'nama_perusahaan' => $request->nama_perusahaan,
         ];
-
         Perusahaan::create($data);
 
         return redirect()->back()->with('success', 'Perusahaan berhasil di tambahkan');
@@ -48,7 +46,6 @@ class ManajerController extends Controller
         $data = [
             'nama_perusahaan' => $request->nama_perusahaan
         ];
-
         $getDataPerusahaan->update($data);
 
         return redirect()->back()->with('success', 'Nama Perusahaan berhasil di update');
@@ -57,7 +54,6 @@ class ManajerController extends Controller
     public function destroy($id)
     {
         $getDataPerusahaan = Perusahaan::findOrFail($id);
-
         $getDataPerusahaan->delete();
 
         return redirect()->back()->with('success', 'Perusahaan berhasil di hapus');

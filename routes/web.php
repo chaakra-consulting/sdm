@@ -24,6 +24,7 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StatusPekerjaanController;
+use App\Http\Controllers\UsersProjectController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
@@ -54,6 +55,7 @@ Route::controller(ExportController::class)->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin
+    
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     // Data Karyawan
     Route::get('/admin/data_karyawan', [AdminController::class, 'data_karyawan']);
@@ -200,6 +202,13 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::post('/karyawan/social_media/store', [SocialMediaController::class, 'store'])->name('karyawan.social_media.store');
     Route::put('/karyawan/social_media/update/{id}', [SocialMediaController::class, 'update'])->name('karyawan.social_media.update');
     Route::delete('/karyawan/social_media/delete/{id}', [SocialMediaController::class, 'destroy'])->name('karyawan.social_media.delete');
+
+    // karyawan: project
+    Route::get('/karyawan/project', [ProjectController::class, 'show'])->name('karyawan.project');
+    Route::post('/karyawan/project/store', [UsersProjectController::class, 'store'])->name('karyawan.project.store');
+    Route::get('/karyawan/project/detail/{id}', [UsersProjectController::class, 'detail'])->name('karyawan.detail.project');
+    Route::put('/karyawan/project/update/{id}', [UsersProjectController::class, 'update'])->name('karyawan.update.project');
+    Route::delete('/karyawan/project/delete/{id}', [ProjectController::class, 'destroyUserProject'])->name('karyawan.delete.project');
 });
 
 Route::middleware(['auth', 'role:manager'])->group(function () {
@@ -245,6 +254,7 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/project/store', [ProjectController::class, 'store'])->name('manajer.tambah.project');
     Route::get('/manajer/project/detail/{id}', [ProjectController::class, 'detail'])->name('manajer.detail.project');
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
+    Route::delete('/manajer/project/delete/{id}', [ProjectController::class, 'destroy'])->name('manajer.delete.project');
 });
 
 Route::middleware(['auth'])->group(function () {

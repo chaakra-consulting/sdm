@@ -3,7 +3,6 @@
     data-menu-styles="light" data-toggled="close">
 
 <head>
-
     <!-- Meta Data -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
@@ -44,7 +43,8 @@
     <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/@simonwep/pickr/themes/nano.min.css') }}">
 
     <!-- Choices Css -->
-    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/choices.js/public/assets/styles/choices.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('/Tema/dist/assets/libs/choices.js/public/assets/styles/choices.min.css') }}">
 
     <!-- Jsvector Maps -->
     <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/jsvectormap/css/jsvectormap.min.css') }}">
@@ -57,9 +57,24 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- FlatPickr CSS -->
+    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.css') }}">
+
+    <!-- Full Calendar CSS -->
+    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/fullcalendar/main.min.css') }}">
+    
+    <!-- Notifications Css -->
+    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/awesome-notifications/style.css') }}">
+
+    <!-- Prism CSS -->
+    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/prismjs/themes/prism-coy.min.css') }}">
+
+    <!-- Sweetalerts CSS -->
+    <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/sweetalert2/sweetalert2.min.css') }}">
 </head>
 
-<body>    
+<body>
     <!-- Start Switcher -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="switcher-canvas" aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header border-bottom">
@@ -73,8 +88,8 @@
                         data-bs-target="#switcher-home" type="button" role="tab" aria-controls="switcher-home"
                         aria-selected="true">Theme Styles</button>
                     <button class="nav-link" id="switcher-profile-tab" data-bs-toggle="tab"
-                        data-bs-target="#switcher-profile" type="button" role="tab" aria-controls="switcher-profile"
-                        aria-selected="false">Theme Colors</button>
+                        data-bs-target="#switcher-profile" type="button" role="tab"
+                        aria-controls="switcher-profile" aria-selected="false">Theme Colors</button>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -111,8 +126,8 @@
                                     <label class="form-check-label" for="switcher-ltr">
                                         LTR
                                     </label>
-                                    <input class="form-check-input" type="radio" name="direction" id="switcher-ltr"
-                                        checked>
+                                    <input class="form-check-input" type="radio" name="direction"
+                                        id="switcher-ltr" checked>
                                 </div>
                             </div>
                             <div class="col-4">
@@ -120,7 +135,8 @@
                                     <label class="form-check-label" for="switcher-rtl">
                                         RTL
                                     </label>
-                                    <input class="form-check-input" type="radio" name="direction" id="switcher-rtl">
+                                    <input class="form-check-input" type="radio" name="direction"
+                                        id="switcher-rtl">
                                 </div>
                             </div>
                         </div>
@@ -395,9 +411,9 @@
                                         id="switcher-menu-primary">
                                 </div>
                                 <div class="form-check switch-select me-3">
-                                    <input class="form-check-input color-input color-gradient" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Gradient Menu" type="radio" name="menu-colors"
-                                        id="switcher-menu-gradient">
+                                    <input class="form-check-input color-input color-gradient"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Gradient Menu"
+                                        type="radio" name="menu-colors" id="switcher-menu-gradient">
                                 </div>
                                 <div class="form-check switch-select me-3">
                                     <input class="form-check-input color-input color-transparent"
@@ -413,23 +429,23 @@
                             <div class="d-flex switcher-style pb-2">
                                 <div class="form-check switch-select me-3">
                                     <input class="form-check-input color-input color-white" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Light Header" type="radio" name="header-colors"
-                                        id="switcher-header-light" checked>
+                                        data-bs-placement="top" title="Light Header" type="radio"
+                                        name="header-colors" id="switcher-header-light" checked>
                                 </div>
                                 <div class="form-check switch-select me-3">
                                     <input class="form-check-input color-input color-dark" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Dark Header" type="radio" name="header-colors"
-                                        id="switcher-header-dark">
+                                        data-bs-placement="top" title="Dark Header" type="radio"
+                                        name="header-colors" id="switcher-header-dark">
                                 </div>
                                 <div class="form-check switch-select me-3">
                                     <input class="form-check-input color-input color-primary" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Color Header" type="radio" name="header-colors"
-                                        id="switcher-header-primary">
+                                        data-bs-placement="top" title="Color Header" type="radio"
+                                        name="header-colors" id="switcher-header-primary">
                                 </div>
                                 <div class="form-check switch-select me-3">
-                                    <input class="form-check-input color-input color-gradient" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Gradient Header" type="radio"
-                                        name="header-colors" id="switcher-header-gradient">
+                                    <input class="form-check-input color-input color-gradient"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Gradient Header"
+                                        type="radio" name="header-colors" id="switcher-header-gradient">
                                 </div>
                                 <div class="form-check switch-select me-3">
                                     <input class="form-check-input color-input color-transparent"
@@ -553,13 +569,14 @@
                     <div class="header-element">
                         <div class="horizontal-logo">
                             <a href="index.html" class="header-logo">
-                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/desktop-logo.png') }}" alt="logo"
-                                    class="desktop-logo">
-                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/toggle-logo.png') }}" alt="logo" class="toggle-logo">
-                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/desktop-white.png') }}" alt="logo"
-                                    class="desktop-white">
-                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/toggle-white.png') }}" alt="logo"
-                                    class="toggle-white">
+                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/desktop-logo.png') }}"
+                                    alt="logo" class="desktop-logo">
+                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/toggle-logo.png') }}"
+                                    alt="logo" class="toggle-logo">
+                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/desktop-white.png') }}"
+                                    alt="logo" class="desktop-white">
+                                <img src="{{ asset('/Tema/dist/assets/images/brand-logos/toggle-white.png') }}"
+                                    alt="logo" class="toggle-white">
                             </a>
                         </div>
                     </div>
@@ -589,9 +606,10 @@
 
                     <div class="header-element Search-element d-block d-lg-none">
                         <!-- Start::header-link|dropdown-toggle -->
-                        <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
-                            data-bs-toggle="dropdown">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="header-link-icon">
+                        <a href="javascript:void(0);" class="header-link dropdown-toggle"
+                            data-bs-auto-close="outside" data-bs-toggle="dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+                                class="header-link-icon">
                                 <path
                                     d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
                             </svg>
@@ -713,8 +731,8 @@
 
                     <!-- Start::header-element -->
                     {{-- <div class="header-element messages-dropdown"> --}}
-                        <!-- Start::header-link|dropdown-toggle -->
-                        {{-- <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
+                    <!-- Start::header-link|dropdown-toggle -->
+                    {{-- <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown">
                             <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" height="24px"
                                 viewBox="0 0 24 24" width="24px" fill="currentColor">
@@ -827,7 +845,7 @@
                                 <a href="chat.html" class="text-primary fs-13">VIEW ALL</a>
                             </div>
                         </div> --}}
-                        <!-- End::main-header-dropdown -->
+                    <!-- End::main-header-dropdown -->
                     {{-- </div> --}}
                     <!-- End::header-element -->
 
@@ -1019,19 +1037,19 @@
                         <a href="javascript:void(0);" class="header-link dropdown-toggle" id="mainHeaderProfile"
                             data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                             <?php
-                                $user = Auth::user();
-                                $datadiri = $user->dataDiri ? $user->dataDiri : null;
+                            $user = Auth::user();
+                            $datadiri = $user->dataDiri ? $user->dataDiri : null;
                             ?>
-                            @if($datadiri && $datadiri->foto_user )
-                            <img src="{{ $datadiri && $datadiri->foto_user ? asset('/uploads/'.$datadiri->foto_user) : asset('/images/default-images.svg') }}" 
-                            alt="img" width="37" height="37" class="rounded-circle">
+                            @if ($datadiri && $datadiri->foto_user)
+                                <img src="{{ $datadiri && $datadiri->foto_user ? asset('/uploads/' . $datadiri->foto_user) : asset('/images/default-images.svg') }}"
+                                    alt="img" width="37" height="37" class="rounded-circle">
                             @else
-                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                width="27" height="27" fill="currentColor" class="bi bi-person-circle"viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                              </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27"
+                                    fill="currentColor" class="bi bi-person-circle"viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                </svg>
                             @endif
                         </a>
                         <!-- End::header-link|dropdown-toggle -->
@@ -1046,10 +1064,11 @@
                                 </div>
                             </li>
                             <li>
-                               <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item d-flex border-block-end"><i class="bx bx-log-out fs-18 me-2 op-7"></i>Sign Out</button>
-                               </form>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item d-flex border-block-end"><i
+                                            class="bx bx-log-out fs-18 me-2 op-7"></i>Sign Out</button>
+                                </form>
                             </li>
                         </ul>
                     </div>
@@ -1092,13 +1111,14 @@
             <div class="offcanvas-body rounded-0 p-0">
                 <ul class="nav nav-tabs tab-style-1 d-block" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#chat" aria-current="page" href="#chat"
-                            aria-selected="false" role="tab" tabindex="-1"><i
+                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#chat" aria-current="page"
+                            href="#chat" aria-selected="false" role="tab" tabindex="-1"><i
                                 class="fe fe-message-circle fs-15 me-2"></i>Chat</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#notifications" href="#notifications"
-                            aria-selected="false" role="tab" tabindex="-1"><i class="fe fe-bell fs-15 me-2"></i>
+                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#notifications"
+                            href="#notifications" aria-selected="false" role="tab" tabindex="-1"><i
+                                class="fe fe-bell fs-15 me-2"></i>
                             Notifications</a>
                     </li>
                     <li class="nav-item mb-0" role="presentation">
@@ -1245,7 +1265,8 @@
                             </a>
                         </div>
                     </div>
-                    <div class="tab-pane border-start-0 border-end-0 rounded-0 p-0" id="notifications" role="tabpanel">
+                    <div class="tab-pane border-start-0 border-end-0 rounded-0 p-0" id="notifications"
+                        role="tabpanel">
                         <div class="list-group list-group-flush ">
                             <div class="list-group-item d-flex  align-items-center">
                                 <span class="avatar avatar-lg online avatar-rounded flex-shrink-0">
@@ -1334,7 +1355,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/1.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Mozelle
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Mozelle
                                         Belt</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1347,7 +1369,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/2.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Florinda
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Florinda
                                         Carasco</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1386,7 +1409,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/8.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Isidro
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Isidro
                                         Heide</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1399,7 +1423,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/8.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Mozelle
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Mozelle
                                         Belt</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1412,7 +1437,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/9.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Florinda
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Florinda
                                         Carasco</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1451,7 +1477,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/12.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Isidro
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Isidro
                                         Heide</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1464,7 +1491,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/2.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Florinda
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Florinda
                                         Carasco</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1503,7 +1531,8 @@
                                     <img src="{{ asset('/Tema/dist/assets/images/faces/4.jpg') }}" alt="img">
                                 </span>
                                 <div class="ms-2">
-                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">Isidro
+                                    <div class="fw-semibold" data-bs-toggle="modal" data-bs-target="#chatmodel">
+                                        Isidro
                                         Heide</div>
                                 </div>
                                 <div class="ms-auto">
@@ -1527,7 +1556,8 @@
                         <div class="action-header clearfix">
                             <div class="float-start hidden-xs d-flex">
                                 <div class="avatar avatar-lg rounded-circle me-3">
-                                    <img src="../assets/images/faces/6.jpg" class="rounded-circle user_img" alt="img">
+                                    <img src="../assets/images/faces/6.jpg" class="rounded-circle user_img"
+                                        alt="img">
                                 </div>
                                 <div class="align-items-center mt-2">
                                     <h5 class="text-fixed-white mb-0">Daneil Scott</h5>
@@ -1537,14 +1567,14 @@
                             </div>
                             <ul class="ah-actions actions align-items-center float-end">
                                 <li class="call-icon">
-                                    <a href="" class="d-done d-md-block phone-button" data-bs-toggle="modal"
-                                        data-bs-target="#audiomodal">
+                                    <a href="" class="d-done d-md-block phone-button"
+                                        data-bs-toggle="modal" data-bs-target="#audiomodal">
                                         <i class="fe fe-phone"></i>
                                     </a>
                                 </li>
                                 <li class="video-icon">
-                                    <a href="" class="d-done d-md-block phone-button" data-bs-toggle="modal"
-                                        data-bs-target="#videomodal">
+                                    <a href="" class="d-done d-md-block phone-button"
+                                        data-bs-toggle="modal" data-bs-target="#videomodal">
                                         <i class="fe fe-video"></i>
                                     </a>
                                 </li>
@@ -1553,7 +1583,8 @@
                                         <i class="fe fe-more-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li class="dropdown-item"><i class="fa fa-user-circle"></i> View profile</li>
+                                        <li class="dropdown-item"><i class="fa fa-user-circle"></i> View profile
+                                        </li>
                                         <li class="dropdown-item"><i class="fa fa-users"></i>Add friends</li>
                                         <li class="dropdown-item"><i class="fa fa-plus"></i> Add to group</li>
                                         <li class="dropdown-item"><i class="fa fa-ban"></i> Block</li>
@@ -1708,8 +1739,8 @@
                 <div class="modal-content bg-fixed-dark border-0">
                     <div class="modal-body mx-auto text-center p-5">
                         <h5 class="text-fixed-white">Valex Video call</h5>
-                        <img src="{{ asset('/Tema/dist/assets/images/faces/6.jpg') }}" class="rounded-circle user-img-circle h-8 w-8 mt-4 mb-3"
-                            alt="img">
+                        <img src="{{ asset('/Tema/dist/assets/images/faces/6.jpg') }}"
+                            class="rounded-circle user-img-circle h-8 w-8 mt-4 mb-3" alt="img">
                         <h4 class="mb-1 fw-semibold text-fixed-white">Daneil Scott</h4>
                         <h6 class="loading text-fixed-white">Calling...</h6>
                         <div class="mt-5">
@@ -1744,8 +1775,8 @@
                 <div class="modal-content border-0">
                     <div class="modal-body mx-auto text-center p-5">
                         <h6>Valex Voice call</h6>
-                        <img src="{{ asset('/Tema/dist/assets/images/faces/6.jpg') }}" class="rounded-circle user-img-circle h-8 w-8 mt-4 mb-3"
-                            alt="img">
+                        <img src="{{ asset('/Tema/dist/assets/images/faces/6.jpg') }}"
+                            class="rounded-circle user-img-circle h-8 w-8 mt-4 mb-3" alt="img">
                         <h5 class="mb-1 fw-medium">Daneil Scott</h5>
                         <h6 class="loading">Calling...</h6>
                         <div class="mt-5">
@@ -1780,7 +1811,7 @@
         <!-- Start::app-content -->
         <div class="main-content app-content">
             <div class="container-fluid">
-                        <!-- Page Header -->
+                <!-- Page Header -->
                 <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
                     <div class="my-auto">
                         <h5 class="page-title fs-21 mb-1">{{ $title }}</h5>
@@ -1794,10 +1825,10 @@
                 </div>
                 <!-- Page Header Close -->
             </div>
-            @if(session('success'))
+            @if (session('success'))
                 <div id="msg-success" data-msg_success="{{ session('success') }}"></div>
             @endif
-            @if(session('error'))
+            @if (session('error'))
                 <div id="msg-error" data-msg_error="{{ session('error') }}"></div>
             @endif
             @yield('content')
@@ -1818,13 +1849,12 @@
             </div>
         </footer>
         <!-- Footer End -->
-
     </div>
-
     <!-- Scroll To Top -->
     <div class="scrollToTop">
         <span class="arrow"><i class="las la-angle-double-up"></i></span>
     </div>
+
     <div id="responsive-overlay"></div>
     <!-- Scroll To Top -->
 
@@ -1850,7 +1880,6 @@
     <!-- Color Picker JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/@simonwep/pickr/pickr.es5.min.js') }}"></script>
 
-
     <!-- Apex Charts JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
 
@@ -1864,14 +1893,22 @@
     <!-- Chartjs Chart JS -->
     <script src="{{ asset('/Tema/dist/assets/js/index.js') }}"></script>
 
-
     <!-- Custom-Switcher JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom-switcher.min.js') }}"></script>
+
     <!-- Custom JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom.js') }}"></script>
 
-     <!-- Datatables Cdn -->
-     <!-- jQuery (DataTables requires jQuery) -->
+    <!-- Rating JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/awesome-notifications/index.var.js') }}"></script>
+    <script src="{{ asset('/Tema/dist/assets/js/notifications.js') }}"></script>
+   
+    <!-- Prism JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/prismjs/prism.js') }}"></script>
+    <script src="{{ asset('/Tema/dist/assets/js/prism-custom.js') }}"></script>
+
+    <!-- Datatables Cdn -->
+    <!-- jQuery (DataTables requires jQuery) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Datatables Cdn -->
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
@@ -1885,24 +1922,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="{{ asset('Tema/dist/assets/js/datatables.js') }}"></script>
 
-
     <!-- Sweetalerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js"></script>
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
 
             tanggal_indo();
-            
-            function tanggal_indo(){
+
+            function tanggal_indo() {
                 const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const bulan = [
                     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
                 ];
 
-                $('.tanggal_indo').each(function () {
-                    const tanggalAsli = $(this).text().trim(); 
+                $('.tanggal_indo').each(function() {
+                    const tanggalAsli = $(this).text().trim();
                     const [tahun, bulanIndex, tanggal] = tanggalAsli.split('-');
 
                     const tanggalObj = new Date(tahun, bulanIndex - 1, tanggal);
@@ -1914,22 +1950,22 @@
                 })
             }
 
-            if($('#msg-success').data('msg_success') != null){
+            if ($('#msg-success').data('msg_success') != null) {
                 Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: $("#msg-success").data('msg_success'),
-                showConfirmButton: false,
-                timer: 1500
+                    position: "top-end",
+                    icon: "success",
+                    title: $("#msg-success").data('msg_success'),
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
 
-            if($('#msg-error').data('msg_error') != null){
+            if ($('#msg-error').data('msg_error') != null) {
                 Swal.fire({
-                position: "top-end",
-                icon: "error",
-                title: $('#msg-error').data('msg_error'),
-                showConfirmButton: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: $('#msg-error').data('msg_error'),
+                    showConfirmButton: true,
                 });
             }
         })

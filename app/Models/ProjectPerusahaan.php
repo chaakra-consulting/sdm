@@ -12,6 +12,10 @@ class ProjectPerusahaan extends Model
 
     public function perusahaan() 
     {
-        return $this->belongsTo(Perusahaan::class, 'id');
+        return $this->belongsTo(Perusahaan::class,'perusahaan_id','id');
+    }
+    public function project_users()
+    {
+        return $this->hasOne(UsersProject::class, 'project_perusahaan_id');
     }
 }
