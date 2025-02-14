@@ -99,7 +99,18 @@
                                 </td>
                                 <td>
                                     <div class="btn-list">
-                                        <a href="/admin_sdm/detail_kepegawaian/{{ $row->id }}" class="btn btn-secondary">Detail</a>
+                                        <a href="/admin_sdm/detail_kepegawaian/{{ $row->id }}" class="btn btn-secondary"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top" 
+                                            title="Kepegawaian">
+                                            <i class="bi bi-person-rolodex"></i>
+                                        </a>
+                                        <a href="/admin_sdm/absensi_harian/{{ $row->id }}" class="btn btn-warning"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top" 
+                                            title="Absensi">
+                                            <i class="bi bi-card-checklist"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
