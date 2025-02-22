@@ -5,92 +5,56 @@
 <div class="container-fluid">
     <!-- row -->
     <div class="row">
-        <div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-            <div class="card overflow-hidden sales-card bg-primary-gradient">
-                <div class="px-3 pt-3  pb-2 pt-0">
-                    <div>
-                        <h6 class="mb-3 fs-12 text-fixed-white">TODAY ORDERS</h6>
-                    </div>
-                    <div class="pb-0 mt-0">
-                        <div class="d-flex">
-                            <div>
-                                <h4 class="fs-20 fw-bold mb-1 text-fixed-white">$5,74.12</h4>
-                                <p class="mb-0 fs-12 text-fixed-white op-7">Compared to last week</p>
-                            </div>
-                            <span class="float-end my-auto ms-auto">
-                                <i class="fas fa-arrow-circle-up text-fixed-white"></i>
-                                <span class="text-fixed-white op-7"> +427</span>
-                            </span>
+        <div class="card-body">
+            <form action="" method="GET" class="ms-auto" style="max-width: 400px;">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                            <input type="text" class="form-control" id="date_range" name="date_range" value="{{ old('date_range', $default_range) }} placeholder="Pilih Range Tanggal">
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <button type="submit" id="applyFilter" class="btn btn-primary w-100">Filter</button>
+                    </div>
                 </div>
-                <div id="compositeline"></div>
+            </form>
+        </div> 
+        <div class="col-lg-4">
+            <div class="card bg-primary-gradient text-fixed-white">
+                <div class="card-body text-fixed-white">
+                    <div class="row">
+                            <div class="mt-0 text-center">
+                                <span class="text-fixed-white">{{ $widget_absensi[0]->nama }}</span>
+                                <h3 class="text-fixed-white mt-3">{{ $widget_absensi[0]->count }}%</h3>
+                            </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-            <div class="card overflow-hidden sales-card bg-danger-gradient">
-                <div class="px-3 pt-3  pb-2 pt-0">
-                    <div>
-                        <h6 class="mb-3 fs-12 text-fixed-white">TODAY EARNINGS</h6>
-                    </div>
-                    <div class="pb-0 mt-0">
-                        <div class="d-flex">
-                            <div>
-                                <h4 class="fs-20 fw-bold mb-1 text-fixed-white">$1,230.17</h4>
-                                <p class="mb-0 fs-12 text-fixed-white op-7">Compared to last week</p>
+        <div class="col-lg-4">
+            <div class="card bg-warning-gradient text-fixed-white">
+                <div class="card-body text-fixed-white">
+                    <div class="row">
+                            <div class="mt-0 text-center">
+                                <span class="text-fixed-white">{{ $widget_absensi[1]->nama }}</span>
+                                <h3 class="text-fixed-white mt-3">{{ $widget_absensi[1]->count }}</h3>
                             </div>
-                            <span class="float-end my-auto ms-auto">
-                                <i class="fas fa-arrow-circle-down text-fixed-white"></i>
-                                <span class="text-fixed-white op-7"> -23.09%</span>
-                            </span>
-                        </div>
                     </div>
                 </div>
-                <div id="compositeline2"></div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-            <div class="card overflow-hidden sales-card bg-success-gradient">
-                <div class="px-3 pt-3  pb-2 pt-0">
-                    <div>
-                        <h6 class="mb-3 fs-12 text-fixed-white">TOTAL EARNINGS</h6>
-                    </div>
-                    <div class="pb-0 mt-0">
-                        <div class="d-flex">
-                            <div>
-                                <h4 class="fs-20 fw-bold mb-1 text-fixed-white">$7,125.70</h4>
-                                <p class="mb-0 fs-12 text-fixed-white op-7">Compared to last week</p>
+        <div class="col-lg-4">
+            <div class="card bg-danger-gradient text-fixed-white">
+                <div class="card-body text-fixed-white">
+                    <div class="row">
+                            <div class="mt-0 text-center">
+                                <span class="text-fixed-white">{{ $widget_absensi[2]->nama }}</span>
+                                <h3 class="text-fixed-white mb-0">{{ $widget_absensi[2]->rata_rata }} Menit</h3>
+                                <p class="mb-0 fs-16 text-fixed-white">{{ $widget_absensi[2]->count }} Peristiwa</p>
                             </div>
-                            <span class="float-end my-auto ms-auto">
-                                <i class="fas fa-arrow-circle-up text-fixed-white"></i>
-                                <span class="text-fixed-white op-7"> 52.09%</span>
-                            </span>
-                        </div>
                     </div>
                 </div>
-                <div id="compositeline3"></div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-            <div class="card overflow-hidden sales-card bg-warning-gradient">
-                <div class="px-3 pt-3  pb-2 pt-0">
-                    <div>
-                        <h6 class="mb-3 fs-12 text-fixed-white">PRODUCT SOLD</h6>
-                    </div>
-                    <div class="pb-0 mt-0">
-                        <div class="d-flex">
-                            <div>
-                                <h4 class="fs-20 fw-bold mb-1 text-fixed-white">$4,820.50</h4>
-                                <p class="mb-0 fs-12 text-fixed-white op-7">Compared to last week</p>
-                            </div>
-                            <span class="float-end my-auto ms-auto">
-                                <i class="fas fa-arrow-circle-down text-fixed-white"></i>
-                                <span class="text-fixed-white op-7"> -152.3</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div id="compositeline4"></div>
             </div>
         </div>
     </div>
@@ -98,7 +62,173 @@
 
     <!-- row opened -->
     <div class="row">
-        <div class="col-md-12 col-lg-12 col-xl-7">
+        {{-- <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <div class="card-title">Data Keterangan Absensi</div>
+                </div>
+                <div class="card-body">
+                    <canvas id="keteranganAbsensi" class="chartjs-chart"></canvas>
+                </div>
+            </div>
+        </div> --}}
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Keterangan Absensi
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#keterangan-absensi-percentage" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#keterangan-absensi-value"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="keterangan-absensi-percentage"
+                            role="tabpanel">
+                            <canvas id="keteranganAbsensiPercentage" class="chartjs-chart"></canvas>
+                        </div>
+                        <div class="tab-pane text-muted" id="keterangan-absensi-value" role="tabpanel">
+                            <canvas id="keteranganAbsensiValue" class="chartjs-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Kehadiran Per Bulan
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#kehadiran-percentage" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#kehadiran-value"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <?php $defaultYear = $arr_year[0] ?? date('Y');?>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedYearKehadiranPerBulan">
+                                <?= $defaultYear ?>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($arr_year as $year): ?>
+                                    <li><a class="dropdown-item year-option" href="javascript:void(0);" data-target="bulan" data-year="<?= $year ?>"><?= $year ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage"
+                            role="tabpanel">
+                            <canvas id="barKehadiranPercentage" class="chartjs-chart"></canvas>
+                        </div>
+                        <div class="tab-pane text-muted" id="kehadiran-value" role="tabpanel">
+                            <canvas id="barKehadiranValue" class="chartjs-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="col-xl-12">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Kehadiran Per Hari
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#kehadiran-percentage-per-hari" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#kehadiran-value-per-hari"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <?php 
+                $defaultYear = $arr_year[0] ?? date('Y');
+                $defaultMonth = $month ?? '01';
+                $months = [
+                    '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+                    '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+                    '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                ];
+                ?>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title"></div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <div class="btn-group">
+                            <!-- Dropdown Tahun -->
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedYearKehadiranPerHari">
+                                <?= $defaultYear ?>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($arr_year as $year): ?>
+                                    <li><a class="dropdown-item year-option" href="javascript:void(0);" data-target="hari" data-year="<?= $year ?>"><?= $year ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                
+                        <div class="btn-group ms-2">
+                            <!-- Dropdown Bulan -->
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedMonthKehadiranPerHari">
+                                <?= $months[$defaultMonth] ?>
+                            </button>
+                            
+                            <ul class="dropdown-menu">
+                                <?php foreach ($months as $key => $month): ?>
+                                    <li><a class="dropdown-item month-option" href="javascript:void(0);" data-target="hari" data-month="<?= $key ?>"><?= $month ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+                
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage-per-hari"
+                            role="tabpanel">
+                            <canvas id="barKehadiranPercentagePerHari" class="chartjs-chart"></canvas>
+                        </div>
+                        <div class="tab-pane text-muted" id="kehadiran-value-per-hari" role="tabpanel">
+                            <canvas id="barKehadiranValuePerHari" class="chartjs-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <div class="card-title">Data Rata-Rata Jam Masuk</div>
+                </div>
+                <div class="card-body">
+                    <canvas id="barAbsensi" class="chartjs-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        {{-- <div class="col-md-12 col-lg-12 col-xl-7">
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="d-flex justify-content-between">
@@ -142,12 +272,12 @@
                 <p class="fs-12 text-muted">Sales Performance of all states in the United States.</p>
                 <div id="us-map1" class="pt-1"></div>
             </div>
-        </div>
+        </div> --}}
     </div>
     <!-- row closed -->
 
     <!-- row opened -->
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-xl-4 col-md-12 col-lg-12">
             <div class="card overflow-hidden">
                 <div class="card-header pb-1">
@@ -353,11 +483,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- row close -->
 
     <!-- row opened -->
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-md-12 col-lg-4 col-xl-4">
             <div class="card top-countries-card">
                 <div class="card-header p-0">
@@ -448,7 +578,608 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- /row -->
 </div>
+<script>
+    var absensiHarianByKetValue = @json($value_absensi_harian_by_ket);
+    var absensiHarianByKetPercentage = @json($percentage_absensi_harian_by_ket);
+    var pegawaiByJamMasuk = @json($bar_pegawai_by_jam_masuk);
+    var kehadiranPerBulanValue = @json($bar_value_kehadiran_per_bulan);
+    var kehadiranPerBulanPercentage = @json($bar_percentage_kehadiran_per_bulan);
+    var kehadiranPerHariValue = @json($bar_value_kehadiran_per_hari);
+    var kehadiranPerHariPercentage = @json($bar_percentage_kehadiran_per_hari);
+
+    var barKehadiranPerBulanValue = null;
+    var barKehadiranPerBulanPercentage = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        createDoughnutValueAbsensiHarian('keteranganAbsensiValue', absensiHarianByKetValue);
+        createDoughnutPercentageAbsensiHarian('keteranganAbsensiPercentage', absensiHarianByKetPercentage);
+        createBarChart('barAbsensi', pegawaiByJamMasuk);
+        createBarValueKehadiran('barKehadiranValue', kehadiranPerBulanValue);
+        createBarPercentageKehadiran('barKehadiranPercentage', kehadiranPerBulanPercentage);
+        createBarValueKehadiranPerDay('barKehadiranValuePerHari', kehadiranPerHariValue);
+        createBarPercentageKehadiranPerDay('barKehadiranPercentagePerHari', kehadiranPerHariPercentage);
+    });
+
+    // Fungsi untuk membuat Doughnut Chart
+    function createDoughnutValueAbsensiHarian(canvasId, data) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        var labels = data.map(item => item.nama);
+        var counts = data.map(item => item.count);
+        var colors = data.map(item => item.color);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: colors,
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 10,
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    datalabels: {  
+                        color: '#fff', 
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        borderRadius: 5, 
+                        padding: 6,
+                        font: {
+                            weight: 'bold',
+                            size: 7
+                        },
+                        formatter: (value, ctx) => {
+                            let label = ctx.chart.data.labels[ctx.dataIndex];
+                            return `${label}\n${value}`;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels] // Aktifkan plugin datalabels
+        });
+    }
+
+    function createDoughnutPercentageAbsensiHarian(canvasId, data) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        var labels = data.map(item => item.nama);
+        var counts = data.map(item => item.count);
+        var colors = data.map(item => item.color);
+
+        // Hitung total untuk persentase
+        var total = counts.reduce((sum, value) => sum + value, 0);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: colors,
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 10,
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                return `${tooltipItem.label}: ${value}%`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+                        borderRadius: 5,
+                        padding: 6,
+                        font: {
+                            weight: 'bold',
+                            size: 7
+                        },
+                        formatter: (value, ctx) => {
+                            let label = ctx.chart.data.labels[ctx.dataIndex];
+                            return `${label}\n${value}%`;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels] 
+        });
+    }
+
+    function createBarChart(canvasId, data) { 
+        var ctx = document.getElementById(canvasId).getContext('2d');
+
+        var labels = data.map(item => item.nama);
+        var times = data.map(item => item.count * 3600); // Konversi jam desimal ke detik
+        var colors = data.map(item => item.color);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jam Masuk',
+                    data: times,
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        min: 6 * 3600,
+                        max: 10 * 3600,
+                        ticks: {
+                            stepSize: 900,
+                            callback: function(value) {
+                                let hours = Math.floor(value / 3600);
+                                let minutes = Math.round((value % 3600) / 60);
+                                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.raw;
+                                let hours = Math.floor(value / 3600);
+                                let minutes = Math.round((value % 3600) / 60);
+                                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: function(value) {
+                            let hours = Math.floor(value / 3600);
+                            let minutes = Math.round((value % 3600) / 60);
+                            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                        },
+                        color: '#fff',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        borderRadius: 5, 
+                        padding: 5,
+                        font: {
+                            weight: 'bold',
+                            size: 10
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    function createBarValueKehadiran(canvasId, data) { 
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        var labels = data.map(item => item.month_text);
+
+        var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+        var datasets = keteranganTypes.map(keterangan => {
+            return {
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            },
+        });
+    }
+
+    function createBarPercentageKehadiran(canvasId, data) { 
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        var labels = data.map(item => item.month_text);
+
+        var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+        var datasets = keteranganTypes.map(keterangan => {
+            return {
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },  
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                return `${tooltipItem.dataset.label}: ${value}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            },
+        });
+    }
+
+    function createBarValueKehadiranPerDay(canvasId, data) { 
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        var labels = data.map(item => item.day_text);
+
+        var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+        var datasets = keteranganTypes.map(keterangan => {
+            return {
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },  
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                return `${tooltipItem.dataset.label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            },
+        });
+    }
+
+    function createBarPercentageKehadiranPerDay(canvasId, data) { 
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        var labels = data.map(item => item.day_text);
+
+        var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+        var datasets = keteranganTypes.map(keterangan => {
+            return {
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },  
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                return `${tooltipItem.dataset.label}: ${value}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            },
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let selectedYearBtnBulan = document.getElementById('selectedYearKehadiranPerBulan');
+        let selectedYearBtnHari = document.getElementById('selectedYearKehadiranPerHari');
+
+        let yearOptionsBulan = document.querySelectorAll('.year-option[data-target="bulan"]');
+        let yearOptionsHari = document.querySelectorAll('.year-option[data-target="hari"]');
+
+        let monthOptions = document.querySelectorAll('.month-option');
+
+        let graphBarValueKehadiranPerBulan = null;
+        let graphBarPercentageKehadiranPerBulan = null;
+        let graphBarValueKehadiranPerHari = null;
+        let graphBarPercentageKehadiranPerHari = null;
+
+        let selectedYearBulan = selectedYearBtnBulan.textContent.trim();
+        let selectedYearHari = selectedYearBtnHari.textContent.trim();
+        let selectedMonth = null;
+
+        // Event listener untuk memilih tahun pada grafik per bulan
+        yearOptionsBulan.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedYearBulan = this.getAttribute('data-year');
+                selectedYearBtnBulan.textContent = selectedYearBulan;
+                fetchChartDataPerBulan(selectedYearBulan, 'value');
+                fetchChartDataPerBulan(selectedYearBulan, 'percentage');
+            });
+        });
+
+        // Event listener untuk memilih tahun pada grafik per hari
+        yearOptionsHari.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedYearHari = this.getAttribute('data-year');
+                selectedYearBtnHari.textContent = selectedYearHari;
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+            });
+        });
+
+            // Event listener untuk memilih bulan pada grafik per hari
+            monthOptions.forEach(item => {
+                item.addEventListener('click', function () {
+                    selectedMonth = this.getAttribute('data-month');
+                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+                });
+            });
+
+            function fetchChartDataPerBulan(year, type) {
+                let url = type === 'value' 
+                    ? `/get-kehadiran-data-value?year=${year}` 
+                    : `/get-kehadiran-data-percentage?year=${year}`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (type === 'value') {
+                            updateChart(data, 'barKehadiranValue', graphBarValueKehadiranPerBulan, updatedChart => {
+                                graphBarValueKehadiranPerBulan = updatedChart;
+                            });
+                        } else {
+                            updateChart(data, 'barKehadiranPercentage', graphBarPercentageKehadiranPerBulan, updatedChart => {
+                                graphBarPercentageKehadiranPerBulan = updatedChart;
+                            }, true);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            function fetchChartDataPerHari(year, month, type) {
+                let url = type === 'value' 
+                    ? `/get-kehadiran-data-value-per-hari?year=${year}&month=${month || ''}`
+                    : `/get-kehadiran-data-percentage-per-hari?year=${year}&month=${month || ''}`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (type === 'value') {
+                            updateChart(data, 'barKehadiranValuePerHari', graphBarValueKehadiranPerHari, updatedChart => {
+                                graphBarValueKehadiranPerHari = updatedChart;
+                            });
+                        } else {
+                            updateChart(data, 'barKehadiranPercentagePerHari', graphBarPercentageKehadiranPerHari, updatedChart => {
+                                graphBarPercentageKehadiranPerHari = updatedChart;
+                            }, true);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
+                let canvas = document.getElementById(canvasId);
+
+                if (chartInstance instanceof Chart) {
+                    chartInstance.destroy();
+                    chartInstance = null;
+                }
+
+                const canvasParent = canvas.parentNode;
+                canvas.remove();
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = canvasId;
+                canvasParent.appendChild(newCanvas);
+
+                canvas = document.getElementById(canvasId);
+                const ctx = canvas.getContext('2d');
+
+                var labels = data.map(item => item.day_text || item.month_text);
+                var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+                var datasets = keteranganTypes.map(keterangan => ({
+                    label: keterangan,
+                    data: data.map(item => {
+                        let found = item.data.find(k => k.nama === keterangan);
+                        return found ? found.count : 0;
+                    }),
+                    backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+                }));
+
+                let newChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: isPercentage ? {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        let value = tooltipItem.raw;
+                                        return `${tooltipItem.dataset.label}: ${value}%`;
+                                    }
+                                }
+                            } : {}
+                        },
+                        scales: {
+                            x: { stacked: true },
+                            y: { stacked: true }
+                        }
+                    },
+                });
+
+                setChartInstance(newChart);
+            }
+
+            // Muat data awal berdasarkan tahun yang sudah dipilih di button
+            fetchChartDataPerBulan(selectedYearBulan, 'value');
+            fetchChartDataPerBulan(selectedYearBulan, 'percentage');
+            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let selectedMonthBtnHari = document.getElementById('selectedMonthKehadiranPerHari');
+        let monthOptions = document.querySelectorAll('.month-option');
+
+        let selectedYearHari = document.getElementById('selectedYearKehadiranPerHari').textContent.trim();
+        let selectedMonth = selectedMonthBtnHari.textContent.trim();
+
+        // Event listener untuk memilih bulan
+        monthOptions.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedMonth = this.getAttribute('data-month');
+                selectedMonthBtnHari.textContent = this.textContent; // Perbarui teks dropdown
+
+                // Panggil fungsi fetch untuk memperbarui grafik
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+            });
+        });
+    });
+
+
+    document.getElementById('applyFilter').addEventListener('click', function () {
+        const dateRange = document.getElementById('date_range').value;
+        const baseUrl = `/admin_sdm/dashboard/`; // Bangun URL dinamis
+
+        let queryParams = [];
+        if (dateRange) {
+            queryParams.push(`date_range=${dateRange}`);
+        }
+
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        const finalUrl = baseUrl + queryString;
+
+        // Redirect to the filtered URL
+        window.location.href = finalUrl;
+    });
+
+    flatpickr("#date_range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        allowInput: true
+    });
+</script>
+
 @endsection

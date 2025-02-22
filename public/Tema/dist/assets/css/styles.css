@@ -21232,3 +21232,7 @@ a.link-underline-dark {
 }
 
 /* End::Colored Links */
+
+.chartjs-chart {
+  max-height: 18.75rem;
+}
