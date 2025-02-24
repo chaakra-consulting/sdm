@@ -19,19 +19,16 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
         $data = collect();
-
-        // $countHariKerja = 0;
-        // for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
-        //     $hari = $date->translatedFormat('l') ?? '-';          
-        //     $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-        //     if($isLibur == false) $countHariKerja++;
-        // }
           
-        $kepegawaians = DataKepegawaian::where('tgl_masuk', '<=', $endDate)
+        $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->where('tgl_masuk', '<=', $endDate)
         ->where(function ($query) use ($startDate) {
             $query->where('tgl_berakhir', '>=', $startDate)
-                ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
+                ->orWhereNull('tgl_berakhir');
         })
         ->get();
 
@@ -52,7 +49,10 @@ class DashboardService
             }
         } 
      
-        $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
+        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
         $countKehadiran = $absensiHarians->filter(function ($item) {
             return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'wfh', 'lembur']);
         })->count();
@@ -115,10 +115,14 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
         $data = collect();
 
 
-        $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
+        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
         $keteranganAbsensis = KeteranganAbsensi::all();
         
         $countHariKerja = 0;
@@ -151,9 +155,13 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
         $data = collect();
 
-        $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
+        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
         $keteranganAbsensis = KeteranganAbsensi::all();
         $countHariKerja = 0;
         for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
@@ -162,7 +170,10 @@ class DashboardService
             if($isLibur == false) $countHariKerja++;
         }
           
-        $kepegawaians = DataKepegawaian::where('tgl_masuk', '<=', $endDate)
+        $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->where('tgl_masuk', '<=', $endDate)
         ->where(function ($query) use ($startDate) {
             $query->where('tgl_berakhir', '>=', $startDate)
                 ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
@@ -210,8 +221,12 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
     
-        $pegawais = DatadiriUser::all();
+        $pegawais = DatadiriUser::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->get();
         $data = collect();
     
         foreach ($pegawais as $pegawai) {
@@ -246,6 +261,7 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
         $keteranganAbsensis = KeteranganAbsensi::all();
         $arrYear = range($startDate->year, $endDate->year);
         $dataPerMonth = collect();
@@ -261,7 +277,10 @@ class DashboardService
         
                 $dataKeterangan = collect();
                 
-                $absensiHarians = AbsensiHarian::whereYear('tanggal_kerja', $year)
+                $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+                        return $query->where('user_id', $userId);
+                    })
+                    ->whereYear('tanggal_kerja', $year)
                     ->whereMonth('tanggal_kerja', $month)
                     ->get();
         
@@ -299,6 +318,7 @@ class DashboardService
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
+        $userId = $dto->userId;
         $keteranganAbsensis = KeteranganAbsensi::all();
         $year = max($startDate->year, $endDate->year);
 
@@ -318,7 +338,10 @@ class DashboardService
         
                 $dataKeterangan = collect();
                 
-                $absensiHarians = AbsensiHarian::whereYear('tanggal_kerja', $year)
+                $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+                        return $query->where('user_id', $userId);
+                    })
+                    ->whereYear('tanggal_kerja', $year)
                     ->whereMonth('tanggal_kerja', $month)
                     ->get();
         
@@ -329,7 +352,10 @@ class DashboardService
                 //     if ($isLibur == false) $countHariKerja++;
                 // }
 
-                $kepegawaians = DataKepegawaian::where('tgl_masuk', '<=', $end)
+                $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
+                    return $query->where('user_id', $userId);
+                })
+                ->where('tgl_masuk', '<=', $end)
                 ->where(function ($query) use ($start) {
                     $query->where('tgl_berakhir', '>=', $start)
                         ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
@@ -339,11 +365,6 @@ class DashboardService
                 $countHariKerjaPegawai = 0;
         
                 foreach ($kepegawaians as $kepegawaian) {
-                    // $tglMasuk = Carbon::parse($kepegawaian->tgl_masuk);
-                    // $tglBerakhir = $kepegawaian->tgl_berakhir ? Carbon::parse($kepegawaian->tgl_berakhir) : null;
-                
-                    // $startDatePegawai = $start->lt($tglMasuk) ? $tglMasuk : $start;
-                    // $endDatePegawai = (!$tglBerakhir || $end->lt($tglBerakhir)) ? $end : $tglBerakhir;
                 
                     for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                         $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
