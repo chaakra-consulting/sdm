@@ -172,6 +172,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Karyawan
     Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
+    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
+    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
 
     //Management Datadiri
     Route::get('/karyawan/datadiri', [DatadiriController::class, 'index'])->name('karyawan.datadiri');
