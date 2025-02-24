@@ -33,31 +33,36 @@ class AbsensiHarianController extends Controller
     {
         $request->validate([
             //'pegawai_id'              => 'required|exists:\App\Models\DatadiriUser,id',
-            'year'                    => 'nullable|string|in:' . implode(',', range(1900, date('Y') + 1)),
-            'month'                   => 'nullable|string|in:01,02,03,04,05,06,07,08,09,10,11,12',
+            // 'year'                    => 'nullable|string|in:' . implode(',', range(1900, date('Y') + 1)),
+            // 'month'                   => 'nullable|string|in:01,02,03,04,05,06,07,08,09,10,11,12',
             'date_range'                   => 'nullable|string',
         ]);
-
-        $startDate = Carbon::createFromDate($request->year, $request->month, 1); 
-        $endDate = $startDate->copy()->endOfMonth();
 
         $keteranganAbsensis = KeteranganAbsensi::all();
 
         $widgetCollection = collect();
         if ($request->date_range) {
             [$startDateRange, $endDateRange] = explode(" to ", $request->date_range . " to ");
-            $endDateRange = $endDateRange ?: $startDateRange;
+            $startDateRange = Carbon::parse($startDateRange);
+            $endDateRange = $endDateRange ? Carbon::parse($endDateRange) : $startDateRange;
         }else{
-            $startDateRange = Carbon::now()->startOfMonth();
-            $endDateRange = Carbon::now()->endOfMonth();        
+            $startDateRange = Carbon::now()->subMonth()->day(26);
+            $endDateRange = Carbon::now()->day(25);             
         }
 
-        $widget = AbsensiHarian::where('pegawai_id',$id)->whereBetween('tanggal_kerja', [$startDateRange, $endDateRange])->get();
-
+        $countHariKerja = 0;
+        for ($date = clone $startDateRange; $date->lte($endDateRange); $date->addDay()) {
+            $hari = $date->translatedFormat('l') ?? '-';          
+            $isLibur = Absensi::where('hari',$hari)->value('is_libur');
+            if($isLibur == false) $countHariKerja++;
+        }
+    
         $widgetCollection->push((object)[
             'nama' => 'Hari Masuk Kerja',
-            'count'    => $widget ? $widget->count() : 0,
+            'count'    => $countHariKerja ? $countHariKerja : 0,
         ]);
+
+        $widget = AbsensiHarian::where('pegawai_id',$id)->whereBetween('tanggal_kerja', [$startDateRange, $endDateRange])->get();
 
         $terlambatCount = $widget->filter(function ($item) {
             $data = json_decode($item->data ?? null, true);
@@ -77,7 +82,7 @@ class AbsensiHarianController extends Controller
         }
 
         $absensiCollection = collect();
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+        for ($date = $startDateRange->copy(); $date->lte($endDateRange); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';
             $absensiHarian = AbsensiHarian::where('pegawai_id',$id)->where('tanggal_kerja', $date->toDateString())->first();           
             $keterangan = $absensiHarian ? $absensiHarian->keteranganAbsensi : null;

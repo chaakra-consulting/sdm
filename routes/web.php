@@ -89,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
+    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
+    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
+    Route::get('/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
+    Route::get('/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
 
     //Management User 
     Route::get('/admin_sdm/users', [UserController::class, 'index'])->name('admin.users');
@@ -170,6 +174,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Karyawan
     Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
+    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
+    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
 
     //Management Datadiri
     Route::get('/karyawan/datadiri', [DatadiriController::class, 'index'])->name('karyawan.datadiri');

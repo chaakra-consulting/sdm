@@ -303,22 +303,16 @@
                 </div>
             </div>
         </div>
-    </div>
-    {{-- <div class="card custom-card">
-    </div> --}}
-    {{-- <div class="d-flex justify-content-between mb-2">
-        <a href="/report/excel-kepegawaian" class="btn btn-success btn-download-karyawan"><i class="fas fa-file-excel"></i> Download Excel</a>
-    </div> --}}
-    <div class="card custom-card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+    {{-- </div>
+    <div class="card custom-card"> --}}
+        {{-- <div class="card-header d-flex justify-content-between align-items-center">
             <div class="card-title">
                 Data Absensi Harian Bulan {{ $month_text }} Tahun {{ $filter_year }}
             </div>
             <button class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#filterModal">
                 Filter
             </button>
-        </div>
-        
+        </div> --}}
         <div class="card-body">
             <div class="table-responsive">
                 <table
@@ -417,7 +411,7 @@
 <script>
     $('#datatable-basic-month').DataTable({
         "pageLength": 31,
-        "dom": 'ti',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
+        "dom": 'ftip',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
         "language": {
             "paginate": {
                 "first": "First",
