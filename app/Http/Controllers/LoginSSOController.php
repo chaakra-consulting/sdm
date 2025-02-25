@@ -89,7 +89,7 @@ class LoginSSOController extends Controller
             } elseif($user->role_id == 4){
                 return redirect()->route('admin_sdm.dashboard')->with('success', 'Login successful');
             } elseif($user->role_id == 5){
-                return redirect()->route('home')->with('success', 'Login successful');
+                return redirect()->route('direktur.dashboard')->with('success', 'Login successful');
             } elseif($user->role_id == 6){
                 return redirect()->route('manajer.dashboard')->with('success', 'Login successful');
             }
