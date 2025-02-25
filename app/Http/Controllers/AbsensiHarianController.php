@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use App\Models\Absensi;
 use App\Models\AbsensiHarian;
 use App\Models\DatadiriUser;
@@ -31,6 +32,11 @@ class AbsensiHarianController extends Controller
      */
     public function show(Request $request,$id)
     {
+        $user = Auth::user();
+        if($user->role->slug == 'karyawan'){
+            $id = $user->dataDiri->id;
+        }
+
         $request->validate([
             //'pegawai_id'              => 'required|exists:\App\Models\DatadiriUser,id',
             // 'year'                    => 'nullable|string|in:' . implode(',', range(1900, date('Y') + 1)),
@@ -112,6 +118,7 @@ class AbsensiHarianController extends Controller
         }
 
         $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         $pegawai = DatadiriUser::where('id',$id)->first();
         $kepegawaian = $pegawai ? $pegawai->kepegawaian : null;
         $jabatan = $kepegawaian ? $kepegawaian->subJabatan : null;
@@ -119,6 +126,7 @@ class AbsensiHarianController extends Controller
         
         $data = [
             'title' => 'Detail Absensi',
+            'role'=>$role,
             'pegawai_id'=>$id,
             'nama'=> $pegawai ? $pegawai->nama_lengkap : null,
             'foto_user'=> $pegawai ? $pegawai->foto_user : null,
@@ -135,11 +143,7 @@ class AbsensiHarianController extends Controller
         ];
         //dd($data);
         // return view('admin.sub_jabatan', $data);
-        if($roleSlug == 'admin-sdm'){
-            return view('admin_sdm.detail_absensi_harian', $data);
-        }else{
-            return redirect()->back()->with('error', 'Anda Tidak Memiliki Akses ke Halaman Ini');
-        }
+        return view('admin_sdm.detail_absensi_harian', $data);
     }
 
     public function store(Request $request,$id)

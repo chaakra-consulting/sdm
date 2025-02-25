@@ -11,6 +11,7 @@ use App\Models\DataKepegawaian;
 use App\Models\KeteranganAbsensi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -117,7 +118,6 @@ class DashboardService
         $endDate = $dto->endDate;
         $userId = $dto->userId;
         $data = collect();
-
 
         $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
             return $query->where('user_id', $userId);

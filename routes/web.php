@@ -87,10 +87,10 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
-    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
-    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
-    Route::get('/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
-    Route::get('/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
+    // Route::get('/admin_sdm/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
+    // Route::get('/admin_sdm/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
+    // Route::get('/admin_sdm/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
+    // Route::get('/admin_sdm/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
 
     //Management User 
     Route::get('/admin_sdm/users', [UserController::class, 'index'])->name('admin.users');
@@ -172,8 +172,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //Karyawan
     Route::get('/karyawan/dashboard', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard');
-    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
-    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
+    Route::get('/karyawan/get-kehadiran-data-value', [KaryawanController::class, 'getDashboardKehadiranDataValue'])->name('karyawan.dashboard_kehadiran_data_value');
+    Route::get('/karyawan/get-kehadiran-data-percentage', [KaryawanController::class, 'getDashboardKehadiranDataPercentage'])->name('karyawan.dashboard_kehadiran_data');
 
     //Management Datadiri
     Route::get('/karyawan/datadiri', [DatadiriController::class, 'index'])->name('karyawan.datadiri');
@@ -206,6 +206,10 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::post('/karyawan/social_media/store', [SocialMediaController::class, 'store'])->name('karyawan.social_media.store');
     Route::put('/karyawan/social_media/update/{id}', [SocialMediaController::class, 'update'])->name('karyawan.social_media.update');
     Route::delete('/karyawan/social_media/delete/{id}', [SocialMediaController::class, 'destroy'])->name('karyawan.social_media.delete');
+
+    // Karyawan: Absensi Harian
+    Route::get('/karyawan/absensi_harian/{id}', [AbsensiHarianController::class, 'show'])->name('karyawan.absensi_harian.show');
+
 });
 
 Route::middleware(['auth', 'role:manager'])->group(function () {
@@ -253,8 +257,30 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
 });
 
+Route::middleware(['auth', 'role:direktur'])->group(function () {
+    // Dashboard
+    Route::get('/direktur/dashboard', [AdminSdmController::class, 'dashboard'])->name('direktur.dashboard');
+
+    // Direktur : Kepegawaian
+    Route::get('/direktur/kepegawaian', [KepegawaianController::class, 'index']);
+    Route::get('/direktur/detail_kepegawaian/{id}', [KepegawaianController::class, 'show']);
+
+    // Direktur : Absensi Harian
+    Route::get('/direktur/absensi_harian', [AbsensiHarianController::class, 'index'])->name('direktur.absensi_harian.index');
+    Route::get('/direktur/absensi_harian/{id}', [AbsensiHarianController::class, 'show'])->name('direktur.absensi_harian.show');
+    Route::post('/direktur/absensi_harian/store/{id}', [AbsensiHarianController::class, 'store'])->name('direktur.absensi_harian.store');
+    Route::put('/direktur/absensi_harian/update/{pegawai_id}/{id}', [AbsensiHarianController::class, 'update'])->name('direktur.absensi_harian.update');
+    Route::delete('/direktur/absensi_harian/delete/{id}', [AbsensiHarianController::class, 'destroy'])->name('direktur.absensi_harian.delete'); // Delete a role
+
+});
+
 Route::middleware(['auth'])->group(function () {
     // sso
     Route::get('/sso/get', [LoginSSOController::class, 'index'])->name('sso');
     Route::post('/sso/store', [LoginSSOController::class, 'storeSSO'])->name('sso.store');
+
+    Route::get('/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
+    Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
+    Route::get('/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
+    Route::get('/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
 });

@@ -158,6 +158,27 @@
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
+                    
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span class="side-menu__label">Management Absensi</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="{{ route('karyawan.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.absensi_harian.show') ? 'active' : '' }}">Data
+                                    Absensi Harian</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
@@ -440,6 +461,52 @@
                         </ul>
                     </li>
                     <!-- End::slide__category -->
+                </ul>
+            @endif
+            @if (Auth::check() && Auth::user()->role->slug == 'direktur')
+                <ul class="main-menu">
+                    <!-- Start::slide__category -->
+                    <li class="slide__category"><span class="category-name">Main</span></li>
+                    <!-- End::slide__category -->
+
+                    <!-- Start::slide -->
+                    <li class="slide">
+                        <a href="/direktur/dashboard"
+                            class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0V0z" fill="none" />
+                                <path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3" />
+                                <path
+                                    d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z" />
+                            </svg>
+                            <span class="side-menu__label">Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- End::slide -->
+
+                    <!-- Start::slide__category -->
+                    <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
+                    <!-- End::slide__category -->
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span class="side-menu__label">Management Karyawan</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/direktur/kepegawaian"
+                                    class="side-menu__item {{ request()->routeIs('/direktur/kepegawaian') ? 'active' : '' }}">Data
+                                    Kepegawaian</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
                 </ul>
             @endif
             <li class="slide__category"><span class="category-name">Sync SSO Login</span></li>

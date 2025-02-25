@@ -164,12 +164,14 @@
 </div>
 
 <div class="container-fluid">
+    @if(in_array($role,['admin_sdm','direktur']))
     <div class="mt-1">
-        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">
+        <a href="/{{ $role }}/kepegawaian" class="btn btn-secondary">
             <i class="bi bi-arrow-left">Kembali</i>
         </a>
     </div>
     <br>
+    @endif
     <div class="card custom-card border">
         {{-- <a href="javascript:void(0);" class="card-anchor"></a> --}}
         <div class="card-body">
@@ -330,7 +332,9 @@
                             <th>Note</th>
                             <th>Durasi Lembur</th>
                             <th>File</th>
+                            @if($role == 'admin_sdm')
                             <th>Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -366,6 +370,7 @@
                                         -
                                     @endif
                                 </td>
+                                @if($role == 'admin_sdm')
                                 <td>
                                     <div class="btn-list">
                                         <a href="" 
@@ -396,6 +401,7 @@
                                         </form>                                        
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
