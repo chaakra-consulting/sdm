@@ -1,29 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-
-    <style>
-        .form-label {
-            font-weight: bold;
-        }
-
-        .icon-kedip {
-            animation: blinkIcon 1s infinite;
-        }
-
-        @keyframes blinkIcon {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-    </style>
-
     {{-- Modal View Dokumen PDF --}}
     <div class="modal fade" id="staticBackdropViewDokumenPdf" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -76,42 +53,21 @@
                                         </ul>
                                     </div>
                                 @endif
-                                @if ($project->waktu_mulai == null)
-                                    <div class="container-peringatan">
-                                        <div class="card border-1">
-                                            <div class="alert custom-alert1 alert-warning">
-                                                <div class="text-center px-5 pb-0">
-                                                    <svg class="custom-alert-icon svg-warning icon-kedip"
-                                                        xmlns="http://www.w3.org/2000/svg" height="1.5rem"
-                                                        viewBox="0 0 24 24" width="1.5rem" fill="#000000">
-                                                        <path d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                                    </svg>
-                                                    <h5>Peringatan</h5>
-                                                    <p class="">Project belum dimulai oleh pegawai, silahkan
-                                                        konfirmasi ke pegawai!</p>
-                                                    <div class="">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-secondary m-1 update-project">Lihat
-                                                            Projek</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                                 <div class="container-project" {{ $project->waktu_mulai != null ? '' : 'hidden' }}>
                                     <form action="{{ route('manajer.update.project', $project->id) }}" method="post">
                                         @csrf
                                         @method('put')
                                         <div class="form-group">
                                             <label for="perusahaan_id" class="form-label">Nama Perusahaan</label>
-                                            <select name="perusahaan_id" id="perusahaan_id" class="form-control">
+                                            <select name="perusahaan_id" data-trigger id="perusahaan_id"
+                                                class="form-control">
                                                 <option selected disabled>Pilih Perusahaan</option>
                                                 @foreach ($perusahaan as $key => $row)
                                                     <option
                                                         {{ old('perusahaan_id', $project == null ? '' : $project->perusahaan_id) == $row->id ? 'selected' : '' }}
-                                                        value="{{ $row->id }}">{{ $row->nama_perusahaan }}</option>
+                                                        value="{{ $row->id }}">
+                                                        {{ $row->nama_perusahaan }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -120,92 +76,83 @@
                                             <input type="text" name="nama_project" id="nama_project" class="form-control"
                                                 value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="skala_project" class="form-label">Skala Project</label>
-                                            <select class="form-select" id="skala_project" name="skala_project" required>
-                                                <option value="">Pilih Skala Project</option>
-                                                <option value="kecil"
-                                                    {{ $project->skala_project == 'kecil' ? 'selected' : '' }}>
-                                                    Kecil
-                                                </option>
-                                                <option value="sedang"
-                                                    {{ $project->skala_project == 'sedang' ? 'selected' : '' }}>
-                                                    Sedang
-                                                </option>
-                                                <option value="besar"
-                                                    {{ $project->skala_project == 'besar' ? 'selected' : '' }}>
-                                                    Besar
-                                                </option>
-                                            </select>
-                                        </div>
                                         <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="waktu_mulai" class="form-label">Waktu Mulai</label>
-                                                    <input type="date" name="waktu_mulai" id="waktu_mulai"
-                                                        class="form-control border-0"
-                                                        value="{{ old('waktu_mulai', $project == null ? '' : $project->waktu_mulai) }}"
-                                                        readonly>
-                                                </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="skala_project" class="form-label">Skala</label>
+                                                <select class="form-control" id="skala_project" data-trigger name="skala_project"
+                                                    required>
+                                                    <option value="">Pilih Skala Project</option>
+                                                    <option value="kecil"
+                                                        {{ $project->skala_project == 'kecil' ? 'selected' : '' }}>
+                                                        Kecil
+                                                    </option>
+                                                    <option value="sedang"
+                                                        {{ $project->skala_project == 'sedang' ? 'selected' : '' }}>
+                                                        Sedang
+                                                    </option>
+                                                    <option value="besar"
+                                                        {{ $project->skala_project == 'besar' ? 'selected' : '' }}>
+                                                        Besar
+                                                    </option>
+                                                </select>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="waktu_berakhir" class="form-label">Waktu Berakhir</label>
-                                                    <input type="date" name="waktu_berakhir" id="waktu_berakhir"
-                                                        class="form-control border-0"
-                                                        value="{{ old('waktu_berakhir', $project == null ? '' : $project->waktu_berakhir) }}"
-                                                        readonly>
-                                                </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="status" class="form-label">Status</label>
+                                                <select class="form-control" id="status" data-trigger name="status"
+                                                    required>
+                                                    <option value="">Pilih Skala Project</option>
+                                                    <option value="belum"
+                                                        {{ $project->status == 'belum' ? 'selected' : '' }}>
+                                                        Belum
+                                                    </option>
+                                                    <option value="proses"
+                                                        {{ $project->status == 'proses' ? 'selected' : '' }}>
+                                                        Proses
+                                                    </option>
+                                                    <option value="selesai"
+                                                        {{ $project->status == 'selesai' ? 'selected' : '' }}>
+                                                        Selesai
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
-
+                                        <div class="form-group">
+                                            <label for="waktu_mulai">Tanggal Mulai</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
+                                                <input type="text" class="form-control" name="waktu_mulai"
+                                                    value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
+                                                    id="humanfrienndlydate" placeholder="Waktu Mulai">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="waktu_berakhir">Tanggal Berakhir</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
+                                                <input type="text" class="form-control" name="waktu_berakhir"
+                                                    value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
+                                                    id="humanfrienndlydate" placeholder="Waktu Berakhir">
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label for="deadline">Deadline</label>
                                             <div class="input-group">
-                                                <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i>
-                                                </div>
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
                                                 <input type="text" class="form-control" name="deadline"
                                                     value="{{ $project->deadline != null ? $project->deadline : '' }}"
                                                     id="humanfrienndlydate" placeholder="deadline">
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="status" class="form-label">Status</label>
-                                                    <input type="text" name="status" id="status"
-                                                        class="form-control border-0"
-                                                        value="{{ old('status', $project == null ? '' : ucwords($project->status)) }}"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="progres" class="form-label">Progres</label>
-                                                    {{-- <input type="text" name="progres" id="progres"
-                                                        class="form-control border-0"
-                                                        style="boreder: 0; box-shadow: none;"
-                                                        value="{{ old('progres', $project == null ? '' : $project->progres) }}"
-                                                        readonly> --}}
-                                                    <div class="progress progress-sm" style="height: 35px">
-                                                        <div class="progress-bar bg-info-gradient"
-                                                            id="bootstrap-progress-bar" role="progressbar"
-                                                            style="width:{{ $project->progres ?? 0 }}%;"
-                                                            aria-valuemin="0" aria-valuemax="100">
-                                                            <strong>
-                                                                {{ $project->progres == null ? 0 : $project->progres }}%
-                                                            </strong>
-                                                        </div>
-                                                    </div>
-                                                    {{-- <div class="progress" style="height: 35px">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
-                                                            aria-valuemin="0" aria-valuemax="100"
-                                                            style="width: {{ $project->progres == null ? 0 : $project->progres }}%">
-                                                            <strong>
-                                                                {{ $project->progres == null ? 0 : $project->progres }}%
-                                                            </strong>
-                                                        </div>
-                                                    </div> --}}
+                                        <div class="form-group">
+                                            <label for="progres" class="form-label">Progres</label>
+                                            <div class="progress progress-sm" style="height: 35px">
+                                                <div class="progress-bar bg-info-gradient"
+                                                    id="bootstrap-progress-bar" role="progressbar"
+                                                    style="width:{{ $project->progres ?? 0 }}%;"
+                                                    aria-valuemin="0" aria-valuemax="100">
+                                                    <strong>
+                                                        {{ $project->progres == null ? 0 : $project->progres }}%
+                                                    </strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -696,20 +643,8 @@
 @endsection
 
 @section('script')
-    <!-- Date & Time Picker JS -->
-    <script src="{{ asset('Tema/dist/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
-    <script src="{{ asset('Tema/dist/assets/js/date&time_pickers.js') }}"></script>
-
-    <!-- Moment JS -->
-    <script src="{{ asset('Tema/dist/assets/libs/moment/moment.js') }}"></script>
-
-    <!-- Fullcalendar JS -->
-    <script src="{{ asset('Tema/dist/assets/libs/fullcalendar/main.min.js') }}"></script>
-    <script src="{{ asset('Tema/dist/assets/js/fullcalendar.js') }}"></script>
     <script>
         $(document).ready(function() {
-
-            // $(".container-project").hide();
             $(".update-project").click(function() {
                 console.log('test')
                 $(".container-peringatan").slideUp(200);

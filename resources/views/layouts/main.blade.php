@@ -56,12 +56,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-
     <!-- FlatPickr CSS -->
     <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.css') }}">
 
@@ -76,6 +70,10 @@
 
     <!-- Sweetalerts CSS -->
     <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/sweetalert2/sweetalert2.min.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 </head>
 
 <body>
@@ -1864,56 +1862,63 @@
 
     <!-- Popper JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/@popperjs/core/umd/popper.min.js') }}"></script>
-
+    
     <!-- Bootstrap JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
+    
     <!-- Defaultmenu JS -->
     <script src="{{ asset('/Tema/dist/assets/js/defaultmenu.min.js') }}"></script>
-
+    
     <!-- Node Waves JS-->
     <script src="{{ asset('/Tema/dist/assets/libs/node-waves/waves.min.js') }}"></script>
-
+    
     <!-- Sticky JS -->
     <script src="{{ asset('/Tema/dist/assets/js/sticky.js') }}"></script>
-
+    
     <!-- Simplebar JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('/Tema/dist/assets/js/simplebar.js') }}"></script>
-
+    
     <!-- Color Picker JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/@simonwep/pickr/pickr.es5.min.js') }}"></script>
-
+    
     <!-- Apex Charts JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
-
+    
     <!-- JSVector Maps JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/jsvectormap/js/jsvectormap.min.js') }}"></script>
 
     <!-- JSVector Maps MapsJS -->
     <script src="{{ asset('/Tema/dist/assets/libs/jsvectormap/maps/world-merc.js') }}"></script>
     <script src="{{ asset('/Tema/dist/assets/js/us-merc-en.js') }}"></script>
-
+    
     <!-- Chartjs Chart JS -->
     <script src="{{ asset('/Tema/dist/assets/js/index.js') }}"></script>
-
+    
     <!-- Custom-Switcher JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom-switcher.min.js') }}"></script>
-
+    
+    <!-- Date & Time Picker JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ asset('/Tema/dist/assets/js/date&time_pickers.js') }}"></script>
+    
     <!-- Custom JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom.js') }}"></script>
-
+    
     <!-- Rating JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/awesome-notifications/index.var.js') }}"></script>
     <script src="{{ asset('/Tema/dist/assets/js/notifications.js') }}"></script>
-   
+    
     <!-- Prism JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/prismjs/prism.js') }}"></script>
     <script src="{{ asset('/Tema/dist/assets/js/prism-custom.js') }}"></script>
 
-    <!-- Datatables Cdn -->
+    <!-- Internal Choices JS -->
+    <script src="{{ asset('/Tema/dist/assets/js/choices.js') }}"></script>
+
     <!-- jQuery (DataTables requires jQuery) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <!-- Datatables Cdn -->
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
@@ -1925,7 +1930,7 @@
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="{{ asset('Tema/dist/assets/js/datatables.js') }}"></script>
-
+    
     <!-- Sweetalerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js"></script>

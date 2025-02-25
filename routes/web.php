@@ -3,30 +3,31 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GajiController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DivisiController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\ManajerController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
-use App\Http\Controllers\ExportController;
-use App\Http\Controllers\GajiController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\LoginSSOController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\KepegawaianController;
-use App\Http\Controllers\LoginSSOController;
-use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\SocialMediaController;
-use App\Http\Controllers\PengalamanKerjaController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\StatusPekerjaanController;
 use App\Http\Controllers\UsersProjectController;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\PengalamanKerjaController;
+use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 //Auth Register & Login 
 // Route::get('/register', function () {
@@ -215,7 +216,12 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/karyawan/project/detail/{id}', [UsersProjectController::class, 'detail'])->name('karyawan.detail.project');
     Route::put('/karyawan/project/update/{id}', [UsersProjectController::class, 'update'])->name('karyawan.update.project');
     Route::delete('/karyawan/project/delete/{id}', [ProjectController::class, 'destroyUserProject'])->name('karyawan.delete.project');
+
+    // karyawan : Task
+    Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
+    Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
 });
+
 
 Route::middleware(['auth', 'role:manager'])->group(function () {
     // manajer : data perusahaan
@@ -261,6 +267,9 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::get('/manajer/project/detail/{id}', [ProjectController::class, 'detail'])->name('manajer.detail.project');
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
     Route::delete('/manajer/project/delete/{id}', [ProjectController::class, 'destroy'])->name('manajer.delete.project');
+
+    // manajer : data transfer
+    Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
 });
 
 Route::middleware(['auth'])->group(function () {

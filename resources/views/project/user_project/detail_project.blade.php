@@ -62,6 +62,7 @@
                                                     value="{{ old('waktu_mulai', $project->project_perusahaan->waktu_mulai ?? now()->format('Y-m-d')) }}"
                                                     id="humanfrienndlydate" placeholder="Waktu Mulai"
                                                     {{ $project->project_perusahaan->waktu_mulai != null ? 'disabled' : '' }}>
+                                                <input type="hidden" name="waktu_mulai_hidden" id="waktu_mulai_hidden">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -70,9 +71,11 @@
                                                 <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i>
                                                 </div>
                                                 <input type="text" class="form-control" name="waktu_berakhir"
-                                                    value="{{ $project->project_perusahaans->waktu_berakhir ?? '' }}"
+                                                    value="{{ $project->project_perusahaan->waktu_berakhir ?? '' }}"
                                                     id="humanfrienndlydate" placeholder="Waktu Berakhir"
                                                     {{ $project->project_perusahaan->waktu_berakhir != null ? 'disabled' : '' }}>
+                                                <input type="hidden" name="waktu_berakhir_hidden"
+                                                    id="waktu_berakhir_hidden">
                                             </div>
                                         </div>
                                     </div>
@@ -82,7 +85,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i>
                                                 </div>
-                                                <input type="text" class="form-control" name="berakhir"
+                                                <input type="text" class="form-control" name="deadline"
                                                     value="{{ $project->project_perusahaan->deadline }}"
                                                     id="humanfrienndlydate" placeholder="deadline" disabled>
                                             </div>
@@ -128,28 +131,37 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                {{-- <form action="{{ route('task.store') }}" method="POST"> --}}
+                                <form action="{{ route('karyawan.task.store') }}" method="POST" id="taskModal"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label for="taskDate" class="form-label">Tanggal</label>
-                                            <input type="text" class="form-control" id="taskDate" name="tanggal"
+                                            <label for="tgl_task" class="form-label">Tanggal</label>
+                                            <input type="text" class="form-control" id="tgl_task" name="tgl_task"
                                                 readonly>
+                                            <input type="hidden" name="project_perusahaan_id"
+                                                value="{{ $project->project_perusahaan->id }}">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="taskName" class="form-label">Nama Task</label>
-                                            <input type="text" class="form-control" id="taskName" name="nama_task"
+                                            <label for="nama_task" class="form-label">Nama Task</label>
+                                            <input type="text" class="form-control" id="nama_task" name="nama_task"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="taskDescription" class="form-label">Deskripsi</label>
-                                            <textarea class="form-control" id="taskDescription" name="deskripsi" rows="3"></textarea>
+                                            <label for="keterangan" class="form-label">Keterangan</label>
+                                            <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="formFileMultiple" class="form-label">Multiple files input
+                                                example</label>
+                                            <input class="form-control" type="file" id="formFileMultiple"
+                                                name="upload[]" multiple>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-primary">Simpan Task</button>
+                                        <button type="submit" class="btn btn-primary">Tambah Task</button>
                                     </div>
                                 </form>
                             </div>
@@ -167,24 +179,8 @@
     </div>
 @endsection
 @section('script')
-    <!-- Date & Time Picker JS -->
-    <script src="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
-    <script src="{{ asset('/Tema/dist/assets/js/date&time_pickers.js') }}"></script>
-
-    <!-- Moment JS -->
-    <script src="{{ asset('/Tema/dist/assets/libs/moment/moment.js') }}"></script>
-
-    <!-- Fullcalendar JS -->
-    <script src="{{ asset('/Tema/dist/assets/libs/fullcalendar/main.min.js') }}"></script>
-    <script src="{{ asset('/Tema/dist/assets/js/fullcalendar.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $(".update-project").click(function() {
-                console.log('test')
-                $(".container-peringatan").slideUp(200);
-                $(".container-project").prop('hidden', false).slideDown(200);
-            })
-
             $('.btn-edit-project').click(function() {
                 console.log('test')
                 $('.btn-edit-project').hide();
@@ -194,65 +190,53 @@
                 $('.btn-batal-edit').click(function() {
                     $('.btn-edit-project').fadeIn(200);
                     $('.btn-batal-edit').prop('hidden', true);
-                    $(".btn-submit-project").prop('hidden', true);
-                })
+
+                    if ($("input[name='waktu_mulai']").val()) {
+                        $(".btn-submit-project").prop('hidden', true);
+                    }
+                });
             })
         })
-    </script>
-    <script>
-        document.getElementById("bootstrap-range").addEventListener("input", function() {
-            let value = this.value;
-            document.getElementById("progress-value").textContent = value + "%";
-            document.getElementById("bootstrap-progress-bar").style.width = value + "%";
+        $(document).ready(function() {
+            $("form").submit(function() {
+                let waktuMulai = $("input[name='waktu_mulai']").val();
+                let waktuBerakhir = $("input[name='waktu_berakhir']").val();
+
+                $("#waktu_mulai_hidden").val(waktuMulai);
+                $("#waktu_berakhir_hidden").val(waktuBerakhir);
+            });
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function(){
+        $("#bootstrap-range").on("input", function() {
+            let value = $(this).val();
+            $("#progress-value").text(value + "%");
+            $("#bootstrap-progress-bar").css("width", value + "%");
+        });
+    </script>
+    <script>
+        let calendar;
+
+        document.addEventListener('DOMContentLoaded', function() {
             let calendarEl = document.getElementById('calendar2');
-    
+
             if (calendarEl) {
-                let calendar = new FullCalendar.Calendar(calendarEl, {
+                calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
-                    events: [{
-                            title: '📌 Mulai: {{ $project->project_perusahaan->nama_project }}',
-                            start: '{{ $project->project_perusahaan->waktu_mulai ?? now()->format('Y-m-d') }}',
-                            color: '#007bff',
-                            extendedProps: {
-                                description: 'Project dimulai pada {{ $project->project_perusahaan->waktu_mulai }}'
-                            }
-                        },
-                        {
-                            title: '⏳ Deadline: {{ $project->project_perusahaan->nama_project }}',
-                            start: '{{ $project->project_perusahaan->deadline ?? now()->format('Y-m-d') }}',
-                            color: '#dc3545',
-                            extendedProps: {
-                                description: 'Batas waktu untuk project {{ $project->project_perusahaan->nama_project }}'
-                            }
-                        }
-                    ],
-                    dateClick: function(info){
-                        $('#taskDate').val(info.dateStr);
+                    events: "{{ route('karyawan.project.tasks', ['id' => $project->project_perusahaan_id]) }}",
+                    dateClick: function(info) {
+                        $('#tgl_task').val(info.dateStr);
                         $('#taskModal').modal('show');
                     }
                 });
-    
+
                 calendar.render();
             }
-        })
-    </script>
-    <script>
-        calendar.on('eventClick', function(info) {
-            $(info.el).popover({
-                title: info.event.title,
-                content: info.event.extendedProps.description,
-                trigger: 'focus',
-                placement: 'top'
-            }).popover('show');
         });
     </script>
 @endsection

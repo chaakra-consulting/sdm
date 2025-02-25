@@ -6,6 +6,7 @@ use App\Models\Perusahaan;
 use App\Models\UsersProject;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -16,21 +17,22 @@ class ProjectController extends Controller
         $project = ProjectPerusahaan::with('perusahaan', 'project_users')->get();
         $userTakenProjects = UsersProject::where('user_id', Auth::user()->id)->pluck('project_perusahaan_id')->toArray();
         $perusahaan = Perusahaan::all();
+        $users = User::all();
 
-        return view('project.daftar_project', compact('title', 'project', 'userTakenProjects', 'perusahaan'));
+        return view('project.daftar_project', compact('title', 'project', 'userTakenProjects', 'perusahaan', 'users'));
     }
 
     public function store(Request $request)
     {
-        // dd($request);
-
         $request->validate([
             'nama_perusahaan' => 'required',
             'nama_project' => 'required',
             'skala_project' => 'required',
+            'status' => 'required',
+            'waktu_mulai' => 'required',
             'deadline' => 'required',
+            'user.*' => 'required',
         ]);
-
         $data = [
             'perusahaan_id' => $request->nama_perusahaan,
             'nama_project' => $request->nama_project,
@@ -38,11 +40,19 @@ class ProjectController extends Controller
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
+            'status' => $request->status,
             'progres' => $request->progres,
         ];
+        
+        $project = ProjectPerusahaan::create($data);
 
-        // dd($data);
-        ProjectPerusahaan::create($data);
+        foreach ($request->user as $user_id) {
+            UsersProject::create([
+                'project_perusahaan_id' => $project->id,
+                'user_id' => $user_id,
+                'status' => $request->status,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Project berhasil di tambahkan');
     }
@@ -64,17 +74,21 @@ class ProjectController extends Controller
             'perusahaan_id' => 'required',
             'nama_project' => 'required',
             'skala_project' => 'required',
+            'status' => 'required',
+            'waktu_mulai' => 'required',
+            'waktu_berakhir' => 'nullable',
             'deadline' => 'required',
         ]);
-        // dd($request);
-
         $data = [
             'perusahaan_id' => $request->perusahaan_id,
             'nama_project' => $request->nama_project,
             'skala_project' => $request->skala_project,
+            'status' => $request->status,
+            'waktu_mulai' => $request->waktu_mulai,
+            'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
         ];
-        // dd($data);
+        
         $project->update($data);
 
         return redirect()->back()->with('success', 'Project berhasil di update');
@@ -93,13 +107,11 @@ class ProjectController extends Controller
     public function destroyUserProject($id)
     {
             $userId = Auth::id();
-            // dd($userId, $id);
-
+            
             $deleted = UsersProject::where('user_id', $userId)
                 ->where('project_perusahaan_id', $id)
                 ->delete();
-
-            // dd($deleted);
+                
             if ($deleted) {
                 return back()->with('success', 'Project berhasil dihapus dari daftar Anda.');
             } else {

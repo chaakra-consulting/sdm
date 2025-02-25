@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
+use App\Models\ProjectPerusahaan;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\ProjectPerusahaanObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +23,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Carbon::setLocale('id');
+        ProjectPerusahaan::observe(ProjectPerusahaanObserver::class);
     }
 }

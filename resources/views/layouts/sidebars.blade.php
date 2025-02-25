@@ -428,7 +428,7 @@
                             <li class="slide">
                                 <a href="{{ route('manajer.perusahaan') }}"
                                     class="side-menu__item {{ request()->routeIs('manajer.perusahaan') ? 'active' : '' }}">List
-                                    Perusahaan</a>
+                                    Instansi</a>
                             </li>
                             <li class="slide">
                                 <a href="{{ route('manajer.project') }}"

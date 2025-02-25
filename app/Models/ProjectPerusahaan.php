@@ -16,6 +16,10 @@ class ProjectPerusahaan extends Model
     }
     public function project_users()
     {
-        return $this->hasOne(UsersProject::class, 'project_perusahaan_id');
+        return $this->hasMany(UsersProject::class, 'project_perusahaan_id');
+    }
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'project_perusahaan_id');
     }
 }

@@ -13,31 +13,66 @@
                     <form action="" method="POST" id="formProject">
                         @csrf
                         <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="nama_perusahaan">Nama Instansi</label>
+                                    <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
+                                        <option selected disabled>Pilih Instansi</option>
+                                        @foreach ($perusahaan as $item)
+                                            <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="nama_project">Nama Project</label>
+                                    <input type="text" name="nama_project" id="nama_project" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="skala_project">Skala</label>
+                                    <select name="skala_project" id="skala_project" data-trigger class="form-control" required>
+                                        <option selected disabled>Pilih Skala</option>
+                                        <option value="kecil">Kecil</option>
+                                        <option value="sedang">Sedang</option>
+                                        <option value="besar">Besar</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="status">Status</label>
+                                    <select name="status" id="status" data-trigger class="form-control" required>
+                                        <option selected disabled>Pilih Status</option>
+                                        <option value="belum">Belum</option>
+                                        <option value="proses">Proses</option>
+                                        <option value="selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="format-waktu_mulai">Tanggal Mulai</label>
+                                    <div class="input-group">
+                                        <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
+                                        <input type="text" class="form-control" name="format-waktu_mulai" id="format-waktu_mulai" placeholder="Tanggal Mulai" required>
+                                        <input type="hidden" name="waktu_mulai" id="waktu_mulai">
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="format-deadline">Deadline</label>
+                                    <div class="input-group">
+                                        <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
+                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline" required>
+                                        <input type="hidden" name="deadline" id="deadline">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
-                                <label for="nama_perusahaan">Nama Perusahaan</label>
-                                <select name="nama_perusahaan" id="nama_perusahaan" class="form-control">
-                                    <option selected disabled>Pilih Perusahaan</option>
-                                    @foreach ($perusahaan as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_perusahaan }}</option>
+                                <label for="user">Anggota Project</label>
+                                <select name="user[]" id="user" multiple class="form-control">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="nama_project">Nama Project</label>
-                                <input type="text" name="nama_project" id="nama_project" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="skala_project">Skala Project</label>
-                                <select name="skala_project" id="skala_project" class="form-control" required>
-                                    <option selected disabled>Pilih Skala Project</option>
-                                    <option value="kecil">Kecil</option>
-                                    <option value="sedang">Sedang</option>
-                                    <option value="besar">Besar</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="deadline">Deadline</label>
-                                <input type="date" name="deadline" id="deadline" class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -145,7 +180,7 @@
                                                     @method('post')
                                                     <input type="hidden" name="project_perusahaan_id"
                                                         value="{{ $item->id }}">
-                                                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                                                    <input type="hidden" name="user" value="{{ Auth::user()->id }}">
                                                     <input type="hidden" name="status" value="{{ $item->status }}">
                                                     <button type="submit" class="btn btn-info confirm-project"
                                                         title="Ambil Project" data-id="{{ $item->id }}"
@@ -179,8 +214,39 @@
                 $("#skala_project").change().val('Pilih Skala Project');
                 $("#deadline").val('');
                 $("#formProject").attr('action', '/manajer/project/store');
-            })
+            });
         })
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            flatpickr("#format-waktu_mulai", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "F d, Y",
+                onChange: function(selectedDates, dateStr, instance){
+                    document.getElementById("waktu_mulai").value = dateStr;
+                },
+                appendTo: document.getElementById("staticBackdrop")
+            });
+            flatpickr("#format-deadline", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "F d, Y",
+                onChange: function(selectedDates, dateStr, instance){
+                    document.getElementById("deadline").value = dateStr;
+                },
+                appendTo: document.getElementById("staticBackdrop")
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new Choices('#user', {
+                removeItemButton: true,
+                // maxItemCount: 10,
+                searchEnabled: true
+            });
+        });
     </script>
     <script>
         $(document).ready(function() {
@@ -191,7 +257,7 @@
                 let projectName = $(this).data("nama_project");
 
                 Swal.fire({
-                    title: "Konfirmasi Ambil Project",
+                    title: "Konfirmasi Hapus Project",
                     text: "Apakah kamu yakin ingin menghapus project '" + projectName + "'?",
                     icon: "warning",
                     showCancelButton: true,
@@ -220,7 +286,7 @@
                 let projectStatus = $(this).data("status");
 
                 Swal.fire({
-                    title: "Konfirmasi Ambil Project",
+                    title: "Konfirmasi Hapus Project",
                     text: "Apakah kamu yakin ingin mengambil project '" + projectName + "'?",
                     icon: "warning",
                     showCancelButton: true,
@@ -235,7 +301,7 @@
                             '@csrf' +
                             '<input type="hidden" name="project_perusahaan_id" value="' +
                             projectId + '">' +
-                            '<input type="hidden" name="user_id" value="{{ Auth::user()->id }}">' +
+                            '<input type="hidden" name="user" value="{{ Auth::user()->id }}">' +
                             '<input type="hidden" name="status" value="' + projectStatus +
                             '">' +
                             '</form>');
