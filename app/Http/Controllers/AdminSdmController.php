@@ -6,6 +6,7 @@ use App\DTOs\GraphDTO;
 use App\Services\DashboardService;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminSdmController extends Controller
 {
@@ -63,12 +64,19 @@ class AdminSdmController extends Controller
 
     public function getDashboardKehadiranDataValue(Request $request)
     {
-        $year = $request->query('year', date('Y'));
+        $year = $request->get('year', date('Y'));
         $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
         $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
 
+        $user = Auth::user() ?? null;
+        if($user && in_array($user->role->slug,['direktur','admin-sdm'])){
+            $userId = null;
+        }else{
+            $userId = $user->id;
+        }
+
         // Simulasi Data (Gantilah dengan Query ke Database)
-        $graphDTO = new GraphDTO($startDateRange,$endDateRange);
+        $graphDTO = new GraphDTO($startDateRange,$endDateRange,null,$userId);
         $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
 
         return response()->json($graphBarValueKehadiranPerBulan);
@@ -76,12 +84,19 @@ class AdminSdmController extends Controller
 
     public function getDashboardKehadiranDataPercentage(Request $request)
     {
-        $year = $request->query('year', date('Y'));
+        $year = $request->get('year', date('Y'));
         $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
         $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
 
+        $user = Auth::user() ?? null;
+        if($user && in_array($user->role->slug,['direktur','admin-sdm'])){
+            $userId = null;
+        }else{
+            $userId = $user->id;
+        }
+
         // Simulasi Data (Gantilah dengan Query ke Database)
-        $graphDTO = new GraphDTO($startDateRange,$endDateRange);
+        $graphDTO = new GraphDTO($startDateRange,$endDateRange,null,$userId);
         $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
 
         return response()->json($graphBarPercentageKehadiranPerBulan);

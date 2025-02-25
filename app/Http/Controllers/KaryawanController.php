@@ -24,7 +24,8 @@ class KaryawanController extends Controller
         $request->validate([
             'date_range' => 'nullable|string',
         ]);
-        $userId = Auth::user()->id;
+        $user = Auth::user();
+        $userId = $user->id;
 
         if ($request->date_range) {
             [$startDateRange, $endDateRange] = explode(" to ", $request->date_range . " to ");
@@ -38,7 +39,7 @@ class KaryawanController extends Controller
         }
 
         $arrYear = range(max($startDateRange->year, $endDateRange->year), min($startDateRange->year, $endDateRange->year));
-        $graphDTO = new GraphDTO($startDateRange,$endDateRange,$userId);
+        $graphDTO = new GraphDTO($startDateRange,$endDateRange,null,$userId);
 
         $widgetAbsensi = $this->dashboardService->widgetAbsensi($graphDTO);
         $graphValueAbsensiHarianByKeterangan = $this->dashboardService->graphValueAbsensiHarianByKeterangan($graphDTO);
@@ -66,31 +67,31 @@ class KaryawanController extends Controller
         return view('karyawan.dashboard', $data);
     }
 
-    public function getDashboardKehadiranDataValue(Request $request)
-    {
-        $userId = Auth::user()->id;
-        $year = $request->query('year', date('Y'));
-        $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
-        $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
+    // public function getDashboardKehadiranDataValue(Request $request)
+    // {
+    //     $userId = Auth::user()->id;
+    //     $year = $request->query('year', date('Y'));
+    //     $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
+    //     $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
 
-        // Simulasi Data (Gantilah dengan Query ke Database)
-        $graphDTO = new GraphDTO($startDateRange,$endDateRange,$userId);
-        $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
+    //     // Simulasi Data (Gantilah dengan Query ke Database)
+    //     $graphDTO = new GraphDTO($startDateRange,$endDateRange,null,$userId);
+    //     $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
 
-        return response()->json($graphBarValueKehadiranPerBulan);
-    }
+    //     return response()->json($graphBarValueKehadiranPerBulan);
+    // }
 
-    public function getDashboardKehadiranDataPercentage(Request $request)
-    {
-        $userId = Auth::user()->id;
-        $year = $request->query('year', date('Y'));
-        $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
-        $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
+    // public function getDashboardKehadiranDataPercentage(Request $request)
+    // {
+    //     $userId = Auth::user()->id;
+    //     $year = $request->query('year', date('Y'));
+    //     $startDateRange = Carbon::createFromFormat('Y', $year)->startOfYear(); 
+    //     $endDateRange = Carbon::createFromFormat('Y', $year)->endOfYear();
 
-        // Simulasi Data (Gantilah dengan Query ke Database)
-        $graphDTO = new GraphDTO($startDateRange,$endDateRange,$userId);
-        $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
+    //     // Simulasi Data (Gantilah dengan Query ke Database)
+    //     $graphDTO = new GraphDTO($startDateRange,$endDateRange,null,$userId);
+    //     $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
 
-        return response()->json($graphBarPercentageKehadiranPerBulan);
-    }
+    //     return response()->json($graphBarPercentageKehadiranPerBulan);
+    // }
 }

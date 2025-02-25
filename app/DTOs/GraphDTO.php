@@ -9,6 +9,7 @@ class GraphDTO
     public function __construct(
         public readonly Carbon|null $startDate = null,
         public readonly Carbon|null $endDate = null,
+        public readonly string|null $month = null,
         public readonly string|null $userId = null,
     ) {
     }

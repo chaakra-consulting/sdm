@@ -11,7 +11,7 @@
                     <div class="col-md-8">
                         <div class="input-group">
                             <span class="input-group-text"><i class="ri-calendar-line"></i></span>
-                            <input type="text" class="form-control" id="date_range" name="date_range" value="{{ old('date_range', $default_range) }} placeholder="Pilih Range Tanggal">
+                            <input type="text" class="form-control" id="date_range" name="date_range" value="{{ old('date_range', $default_range) }}" placeholder="Pilih Range Tanggal">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -377,21 +377,12 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         let selectedYearBtnBulan = document.getElementById('selectedYearKehadiranPerBulan');
-        let selectedYearBtnHari = document.getElementById('selectedYearKehadiranPerHari');
-
         let yearOptionsBulan = document.querySelectorAll('.year-option[data-target="bulan"]');
-        let yearOptionsHari = document.querySelectorAll('.year-option[data-target="hari"]');
-
-        let monthOptions = document.querySelectorAll('.month-option');
 
         let graphBarValueKehadiranPerBulan = null;
         let graphBarPercentageKehadiranPerBulan = null;
-        let graphBarValueKehadiranPerHari = null;
-        let graphBarPercentageKehadiranPerHari = null;
 
         let selectedYearBulan = selectedYearBtnBulan.textContent.trim();
-        let selectedYearHari = selectedYearBtnHari.textContent.trim();
-        let selectedMonth = null;
 
         // Event listener untuk memilih tahun pada grafik per bulan
         yearOptionsBulan.forEach(item => {
@@ -403,137 +394,95 @@
             });
         });
 
-        // Event listener untuk memilih tahun pada grafik per hari
-        yearOptionsHari.forEach(item => {
-            item.addEventListener('click', function () {
-                selectedYearHari = this.getAttribute('data-year');
-                selectedYearBtnHari.textContent = selectedYearHari;
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-            });
-        });
+        function fetchChartDataPerBulan(year, type) {
+            let url = type === 'value' 
+                ? `/get-kehadiran-data-value?year=${year}` 
+                : `/get-kehadiran-data-percentage?year=${year}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (type === 'value') {
+                        updateChart(data, 'barKehadiranValue', graphBarValueKehadiranPerBulan, updatedChart => {
+                            graphBarValueKehadiranPerBulan = updatedChart;
+                        });
+                    } else {
+                        updateChart(data, 'barKehadiranPercentage', graphBarPercentageKehadiranPerBulan, updatedChart => {
+                            graphBarPercentageKehadiranPerBulan = updatedChart;
+                        }, true);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
 
-            // Event listener untuk memilih bulan pada grafik per hari
-            monthOptions.forEach(item => {
-                item.addEventListener('click', function () {
-                    selectedMonth = this.getAttribute('data-month');
-                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-                });
-            });
+        function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
+            let canvas = document.getElementById(canvasId);
 
-            function fetchChartDataPerBulan(year, type) {
-                let url = type === 'value' 
-                    ? `/get-kehadiran-data-value?year=${year}` 
-                    : `/get-kehadiran-data-percentage?year=${year}`;
-                
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (type === 'value') {
-                            updateChart(data, 'barKehadiranValue', graphBarValueKehadiranPerBulan, updatedChart => {
-                                graphBarValueKehadiranPerBulan = updatedChart;
-                            });
-                        } else {
-                            updateChart(data, 'barKehadiranPercentage', graphBarPercentageKehadiranPerBulan, updatedChart => {
-                                graphBarPercentageKehadiranPerBulan = updatedChart;
-                            }, true);
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
+            if (chartInstance instanceof Chart) {
+                chartInstance.destroy();
+                chartInstance = null;
             }
 
-            function fetchChartDataPerHari(year, month, type) {
-                let url = type === 'value' 
-                    ? `/get-kehadiran-data-value-per-hari?year=${year}&month=${month || ''}`
-                    : `/get-kehadiran-data-percentage-per-hari?year=${year}&month=${month || ''}`;
-                
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (type === 'value') {
-                            updateChart(data, 'barKehadiranValuePerHari', graphBarValueKehadiranPerHari, updatedChart => {
-                                graphBarValueKehadiranPerHari = updatedChart;
-                            });
-                        } else {
-                            updateChart(data, 'barKehadiranPercentagePerHari', graphBarPercentageKehadiranPerHari, updatedChart => {
-                                graphBarPercentageKehadiranPerHari = updatedChart;
-                            }, true);
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            }
+            const canvasParent = canvas.parentNode;
+            canvas.remove();
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id = canvasId;
+            canvasParent.appendChild(newCanvas);
 
-            function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
-                let canvas = document.getElementById(canvasId);
+            canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
 
-                if (chartInstance instanceof Chart) {
-                    chartInstance.destroy();
-                    chartInstance = null;
-                }
+            var labels = data.map(item => item.month_text);
+            var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
 
-                const canvasParent = canvas.parentNode;
-                canvas.remove();
-                const newCanvas = document.createElement('canvas');
-                newCanvas.id = canvasId;
-                canvasParent.appendChild(newCanvas);
+            var datasets = keteranganTypes.map(keterangan => ({
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            }));
 
-                canvas = document.getElementById(canvasId);
-                const ctx = canvas.getContext('2d');
-
-                var labels = data.map(item => item.day_text || item.month_text);
-                var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
-
-                var datasets = keteranganTypes.map(keterangan => ({
-                    label: keterangan,
-                    data: data.map(item => {
-                        let found = item.data.find(k => k.nama === keterangan);
-                        return found ? found.count : 0;
-                    }),
-                    backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
-                }));
-
-                let newChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: datasets
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: isPercentage ? {
-                                callbacks: {
-                                    label: function (tooltipItem) {
-                                        let value = tooltipItem.raw;
-                                        return `${tooltipItem.dataset.label}: ${value}%`;
-                                    }
-                                }
-                            } : {}
+            let newChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
                         },
-                        scales: {
-                            x: { stacked: true },
-                            y: { stacked: true }
-                        }
+                        tooltip: isPercentage ? {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    let value = tooltipItem.raw;
+                                    return `${tooltipItem.dataset.label}: ${value}%`;
+                                }
+                            }
+                        } : {}
                     },
-                });
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                    }
+                },
+            });
 
-                setChartInstance(newChart);
-            }
+            setChartInstance(newChart);
+        }
 
-            // Muat data awal berdasarkan tahun yang sudah dipilih di button
-            fetchChartDataPerBulan(selectedYearBulan, 'value');
-            fetchChartDataPerBulan(selectedYearBulan, 'percentage');
-            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+        // Muat data awal berdasarkan tahun yang sudah dipilih di button
+        fetchChartDataPerBulan(selectedYearBulan, 'value');
+        fetchChartDataPerBulan(selectedYearBulan, 'percentage');
     });
 
     document.getElementById('applyFilter').addEventListener('click', function () {
         const dateRange = document.getElementById('date_range').value;
-        const baseUrl = `/admin_sdm/dashboard/`; // Bangun URL dinamis
+        const baseUrl = `/karyawan/dashboard/`; // Bangun URL dinamis
 
         let queryParams = [];
         if (dateRange) {
