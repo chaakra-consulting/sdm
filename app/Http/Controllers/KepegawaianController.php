@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Divisi;
@@ -16,6 +17,7 @@ use App\Models\DataKepegawaian;
 use App\Models\PengalamanKerja;
 use Illuminate\Support\Facades\DB;
 use App\Models\DataStatusPekerjaan;
+use Illuminate\Support\Facades\Auth;
 
 class KepegawaianController extends Controller
 {
@@ -26,10 +28,12 @@ class KepegawaianController extends Controller
     {
         //
         $data_diri = DatadiriUser::all();
+        $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         $getKepegawaian = DataKepegawaian::with('subJabatan', 'statusPekerjaan', 'divisi')->get();
         $title = 'Data Kepegawaian';
 
-        return view('admin_sdm.kepegawaian', compact('data_diri', 'title', 'getKepegawaian'));
+        return view('admin_sdm.kepegawaian', compact('data_diri', 'title', 'getKepegawaian','role'));
     }
 
     /**
@@ -127,9 +131,12 @@ class KepegawaianController extends Controller
         $sub_jabatan = SubJabatan::all();
         $status_pekerjaan = DataStatusPekerjaan::all();
         $divisi = Divisi::all();
+        $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         
         $data = [
             'title' => 'Detail Karyawan',
+            'role' => $role,
             'karyawan' => $getKaryawan,
             'pendidikan' => $pendidikan,
             'kesehatan' => $kesehatan,

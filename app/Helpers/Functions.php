@@ -24,5 +24,23 @@ class Functions
             default:
                 return "rgb(241, 0, 117, 1)";
         }
-    }    
+    } 
+    
+    public static function generateUrlByRoleSlug($roleSlug)
+    {   
+        switch($roleSlug){
+            case"admin-sdm":
+                return "admin_sdm";
+            case"admin":
+                return "admin";
+            case"manager":
+                return "manajer";
+            case"direktur":
+                return "direktur";
+            case"karyawan":
+                return "karyawan";
+            case"super-admin":
+                return "superadmin";
+        }
+    }  
 }

@@ -99,13 +99,13 @@
                                 </td>
                                 <td>
                                     <div class="btn-list">
-                                        <a href="/admin_sdm/detail_kepegawaian/{{ $row->id }}" class="btn btn-secondary"
+                                        <a href="/{{ $role }}/detail_kepegawaian/{{ $row->id }}" class="btn btn-secondary"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top" 
                                             title="Kepegawaian">
                                             <i class="bi bi-person-rolodex"></i>
                                         </a>
-                                        <a href="/admin_sdm/absensi_harian/{{ $row->id }}" class="btn btn-warning"
+                                        <a href="/{{ $role }}/absensi_harian/{{ $row->id }}" class="btn btn-warning"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top" 
                                             title="Absensi">

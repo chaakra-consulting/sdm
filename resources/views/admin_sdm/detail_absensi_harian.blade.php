@@ -163,13 +163,38 @@
     </div>
 </div>
 
+<div class="modal fade" id="verifikasiModal" tabindex="-1" aria-labelledby="exampleModalScrollable2" data-bs-keyboard="false" aria-hidden="true">
+    <!-- Scrollable modal -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="staticBackdropLabel2">Modal title
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah anda yakin ingin melakukan verifikasi?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save
+                    Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid">
+    @if(in_array($role,['admin_sdm','direktur']))
     <div class="mt-1">
-        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">
+        <a href="/{{ $role }}/kepegawaian" class="btn btn-secondary">
             <i class="bi bi-arrow-left">Kembali</i>
         </a>
     </div>
     <br>
+    @endif
     <div class="card custom-card border">
         {{-- <a href="javascript:void(0);" class="card-anchor"></a> --}}
         <div class="card-body">
@@ -182,7 +207,20 @@
                 <div>
                     <p class="card-text mb-1 fs-14 fw-semibold">{{ $nama }}</p>
                     <div class="card-title fs-12 mb-1">{{ $nip }}</div>
-                    <div class="card-title text-muted fs-11 mb-0">{{ $jabatan }} / {{ $divisi }}</div>
+                    <div class="card-title text-muted fs-11 mb-1">{{ $jabatan }} / {{ $divisi }}</div>
+                    @if($verifikasi == 'Terverifikasi')
+                        <div class="card-title fs-12 mb-1">
+                            Absensi Bulan {{ $month_text }} : <span class="text-success">{{ $verifikasi }}</span>
+                        </div> 
+                    @else
+                        <div class="card-title fs-12 mb-1">
+                            Absensi Bulan {{ $month_text }} : 
+                            <span class="text-danger">{{ $verifikasi }}</span>
+                            @if($role=='admin_sdm')
+                            <button class="btn btn-sm btn-success ms-2" id="alert-parameter">Verifikasi?</button>  
+                            @endif 
+                        </div>                                                                                        
+                    @endif
                 </div>    
             </div>
         </div>
@@ -330,7 +368,9 @@
                             <th>Note</th>
                             <th>Durasi Lembur</th>
                             <th>File</th>
+                            @if($role == 'admin_sdm')
                             <th>Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -366,6 +406,7 @@
                                         -
                                     @endif
                                 </td>
+                                @if($role == 'admin_sdm')
                                 <td>
                                     <div class="btn-list">
                                         <a href="" 
@@ -396,6 +437,7 @@
                                         </form>                                        
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
@@ -633,5 +675,31 @@
         dateFormat: "Y-m-d",
         allowInput: true
     });
+
+    document.getElementById('alert-parameter').onclick = function () {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success ms-2',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: 'Apakah anda Yakin ingin melakukan verifikasi?',
+            // text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Verifikasi!',
+            cancelButtonText: 'Batalkan',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect ke endpoint Laravel untuk verifikasi
+                window.location.href = "/admin_sdm/absensi_verifikasi/store/{{ $pegawai_id }}";
+            } 
+            // Tidak perlu else karena cancel hanya menutup tanpa notif tambahan
+        });
+    }
 </script>
 @endsection

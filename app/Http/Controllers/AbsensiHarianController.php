@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use App\Models\Absensi;
 use App\Models\AbsensiHarian;
+use App\Models\AbsensiVerifikasi;
 use App\Models\DatadiriUser;
 use App\Models\KeteranganAbsensi;
 use App\Rules\TimeFormat;
@@ -31,6 +33,11 @@ class AbsensiHarianController extends Controller
      */
     public function show(Request $request,$id)
     {
+        $user = Auth::user();
+        if($user->role->slug == 'karyawan'){
+            $id = $user->dataDiri->id;
+        }
+
         $request->validate([
             //'pegawai_id'              => 'required|exists:\App\Models\DatadiriUser,id',
             // 'year'                    => 'nullable|string|in:' . implode(',', range(1900, date('Y') + 1)),
@@ -112,14 +119,23 @@ class AbsensiHarianController extends Controller
         }
 
         $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         $pegawai = DatadiriUser::where('id',$id)->first();
         $kepegawaian = $pegawai ? $pegawai->kepegawaian : null;
         $jabatan = $kepegawaian ? $kepegawaian->subJabatan : null;
         $divisi = $kepegawaian ? $kepegawaian->divisi : null;
+
+        $verifikasi = AbsensiVerifikasi::where('pegawai_id',$id)
+            ->where('tahun',Carbon::now()->format('Y'))
+            ->where('bulan',Carbon::now()->format('m'))->first();
+        if($verifikasi) $statusVerifikasi = 'Terverifikasi';
+        else $statusVerifikasi = 'Belum Terverifikasi';
         
         $data = [
             'title' => 'Detail Absensi',
+            'role'=>$role,
             'pegawai_id'=>$id,
+            'verifikasi'=> $statusVerifikasi,
             'nama'=> $pegawai ? $pegawai->nama_lengkap : null,
             'foto_user'=> $pegawai ? $pegawai->foto_user : null,
             'nip'=> $kepegawaian ? $kepegawaian->nip : '-',
@@ -135,11 +151,7 @@ class AbsensiHarianController extends Controller
         ];
         //dd($data);
         // return view('admin.sub_jabatan', $data);
-        if($roleSlug == 'admin-sdm'){
-            return view('admin_sdm.detail_absensi_harian', $data);
-        }else{
-            return redirect()->back()->with('error', 'Anda Tidak Memiliki Akses ke Halaman Ini');
-        }
+        return view('admin_sdm.detail_absensi_harian', $data);
     }
 
     public function store(Request $request,$id)
@@ -264,4 +276,39 @@ class AbsensiHarianController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
         }
     }
+
+        /**
+    * Store a newly created resource in storage.
+    */
+   public function storeVerifikasi(Request $request,$id)
+   {
+        try {
+            DB::beginTransaction();
+
+            $pegawai = DatadiriUser::where('id',$id)->firstOrFail();
+
+            $check = AbsensiVerifikasi::where('pegawai_id',$id)
+                ->where('tahun',Carbon::now()->format('Y'))
+                ->where('bulan',Carbon::now()->format('m'))
+                ->first();
+            if($check) return redirect()->back()->with('error', 'Verifikasi Sudah Dilakukan');
+
+            $data = [
+                'user_id'               => $pegawai->user_id,
+                'pegawai_id'            => $pegawai->id,
+                'tahun'                 => Carbon::now()->format('Y'),
+                'bulan'                 => Carbon::now()->format('m'),
+                'tanggal_verifikasi'    => Carbon::now(),
+            ];
+    
+            AbsensiVerifikasi::create($data);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Verifikasi Berhasil');
+        } catch (Exception $e) {
+            DB::rollback();
+            //return redirect()->back()->with('error', 'Gagal Mengubah Data');
+            return redirect()->back()->with('error', "{$e->getMessage()}");
+        }
+   }
 }

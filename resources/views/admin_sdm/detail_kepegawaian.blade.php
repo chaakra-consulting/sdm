@@ -44,7 +44,7 @@
 
 <div class="container-fluid">
     <div class="mt-1">
-        <a href="/admin_sdm/kepegawaian" class="btn btn-secondary">
+        <a href="/{{ $role }}/kepegawaian" class="btn btn-secondary">
             <i class="bi bi-arrow-left">Kembali</i>
         </a>
     </div>
@@ -144,7 +144,9 @@
                                   </div>
                                   @if($kepegawaian != null)
                                   <button type="button" class="btn btn-danger btn-batal-edit" hidden>Batal</button>
-                                  <button type="button" class="btn btn-warning btn-edit-kepegawaian">Edit</button>
+                                    @if($role == 'admin_sdm')
+                                    <button type="button" class="btn btn-warning btn-edit-kepegawaian">Edit</button>
+                                    @endif
                                   @endif
                                   <button type="submit" class="btn btn-primary btn-submit-kepegawaian" {{ ($kepegawaian != null ? 'hidden' : '') }}>{{ ($kepegawaian != null ? 'Update' : 'Simpan') }}</button>
                                 </form>

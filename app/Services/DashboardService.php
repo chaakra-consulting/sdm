@@ -11,6 +11,7 @@ use App\Models\DataKepegawaian;
 use App\Models\KeteranganAbsensi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -60,7 +61,7 @@ class DashboardService
         $data->push((object)[
             'nama' => 'PERSENTASE KEHADIRAN',
             'slug' => 'persentase-kehadiran',
-            'count'    => $countKehadiran ? round(($countKehadiran/$countHariKerjaPegawai) * 100,2) : 0,
+            'count'    => $countHariKerjaPegawai ? round(($countKehadiran/$countHariKerjaPegawai) * 100,2) : 0,
             // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
         ]);
 
@@ -117,7 +118,6 @@ class DashboardService
         $endDate = $dto->endDate;
         $userId = $dto->userId;
         $data = collect();
-
 
         $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
             return $query->where('user_id', $userId);
@@ -263,10 +263,11 @@ class DashboardService
         $endDate = $dto->endDate;
         $userId = $dto->userId;
         $keteranganAbsensis = KeteranganAbsensi::all();
-        $arrYear = range($startDate->year, $endDate->year);
+        //$arrYear = range($startDate->year, $endDate->year);
+        $year = max($startDate->year, $endDate->year);
         $dataPerMonth = collect();
 
-        foreach ($arrYear as $year) {
+        // foreach ($arrYear as $year) {
             for ($month = 1; $month <= 12; $month++) {
                 $date = Carbon::create($year, $month, 1);
                 
@@ -309,7 +310,7 @@ class DashboardService
                     'data' => $dataKeterangan,
                 ]);
             }
-        }
+        // }
         
         return $dataPerMonth;        
     }  
