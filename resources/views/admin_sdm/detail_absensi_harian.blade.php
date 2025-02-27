@@ -91,12 +91,12 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="upload_surat_dokter" class="form-label">Surat Pendukung</label>
-                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="image/*"
-                            onchange="validateFile(this, 'preview_surat', 'error_surat')">
+                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="pdf/*">
+                            {{-- onchange="validateFile(this, 'preview_surat', 'error_surat')">
                         <!-- Preview gambar akan diupdate setelah pengguna memilih file -->
-                        <img id="preview_surat" alt="Preview Foto KTP"
-                            style="max-width: 150px; margin-top: 10px; display: none;">
-                        <small id="error_surat" class="text-danger" style="display: none;"></small>
+                        <img id="preview_surat" alt="Preview File"
+                            style="max-width: 150px; margin-top: 10px; display: none;"> --}}
+                        {{-- <small id="error_surat" class="text-danger" style="display: none;"></small> --}}
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
                                     @if ($row->absensi)
                                         @if ($row->absensi->status_keterlambatan == 'Terlambat')
                                             <span style="color: red;">{{ $row->absensi->status_keterlambatan }}</span>
-                                        @elseif ($row->absensi->status_keterlambatan == 'Tidak Terlambat')
+                                        @elseif ($row->absensi->status_keterlambatan == 'On Time')
                                             <span style="color: green;">{{ $row->absensi->status_keterlambatan }}</span>
                                         @else
                                             {{ $row->absensi->status_keterlambatan }}
@@ -453,7 +453,10 @@
 <script>
     $('#datatable-basic-month').DataTable({
         "pageLength": 31,
-        "dom": 'ftip',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
+        "dom": 'Bftip',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
+        "buttons": [
+            'copy','excel', 'pdf'
+        ],
         "language": {
             "paginate": {
                 "first": "First",

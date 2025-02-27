@@ -98,7 +98,7 @@ class AbsensiHarianController extends Controller
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
 
             if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
-            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "Tidak Terlambat";
+            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
             else $isTelat = "-";
     
             $absensiCollection->push((object)[
@@ -167,8 +167,9 @@ class AbsensiHarianController extends Controller
                  'keterangan_id'             => 'nullable|exists:\App\Models\KeteranganAbsensi,id',
                  'keterangan'                => 'nullable|string',
                  'durasi_lembur'             => 'nullable|numeric',
-                 'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
-             ]);
+                //  'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                 'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
+                ]);
 
              $userId = DatadiriUser::where('id',$id)->value('user_id');
              $absensi = Absensi::where('hari',strtolower($request->hari_kerja))->first();
@@ -224,7 +225,8 @@ class AbsensiHarianController extends Controller
                 'keterangan_id'             => 'nullable|exists:\App\Models\KeteranganAbsensi,id',
                 'keterangan'                => 'nullable|string',
                 'durasi_lembur'             => 'nullable|numeric',
-                'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                // 'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
             ]);
 
             $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
