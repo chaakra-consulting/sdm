@@ -91,6 +91,10 @@ class AbsensiHarianController extends Controller
         $absensiCollection = collect();
         for ($date = $startDateRange->copy(); $date->lte($endDateRange); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';
+            $year = $date->format('Y');
+            $month = $date->format('m');
+            $day = $date->format('d');
+
             $absensiHarian = AbsensiHarian::where('pegawai_id',$id)->where('tanggal_kerja', $date->toDateString())->first();           
             $keterangan = $absensiHarian ? $absensiHarian->keteranganAbsensi : null;
 
@@ -100,10 +104,19 @@ class AbsensiHarianController extends Controller
             if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
             elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
             else $isTelat = "-";
+
+            if ($day >= 26) $dateVerif = Carbon::create($year, $month + 1, 1);
+            else $dateVerif = Carbon::create($year, $month, 1);
+
+            $absensiVerifikasi = AbsensiVerifikasi::where('pegawai_id',$id)
+                ->where('tahun',intval($dateVerif->format('Y')))
+                ->where('bulan',intval($dateVerif->format('m')))
+                ->first();
     
             $absensiCollection->push((object)[
                 'tanggal' => $date->toDateString(),
                 'hari'    => $absensiHarian && $absensiHarian->hari_kerja ? $absensiHarian->hari_kerja : $hari,
+                'status_verifikasi_absensi'=> $absensiVerifikasi ? true : false,
                 'absensi' => $absensiHarian ? (object)[
                     'id' => $absensiHarian->id,
                     'waktu_masuk' => $absensiHarian->waktu_masuk,

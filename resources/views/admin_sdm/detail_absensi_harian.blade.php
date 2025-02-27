@@ -409,6 +409,7 @@
                                 @if($role == 'admin_sdm')
                                 <td>
                                     <div class="btn-list">
+                                        @if (!$row->status_verifikasi_absensi)
                                         <a href="" 
                                         class="btn btn-warning {{ $row->absensi ? 'editDetailAbsensiHarian' : 'tambahDetailAbsensiHarian' }}" 
                                         data-bs-toggle="modal"
@@ -422,7 +423,7 @@
                                         data-keterangan="{{ $row->absensi && $row->absensi->keterangan ? $row->absensi->keterangan : '' }}"
                                         data-durasi_lembur="{{ $row->absensi && $row->absensi->durasi_lembur ? $row->absensi->durasi_lembur : '' }}"
                                         data-upload_surat_dokter="{{ $row->absensi && $row->absensi->upload_surat_dokter ? asset('uploads/'.$row->absensi->upload_surat_dokter) : '' }}"
-                                        ><i class="fas fa-edit"></i></a>                                    
+                                        ><i class="fas fa-edit"></i></a>
                                         <form action="/admin_sdm/absensi_harian/delete/{{ $row->absensi && $row->absensi->id ? $row->absensi->id : '' }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -434,7 +435,15 @@
                                                 data-id="{{ $row->absensi->id ?? '' }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        </form>                                        
+                                        </form>  
+                                        @else
+                                            <a href="#" class="btn btn-warning disabled">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-danger disabled">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        @endif                                                                          
                                     </div>
                                 </td>
                                 @endif
