@@ -24,6 +24,7 @@ use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -172,6 +173,12 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/divisi/store', [DivisiController::class, 'store'])->name('admin_sdm.divisi.store');
     Route::put('/admin_sdm/divisi/update/{id}', [DivisiController::class, 'update'])->name('admin_sdm.divisi.update');
     Route::delete('/admin_sdm/divisi/delete/{id}', [DivisiController::class, 'destroy'])->name('admin_sdm.divisi.destroy');
+
+    // admin SDM: Hari Libur
+    Route::get('/admin_sdm/hari_libur/', [HariLiburController::class, 'index'])->name('admin_sdm.hari_libur');
+    Route::post('/admin_sdm/hari_libur/store', [HariLiburController::class, 'store'])->name('admin_sdm.hari_libur.store');
+    Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
+    Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {

@@ -131,9 +131,12 @@
         $(".tambahGaji").click(function(){
             $(".modal-title").text('Tambah Gaji Karyawan');
             $(".tambahGajiDropdown").show();
-            $(".editGajiDropdown").hide(); 
-            $("#formGaji").attr('action', '/admin_sdm/gaji/store');
+            $(".editGajiDropdown").hide();
+            
+            $("#formGaji").append('<input type="hidden" name="_method" value="POST">');
+            $("#formGaji").attr('action', '/admin_sdm/gaji/store');           
         })
+        // <form action="" method="POST" id="formGaji">
 
         $(".editGaji").click(function(e){
             e.preventDefault();
