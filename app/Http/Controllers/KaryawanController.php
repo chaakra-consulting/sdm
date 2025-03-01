@@ -34,8 +34,8 @@ class KaryawanController extends Controller
             $startDateRange = Carbon::parse($startDateRange);
             $endDateRange = Carbon::parse($endDateRange);
         }else{
-            $startDateRange = Carbon::now()->startOfMonth();
-            $endDateRange = Carbon::now()->endOfMonth();        
+            $startDateRange = Carbon::now()->subMonth()->day(26);
+            $endDateRange = Carbon::now()->day(25);           
         }
 
         $arrYear = range(max($startDateRange->year, $endDateRange->year), min($startDateRange->year, $endDateRange->year));

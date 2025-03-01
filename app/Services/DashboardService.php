@@ -65,7 +65,10 @@ class DashboardService
             // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
         ]);
 
-        $averageSeconds = $absensiHarians->whereNotNull('waktu_masuk')->map(function ($item) {
+        $averageSeconds = $absensiHarians->whereNotNull('waktu_masuk')->filter(function ($item) {
+            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'lembur']);
+        })
+        ->map(function ($item) {
             return strtotime($item->waktu_masuk);
         })->avg();
         

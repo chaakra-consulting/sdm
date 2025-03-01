@@ -21,6 +21,8 @@ class Functions
                 return "rgb(59, 72, 99, 1)";
             case"alpa":
                 return "rgb(95, 109, 136, 1)";
+            case"ijin-direktur":
+                return "rgb(29, 153, 12, 1)";
             default:
                 return "rgb(241, 0, 117, 1)";
         }
