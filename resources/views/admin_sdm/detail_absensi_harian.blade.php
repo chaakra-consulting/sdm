@@ -394,7 +394,12 @@
                                         -
                                     @endif
                                 </td>
-                                <td>{{ ($row->absensi && $row->absensi->keterangan_absensi  ? $row->absensi->keterangan_absensi : '-') }}</td>
+                                <td>
+                                    @if ($row->absensi && $row->absensi->keterangan_absensi)
+                                    {{ $row->absensi->keterangan_absensi }}
+                                    @else
+                                        {{ $row->status_libur ? 'Hari Libur' : '-' }}
+                                    @endif                                </td>                                
                                 <td>{{ ($row->absensi && $row->absensi->keterangan  ? $row->absensi->keterangan : '-') }}</td>
                                 <td>{{ ($row->absensi && $row->absensi->durasi_lembur  ? $row->absensi->durasi_lembur.' Jam' : '-') }}</td>
                                 <td>
