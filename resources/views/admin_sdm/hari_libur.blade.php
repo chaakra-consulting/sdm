@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('content')
+@php
+    use Carbon\Carbon;
+@endphp
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -61,7 +64,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
-                                    <td>{{ $item->tanggal }}</td>
+                                    <td>{{ $item->tanggal ? Carbon::parse($item->tanggal)->format('d M Y') : '-' }}</td>
                                     <td><a href="" class="btn btn-warning editHariLibur" data-bs-toggle="modal"
                                             data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
                                             data-nama="{{ $item->nama }}"
