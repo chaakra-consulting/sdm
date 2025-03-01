@@ -329,6 +329,7 @@
                                                         <div class="dropdown-menu shadow"><a class="dropdown-item" href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a> 
                                                             <a class="dropdown-item" href="javascript:void(0);"><i class="fe fe-trash-2 me-2"></i> Delete</a>
                                                         </div>
+                                                        
                                                     </div>
                                                     <a href="profile.html">
                                                         <img alt="avatar" class="rounded-circle" src="../assets/images/faces/1.jpg">
