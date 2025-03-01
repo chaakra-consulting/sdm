@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
+use App\Models\User;
 use App\Models\Perusahaan;
+use App\Models\SocialMedia;
 use App\Models\UsersProject;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 class ProjectController extends Controller
 {
@@ -60,10 +64,34 @@ class ProjectController extends Controller
     public function detail(string $id)
     {
         $project = ProjectPerusahaan::where('id', $id)->first();
+        $tasks = Task::where('project_perusahaan_id', $id)->get();
         $perusahaan = Perusahaan::all();
+        $users = UsersProject::where('project_perusahaan_id', $id)
+        ->with
+            ([
+                'user.dataDiri.socialMedias',
+                'user.dataDiri.kepegawaian.subJabatan'
+            ])
+            ->get();
         $title = 'Detail Project';
+        $events = [];
 
-        return view('project.detail_project', compact('project', 'title', 'perusahaan'));
+        if ($project->waktu_mulai) {
+            $events[] = [
+                'title' => 'Mulai: ' . $project->nama_project,
+                'start' => $project->waktu_mulai,
+                'color' => 'green'
+            ];
+        }
+        if ($project->deadline) {
+            $events[] = [
+                'title' => 'Deadline: ' . $project->nama_project,
+                'start' => $project->deadline,
+                'color' => 'red'
+            ];
+        }
+    
+        return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'users'));
     }
 
     public function update(Request $request, $id)

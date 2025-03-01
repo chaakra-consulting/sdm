@@ -273,6 +273,12 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
     Route::delete('/manajer/project/delete/{id}', [ProjectController::class, 'destroy'])->name('manajer.delete.project');
 
+    // manajer : task
+    // Route::get('/manajer/project/task/', [TaskController::class, 'index'])->name('manajer.task');
+    Route::post('/manajer/project/task/store', [TaskController::class, 'store'])->name('manajer.store.task');
+    Route::put('/manajer/project/task/update/{id}', [TaskController::class, 'update'])->name('manajer.update.task');
+    Route::delete('/manajer/project/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
+
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
 });

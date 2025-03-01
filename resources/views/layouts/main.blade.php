@@ -1897,11 +1897,21 @@
     
     <!-- Custom-Switcher JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom-switcher.min.js') }}"></script>
+
+    <!-- Moment JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/moment/moment.js') }}"></script>    
+    
+    <!-- Fullcalendar JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/fullcalendar/main.min.js') }}"></script>
+    <script src="{{ asset('/Tema/dist/assets/js/fullcalendar.js') }}"></script>
     
     <!-- Date & Time Picker JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ asset('/Tema/dist/assets/js/date&time_pickers.js') }}"></script>
-    
+
+    <!-- Modal JS -->
+    <script src="{{ asset('/Tema/dist/assets/js/modal.js') }}"></script>
+
     <!-- Custom JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom.js') }}"></script>
     

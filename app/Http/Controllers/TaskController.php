@@ -14,39 +14,76 @@ class TaskController extends Controller
         $request->validate([
             'project_perusahaan_id' => 'required',
             'nama_task' => 'required',
-            'tgl_task' => 'required',
             'keterangan' => 'nullable',
-            'upload' => 'nullable',
-            'upload.*' => 'mimes:jpeg,png,jpg,pdf|max:3072',
+            'upload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:5120',
         ]);
         
-        $existingFilesCount = Task::whereDate('tgl_task', $request->tgl_task)
-            ->whereNotNull('upload')
-            ->get()
-            ->sum(function ($task) {
-                return is_array(json_decode($task->upload, true)) ? count(json_decode($task->upload, true)) : 0;
-            });
-        $uploadedFiles = [];
+        $uploadPath = null;
         
-        if ($request->hasFile('upload')) {
-            $files = is_array($request->file('upload')) ? $request->file('upload') : [$request->file('upload')];
-            foreach ($files as $index => $file) {
-                $fileNumber = str_pad($existingFilesCount + $index + 1, 2, '0', STR_PAD_LEFT);
-                $fileName = "Task{$fileNumber}_" . time() . "_" . $file->getClientOriginalName();
-                $file->storeAs('uploads', $fileName, 'public');
-                $uploadedFiles[] = $fileName;
-            }
+        if($request->hasFile('upload')){
+            $file = $request->file('upload');
+            $fileName = uniqid() . "_task_" . time(). "." . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $fileName);
+            $uploadPath = $fileName;
         }
-        
-        Task::create([
+
+        $data = [
             'project_perusahaan_id' => $request->project_perusahaan_id,
-            'user_id' => Auth::id(),
+            'tgl_task' => now()->format('Y-m-d'),
+            'user_id' => Auth::user()->id,
             'nama_task' => $request->nama_task,
-            'tgl_task' => $request->tgl_task,
             'keterangan' => $request->keterangan,
-            'upload' => !empty($uploadedFiles) ? json_encode($uploadedFiles) : null,
+            'upload' => $uploadPath,
+        ];
+
+        Task::create($data);
+        return redirect()->back()->with('success', 'Task berhasil di tambahkan');
+    }
+    
+    public function update(Request $request, $id)
+    {
+        $task = Task::find($id);
+
+        $request->validate([
+            'nama_task' => 'required',
+            'keterangan' => 'nullable',
+            'upload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:5120',
+            'user_id' => 'required',            
         ]);
 
-        return redirect()->back()->with('success', 'Task Project berhasil di tambahkan');
+        $task->fill($request->except('upload'));
+
+        if ($request->hasFile('upload')) {
+            if ($task->upload) {
+                $oldPhotoPath = public_path('uploads/' . $task->upload);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
+            }
+            $file = $request->file('upload');
+            $filename = uniqid() . '_task_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $task->upload = $filename;
+        }
+        
+        $data = [
+            'user_id' => $request->user_id,
+            'nama_task' => $request->nama_task,
+            'keterangan' => $request->keterangan,
+            'upload' => $task->upload,
+            'tgl_task' => now()->format('Y-m-d'),
+        ];
+
+        $task->update($data);
+        return redirect()->back()->with('success', 'Task berhasil di update');
+    }
+
+    public function destroy($id)
+    {
+        dd($id);
+        $task = Task::find($id);
+        $task->delete();
+
+        return redirect()->back()->with('succeess', 'Task Berhasil di hapus');
     }
 }
