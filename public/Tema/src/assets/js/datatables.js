@@ -9,6 +9,24 @@ $(function (e) {
         "pageLength": 10,
         // scrollX: true
     });
+
+    $('#datatable-aktif').DataTable({
+        language: {
+            searchPlaceholder: 'Search...',
+            sSearch: '',
+        },
+        "pageLength": 10,
+        // scrollX: true
+    });
+
+    $('#datatable-tidak-aktif').DataTable({
+        language: {
+            searchPlaceholder: 'Search...',
+            sSearch: '',
+        },
+        "pageLength": 10,
+        // scrollX: true
+    });
     // basic datatable
     $('#datatable-basic-month').DataTable({
         language: {
