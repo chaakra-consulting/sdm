@@ -3,6 +3,11 @@
 @section('content')
 
 <div class="container-fluid">
+    <style>
+        #barKehadiranValuePerHari, #barKehadiranPercentagePerHari {
+            max-height: 300px;
+        }
+    </style>
     <!-- row -->
     <div class="row">
         <div class="card-body">
