@@ -16,6 +16,7 @@ class DataKepegawaian extends Model
         'tgl_masuk',
         'tgl_berakhir',
         'no_npwp',
+        'is_active',
         'nip'
     ];
 

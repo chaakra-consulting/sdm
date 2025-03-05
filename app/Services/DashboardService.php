@@ -83,15 +83,18 @@ class DashboardService
 
         $totalKeterlambatan = 0;
     
-        $countKeterlambatan = $absensiHarians->filter(function ($absensiHarian) use (&$totalKeterlambatan, &$jumlahTerlambat) {
+        $countKeterlambatan = $absensiHarians->filter(function ($absensiHarian) use (&$totalKeterlambatan) {
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data['batas_waktu_terlambat'] ?? null;
-    
-            // Pastikan batas keterlambatan dan waktu masuk tidak null sebelum perbandingan
+        
+            if (!isset($absensiHarian->keteranganAbsensi) || !in_array($absensiHarian->keteranganAbsensi->slug, ['wfo', 'lembur'])) {
+                return false;
+            }
+
             if ($batasWaktuTerlambat && $absensiHarian->waktu_masuk) {
                 $batasTimestamp = strtotime($batasWaktuTerlambat);
                 $waktuMasukTimestamp = strtotime($absensiHarian->waktu_masuk);
-    
+        
                 if ($waktuMasukTimestamp > $batasTimestamp) {
                     $selisihMenit = ($waktuMasukTimestamp - $batasTimestamp) / 60;
                     $totalKeterlambatan += $selisihMenit;
@@ -99,11 +102,9 @@ class DashboardService
                 }
             }
             return false;
-        })->count();
+        })->count();        
     
-        // Hitung rata-rata keterlambatan dalam menit
         $rataRataKeterlambatan = $countKeterlambatan > 0 ? round($totalKeterlambatan / $countKeterlambatan, 2) : 0;
-        //dd($countKeterlambatan);
 
         $data->push((object)[
             'nama'      => 'RATA-RATA KETERLAMBATAN',

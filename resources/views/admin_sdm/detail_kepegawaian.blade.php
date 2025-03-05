@@ -138,6 +138,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <label for="is_active" class="form-label">Status Keaktifan</label>
+                                        <select name="is_active" id="is_active" class="form-control" {{ ($kepegawaian != null ? 'disabled' : '') }}>
+                                            <option selected disabled>Pilih Status Keaktifan</option>
+                                            <option value="1" {{ isset($kepegawaian) && $kepegawaian->is_active == true ? 'selected' : '' }}>Aktif</option>
+                                            <option value="0" {{ isset($kepegawaian) && $kepegawaian->is_active == false ? 'selected' : '' }}>Tidak Aktif</option>
+                                        </select>
+                                    </div>                                    
+                                    <div class="form-group">
                                         <label for="no_npwp" class="form-label">No NPWP</label>
                                         <input type="number" name="no_npwp" id="no_npwp" class="form-control" placeholder="Masukan Nomer NPWP Jika Ada" value="{{ old('no_npwp', ($kepegawaian == null ? '' : $kepegawaian->no_npwp)) }}" {{ ($kepegawaian != null ? 'disabled' : '') }}>
                                     </div>
@@ -521,6 +529,7 @@
             $("#status_pekerjaan_id").prop('disabled', false);
             $("#tgl_masuk").prop('disabled', false);
             $("#tgl_berakhir").prop('disabled', false);
+            $("#is_active").prop('disabled', false);
             $("#no_npwp").prop('disabled', false);
 
             $('.btn-batal-edit').click(function(){
@@ -528,6 +537,7 @@
                 $("#status_pekerjaan_id").prop('disabled', true);
                 $("#tgl_masuk").prop('disabled', true);
                 $("#tgl_berakhir").prop('disabled', true);
+                $("#is_active").prop('disabled', true);
                 $("#no_npwp").prop('disabled', true);
 
                 $('.btn-edit-kepegawaian').fadeIn(200);
