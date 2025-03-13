@@ -18,15 +18,22 @@ class GajiController extends Controller
     public function index()
     {
         $roleSlug = Auth::user()->role->slug;
-        $gajis = Gaji::get();
+        $gajis = Gaji::whereHas('pegawai.kepegawaian', function ($query) {
+            $query->where('is_active', 1);
+        })->get(); 
+        
+        $gajisNotActive = Gaji::whereHas('pegawai.kepegawaian', function ($query) {
+            $query->where('is_active', 0);
+        })->get(); 
+        
         $pegawais = DatadiriUser::whereNotIn('id', $gajis->pluck('pegawai_id'))->get();
         //$pegawais = DatadiriUser::get();
         
         $data = [
             'title' => 'Data Gaji Karyawan',
             'pegawais' => $pegawais,
-            //'listPegawais' => $listPegawais,
-            'gajis' => $gajis
+            'gajis' => $gajis,
+            'gajis_not_active' => $gajisNotActive,
         ];
 
         // return view('admin.sub_jabatan', $data);
@@ -44,11 +51,11 @@ class GajiController extends Controller
  
              $request->validate([
                  'pegawai_id'                => 'required|exists:\App\Models\DatadiriUser,id',
-                 'gaji_pokok'                => 'required|numeric',
-                 'uang_makan'                => 'nullable|numeric',
-                 'uang_bensin'               => 'nullable|numeric',
-                 'bpjs_ketenagakerjaan'      => 'nullable|numeric',
-                 'bpjs_kesehatan'            => 'nullable|numeric',
+                 'gaji_pokok'                => 'required',
+                 'uang_makan'                => 'nullable',
+                 'uang_bensin'               => 'nullable',
+                 'bpjs_ketenagakerjaan'      => 'nullable',
+                 'bpjs_kesehatan'            => 'nullable',
              ]);
              
              $userId = DatadiriUser::where('id',$request->pegawai_id)->value('user_id');
@@ -86,11 +93,11 @@ class GajiController extends Controller
              }
  
              $request->validate([
-                 'gaji_pokok'                => 'required|numeric',
-                 'uang_makan'                => 'nullable|numeric',
-                 'uang_bensin'               => 'nullable|numeric',
-                 'bpjs_ketenagakerjaan'      => 'nullable|numeric',
-                 'bpjs_kesehatan'            => 'nullable|numeric',
+                 'gaji_pokok'                => 'required',
+                 'uang_makan'                => 'nullable',
+                 'uang_bensin'               => 'nullable',
+                 'bpjs_ketenagakerjaan'      => 'nullable',
+                 'bpjs_kesehatan'            => 'nullable',
              ]);
 
              $updateData = collect([
@@ -104,7 +111,7 @@ class GajiController extends Controller
             $gaji->update($updateData->toArray());
              
              DB::commit();
-             return redirect()->back()->with('success', 'Data Gaji Berhasil Dibuat');
+             return redirect()->back()->with('success', 'Data Gaji Berhasil Diubah');
          } catch (Exception $e) {
              DB::rollback();
              //return redirect()->back()->withInput()->with('error', 'Gagal Mengubah Data');
