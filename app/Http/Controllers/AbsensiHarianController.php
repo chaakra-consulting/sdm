@@ -10,6 +10,7 @@ use App\Models\DatadiriUser;
 use App\Models\HariLibur;
 use App\Models\KeteranganAbsensi;
 use App\Rules\TimeFormat;
+use App\Services\GajiBulananService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,6 +20,10 @@ use Illuminate\Validation\Rule;
 
 class AbsensiHarianController extends Controller
 {
+    public function __construct(
+        protected GajiBulananService $gajiBulananService,
+    ) {
+    }
     //  /**
     //  * Display a listing of the resource.
     //  */
@@ -76,7 +81,7 @@ class AbsensiHarianController extends Controller
 
         $terlambatCount = $widget->filter(function ($item) {
             $data = json_decode($item->data ?? null, true);
-            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'];
+            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'] && $item->keteranganAbsensi->slug != 'ijin-direktur';
         })->count();
 
         $widgetCollection->push((object)[
@@ -108,10 +113,14 @@ class AbsensiHarianController extends Controller
 
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
-
-            if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
-            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
-            else $isTelat = "-";
+            
+            if($keterangan && ($keterangan->slug != 'ijin-direktur')){
+                if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
+                else $isTelat = "-";
+            }else{
+                $isTelat =  "On Time";
+            }
 
             if ($day >= 26) $dateVerif = Carbon::create($year, $month + 1, 1);
             else $dateVerif = Carbon::create($year, $month, 1);
@@ -327,6 +336,8 @@ class AbsensiHarianController extends Controller
             ];
     
             AbsensiVerifikasi::create($data);
+
+            $this->gajiBulananService->generateGajiBulananPegawai($data);
 
             DB::commit();
             return redirect()->back()->with('success', 'Verifikasi Berhasil');
