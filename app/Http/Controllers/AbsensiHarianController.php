@@ -20,10 +20,10 @@ use Illuminate\Validation\Rule;
 
 class AbsensiHarianController extends Controller
 {
-    public function __construct(
-        protected GajiBulananService $gajiBulananService,
-    ) {
-    }
+    // public function __construct(
+    //     protected GajiBulananService $gajiBulananService,
+    // ) {
+    // }
     //  /**
     //  * Display a listing of the resource.
     //  */
@@ -337,7 +337,7 @@ class AbsensiHarianController extends Controller
     
             AbsensiVerifikasi::create($data);
 
-            $this->gajiBulananService->generateGajiBulananPegawai($data);
+            // $this->gajiBulananService->generateGajiBulananPegawai($data);
 
             DB::commit();
             return redirect()->back()->with('success', 'Verifikasi Berhasil');
