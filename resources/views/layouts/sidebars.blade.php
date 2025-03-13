@@ -262,7 +262,7 @@
                     <!-- End::slide -->
 
                     <!-- Start::slide -->
-                    <li class="slide has-sub">
+                    {{-- <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
@@ -284,7 +284,7 @@
                                     Bulanan</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide -->
+                    </li> <!-- End::slide --> --}}
 
                     {{-- <!-- Start::slide -->
                     <li class="slide has-sub">
