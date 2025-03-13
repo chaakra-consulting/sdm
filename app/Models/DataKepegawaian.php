@@ -20,6 +20,11 @@ class DataKepegawaian extends Model
         'nip'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     public function subJabatan()
     {
         return $this->belongsTo(SubJabatan::class, 'sub_jabatan_id', 'id');
