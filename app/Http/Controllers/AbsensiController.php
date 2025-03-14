@@ -48,9 +48,9 @@ class AbsensiController extends Controller
             $request->validate([
                 // 'id'                       => 'required|exists:\App\Models\Absensi,id',
                 //'hari'                      => 'nullable|in:senin,selasa,rabu,kamis,jumat,sabtu,minggu',
-                'waktu_masuk'               => 'nullable|date_format:H:i:s',
-                'waktu_pulang'              => 'nullable|date_format:H:i:s',
-                'batas_waktu_terlambat'     => 'nullable|date_format:H:i:s',
+                'waktu_masuk'               => 'nullable',
+                'waktu_pulang'              => 'nullable',
+                'batas_waktu_terlambat'     => 'nullable',
                 'denda_terlambat'           => 'nullable|string',
                 'overtime'                  => 'nullable|numeric',
                 //'is_libur'                  => 'nullable|boolean',
