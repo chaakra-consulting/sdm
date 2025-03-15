@@ -160,6 +160,7 @@
                     </li> <!-- End::slide -->
                     
                     <!-- Start::slide -->
+                    @if(Auth::user()->dataDiri)
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -174,11 +175,13 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="{{ route('karyawan.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
-                                    class="side-menu__item {{ request()->routeIs('karyawan.absensi_harian.show') ? 'active' : '' }}">Data
-                                    Absensi Harian</a>
+                                    class="side-menu__item {{ request()->routeIs('karyawan.absensi_harian.show') ? 'active' : '' }}">
+                                    Data Absensi Harian
+                                </a>
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
+                    @endif                
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
