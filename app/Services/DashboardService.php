@@ -56,7 +56,7 @@ class DashboardService
         })
         ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
         $countKehadiran = $absensiHarians->filter(function ($item) {
-            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'wfh', 'lembur']);
+            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'wfh', 'lembur','ijin-direktur']);
         })->count();
 
         $data->push((object)[
