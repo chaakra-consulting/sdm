@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tb_gaji_bulanans', function (Blueprint $table) {
-            $table->string('hash')->after('id');
+            $table->string('hash')->unique()->after('id');
             $table->unsignedBigInteger('pegawai_id')->after('user_id')->index('FK_gaji_bulanans_pegawais');
             $table->unsignedBigInteger('gaji_pokok')->after('tanggal_gaji');
             $table->unsignedBigInteger('potongan_bpjs_ketenagakerjaan')->after('potongan_pajak');
