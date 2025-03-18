@@ -7,8 +7,10 @@ use App\Models\Absensi;
 use App\Models\AbsensiHarian;
 use App\Models\AbsensiVerifikasi;
 use App\Models\DatadiriUser;
+use App\Models\HariLibur;
 use App\Models\KeteranganAbsensi;
 use App\Rules\TimeFormat;
+use App\Services\GajiBulananService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,6 +20,10 @@ use Illuminate\Validation\Rule;
 
 class AbsensiHarianController extends Controller
 {
+    // public function __construct(
+    //     protected GajiBulananService $gajiBulananService,
+    // ) {
+    // }
     //  /**
     //  * Display a listing of the resource.
     //  */
@@ -61,7 +67,9 @@ class AbsensiHarianController extends Controller
         for ($date = clone $startDateRange; $date->lte($endDateRange); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            if($isLibur == false) $countHariKerja++;
+            $isHariLibur = HariLibur::where('tanggal',$date)->first();
+
+            if($isLibur == false && !$isHariLibur) $countHariKerja++;
         }
     
         $widgetCollection->push((object)[
@@ -73,7 +81,7 @@ class AbsensiHarianController extends Controller
 
         $terlambatCount = $widget->filter(function ($item) {
             $data = json_decode($item->data ?? null, true);
-            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'];
+            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'] && $item->keteranganAbsensi->slug != 'ijin-direktur';
         })->count();
 
         $widgetCollection->push((object)[
@@ -91,19 +99,42 @@ class AbsensiHarianController extends Controller
         $absensiCollection = collect();
         for ($date = $startDateRange->copy(); $date->lte($endDateRange); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';
+            $year = $date->format('Y');
+            $month = $date->format('m');
+            $day = $date->format('d');
+        
+            $isLibur = Absensi::where('hari',$hari)->value('is_libur');
+            $isHariLibur = HariLibur::where('tanggal',$date)->first();
+
+            $statusLibur = ($isLibur == true || $isHariLibur) ? true : false;
+
             $absensiHarian = AbsensiHarian::where('pegawai_id',$id)->where('tanggal_kerja', $date->toDateString())->first();           
             $keterangan = $absensiHarian ? $absensiHarian->keteranganAbsensi : null;
 
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
+            
+            if($keterangan && ($keterangan->slug != 'ijin-direktur')){
+                if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
+                else $isTelat = "-";
+            }else{
+                $isTelat =  "On Time";
+            }
 
-            if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
-            elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "Tidak Terlambat";
-            else $isTelat = "-";
+            if ($day >= 26) $dateVerif = Carbon::create($year, $month + 1, 1);
+            else $dateVerif = Carbon::create($year, $month, 1);
+
+            $absensiVerifikasi = AbsensiVerifikasi::where('pegawai_id',$id)
+                ->where('tahun',intval($dateVerif->format('Y')))
+                ->where('bulan',intval($dateVerif->format('m')))
+                ->first();
     
             $absensiCollection->push((object)[
                 'tanggal' => $date->toDateString(),
                 'hari'    => $absensiHarian && $absensiHarian->hari_kerja ? $absensiHarian->hari_kerja : $hari,
+                'status_verifikasi_absensi'=> $absensiVerifikasi ? true : false,
+                'status_libur'=> $statusLibur,
                 'absensi' => $absensiHarian ? (object)[
                     'id' => $absensiHarian->id,
                     'waktu_masuk' => $absensiHarian->waktu_masuk,
@@ -117,6 +148,7 @@ class AbsensiHarianController extends Controller
                 ] : null,
             ]);
         }
+        //dd($absensiCollection);
 
         $roleSlug = Auth::user()->role->slug;
         $role = Functions::generateUrlByRoleSlug($roleSlug);
@@ -167,8 +199,9 @@ class AbsensiHarianController extends Controller
                  'keterangan_id'             => 'nullable|exists:\App\Models\KeteranganAbsensi,id',
                  'keterangan'                => 'nullable|string',
                  'durasi_lembur'             => 'nullable|numeric',
-                 'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
-             ]);
+                //  'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                 'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
+                ]);
 
              $userId = DatadiriUser::where('id',$id)->value('user_id');
              $absensi = Absensi::where('hari',strtolower($request->hari_kerja))->first();
@@ -224,7 +257,8 @@ class AbsensiHarianController extends Controller
                 'keterangan_id'             => 'nullable|exists:\App\Models\KeteranganAbsensi,id',
                 'keterangan'                => 'nullable|string',
                 'durasi_lembur'             => 'nullable|numeric',
-                'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                // 'upload_surat_dokter'       => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
+                'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
             ]);
 
             $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
@@ -302,6 +336,8 @@ class AbsensiHarianController extends Controller
             ];
     
             AbsensiVerifikasi::create($data);
+
+            // $this->gajiBulananService->generateGajiBulananPegawai($data);
 
             DB::commit();
             return redirect()->back()->with('success', 'Verifikasi Berhasil');

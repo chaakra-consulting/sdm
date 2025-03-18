@@ -35,27 +35,27 @@
                 <div class="form-group">
                     <label for="gaji_pokok">Gaji Pokok</label>
                     {{-- <input type="number" name="gaji_pokok" id="gaji_pokok" value= "gaji_pokok" class="form-control" required> --}}
-                    <input type="number" name="gaji_pokok" id="gaji_pokok" value="{{ old('gaji_pokok') }}" class="form-control">
+                    <input type="text" name="gaji_pokok" id="gaji_pokok" value="{{ old('gaji_pokok') }}" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="uang_makan">Uang Makan</label>
                     {{-- <input type="number" name="uang_makan" id="uang_makan" value= "uang_makan"class="form-control" required> --}}
-                    <input type="number" name="uang_makan" id="uang_makan" value="{{ old('uang_makan') }}"class="form-control">
+                    <input type="text" name="uang_makan" id="uang_makan" value="{{ old('uang_makan') }}"class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="uang_bensin">Uang Bensin</label>
                     {{-- <input type="number" name="uang_bensin" id="uang_bensin" value= "uang_bensin"class="form-control" required> --}}
-                    <input type="number" name="uang_bensin" id="uang_bensin" value="{{ old('uang_bensin') }}"class="form-control">
+                    <input type="text" name="uang_bensin" id="uang_bensin" value="{{ old('uang_bensin') }}"class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="bpjs_ketenagakerjaan">BPJS Ketenagakerjaan</label>
                     {{-- <input type="number" name="bpjs_ketenagakerjaan" id="bpjs_ketenagakerjaan" value= "bpjs_ketenagakerjaan"class="form-control" required> --}}
-                    <input type="number" name="bpjs_ketenagakerjaan" id="bpjs_ketenagakerjaan" value="{{ old('bpjs_ketenagakerjaan') }}"class="form-control">
+                    <input type="text" name="bpjs_ketenagakerjaan" id="bpjs_ketenagakerjaan" value="{{ old('bpjs_ketenagakerjaan') }}"class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="bpjs_kesehatan">BPJS Kesehatan</label>
                     {{-- <input type="number" name="bpjs_kesehatan" id="bpjs_kesehatan" value= "bpjs_kesehatan"class="form-control" required> --}}
-                    <input type="number" name="bpjs_kesehatan" id="bpjs_kesehatan" value="{{ old('bpjs_kesehatan') }}"class="form-control">
+                    <input type="text" name="bpjs_kesehatan" id="bpjs_kesehatan" value="{{ old('bpjs_kesehatan') }}"class="form-control">
                 </div>
             </div>
             <div class="modal-footer">
@@ -76,48 +76,123 @@
         </button>
     </div>
     <div class="card custom-card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <div class="card-title">
                 Gaji Karyawan
             </div>
+            <ul class="nav nav-pills nav-style-2 mb-3" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                        href="#aktif" aria-selected="true">Aktif</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" role="tab" href="#tidak-aktif"
+                        aria-selected="false">Tidak Aktif</a>
+                </li>
+            </ul>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table
-                    id="datatable-basic"
-                    class="table table-bordered text-nowrap w-100"
-                >
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Karyawan</th>
-                            <th>Gaji Pokok</th>
-                            <th>Uang Makan</th>
-                            <th>Uang Bensin</th>
-                            <th>BPJS Ketenagakerjaan</th>
-                            <th>BPJS Kesehatan</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($gajis as $row)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}</td>
-                                <td>{{ $row->gaji_pokok ?? '-'}}</td>
-                                <td>{{ $row->uang_makan ?? '-' }}</td>
-                                <td>{{ $row->uang_bensin ?? '-' }}</td>
-                                <td>{{ $row->bpjs_ketenagakerjaan ?? '-' }}</td>
-                                <td>{{ $row->bpjs_kesehatan ?? '-' }}</td>
-                                <td>
-                                    <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdrop" data-id="{{ $row->id }}" data-pegawai_id="{{ $row->pegawai_id }}" data-pegawai_nama="{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}" data-gaji_pokok="{{ $row->gaji_pokok }}" data-uang_makan="{{ $row->uang_makan }}" data-uang_bensin="{{ $row->uang_bensin }}" data-bpjs_ketenagakerjaan="{{ $row->bpjs_ketenagakerjaan }}" data-bpjs_kesehatan="{{ $row->bpjs_kesehatan }}"><i class="fas fa-edit"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="tab-content">
+                <div class="tab-pane show active text-muted" id="aktif"
+                    role="tabpanel">
+                    <div class="table-responsive">
+                        <table
+                            id="datatable-basic"
+                            class="table table-bordered text-nowrap w-100"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Gaji Pokok</th>
+                                    <th>Uang Makan</th>
+                                    <th>Uang Bensin</th>
+                                    <th>BPJS Ketenagakerjaan</th>
+                                    <th>BPJS Kesehatan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($gajis as $row)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}</td>
+                                        <td>Rp. {{ number_format($row->gaji_pokok ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->uang_makan ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->uang_bensin ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->bpjs_ketenagakerjaan ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->bpjs_kesehatan ?? 0, 0, ',', '.') }}</td>
+                                        
+                                        <td>
+                                            <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdrop" 
+                                                title="Edit"
+                                                data-id="{{ $row->id }}"
+                                                data-pegawai_id="{{ $row->pegawai_id }}" 
+                                                data-pegawai_nama="{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}" 
+                                                data-gaji_pokok="{{ $row->gaji_pokok }}" 
+                                                data-uang_makan="{{ $row->uang_makan }}" 
+                                                data-uang_bensin="{{ $row->uang_bensin }}" 
+                                                data-bpjs_ketenagakerjaan="{{ $row->bpjs_ketenagakerjaan }}" 
+                                                data-bpjs_kesehatan="{{ $row->bpjs_kesehatan }}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane text-muted" id="tidak-aktif" role="tabpanel">
+                    <div class="table-responsive">
+                        <table
+                            id="datatable-tidak-aktif"
+                            class="table table-bordered text-nowrap w-100"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Gaji Pokok</th>
+                                    <th>Uang Makan</th>
+                                    <th>Uang Bensin</th>
+                                    <th>BPJS Ketenagakerjaan</th>
+                                    <th>BPJS Kesehatan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($gajis_not_active as $row)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}</td>
+                                        <td>Rp. {{ number_format($row->gaji_pokok ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->uang_makan ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->uang_bensin ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->bpjs_ketenagakerjaan ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->bpjs_kesehatan ?? 0, 0, ',', '.') }}</td>                                        
+                                        <td>
+                                            <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdrop" 
+                                                title="Edit"
+                                                data-id="{{ $row->id }}"
+                                                data-pegawai_id="{{ $row->pegawai_id }}" 
+                                                data-pegawai_nama="{{ $row->pegawai && $row->pegawai->nama_lengkap ?  $row->pegawai->nama_lengkap : '-'}}" 
+                                                data-gaji_pokok="{{ $row->gaji_pokok }}" 
+                                                data-uang_makan="{{ $row->uang_makan }}" 
+                                                data-uang_bensin="{{ $row->uang_bensin }}" 
+                                                data-bpjs_ketenagakerjaan="{{ $row->bpjs_ketenagakerjaan }}" 
+                                                data-bpjs_kesehatan="{{ $row->bpjs_kesehatan }}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -131,9 +206,12 @@
         $(".tambahGaji").click(function(){
             $(".modal-title").text('Tambah Gaji Karyawan');
             $(".tambahGajiDropdown").show();
-            $(".editGajiDropdown").hide(); 
-            $("#formGaji").attr('action', '/admin_sdm/gaji/store');
+            $(".editGajiDropdown").hide();
+            
+            $("#formGaji").append('<input type="hidden" name="_method" value="POST">');
+            $("#formGaji").attr('action', '/admin_sdm/gaji/store');           
         })
+        // <form action="" method="POST" id="formGaji">
 
         $(".editGaji").click(function(e){
             e.preventDefault();
@@ -153,5 +231,78 @@
             $("#formGaji").attr('action', '/admin_sdm/gaji/update/' + $(this).data('id'));
         })
     })
+
+    $(document).ready(function() {
+        $('#datatable-tidak-aktif').DataTable({
+            "pageLength": 10,
+            "dom": 'lftip', // Menampilkan dropdown "Show entries" (l), filter/search (f), tabel (t), informasi (i), dan pagination (p)
+            "language": {
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                },
+                "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                "search": "" // Kosongkan karena kita akan memasukkan placeholder manual
+            },
+            "initComplete": function() {
+                var input = $('div.dataTables_filter input');
+                input.attr('placeholder', 'Cari data...'); // Tambahkan placeholder di kolom search
+                input.addClass('form-control'); // Tambahkan class Bootstrap (opsional)
+            }
+        });
+    });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input[type="text"]');
+
+        function applyInitialFormat() {
+            inputs.forEach(input => {
+                if (input.value) {
+                    input.value = formatRupiah(input.value.replace(/\D/g, ""));
+                }
+            });
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                let value = this.value.replace(/\D/g, ""); 
+                this.value = value ? formatRupiah(value) : "";
+            });
+
+            input.addEventListener("keypress", function (event) {
+                let charCode = event.which ? event.which : event.keyCode;
+                if (charCode < 48 || charCode > 57) {
+                    event.preventDefault();
+                }
+            });
+
+            input.addEventListener("blur", function () {
+                this.value = formatRupiah(this.value.replace(/\D/g, ""));
+            });
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function () {
+                applyInitialFormat();
+            });
+        });
+
+        applyInitialFormat();
+
+        document.querySelectorAll("form").forEach(form => {
+            form.addEventListener("submit", function () {
+                inputs.forEach(input => {
+                    input.value = input.value.replace(/\./g, "");
+                });
+            });
+        });
+
+        function formatRupiah(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+    });
+
 </script>
 @endsection

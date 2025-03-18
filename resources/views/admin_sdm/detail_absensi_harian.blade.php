@@ -91,12 +91,12 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="upload_surat_dokter" class="form-label">Surat Pendukung</label>
-                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="image/*"
-                            onchange="validateFile(this, 'preview_surat', 'error_surat')">
+                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="pdf/*">
+                            {{-- onchange="validateFile(this, 'preview_surat', 'error_surat')">
                         <!-- Preview gambar akan diupdate setelah pengguna memilih file -->
-                        <img id="preview_surat" alt="Preview Foto KTP"
-                            style="max-width: 150px; margin-top: 10px; display: none;">
-                        <small id="error_surat" class="text-danger" style="display: none;"></small>
+                        <img id="preview_surat" alt="Preview File"
+                            style="max-width: 150px; margin-top: 10px; display: none;"> --}}
+                        {{-- <small id="error_surat" class="text-danger" style="display: none;"></small> --}}
                     </div>
                 </div>
             </div>
@@ -267,8 +267,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-2">
-                    <div class="card bg-danger-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-danger text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -279,8 +279,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2">
-                    <div class="card bg-primary-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-primary text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -291,8 +291,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2">
-                    <div class="card bg-teal-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-teal text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -303,8 +303,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2">
-                    <div class="card bg-purple-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-purple text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -315,8 +315,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2">
-                    <div class="card bg-dark-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-dark text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -327,13 +327,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2">
-                    <div class="card bg-secondary-gradient text-fixed-white">
+                <div class="col-lg-3">
+                    <div class="card bg-secondary text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
                                     <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
                                     <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card bg-pink text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[8]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[8]->count }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card bg-success text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                <div class="mt-0 text-center">
+                                    <span class="text-fixed-white">{{ $widget[9]->nama }}</span>
+                                    <h3 class="text-fixed-white mb-0">{{ $widget[9]->count }}</h3>
                                 </div>
                             </div>
                         </div>
@@ -385,7 +409,7 @@
                                     @if ($row->absensi)
                                         @if ($row->absensi->status_keterlambatan == 'Terlambat')
                                             <span style="color: red;">{{ $row->absensi->status_keterlambatan }}</span>
-                                        @elseif ($row->absensi->status_keterlambatan == 'Tidak Terlambat')
+                                        @elseif ($row->absensi->status_keterlambatan == 'On Time')
                                             <span style="color: green;">{{ $row->absensi->status_keterlambatan }}</span>
                                         @else
                                             {{ $row->absensi->status_keterlambatan }}
@@ -394,7 +418,12 @@
                                         -
                                     @endif
                                 </td>
-                                <td>{{ ($row->absensi && $row->absensi->keterangan_absensi  ? $row->absensi->keterangan_absensi : '-') }}</td>
+                                <td>
+                                    @if ($row->absensi && $row->absensi->keterangan_absensi)
+                                    {{ $row->absensi->keterangan_absensi }}
+                                    @else
+                                        {{ $row->status_libur ? 'Hari Libur' : '-' }}
+                                    @endif                                </td>                                
                                 <td>{{ ($row->absensi && $row->absensi->keterangan  ? $row->absensi->keterangan : '-') }}</td>
                                 <td>{{ ($row->absensi && $row->absensi->durasi_lembur  ? $row->absensi->durasi_lembur.' Jam' : '-') }}</td>
                                 <td>
@@ -409,6 +438,7 @@
                                 @if($role == 'admin_sdm')
                                 <td>
                                     <div class="btn-list">
+                                        @if (!$row->status_verifikasi_absensi)
                                         <a href="" 
                                         class="btn btn-warning {{ $row->absensi ? 'editDetailAbsensiHarian' : 'tambahDetailAbsensiHarian' }}" 
                                         data-bs-toggle="modal"
@@ -422,7 +452,7 @@
                                         data-keterangan="{{ $row->absensi && $row->absensi->keterangan ? $row->absensi->keterangan : '' }}"
                                         data-durasi_lembur="{{ $row->absensi && $row->absensi->durasi_lembur ? $row->absensi->durasi_lembur : '' }}"
                                         data-upload_surat_dokter="{{ $row->absensi && $row->absensi->upload_surat_dokter ? asset('uploads/'.$row->absensi->upload_surat_dokter) : '' }}"
-                                        ><i class="fas fa-edit"></i></a>                                    
+                                        ><i class="fas fa-edit"></i></a>
                                         <form action="/admin_sdm/absensi_harian/delete/{{ $row->absensi && $row->absensi->id ? $row->absensi->id : '' }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -434,7 +464,15 @@
                                                 data-id="{{ $row->absensi->id ?? '' }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        </form>                                        
+                                        </form>  
+                                        @else
+                                            <a href="#" class="btn btn-warning disabled">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-danger disabled">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        @endif                                                                          
                                     </div>
                                 </td>
                                 @endif
@@ -453,7 +491,10 @@
 <script>
     $('#datatable-basic-month').DataTable({
         "pageLength": 31,
-        "dom": 'ftip',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
+        "dom": 'Bftip',// fp // Menyertakan search box (f), tabel (t), informasi (i), dan pagination (p)
+        "buttons": [
+            'copy','excel', 'pdf'
+        ],
         "language": {
             "paginate": {
                 "first": "First",

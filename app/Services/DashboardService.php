@@ -9,6 +9,7 @@ use App\Models\AbsensiHarian;
 use App\Models\DatadiriUser;
 use App\Models\DataKepegawaian;
 use App\Models\KeteranganAbsensi;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -55,7 +56,7 @@ class DashboardService
         })
         ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
         $countKehadiran = $absensiHarians->filter(function ($item) {
-            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'wfh', 'lembur']);
+            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'wfh', 'lembur','ijin-direktur']);
         })->count();
 
         $data->push((object)[
@@ -65,7 +66,10 @@ class DashboardService
             // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
         ]);
 
-        $averageSeconds = $absensiHarians->whereNotNull('waktu_masuk')->map(function ($item) {
+        $averageSeconds = $absensiHarians->whereNotNull('waktu_masuk')->filter(function ($item) {
+            return $item->keteranganAbsensi && in_array($item->keteranganAbsensi->slug, ['wfo', 'lembur']);
+        })
+        ->map(function ($item) {
             return strtotime($item->waktu_masuk);
         })->avg();
         
@@ -80,15 +84,18 @@ class DashboardService
 
         $totalKeterlambatan = 0;
     
-        $countKeterlambatan = $absensiHarians->filter(function ($absensiHarian) use (&$totalKeterlambatan, &$jumlahTerlambat) {
+        $countKeterlambatan = $absensiHarians->filter(function ($absensiHarian) use (&$totalKeterlambatan) {
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data['batas_waktu_terlambat'] ?? null;
-    
-            // Pastikan batas keterlambatan dan waktu masuk tidak null sebelum perbandingan
+        
+            if (!isset($absensiHarian->keteranganAbsensi) || !in_array($absensiHarian->keteranganAbsensi->slug, ['wfo', 'lembur'])) {
+                return false;
+            }
+
             if ($batasWaktuTerlambat && $absensiHarian->waktu_masuk) {
                 $batasTimestamp = strtotime($batasWaktuTerlambat);
                 $waktuMasukTimestamp = strtotime($absensiHarian->waktu_masuk);
-    
+        
                 if ($waktuMasukTimestamp > $batasTimestamp) {
                     $selisihMenit = ($waktuMasukTimestamp - $batasTimestamp) / 60;
                     $totalKeterlambatan += $selisihMenit;
@@ -96,11 +103,9 @@ class DashboardService
                 }
             }
             return false;
-        })->count();
+        })->count();        
     
-        // Hitung rata-rata keterlambatan dalam menit
         $rataRataKeterlambatan = $countKeterlambatan > 0 ? round($totalKeterlambatan / $countKeterlambatan, 2) : 0;
-        //dd($countKeterlambatan);
 
         $data->push((object)[
             'nama'      => 'RATA-RATA KETERLAMBATAN',
@@ -117,68 +122,75 @@ class DashboardService
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $userId = $dto->userId;
-        $data = collect();
-
-        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
-            return $query->where('user_id', $userId);
-        })
-        ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
+    
+        // Ambil semua absensi harian berdasarkan user_id & rentang tanggal
+        $absensiHarians = AbsensiHarian::when($userId, fn($query) => $query->where('user_id', $userId))
+            ->whereBetween('tanggal_kerja', [$startDate, $endDate])
+            ->get();
+    
+        // Ambil semua keterangan absensi
         $keteranganAbsensis = KeteranganAbsensi::all();
-        
+    
         $countHariKerja = 0;
         for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
             if($isLibur == false) $countHariKerja++;
-        }    
-
-        $data->push((object)[
-            'nama' => 'Hari Kerja',
-            'slug' => 'hari-kerja',
-            'count'    => $countHariKerja ? $countHariKerja : 0,
-            'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
-        ]);
-
-        foreach($keteranganAbsensis as $keterangan){
-            $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-            $data->push((object)[
-                'nama' => $keterangan->nama ?? '-',
-                'slug' => $keterangan->slug ?? '-',
-                'count'    => $absensiHarians ? $absensiHarians->where('keterangan_id', $keterangan->id)->count() : 0,
-                'color' => $color,
-            ]);
-        }
+        } 
+        // Buat data
+        $data = collect([
+            (object) [
+                'nama'  => 'Hari Kerja',
+                'slug'  => 'hari-kerja',
+                'count' => $countHariKerja,
+                'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
+            ]
+        ])->merge(
+            $keteranganAbsensis->map(fn($keterangan) => (object) [
+                'nama'  => $keterangan->nama ?? '-',
+                'slug'  => $keterangan->slug ?? '-',
+                'count' => $absensiHarians->where('keterangan_id', $keterangan->id)->count(),
+                'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+            ])
+        );
+    
         return $data;
-    }
+    }   
 
     public static function graphPercentageAbsensiHarianByKeterangan(GraphDTO $dto)
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $userId = $dto->userId;
-        $data = collect();
-
-        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
-            return $query->where('user_id', $userId);
-        })
-        ->whereBetween('tanggal_kerja', [$startDate, $endDate])->get();
+    
+        // Ambil semua absensi harian berdasarkan user_id & rentang tanggal
+        $absensiHarians = AbsensiHarian::when($userId, fn($query) => $query->where('user_id', $userId))
+            ->whereBetween('tanggal_kerja', [$startDate, $endDate])
+            ->get();
+    
+        // Ambil semua keterangan absensi
         $keteranganAbsensis = KeteranganAbsensi::all();
-        $countHariKerja = 0;
-        for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
-            $hari = $date->translatedFormat('l') ?? '-';          
-            $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            if($isLibur == false) $countHariKerja++;
-        }
-          
-        $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
-            return $query->where('user_id', $userId);
-        })
-        ->where('tgl_masuk', '<=', $endDate)
-        ->where(function ($query) use ($startDate) {
-            $query->where('tgl_berakhir', '>=', $startDate)
-                ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
-        })
-        ->get();
+    
+        // Ambil daftar hari libur dalam satu query
+        $hariLibur = Absensi::where('is_libur', true)->pluck('hari')->toArray();
+    
+        // Ambil kepegawaian aktif dalam rentang waktu
+        $kepegawaians = DataKepegawaian::when($userId, fn($query) => $query->where('user_id', $userId))
+            ->where('tgl_masuk', '<=', $endDate)
+            ->where(function ($query) use ($startDate) {
+                $query->where('tgl_berakhir', '>=', $startDate)->orWhereNull('tgl_berakhir');
+            })
+            ->get();
+    
+        // Hitung jumlah hari kerja pegawai
+        $countHariKerjaPegawai = $kepegawaians->sum(function ($kepegawaian) use ($startDate, $endDate, $hariLibur) {
+            $startPegawai = max($startDate, Carbon::parse($kepegawaian->tgl_masuk));
+            $endPegawai = min($endDate, $kepegawaian->tgl_berakhir ? Carbon::parse($kepegawaian->tgl_berakhir) : $endDate);
+        
+            return collect(CarbonPeriod::create($startPegawai, $endPegawai))
+                ->filter(fn($date) => !in_array($date->translatedFormat('l'), $hariLibur))
+                ->count();
+        });
 
         $countHariKerjaPegawai = 0;
 
@@ -196,26 +208,25 @@ class DashboardService
                 if (!$isLibur) $countHariKerjaPegawai++;
             }
         } 
-
-        $data->push((object)[
-            'nama' => 'Hari Kerja',
-            'slug' => 'hari-kerja',
-            'count'    => $countHariKerja ? ($countHariKerja/$countHariKerja) * 100 : 0,
-            'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
-        ]);
-
-        foreach($keteranganAbsensis as $keterangan){
-            $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-            $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
-            $data->push((object)[
-                'nama' => $keterangan->nama ?? '-',
-                'slug' => $keterangan->slug ?? '-',
-                'count'    => $countHariKerjaPegawai ? round(($count/$countHariKerjaPegawai) * 100, 2)  : 0,
-                'color' => $color,
-            ]);
-        }
+        //dd($countHariKerjaPegawai);
+        $data = collect([
+            (object) [
+                'nama'  => 'Hari Kerja',
+                'slug'  => 'hari-kerja',
+                'count' => 100,
+                'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
+            ]
+        ])->merge(
+            $keteranganAbsensis->map(fn($keterangan) => (object) [
+                'nama'  => $keterangan->nama ?? '-',
+                'slug'  => $keterangan->slug ?? '-',
+                'count' => $countHariKerjaPegawai ? round(($absensiHarians->where('keterangan_id', $keterangan->id)->count() / $countHariKerjaPegawai) * 100, 2) : 0,
+                'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+            ])
+        );
+    
         return $data;
-    }
+    }   
 
     public static function graphBarPegawaiByJamMasuk(GraphDTO $dto)
     {
@@ -262,235 +273,285 @@ class DashboardService
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $userId = $dto->userId;
-        $keteranganAbsensis = KeteranganAbsensi::all();
-        //$arrYear = range($startDate->year, $endDate->year);
         $year = max($startDate->year, $endDate->year);
-        $dataPerMonth = collect();
-
-        // foreach ($arrYear as $year) {
-            for ($month = 1; $month <= 12; $month++) {
-                $date = Carbon::create($year, $month, 1);
-                
-                // Jika tanggal ini di luar range $startDate - $endDate, skip
-                // if ($date->lt($startDate) || $date->gt($endDate)) {
-                //     continue;
-                // }
         
-                $dataKeterangan = collect();
-                
-                $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
-                        return $query->where('user_id', $userId);
-                    })
-                    ->whereYear('tanggal_kerja', $year)
-                    ->whereMonth('tanggal_kerja', $month)
-                    ->get();
+        // Ambil semua absensi dalam satu query untuk tahun yang diproses
+        $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+                return $query->where('user_id', $userId);
+            })
+            ->whereYear('tanggal_kerja', $year)
+            ->get()
+            ->groupBy(fn($item) => Carbon::parse($item->tanggal_kerja)->month);
         
-                // $countHariKerja = 0;
-                // for ($day = $date->copy()->startOfMonth(); $day->lte($date->copy()->endOfMonth()) && $day->lte($endDate); $day->addDay()) {
-                //     $hari = $day->translatedFormat('l') ?? '-';
-                //     $isLibur = Absensi::where('hari', $hari)->value('is_libur');
-                //     if ($isLibur == false) $countHariKerja++;
-                // }
+        $keteranganAbsensis = KeteranganAbsensi::all();
         
-                foreach ($keteranganAbsensis as $keterangan) {
-                    $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-                    $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
-                    $dataKeterangan->push((object)[
-                        'nama'  => $keterangan->nama ?? '-',
-                        'slug'  => $keterangan->slug ?? '-',
-                        'count' => $count ? $count : 0,
-                        'color' => $color,
-                    ]);
-                }
-        
-                $dataPerMonth->push((object)[
-                    'year'  => $year,
-                    'month' => $month,
-                    'month_text' => $date->translatedFormat('F'),
-                    'data' => $dataKeterangan,
-                ]);
-            }
-        // }
-        
-        return $dataPerMonth;        
-    }  
+        return collect(range(1, 12))->map(function ($month) use ($year, $absensiHarians, $keteranganAbsensis) {
+            $date = Carbon::create($year, $month, 1);
+            
+            $dataKeterangan = $keteranganAbsensis->map(function ($keterangan) use ($absensiHarians, $month) {
+                // Pastikan $absensiHarians[$month] tidak null
+                $absensiData = $absensiHarians[$month] ?? collect();
     
+                return (object) [
+                    'nama'  => $keterangan->nama ?? '-',
+                    'slug'  => $keterangan->slug ?? '-',
+                    'count' => $absensiData->where('keterangan_id', $keterangan->id)->count(),
+                    'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+                ];
+            });
+    
+            return (object) [
+                'year'  => $year,
+                'month' => $month,
+                'month_text' => $date->translatedFormat('F'),
+                'data' => $dataKeterangan,
+            ];
+        });
+    }    
+
     public static function graphBarPercentageKehadiranPerBulan(GraphDTO $dto)
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $userId = $dto->userId;
-        $keteranganAbsensis = KeteranganAbsensi::all();
         $year = max($startDate->year, $endDate->year);
+        
+        // Ambil semua absensi dalam satu query untuk tahun yang diproses
+        $absensiHarians = AbsensiHarian::when($userId, fn($query) => $query->where('user_id', $userId))
+            ->whereYear('tanggal_kerja', $year)
+            ->get()
+            ->groupBy(fn($item) => Carbon::parse($item->tanggal_kerja)->month);
+    
+        // Ambil semua data kepegawaian dalam satu query
+        $kepegawaians = DataKepegawaian::when($userId, fn($query) => $query->where('user_id', $userId))
+            ->where('tgl_masuk', '<=', Carbon::create($year, 12, 31)->endOfMonth())
+            ->where(function ($query) use ($year) {
+                $query->where('tgl_berakhir', '>=', Carbon::create($year, 1, 1)->startOfMonth())
+                    ->orWhereNull('tgl_berakhir');
+            })
+            ->get();
+    
+        // Ambil semua keterangan absensi
+        $keteranganAbsensis = KeteranganAbsensi::all();
+    
+        return collect(range(1, 12))->map(function ($month) use ($year, $absensiHarians, $kepegawaians, $keteranganAbsensis) {
+            $date = Carbon::create($year, $month, 1);
+            $start = $date->copy()->startOfMonth();
+            $end = $date->copy()->endOfMonth();
+    
+            // Hitung hari kerja pegawai dalam bulan ini
+            // $countHariKerjaPegawai = 0;
+        
+            // foreach ($kepegawaians as $kepegawaian) {
+                
+            //     for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            //         $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
+            //         $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+                
+            //         if (!$isLibur) $countHariKerjaPegawai++;
+            //     }
+            // } 
+            $countHariKerjaPegawai = $kepegawaians->sum(function ($kepegawaian) use ($start, $end) {
+                $period = CarbonPeriod::create(
+                    max($start, $kepegawaian->tgl_masuk),
+                    min($end, $kepegawaian->tgl_berakhir ?? $end)
+                );
+                return collect($period)->reject(fn($date) => Absensi::where('hari', $date->translatedFormat('l'))->value('is_libur'))->count();
+            });
 
-        $dataPerMonth = collect();
-
-        // foreach ($arrYear as $year) {
-            for ($month = 1; $month <= 12; $month++) {
-                $date = Carbon::create($year, $month, 1);
-                $monthText = $date->translatedFormat('F');
-                $start = Carbon::create($year, $month, 1)->startOfMonth();
-                $end = Carbon::create($year, $month, 1)->endOfMonth();
-                
-                // Jika tanggal ini di luar range $startDate - $endDate, skip
-                // if ($date->lt($startDate) || $date->gt($endDate)) {
-                //     continue;
-                // }
-        
-                $dataKeterangan = collect();
-                
-                $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
-                        return $query->where('user_id', $userId);
-                    })
-                    ->whereYear('tanggal_kerja', $year)
-                    ->whereMonth('tanggal_kerja', $month)
-                    ->get();
-        
-                // $countHariKerja = 0;
-                // for ($day = $date->copy()->startOfMonth(); $day->lte($date->copy()->endOfMonth()) && $day->lte($endDate); $day->addDay()) {
-                //     $hari = $day->translatedFormat('l') ?? '-';
-                //     $isLibur = Absensi::where('hari', $hari)->value('is_libur');
-                //     if ($isLibur == false) $countHariKerja++;
-                // }
-
-                $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
-                    return $query->where('user_id', $userId);
-                })
-                ->where('tgl_masuk', '<=', $end)
-                ->where(function ($query) use ($start) {
-                    $query->where('tgl_berakhir', '>=', $start)
-                        ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
-                })
-                ->get();
-        
-                $countHariKerjaPegawai = 0;
-        
-                foreach ($kepegawaians as $kepegawaian) {
-                
-                    for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-                        $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
-                        $isLibur = Absensi::where('hari', $hari)->value('is_libur');
-                
-                        if (!$isLibur) $countHariKerjaPegawai++;
-                    }
-                } 
-        
-                foreach ($keteranganAbsensis as $keterangan) {
-                    $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-                    $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
-                    $dataKeterangan->push((object)[
-                        'nama'  => $keterangan->nama ?? '-',
-                        'slug'  => $keterangan->slug ?? '-',
-                        'count' => $countHariKerjaPegawai ? round(($count / $countHariKerjaPegawai) * 100, 2) : 0,
-                        'color' => $color,
-                    ]);
-                }
-        
-                $dataPerMonth->push((object)[
-                    'year'  => $year,
-                    'month' => $month,
-                    'month_text' => $monthText,
-                    'data' => $dataKeterangan,
-                ]);
-            }
-        // }
-        
-        return $dataPerMonth;        
-    } 
+            // Hitung persentase kehadiran untuk setiap keterangan
+            $dataKeterangan = $keteranganAbsensis->map(function ($keterangan) use ($absensiHarians, $month, $countHariKerjaPegawai) {
+                $count = isset($absensiHarians[$month]) 
+                    ? $absensiHarians[$month]->where('keterangan_id', $keterangan->id)->count()
+                    : 0;
+            
+                return (object) [
+                    'nama'  => $keterangan->nama ?? '-',
+                    'slug'  => $keterangan->slug ?? '-',
+                    'count' => $countHariKerjaPegawai ? round(($count / $countHariKerjaPegawai) * 100, 2) : 0,
+                    'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+                ];
+            });
+    
+            return (object) [
+                'year'  => $year,
+                'month' => $month,
+                'month_text' => $date->translatedFormat('F'),
+                'data' => $dataKeterangan,
+            ];
+        });
+    }
+    
 
     public static function graphBarValueKehadiranPerHari(GraphDTO $dto)
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $month = $dto->month ?? 1;
+        $year = max($startDate->year, $endDate->year);
+    
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = Carbon::create($year, $month, 1)->endOfMonth();
+    
         $keteranganAbsensis = KeteranganAbsensi::all();
         
-        $year = max($startDate->year, $endDate->year);
-        
-        $start = Carbon::create($year, $month, 1)->startOfMonth(); // Mulai dari bulan pertama tahun ini
-        $end = Carbon::create($year, $month, 1)->endOfMonth(); // Sampai akhir dari endDate
+        // Ambil semua absensi dalam rentang tanggal, lalu kelompokkan berdasarkan tanggal_kerja
+        $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$start, $end])
+            ->get()
+            ->groupBy('tanggal_kerja');
     
-        $dataPerDay = collect();
-    
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            // $dayText = $date->translatedFormat('l, d F Y');
+        return collect(range(1, $end->day))->map(function ($day) use ($year, $month, $absensiHarians, $keteranganAbsensis) {
+            $date = Carbon::create($year, $month, $day);
             $dayText = $date->format('d/m');
-
-            $absensiHarians = AbsensiHarian::whereDate('tanggal_kerja', $date->toDateString())->get();
     
-            $dataKeterangan = collect();
-            
-            foreach ($keteranganAbsensis as $keterangan) {
-                $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-                $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
-                $dataKeterangan->push((object)[
-                    'nama'  => $keterangan->nama ?? '-',
-                    'slug'  => $keterangan->slug ?? '-',
-                    'count' => $count ? $count : 0,
-                    'color' => $color,
-                ]);
-            }
+            $absensiData = $absensiHarians[$date->toDateString()] ?? collect();
     
-            $dataPerDay->push((object)[
+            $dataKeterangan = $keteranganAbsensis->map(fn($keterangan) => (object) [
+                'nama'  => $keterangan->nama ?? '-',
+                'slug'  => $keterangan->slug ?? '-',
+                'count' => $absensiData->where('keterangan_id', $keterangan->id)->count(),
+                'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+            ]);
+    
+            return (object) [
                 'year'  => $year,
                 'month' => $month,
                 'date'  => $date->toDateString(),
                 'day_text' => $dayText,
                 'data' => $dataKeterangan,
-            ]);
-        }
-        return $dataPerDay;
-    }
+            ];
+        });
+    }    
     
     public static function graphBarPercentageKehadiranPerHari(GraphDTO $dto)
     {
         $startDate = $dto->startDate;
         $endDate = $dto->endDate;
         $month = $dto->month ?? 1;
+        $year = max($startDate->year, $endDate->year);
+    
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = Carbon::create($year, $month, 1)->endOfMonth();
+    
         $keteranganAbsensis = KeteranganAbsensi::all();
         
-        $year = max($startDate->year, $endDate->year);
-        
-        $start = Carbon::create($year, $month, 1)->startOfMonth(); // Mulai dari bulan pertama tahun ini
-        $end = Carbon::create($year, $month, 1)->endOfMonth(); // Sampai akhir dari endDate
+        // Ambil semua absensi dalam rentang tanggal, lalu kelompokkan berdasarkan tanggal_kerja
+        $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$start, $end])
+            ->get()
+            ->groupBy('tanggal_kerja');
     
-        $dataPerDay = collect();
+        // Ambil jumlah pegawai aktif dalam rentang tanggal hanya sekali
+        $countKepegawaians = DataKepegawaian::where('tgl_masuk', '<=', $end)
+            ->where(function ($query) use ($start) {
+                $query->where('tgl_berakhir', '>=', $start)
+                    ->orWhereNull('tgl_berakhir');
+            })
+            ->count();
     
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            // $dayText = $date->translatedFormat('l, d F Y');
+        return collect(range(1, $end->day))->map(function ($day) use ($year, $month, $absensiHarians, $keteranganAbsensis, $countKepegawaians) {
+            $date = Carbon::create($year, $month, $day);
             $dayText = $date->format('d/m');
-
-            $absensiHarians = AbsensiHarian::whereDate('tanggal_kerja', $date->toDateString())->get();
-
-            $countKepegawaians = DataKepegawaian::where('tgl_masuk', '<=', $end)
-                ->where(function ($query) use ($start) {
-                    $query->where('tgl_berakhir', '>=', $start)
-                        ->orWhereNull('tgl_berakhir');
-                })
-                ->count();
     
-            $dataKeterangan = collect();
-            
-            foreach ($keteranganAbsensis as $keterangan) {
-                $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
-                $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
-                $dataKeterangan->push((object)[
-                    'nama'  => $keterangan->nama ?? '-',
-                    'slug'  => $keterangan->slug ?? '-',
-                    'count' => $countKepegawaians ? round(($count / max($countKepegawaians, 1)) * 100, 2) : 0,
-                    'color' => $color,
-                ]);
-            }
+            $absensiData = $absensiHarians[$date->toDateString()] ?? collect();
     
-            $dataPerDay->push((object)[
+            $dataKeterangan = $keteranganAbsensis->map(fn($keterangan) => (object) [
+                'nama'  => $keterangan->nama ?? '-',
+                'slug'  => $keterangan->slug ?? '-',
+                'count' => $countKepegawaians ? round(($absensiData->where('keterangan_id', $keterangan->id)->count() / max($countKepegawaians, 1)) * 100, 2) : 0,
+                'color' => Functions::generateColorForKeteranganAbsensi($keterangan->slug),
+            ]);
+    
+            return (object) [
                 'year'  => $year,
                 'month' => $month,
                 'date'  => $date->toDateString(),
                 'day_text' => $dayText,
                 'data' => $dataKeterangan,
-            ]);
-        }
-        return $dataPerDay;
-    }
+            ];
+        });
+    }    
      
+    // public static function graphBarPercentageKehadiranPerBulan(GraphDTO $dto)
+    // {
+    //     $startDate = $dto->startDate;
+    //     $endDate = $dto->endDate;
+    //     $userId = $dto->userId;
+    //     $keteranganAbsensis = KeteranganAbsensi::all();
+    //     $year = max($startDate->year, $endDate->year);
+
+    //     $dataPerMonth = collect();
+
+    //     // foreach ($arrYear as $year) {
+    //         for ($month = 1; $month <= 12; $month++) {
+    //             $date = Carbon::create($year, $month, 1);
+    //             $monthText = $date->translatedFormat('F');
+    //             $start = Carbon::create($year, $month, 1)->startOfMonth();
+    //             $end = Carbon::create($year, $month, 1)->endOfMonth();
+                
+    //             // Jika tanggal ini di luar range $startDate - $endDate, skip
+    //             // if ($date->lt($startDate) || $date->gt($endDate)) {
+    //             //     continue;
+    //             // }
+        
+    //             $dataKeterangan = collect();
+                
+    //             $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
+    //                     return $query->where('user_id', $userId);
+    //                 })
+    //                 ->whereYear('tanggal_kerja', $year)
+    //                 ->whereMonth('tanggal_kerja', $month)
+    //                 ->get();
+        
+    //             // $countHariKerja = 0;
+    //             // for ($day = $date->copy()->startOfMonth(); $day->lte($date->copy()->endOfMonth()) && $day->lte($endDate); $day->addDay()) {
+    //             //     $hari = $day->translatedFormat('l') ?? '-';
+    //             //     $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+    //             //     if ($isLibur == false) $countHariKerja++;
+    //             // }
+
+    //             $kepegawaians = DataKepegawaian::when($userId, function ($query) use ($userId) {
+    //                 return $query->where('user_id', $userId);
+    //             })
+    //             ->where('tgl_masuk', '<=', $end)
+    //             ->where(function ($query) use ($start) {
+    //                 $query->where('tgl_berakhir', '>=', $start)
+    //                     ->orWhereNull('tgl_berakhir'); // Jika tgl_berakhir NULL, tetap diambil
+    //             })
+    //             ->get();
+        
+    //             $countHariKerjaPegawai = 0;
+        
+    //             foreach ($kepegawaians as $kepegawaian) {
+                
+    //                 for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+    //                     $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
+    //                     $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+                
+    //                     if (!$isLibur) $countHariKerjaPegawai++;
+    //                 }
+    //             } 
+    //             dd($countHariKerjaPegawai);
+    //             foreach ($keteranganAbsensis as $keterangan) {
+    //                 $color = Functions::generateColorForKeteranganAbsensi($keterangan->slug);
+    //                 $count = $absensiHarians->where('keterangan_id', $keterangan->id)->count();
+    //                 $dataKeterangan->push((object)[
+    //                     'nama'  => $keterangan->nama ?? '-',
+    //                     'slug'  => $keterangan->slug ?? '-',
+    //                     'count' => $countHariKerjaPegawai ? round(($count / $countHariKerjaPegawai) * 100, 2) : 0,
+    //                     'color' => $color,
+    //                 ]);
+    //             }
+        
+    //             $dataPerMonth->push((object)[
+    //                 'year'  => $year,
+    //                 'month' => $month,
+    //                 'month_text' => $monthText,
+    //                 'data' => $dataKeterangan,
+    //             ]);
+    //         }
+    //     // }
+        
+    //     return $dataPerMonth;        
+    // }
+    
 }

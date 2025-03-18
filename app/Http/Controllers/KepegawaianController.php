@@ -27,13 +27,19 @@ class KepegawaianController extends Controller
     public function index()
     {
         //
-        $data_diri = DatadiriUser::all();
+        $data_diri = DatadiriUser::whereHas('kepegawaian', function ($query){
+                $query->where('is_active', true);
+            })->get();
+
+        $data_diri_tidak_aktif = DatadiriUser::whereHas('kepegawaian', function ($query){
+                $query->where('is_active', false);
+            })->get();
         $roleSlug = Auth::user()->role->slug;
         $role = Functions::generateUrlByRoleSlug($roleSlug);
         $getKepegawaian = DataKepegawaian::with('subJabatan', 'statusPekerjaan', 'divisi')->get();
         $title = 'Data Kepegawaian';
 
-        return view('admin_sdm.kepegawaian', compact('data_diri', 'title', 'getKepegawaian','role'));
+        return view('admin_sdm.kepegawaian', compact('data_diri','data_diri_tidak_aktif', 'title', 'getKepegawaian','role'));
     }
 
     /**
@@ -56,6 +62,7 @@ class KepegawaianController extends Controller
             'divisi_id' => 'required',
             'tgl_masuk' => 'required',
             'tgl_berakhir' => 'required',
+            'is_active' => 'nullable',
         ]);
 
         // dd($request->all());
@@ -89,7 +96,8 @@ class KepegawaianController extends Controller
             'tgl_masuk' => $request->tgl_masuk,
             'tgl_berakhir' => $request->tgl_berakhir,
             'no_npwp' => $request->no_npwp,
-            'nip' => $kode
+            'nip' => $kode,
+            'is_active' => $request->is_active,
         ];
 
         // dd($data);
@@ -173,6 +181,7 @@ class KepegawaianController extends Controller
             'status_pekerjaan_id' => 'required',
             'tgl_masuk' => 'required',
             'tgl_berakhir' => 'required',
+            'is_active' => 'nullable',
         ]);
 
         // dd($request->all());
@@ -182,7 +191,8 @@ class KepegawaianController extends Controller
             'status_pekerjaan_id' => $request->status_pekerjaan_id,
             'tgl_masuk' => $request->tgl_masuk,
             'tgl_berakhir' => $request->tgl_berakhir,
-            'no_npwp' => $request->no_npwp
+            'no_npwp' => $request->no_npwp,
+            'is_active' => $request->is_active
         ];
 
         $getKepegawaian->update($data);

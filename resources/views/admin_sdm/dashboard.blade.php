@@ -3,6 +3,11 @@
 @section('content')
 
 <div class="container-fluid">
+    <style>
+    #barKehadiranValuePerHari, #barKehadiranPercentagePerHari {
+        max-height: 300px;
+    }
+    </style>
     <!-- row -->
     <div class="row">
         <div class="card-body">
@@ -882,6 +887,8 @@
 
     function createBarValueKehadiranPerDay(canvasId, data) { 
         const ctx = document.getElementById(canvasId).getContext('2d');
+        ctx.width = 200;
+        ctx.height = 200;
 
         var labels = data.map(item => item.day_text);
 

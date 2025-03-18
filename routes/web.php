@@ -24,6 +24,9 @@ use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\DownloadPDFController;
+use App\Http\Controllers\GajiBulananController;
+use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -86,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('home');
 
     Route::get('/ajax/get_karyawan', [AjaxController::class, 'get_karyawan']);
+    Route::get('/cetak-payslip/{id}', [DownloadPDFController::class, 'generatePDFPayslip']);
 });
 
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
@@ -131,6 +135,12 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/gaji/store', [GajiController::class, 'store'])->name('admin_sdm.gaji.store');
     Route::put('/admin_sdm/gaji/update/{id}', [GajiController::class, 'update'])->name('admin_sdm.gaji.update');
 
+    // Admin SDM : Gaji Bulanan
+    Route::get('/admin_sdm/gaji_bulanan', [GajiBulananController::class, 'index'])->name('admin_sdm.gaji_bulanan.index');
+    // Route::post('/admin_sdm/gaji_bulanan/store', [GajiBulananController::class, 'store'])->name('admin_sdm.gaji_bulanan.store');
+    Route::put('/admin_sdm/gaji_bulanan/update/{id}', [GajiBulananController::class, 'update'])->name('admin_sdm.gaji_bulanan.update');
+    Route::get('/admin_sdm/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('admin_sdm.gaji_bulanan.sync');
+
     // Admin SDM : Master Status Pekerjaan
     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
     Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
@@ -172,6 +182,12 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/divisi/store', [DivisiController::class, 'store'])->name('admin_sdm.divisi.store');
     Route::put('/admin_sdm/divisi/update/{id}', [DivisiController::class, 'update'])->name('admin_sdm.divisi.update');
     Route::delete('/admin_sdm/divisi/delete/{id}', [DivisiController::class, 'destroy'])->name('admin_sdm.divisi.destroy');
+
+    // admin SDM: Hari Libur
+    Route::get('/admin_sdm/hari_libur/', [HariLiburController::class, 'index'])->name('admin_sdm.hari_libur');
+    Route::post('/admin_sdm/hari_libur/store', [HariLiburController::class, 'store'])->name('admin_sdm.hari_libur.store');
+    Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
+    Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {

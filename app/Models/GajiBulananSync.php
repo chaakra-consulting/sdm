@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class GajiBulanan extends Model
+class GajiBulananSync extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class GajiBulanan extends Model
      *
      * @var string
      */
-    protected $table = 'tb_gaji_bulanans';
+    protected $table = 'tb_gaji_bulanans_sync';
 
     /**
      * The attributes that are mass assignable.
@@ -23,8 +23,8 @@ class GajiBulanan extends Model
      */
     protected $guarded = ['id'];
 
-    public function pegawai()
+    public function puchaseInvoice()
     {
-        return $this->belongsTo(DatadiriUser::class, 'pegawai_id', 'id');
+        return $this->belongsTo(BukukasPurchaseInvoice::class, 'bukukas_id', 'id');
     }
 }
