@@ -407,9 +407,11 @@
                                 <td>{{ ($row->absensi && $row->absensi->waktu_pulang  ? $row->absensi->waktu_pulang : '-') }}</td>
                                 <td>
                                     @if ($row->absensi)
-                                        @if ($row->absensi->status_keterlambatan == 'Terlambat')
+                                        @if ($row->absensi->status_keterlambatan == 'Terlambat (>= 10 Menit)')
                                             <span style="color: red;">{{ $row->absensi->status_keterlambatan }}</span>
-                                        @elseif ($row->absensi->status_keterlambatan == 'On Time')
+                                        @elseif ($row->absensi->status_keterlambatan == 'Terlambat (< 10 Menit)')
+                                            <span style="color: #FF8C00;">{{ $row->absensi->status_keterlambatan }}</span>
+                                        @elseif ($row->absensi->status_keterlambatan == 'On Time (<= 08:00)')
                                             <span style="color: green;">{{ $row->absensi->status_keterlambatan }}</span>
                                         @else
                                             {{ $row->absensi->status_keterlambatan }}
