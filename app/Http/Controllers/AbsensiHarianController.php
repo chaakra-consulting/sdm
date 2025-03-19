@@ -21,7 +21,7 @@ use Illuminate\Validation\Rule;
 class AbsensiHarianController extends Controller
 {
     public function __construct(
-        protected GajiBulananService $gajiBulananService,
+        //protected GajiBulananService $gajiBulananService,
     ) {
     }
     //  /**
