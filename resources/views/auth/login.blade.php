@@ -10,7 +10,7 @@
     <title>Login</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('Tema/dist/assets/images/brand-logos/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/chaakra-2.png') }}" type="image/x-icon">
 
     <!-- Main Theme Js -->
     <script src="{{ asset('Tema/dist/assets/js/authentication-main.js') }}"></script>
