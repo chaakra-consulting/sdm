@@ -8,6 +8,7 @@ use App\Models\Absensi;
 use App\Models\AbsensiHarian;
 use App\Models\DatadiriUser;
 use App\Models\DataKepegawaian;
+use App\Models\GajiBulanan;
 use App\Models\KeteranganAbsensi;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
@@ -258,11 +259,13 @@ class DashboardService
                 $rataJamMasuk = 0;
             }
     
-            $data->push((object)[
-                'nama' => ucwords(strtolower($pegawai->nama_lengkap ?? '-')),
-                'count' => $rataJamMasuk, // Sudah dalam format jam desimal
-                'color' => "rgb(238, 51, 94, 1)",
-            ]);
+            if($rataJamMasuk){
+                $data->push((object)[
+                    'nama' => ucwords(strtolower($pegawai->nama_lengkap ?? '-')),
+                    'count' => $rataJamMasuk,
+                    'color' => "rgb(238, 51, 94, 1)",
+                ]);
+            }
         }
     
         return $data;
@@ -469,7 +472,41 @@ class DashboardService
                 'data' => $dataKeterangan,
             ];
         });
-    }    
+    } 
+    
+    public static function widgetGaji(GraphDTO $dto)
+    {
+        $startDate = $dto->startDate;
+        // $endDate = $dto->endDate;
+        $userId = $dto->userId;
+        $data = collect();
+          
+        $gajiBulanan = GajiBulanan::when($userId, function ($query) use ($userId) {
+            return $query->where('user_id', $userId);
+        })
+        ->where('tanggal_gaji', '<=', $startDate)
+        ->get();
+
+        $potongan = $gajiBulanan->sum('potongan_gaji_pokok') + $gajiBulanan->sum('potongan_uang_makan') + $gajiBulanan->sum('potongan_kinerja') + $gajiBulanan->sum('potongan_keterlambatan') + $gajiBulanan->sum('potongan_pajak') + $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan') + $gajiBulanan->sum('potongan_bpjs_kesehatan') + $gajiBulanan->sum('potongan_kasbon') + $gajiBulanan->sum('potongan_lainnya');
+        $pemasukan = $gajiBulanan->sum('gaji_pokok') + $gajiBulanan->sum('insentif_kinerja') + $gajiBulanan->sum('insentif_uang_makan') + $gajiBulanan->sum('insentif_uang_bensin') + $gajiBulanan->sum('insentif_penjualan') + $gajiBulanan->sum('insentif_lainnya') + $gajiBulanan->sum('overtime');
+        $totalGaji = $pemasukan - $potongan;
+        
+        $data->push((object)[
+            'nama' => 'Total Gaji Bulan Ini',
+            'slug' => 'jumlah-gaji-bulan-ini',
+            'count'    => $totalGaji ? $totalGaji : 0,
+            // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
+        ]);
+
+        $data->push((object)[
+            'nama' => 'Total Potongan Bulan Ini',
+            'slug' => 'total-potongan-bulan-ini',
+            'count'    => $potongan ? $potongan : 0,
+            // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
+        ]);
+
+        return $data;
+    }
      
     // public static function graphBarPercentageKehadiranPerBulan(GraphDTO $dto)
     // {
