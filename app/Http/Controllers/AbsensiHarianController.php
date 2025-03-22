@@ -65,6 +65,7 @@ class AbsensiHarianController extends Controller
 
         $countHariKerja = 0;
         for ($date = clone $startDateRange; $date->lte($endDateRange); $date->addDay()) {
+            $startDateRange = $startDateRange->startOfDay();
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
             $isHariLibur = HariLibur::where('tanggal',$date)->first();
@@ -117,8 +118,8 @@ class AbsensiHarianController extends Controller
 
             if($keterangan && ($keterangan->slug != 'ijin-direktur')){
                 if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat (>= 10 Menit)";
-                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk < $batasWaktuTerlambat && $absensiHarian->waktu_masuk > $waktuMasuk) $isTelat = "Terlambat (< 10 Menit)";
-                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time (<= 08:00)";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat && $absensiHarian->waktu_masuk > $waktuMasuk) $isTelat = "Terlambat (< 10 Menit)";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk < $batasWaktuTerlambat) $isTelat = "On Time (<= 08:00)";
                 else $isTelat = "-";
             }else{
                 $isTelat =  "On Time (<= 08:00)";
