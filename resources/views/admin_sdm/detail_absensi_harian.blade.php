@@ -279,8 +279,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-primary text-fixed-white">
+                    <div class="card bg-teal text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -291,8 +292,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-teal text-fixed-white">
+                    <div class="card bg-purple text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -303,8 +305,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-purple text-fixed-white">
+                    <div class="card bg-dark text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -315,55 +318,48 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="card bg-dark text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[6]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[6]->count }}</h3>
+                <div class="row justify-content-center">
+                    <div class="col-lg-3">
+                        <div class="card bg-secondary text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[6]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[6]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-secondary text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+            
+                    <div class="col-lg-3">
+                        <div class="card bg-pink text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-pink text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[8]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[8]->count }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-success text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[9]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[9]->count }}</h3>
+            
+                    <div class="col-lg-3">
+                        <div class="card bg-success text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[8]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[8]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     {{-- </div>
     <div class="card custom-card"> --}}
