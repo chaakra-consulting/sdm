@@ -139,14 +139,7 @@ class DashboardService
             if($isLibur == false) $countHariKerja++;
         } 
         // Buat data
-        $data = collect([
-            (object) [
-                'nama'  => 'Hari Kerja',
-                'slug'  => 'hari-kerja',
-                'count' => $countHariKerja,
-                'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
-            ]
-        ])->merge(
+        $data = collect(
             $keteranganAbsensis->map(fn($keterangan) => (object) [
                 'nama'  => $keterangan->nama ?? '-',
                 'slug'  => $keterangan->slug ?? '-',
@@ -209,15 +202,8 @@ class DashboardService
                 if (!$isLibur) $countHariKerjaPegawai++;
             }
         } 
-        //dd($countHariKerjaPegawai);
-        $data = collect([
-            (object) [
-                'nama'  => 'Hari Kerja',
-                'slug'  => 'hari-kerja',
-                'count' => 100,
-                'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
-            ]
-        ])->merge(
+
+        $data = collect(
             $keteranganAbsensis->map(fn($keterangan) => (object) [
                 'nama'  => $keterangan->nama ?? '-',
                 'slug'  => $keterangan->slug ?? '-',

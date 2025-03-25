@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class KeteranganAbsensi extends Model
 {
@@ -22,4 +23,11 @@ class KeteranganAbsensi extends Model
      * @var array<int, string>
      */
     protected $guarded = ['id'];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('filterIjin', function (Builder $query) {
+            $query->whereNot('slug', 'ijin');
+        });
+    }
 }
