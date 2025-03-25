@@ -103,8 +103,13 @@
             
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
+                <button type="submit" id="btn-submit" class="btn btn-primary">
+                    <span id="btn-text">Simpan</span>
+                    <span id="btn-loading" class="loading d-none">
+                        <i class="ri-loader-2-fill fs-16 me-2"></i> Loading...
+                    </span>
+                </button>
+            </div>            
             
         </form>
         </div>
@@ -532,7 +537,6 @@
 
     let id = "{{ $pegawai_id }}";
     $(document).ready(function () {
-        // Handler untuk tambah detail absensi
         $(".tambahDetailAbsensiHarian").click(function (e) {
             e.preventDefault();
 
@@ -551,11 +555,10 @@
             $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/store/' + id);
         });
 
-        $(".editDetailAbsensiHarian").click(function(e){
+        $(".editDetailAbsensiHarian").click(function (e) {
             e.preventDefault();
             $(".modal-title").text('Edit Detail Absensi');
 
-            // $("#pegawai_id").val($(this).data('pegawai_id'));
             $("#tanggal_kerja").val($(this).data('tanggal_kerja'));
             $("#hari_kerja").val($(this).data('hari_kerja'));
             $("#waktu_masuk").val($(this).data('waktu_masuk'));
@@ -564,14 +567,26 @@
             $("#keterangan").val($(this).data('keterangan'));
             $("#durasi_lembur").val($(this).data('durasi_lembur'));
 
-
             // Tambahkan input hidden untuk method spoofing
             if ($("#formDetailAbsensiHarian input[name='_method']").length === 0) {
                 $("#formDetailAbsensiHarian").append('<input type="hidden" name="_method" value="PUT">');
             }
-            $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/update/'+ id +'/' + $(this).data('absensi_id'));
+            $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/update/' + id + '/' + $(this).data('absensi_id'));
         });
-    })
+
+        // Tambahkan efek loading saat form disubmit
+        $("#formDetailAbsensiHarian").submit(function () {
+            let btnSubmit = $("#btn-submit");
+            let btnText = $("#btn-text");
+            let btnLoading = $("#btn-loading");
+
+            // Ubah tombol jadi loading
+            btnText.addClass("d-none");
+            btnLoading.removeClass("d-none");
+            btnSubmit.attr("disabled", true);
+        });
+    });
+
 
     document.querySelectorAll('button.btn-danger').forEach((button) => {
         const absensiId = button.getAttribute('data-id'); // Ambil ID dari atribut data
