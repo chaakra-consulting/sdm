@@ -209,7 +209,7 @@
             $(".editGajiDropdown").hide();
             
             $("#formGaji").append('<input type="hidden" name="_method" value="POST">');
-            $("#formGaji").attr('action', '/admin_sdm/gaji/store');           
+            $("#formGaji").attr('action', '/{{ $role }}/gaji/store');           
         })
         // <form action="" method="POST" id="formGaji">
 
@@ -228,7 +228,7 @@
             $("#pegawai_id").prop('disabled', true);
 
             $("#formGaji").append('<input type="hidden" name="_method" value="PUT">');
-            $("#formGaji").attr('action', '/admin_sdm/gaji/update/' + $(this).data('id'));
+            $("#formGaji").attr('action', '/{{ $role }}/gaji/update/' + $(this).data('id'));
         })
     })
 
