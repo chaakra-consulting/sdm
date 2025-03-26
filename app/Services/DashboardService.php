@@ -20,8 +20,8 @@ class DashboardService
 {   
     public static function widgetAbsensi(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
         $data = collect();
           
@@ -120,8 +120,8 @@ class DashboardService
 
     public static function graphValueAbsensiHarianByKeterangan(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
     
         // Ambil semua absensi harian berdasarkan user_id & rentang tanggal
@@ -153,8 +153,8 @@ class DashboardService
 
     public static function graphPercentageAbsensiHarianByKeterangan(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
     
         // Ambil semua absensi harian berdasarkan user_id & rentang tanggal
@@ -217,8 +217,8 @@ class DashboardService
 
     public static function graphBarPegawaiByJamMasuk(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
     
         $pegawais = DatadiriUser::when($userId, function ($query) use ($userId) {
@@ -259,8 +259,8 @@ class DashboardService
     
     public static function graphBarValueKehadiranPerBulan(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
         $year = max($startDate->year, $endDate->year);
         
@@ -300,8 +300,8 @@ class DashboardService
 
     public static function graphBarPercentageKehadiranPerBulan(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
         $year = max($startDate->year, $endDate->year);
         
@@ -374,8 +374,8 @@ class DashboardService
 
     public static function graphBarValueKehadiranPerHari(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $month = $dto->month ?? 1;
         $year = max($startDate->year, $endDate->year);
     
@@ -414,8 +414,8 @@ class DashboardService
     
     public static function graphBarPercentageKehadiranPerHari(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        $endDate = $dto->endDate->endOfDay();
         $month = $dto->month ?? 1;
         $year = max($startDate->year, $endDate->year);
     
@@ -462,8 +462,8 @@ class DashboardService
     
     public static function widgetGaji(GraphDTO $dto)
     {
-        $startDate = $dto->startDate;
-        // $endDate = $dto->endDate;
+        $startDate = $dto->startDate->startOfDay();
+        //$endDate = $dto->endDate->endOfDay();
         $userId = $dto->userId;
         $data = collect();
           
