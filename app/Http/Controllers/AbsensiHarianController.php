@@ -10,7 +10,7 @@ use App\Models\DatadiriUser;
 use App\Models\HariLibur;
 use App\Models\KeteranganAbsensi;
 use App\Rules\TimeFormat;
-//use App\Services\GajiBulananService;
+use App\Services\GajiBulananService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ use Illuminate\Validation\Rule;
 class AbsensiHarianController extends Controller
 {
     public function __construct(
-        //protected GajiBulananService $gajiBulananService,
+        protected GajiBulananService $gajiBulananService,
     ) {
     }
     //  /**
@@ -51,7 +51,7 @@ class AbsensiHarianController extends Controller
             'date_range'                   => 'nullable|string',
         ]);
 
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
 
         $widgetCollection = collect();
         if ($request->date_range) {
@@ -340,7 +340,7 @@ class AbsensiHarianController extends Controller
     
             AbsensiVerifikasi::create($data);
 
-            //$this->gajiBulananService->generateGajiBulananPegawai($data);
+            $this->gajiBulananService->generateGajiBulananPegawai($data);
 
             DB::commit();
             return redirect()->back()->with('success', 'Verifikasi Berhasil');
