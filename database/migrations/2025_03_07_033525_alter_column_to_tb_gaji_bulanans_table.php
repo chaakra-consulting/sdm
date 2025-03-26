@@ -15,12 +15,16 @@ return new class extends Migration
             $table->string('hash')->unique()->after('id');
             $table->unsignedBigInteger('pegawai_id')->after('user_id')->index('FK_gaji_bulanans_pegawais');
             $table->unsignedBigInteger('gaji_pokok')->after('tanggal_gaji');
+            $table->unsignedBigInteger('potongan_gaji_pokok')->after('gaji_pokok');
+            $table->unsignedBigInteger('potongan_uang_makan')->after('potongan_gaji_pokok');
             $table->unsignedBigInteger('potongan_bpjs_ketenagakerjaan')->after('potongan_pajak');
             $table->unsignedBigInteger('potongan_bpjs_kesehatan')->after('potongan_bpjs_ketenagakerjaan');
             $table->unsignedBigInteger('insentif_uang_makan')->after('insentif_kinerja');
             $table->unsignedBigInteger('insentif_uang_bensin')->after('insentif_uang_makan');
+            $table->unsignedBigInteger('overtime')->after('insentif_uang_bensin');
             $table->json('data')->nullable()->after('keterangan_insentif_lainnya');
 
+            $table->renameColumn('potongan_kehadiran','potongan_keterlambatan');
             $table->dropColumn('insentif_tugas');
 
             $table->foreign(['pegawai_id'], 'FK_gaji_bulanans_pegawais')->references(['id'])->on('tb_datadiris')->onUpdate('CASCADE');
@@ -41,6 +45,7 @@ return new class extends Migration
             $table->dropColumn('potongan_bpjs_kesehatan');
             $table->dropColumn('insentif_uang_makan');
             $table->dropColumn('insentif_uang_bensin');
+            $table->dropColumn('overtime');
             $table->dropColumn('data');
             $table->bigInteger('insentif_tugas')->nullable();
         });
