@@ -130,7 +130,8 @@ class DashboardService
             ->get();
     
         // Ambil semua keterangan absensi
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        //$keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
     
         $countHariKerja = 0;
         for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
@@ -163,7 +164,7 @@ class DashboardService
             ->get();
     
         // Ambil semua keterangan absensi
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
     
         // Ambil daftar hari libur dalam satu query
         $hariLibur = Absensi::where('is_libur', true)->pluck('hari')->toArray();
@@ -272,7 +273,7 @@ class DashboardService
             ->get()
             ->groupBy(fn($item) => Carbon::parse($item->tanggal_kerja)->month);
         
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
         
         return collect(range(1, 12))->map(function ($month) use ($year, $absensiHarians, $keteranganAbsensis) {
             $date = Carbon::create($year, $month, 1);
@@ -321,7 +322,7 @@ class DashboardService
             ->get();
     
         // Ambil semua keterangan absensi
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
     
         return collect(range(1, 12))->map(function ($month) use ($year, $absensiHarians, $kepegawaians, $keteranganAbsensis) {
             $date = Carbon::create($year, $month, 1);
@@ -382,7 +383,7 @@ class DashboardService
         $start = Carbon::create($year, $month, 1)->startOfMonth();
         $end = Carbon::create($year, $month, 1)->endOfMonth();
     
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
         
         // Ambil semua absensi dalam rentang tanggal, lalu kelompokkan berdasarkan tanggal_kerja
         $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$start, $end])
@@ -422,7 +423,7 @@ class DashboardService
         $start = Carbon::create($year, $month, 1)->startOfMonth();
         $end = Carbon::create($year, $month, 1)->endOfMonth();
     
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
         
         // Ambil semua absensi dalam rentang tanggal, lalu kelompokkan berdasarkan tanggal_kerja
         $absensiHarians = AbsensiHarian::whereBetween('tanggal_kerja', [$start, $end])
@@ -499,7 +500,7 @@ class DashboardService
     //     $startDate = $dto->startDate;
     //     $endDate = $dto->endDate;
     //     $userId = $dto->userId;
-    //     $keteranganAbsensis = KeteranganAbsensi::all();
+    //             $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
     //     $year = max($startDate->year, $endDate->year);
 
     //     $dataPerMonth = collect();
