@@ -191,9 +191,9 @@
                     <!-- End::slide__category -->
 
                     <!-- Start::slide -->
-                    <li class="slide">
-                        <a href="/admin_sdm/dashboard"
-                            class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0V0z" fill="none" />
                                 <path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3" />
@@ -201,9 +201,21 @@
                                     d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z" />
                             </svg>
                             <span class="side-menu__label">Dashboard</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
-                    </li>
-                    <!-- End::slide -->
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/admin_sdm/dashboard"
+                                class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                                    Absensi</a>
+                            </li>
+                            <li class="slide">
+                                <a href="/admin_sdm/dashboard_gaji"
+                                class="side-menu__item {{ request()->routeIs('/admin_sdm/dashboard_gaji') ? 'active' : '' }}">
+                                    Gaji</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
@@ -265,7 +277,7 @@
                     <!-- End::slide -->
 
                     <!-- Start::slide -->
-                    {{-- <li class="slide has-sub">
+                    <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
@@ -287,7 +299,7 @@
                                     Bulanan</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide --> --}}
+                    </li> <!-- End::slide -->
 
                     {{-- <!-- Start::slide -->
                     <li class="slide has-sub">
@@ -482,9 +494,9 @@
                     <!-- End::slide__category -->
 
                     <!-- Start::slide -->
-                    <li class="slide">
-                        <a href="/direktur/dashboard"
-                            class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0V0z" fill="none" />
                                 <path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3" />
@@ -492,9 +504,21 @@
                                     d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z" />
                             </svg>
                             <span class="side-menu__label">Dashboard</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
-                    </li>
-                    <!-- End::slide -->
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/direktur/dashboard"
+                                class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                                    Absensi</a>
+                            </li>
+                            <li class="slide">
+                                <a href="/direktur/dashboard_gaji"
+                                class="side-menu__item {{ request()->routeIs('/direktur/dashboard_gaji') ? 'active' : '' }}">
+                                    Gaji</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
@@ -516,6 +540,31 @@
                                 <a href="/direktur/kepegawaian"
                                     class="side-menu__item {{ request()->routeIs('/direktur/kepegawaian') ? 'active' : '' }}">Data
                                     Kepegawaian</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
+
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                                class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
+                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                            </svg>
+                            <span class="side-menu__label">Management Gaji</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/direktur/gaji"
+                                    class="side-menu__item {{ request()->routeIs('/direktur/gaji') ? 'active' : '' }}">Data
+                                    Gaji</a>
+                            </li>
+                            <li class="slide">
+                                <a href="/direktur/gaji_bulanan"
+                                    class="side-menu__item {{ request()->routeIs('/direktur/gaji_bulanan') ? 'active' : '' }}">Realisasi Gaji
+                                    Bulanan</a>
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
