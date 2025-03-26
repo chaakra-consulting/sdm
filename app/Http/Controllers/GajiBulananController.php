@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use App\Models\BukukasPurchaseInvoice;
 use App\Models\BukukasPurchaseInvoiceItems;
 use App\Models\DatadiriUser;
@@ -51,8 +52,8 @@ class GajiBulananController extends Controller
 
         $collect = collect();
         foreach($gajiBulanans as $gajiBulanan){
-            $potonganTotal = $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_kehadiran + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
-            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->insentif_lainnya;
+            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
+            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
             $gajiTotal = ($gajiBulanan->gaji_pokok + $insentifTotal) - $potonganTotal;
 
             $collect->push((object)[
@@ -64,8 +65,10 @@ class GajiBulananController extends Controller
                 'tanggal_gaji_text' => $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->format('d F Y') : '-',
 
                 'potongan_total' => $potonganTotal,
+                'potongan_gaji_pokok' => $gajiBulanan->potongan_gaji_pokok,
+                'potongan_uang_makan' => $gajiBulanan->potongan_uang_makan,
                 'potongan_kinerja' => $gajiBulanan->potongan_kinerja,
-                'potongan_kehadiran' => $gajiBulanan->potongan_kehadiran,
+                'potongan_keterlambatan' => $gajiBulanan->potongan_keterlambatan,
                 'potongan_pajak' => $gajiBulanan->potongan_pajak,
                 'potongan_bpjs_ketenagakerjaan' => $gajiBulanan->potongan_bpjs_ketenagakerjaan,
                 'potongan_bpjs_kesehatan' => $gajiBulanan->potongan_bpjs_kesehatan,
@@ -79,6 +82,7 @@ class GajiBulananController extends Controller
                 'insentif_uang_bensin' => $gajiBulanan->insentif_uang_bensin,
                 'insentif_penjualan' => $gajiBulanan->insentif_penjualan,
                 'insentif_lainnya' => $gajiBulanan->insentif_lainnya,
+                'overtime' => $gajiBulanan->overtime,
                 'keterangan_insentif_lainnya' => $gajiBulanan->keterangan_insentif_lainnya,
 
                 'gaji_pokok' => $gajiBulanan->gaji_pokok,
@@ -94,9 +98,13 @@ class GajiBulananController extends Controller
             '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
             '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
         ];
+
+        $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         
         $data = [
             'title' => 'Realisasi Gaji Bulanan',
+            'role'  => $role,
             'month' => $month,
             'month_text' => $month_text,
             'year' => $year,
@@ -159,8 +167,10 @@ class GajiBulananController extends Controller
  
              $request->validate([
                  'gaji_pokok' => 'required',
+                 'potongan_gaji_pokok' => 'nullable',
+                 'potongan_uang_makan' => 'nullable',
                  'potongan_kinerja' => 'nullable',
-                 'potongan_kehadiran' => 'nullable',
+                 'potongan_keterlambatan' => 'nullable',
                  'potongan_pajak' => 'nullable',
                  'potongan_bpjs_ketenagakerjaan' => 'nullable',
                  'potongan_bpjs_kesehatan' => 'nullable',
@@ -170,23 +180,27 @@ class GajiBulananController extends Controller
                  'insentif_uang_makan' => 'nullable',
                  'insentif_uang_bensin' => 'nullable',
                  'insentif_penjualan' => 'nullable',
+                 'overtime' => 'nullable',
                  'insentif_lainnya' => 'nullable',
              ]);
 
              $updateData = collect([
                 'gaji_pokok'            => $request->gaji_pokok,
-                'potongan_kinerja'            => $request->potongan_kinerja,
-                'potongan_kehadiran'           => $request->potongan_kehadiran,
-                'potongan_pajak'  => $request->potongan_pajak,
-                'potongan_bpjs_ketenagakerjaan'        => $request->potongan_bpjs_ketenagakerjaan,
-                'potongan_bpjs_kesehatan'      => $request->potongan_bpjs_kesehatan,
-                'potongan_kasbon'            => $request->potongan_kasbon,
-                'potongan_lainnya'            => $request->potongan_lainnya,
-                'insentif_kinerja'            => $request->insentif_kinerja,
-                'insentif_uang_makan'            => $request->insentif_uang_makan,
-                'insentif_uang_bensin'            => $request->insentif_uang_bensin,
-                'insentif_penjualan'            => $request->insentif_penjualan,
-                'insentif_lainnya'            => $request->insentif_lainnya,
+                'potongan_gaji_pokok'            => $request->potongan_gaji_pokok ?? 0,
+                'potongan_uang_makan'            => $request->potongan_uang_makan?? 0,
+                'potongan_kinerja'            => $request->potongan_kinerja?? 0,
+                'potongan_keterlambatan'           => $request->potongan_keterlambatan?? 0,
+                'potongan_pajak'  => $request->potongan_pajak?? 0,
+                'potongan_bpjs_ketenagakerjaan'        => $request->potongan_bpjs_ketenagakerjaan?? 0,
+                'potongan_bpjs_kesehatan'      => $request->potongan_bpjs_kesehatan?? 0,
+                'potongan_kasbon'            => $request->potongan_kasbon?? 0,
+                'potongan_lainnya'            => $request->potongan_lainnya?? 0,
+                'insentif_kinerja'            => $request->insentif_kinerja?? 0,
+                'insentif_uang_makan'            => $request->insentif_uang_makan?? 0,
+                'insentif_uang_bensin'            => $request->insentif_uang_bensin?? 0,
+                'insentif_penjualan'            => $request->insentif_penjualan?? 0,
+                'overtime'            => $request->overtime?? 0,
+                'insentif_lainnya'            => $request->insentif_lainnya?? 0,
             ]);
 
             $gaji->update($updateData->toArray());
@@ -203,20 +217,25 @@ class GajiBulananController extends Controller
     public function sync(Request $request)
     {
          try {
-             DB::beginTransaction();
+            DB::beginTransaction();
 
-             $request->validate([
+            $request->validate([
                 'month' => 'required|in:1,2,3,4,5,6,7,8,9,10,11,12',
                 'year' => 'required|in:' . implode(',', range(1900, date('Y'))),
             ]);
 
-             $sync = GajiBulananSync::where('tahun',$request->year)->where('bulan',$request->month)->first();
-             $gajiBulanan = GajiBulanan::whereYear('tanggal_gaji', $request->year)
-             ->whereMonth('tanggal_gaji', $request->month)
-             ->get();
-         
+            $sync = GajiBulananSync::where('tahun',$request->year)->where('bulan',$request->month)->first();
+            $gajiBulanan = GajiBulanan::whereYear('tanggal_gaji', $request->year)
+            ->whereMonth('tanggal_gaji', $request->month)
+            ->get();
+
+            $invoice = $sync ? BukukasPurchaseInvoice::where('id',$sync->bukukas_invoice_id)->where('deleted',false)->first() : null;
+            $invoiceItems = $sync ? BukukasPurchaseInvoiceItems::where('id',$sync->bukukas_invoice_item_id)->first() : null;
+
+            $totalPotonganGajiPokok = $gajiBulanan->sum('potongan_gaji_pokok');
+            $totalPotonganUangMakan = $gajiBulanan->sum('potongan_uang_makan');
             $totalPotonganKinerja = $gajiBulanan->sum('potongan_kinerja');
-            $totalPotonganKehadiran = $gajiBulanan->sum('potongan_kehadiran');
+            $totalPotonganKeterlambatan = $gajiBulanan->sum('potongan_keterlambatan');
             $totalPotonganPajak = $gajiBulanan->sum('potongan_pajak');
             $totalPotonganBPJSKetenagakerjaan = $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan');
             $totalPotonganBPJSKesehatan = $gajiBulanan->sum('potongan_bpjs_kesehatan');
@@ -228,17 +247,16 @@ class GajiBulananController extends Controller
             $totalInsentifUangBensin = $gajiBulanan->sum('insentif_uang_bensin');
             $totalInsentifPenjualan = $gajiBulanan->sum('insentif_penjualan');
             $totalInsentifLainnya = $gajiBulanan->sum('insentif_lainnya');
+            $totalOvertime = $gajiBulanan->sum('overtime');
 
             $gajiPokokTotal = $gajiBulanan->sum('gaji_pokok');
             
-            $potonganTotal = $totalPotonganKinerja + $totalPotonganKehadiran + $totalPotonganPajak + $totalPotonganBPJSKetenagakerjaan + $totalPotonganBPJSKesehatan + $totalPotonganKasbon + $totalPotonganLainnya;
-            $insentifTotal = $totalInsentifKinerja + $totalInsentifUangMakan + $totalInsentifUangBensin + $totalInsentifPenjualan + $totalInsentifLainnya;
+            $potonganTotal = $totalPotonganGajiPokok + $totalPotonganUangMakan + $totalPotonganKinerja + $totalPotonganKeterlambatan + $totalPotonganPajak + $totalPotonganBPJSKetenagakerjaan + $totalPotonganBPJSKesehatan + $totalPotonganKasbon + $totalPotonganLainnya;
+            $insentifTotal = $totalInsentifKinerja + $totalInsentifUangMakan + $totalInsentifUangBensin + $totalInsentifPenjualan + $totalOvertime + $totalInsentifLainnya;
             $gajiTotal = ($gajiPokokTotal + $insentifTotal) - $potonganTotal;
 
-            if ($sync) {
-
+            if ($invoice && $invoiceItems) {
                 // $invoice = BukukasPurchaseInvoice::where('id',$sync->bukukas_invoice_id)->first();
-                $invoiceItems = BukukasPurchaseInvoiceItems::where('id',$sync->bukukas_invoice_item_id)->first();
 
                 $updateSync = collect([
                     'tanggal_sync_terakhir' => Carbon::now(),
@@ -252,6 +270,8 @@ class GajiBulananController extends Controller
                 $invoiceItems->update($updateInvoiceItems->toArray());
 
             }else{
+                if($sync) $sync->delete();
+
                 $month_text = Carbon::createFromDate($request->year, $request->month, 1)->translatedFormat('F');
 
                 $dataInvoice = [
