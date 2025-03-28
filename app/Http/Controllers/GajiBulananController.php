@@ -49,7 +49,8 @@ class GajiBulananController extends Controller
         ->get(); 
 
         $gajiBulananSync = GajiBulananSync::where('bulan',$month)->where('tahun',$year)->first();
-
+        $syncUpdatedAt = $gajiBulananSync ? Carbon::parse($gajiBulananSync->updated_at)->translatedFormat('d M Y H:i:s') : null;
+    
         $collect = collect();
         foreach($gajiBulanans as $gajiBulanan){
             $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
@@ -111,6 +112,7 @@ class GajiBulananController extends Controller
             'months' => $months,
             'years' => $years,
             'sync_id' => $gajiBulananSync ? $gajiBulananSync->id : null,
+            'sync_updated_at' => $syncUpdatedAt,
             'gajis' => $collect,
         ];
 

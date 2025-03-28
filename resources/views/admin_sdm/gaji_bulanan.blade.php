@@ -165,7 +165,12 @@
             <div class="card-title">
                 Realisasi Gaji Bulanan
             </div>
-            <button class="btn btn-sm btn-success ms-2" id="alert-parameter">Sync <i class="fas fa-sync"></i></button> 
+            <button class="btn btn-sm btn-success ms-2" id="alert-parameter">Sinkronisasi Akun Gaji Buku Kas <i class="fas fa-sync"></i></button>
+            @if($sync_updated_at) 
+            <p class="mb-0 ms-1" style="opacity: 0.7; font-size: 11px;">
+                <em>Sinkronisasi Terakhir: {{ $sync_updated_at }}</em>
+            </p>
+            @endif     
             <form action="" method="GET" class="ms-auto" style="max-width: 500px;">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-5">
@@ -190,7 +195,8 @@
                         <button type="submit" id="applyFilter" class="btn btn-primary w-100">Filter</button>
                     </div>
                 </div>
-            </form>            
+            </form> 
+            <p class="mb-0"><small><em><span class="text-danger">*</span>Wajib dilakukan sinkronisasi setelah gaji final diverifikasi</em></small></p>           
         </div>
         
         <div class="card-body">
@@ -497,11 +503,11 @@
         });
 
         swalWithBootstrapButtons.fire({
-            title: 'Apakah anda Yakin ingin melakukan Sync Data?',
+            title: 'Apakah anda Yakin ingin melakukan Sinkronisasi Data?',
             text: "Aksi ini akan mengubah Data Akun Penggajian {{ $month_text }} {{ $year }} pada Sistem Bukukas!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, Sync data!',
+            confirmButtonText: 'Ya, Sinkronisasi data!',
             cancelButtonText: 'Batalkan',
             reverseButtons: true
         }).then((result) => {
