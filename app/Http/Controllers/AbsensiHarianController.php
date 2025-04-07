@@ -216,8 +216,13 @@ class AbsensiHarianController extends Controller
 
              $userId = DatadiriUser::where('id',$id)->value('user_id');
              $absensi = Absensi::where('hari',strtolower($request->hari_kerja))->first();
+             $keteranganSlug = KeteranganAbsensi::where('id',$request->keterangan_id)->value('slug');
 
             $filename = null;
+
+            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            }
 
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');
@@ -272,10 +277,16 @@ class AbsensiHarianController extends Controller
                 'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
             ]);
 
-            $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
+            // $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
             $absensiHarian = AbsensiHarian::where('id',$id)->first();
+            $keteranganSlug = KeteranganAbsensi::where('id',$request->keterangan_id)->value('slug');
 
             $filename = null;
+
+            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            }
+
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');
                 $filename = uniqid() . time() . '.' . $file->getClientOriginalExtension();
