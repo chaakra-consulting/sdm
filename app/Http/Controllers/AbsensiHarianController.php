@@ -40,8 +40,13 @@ class AbsensiHarianController extends Controller
     public function show(Request $request,$id)
     {
         $user = Auth::user();
+        $authPegawaiId = $user->dataDiri ? $user->dataDiri->id : null;
+        $pegawaiId = $id;
+
+        $buttonVerifikasi = $authPegawaiId == $pegawaiId ? true : false;
+
         if($user->role->slug == 'karyawan'){
-            $id = $user->dataDiri->id;
+            $id = $authPegawaiId;
         }
 
         $request->validate([
@@ -165,12 +170,15 @@ class AbsensiHarianController extends Controller
             ->where('bulan',Carbon::now()->format('m'))->first();
         if($verifikasi) $statusVerifikasi = 'Terverifikasi';
         else $statusVerifikasi = 'Belum Terverifikasi';
+        $tanggalVerifikasi = $verifikasi ? Carbon::parse($verifikasi->updated_at)->translatedFormat('d M Y H:i:s') : null;
         
         $data = [
             'title' => 'Detail Absensi',
             'role'=>$role,
             'pegawai_id'=>$id,
+            'button_verifikasi' => $buttonVerifikasi,
             'verifikasi'=> $statusVerifikasi,
+            'tanggal_verifikasi' => $tanggalVerifikasi,
             'nama'=> $pegawai ? $pegawai->nama_lengkap : null,
             'foto_user'=> $pegawai ? $pegawai->foto_user : null,
             'nip'=> $kepegawaian ? $kepegawaian->nip : '-',
