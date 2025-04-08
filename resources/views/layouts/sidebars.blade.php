@@ -164,11 +164,7 @@
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                            </svg>
+                            <svg  xmlns="http://www.w3.org/2000/svg"  class="side-menu__icon"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-list-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
                             <span class="side-menu__label">Management Absensi</span>
                             <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
@@ -275,6 +271,26 @@
                         </ul>
                     </li>
                     <!-- End::slide -->
+
+                    <!-- Start::slide -->
+                    @if(Auth::user()->dataDiri)
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  class="side-menu__icon"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-list-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
+                            <span class="side-menu__label">Management Absensi</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="{{ route('admin_sdm.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
+                                    class="side-menu__item {{ request()->routeIs('admin_sdm.absensi_harian.show') ? 'active' : '' }}">
+                                    Data Absensi Harian
+                                </a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
+                    @endif   
 
                     <!-- Start::slide -->
                     <li class="slide has-sub">
