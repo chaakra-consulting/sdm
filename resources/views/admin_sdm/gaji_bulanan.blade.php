@@ -21,11 +21,11 @@
                         <label for="pegawai_id_tambah" class="form-label">Pilih Karyawan</label>
                         <select name="pegawai_id" id="pegawai_id_tambah" class="form-control">
                             <option selected disabled>Pilih Karyawan</option>
-                            {{-- @foreach ($pegawais as $pegawai)
+                            @foreach ($pegawais as $pegawai)
                                 <option value="{{ $pegawai->id }}">
                                     {{ $pegawai->nama_lengkap }}
                                 </option>
-                            @endforeach --}}
+                            @endforeach
                         </select>
                     </div>
                     <!-- Dropdown untuk Edit Gaji -->
@@ -161,12 +161,12 @@
 </div>
 
 <div class="container-fluid">
-    {{-- <div class="mb-2">
+    <div class="mb-2">
         <button type="button" class="btn btn-primary tambahGaji" data-bs-toggle="modal"
         data-bs-target="#staticBackdrop">
-        Tambah Data Gaji
+        Tambah Gaji Bulanan {{ $month_text }} {{ $year }}
         </button>
-    </div> --}}
+    </div>
     <div class="card custom-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="card-title">
@@ -319,9 +319,28 @@
             $(".modal-title").text('Tambah Gaji Karyawan');
             $(".tambahGajiDropdown").show();
             $(".editGajiDropdown").hide();
+
+            $("#pegawai_id").prop('disabled', false);
+            $("#gaji_pokok").prop('disabled', false);
+            $("#potongan_gaji_pokok").prop('disabled', false);
+            $("#potongan_uang_makan").prop('disabled', false);
+            $("#potongan_keterlambatan").prop('disabled', false);
+            $("#potongan_kinerja").prop('disabled', false);
+            $("#potongan_pajak").prop('disabled', false);
+            $("#potongan_bpjs_ketenagakerjaan").prop('disabled', false);
+            $("#potongan_bpjs_kesehatan").prop('disabled', false);
+            $("#potongan_kasbon").prop('disabled', false);
+            $("#potongan_lainnya").prop('disabled', false);
+            $("#keterangan_potongan_lainnya").prop('disabled', false);
+            $("#insentif_kinerja").prop('disabled', false);
+            $("#insentif_uang_bensin").prop('disabled', false);
+            $("#insentif_uang_makan").prop('disabled', false);
+            $("#insentif_penjualan").prop('disabled', false);
+            $("#overtime").prop('disabled', false);
+            $("#insentif_lainnya").prop('disabled', false);
             
             $("#formGaji").append('<input type="hidden" name="_method" value="POST">');
-            $("#formGaji").attr('action', '/{{ $role }}/gaji/store');           
+            $("#formGaji").attr('action', '/{{ $role }}/gaji_bulanan/store');      
         })
         // <form action="" method="POST" id="formGaji">
 
@@ -432,6 +451,7 @@
     
     document.addEventListener("DOMContentLoaded", function () {
         const targetInputs = [
+            "gaji_pokok",
             "potongan_gaji_pokok", 
             "potongan_uang_makan", 
             "potongan_kinerja", 

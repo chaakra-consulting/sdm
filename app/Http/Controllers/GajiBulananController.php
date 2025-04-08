@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GajiBulananController extends Controller
 {
@@ -102,9 +103,16 @@ class GajiBulananController extends Controller
 
         $roleSlug = Auth::user()->role->slug;
         $role = Functions::generateUrlByRoleSlug($roleSlug);
+
+        $pegawais = DatadiriUser::whereHas('kepegawaian', function ($query) {
+            $query->where('is_active', 1);
+        })->whereHas('kepegawaian.statusPekerjaan', function ($query) {
+            $query->where('slug', 'freelance');
+        })->get(); 
         
         $data = [
             'title' => 'Realisasi Gaji Bulanan',
+            'pegawais' => $pegawais,
             'role'  => $role,
             'month' => $month,
             'month_text' => $month_text,
@@ -119,42 +127,73 @@ class GajiBulananController extends Controller
         return view('admin_sdm.gaji_bulanan',$data);
     }
 
-    // public function store(Request $request)
-    // {
-    //      try {
-    //          DB::beginTransaction();
+    public function store(Request $request)
+    {
+         try {
+             DB::beginTransaction();
  
-    //          $request->validate([
-    //              'pegawai_id'                => 'required|exists:\App\Models\DatadiriUser,id',
-    //              'gaji_pokok'                => 'required',
-    //              'uang_makan'                => 'nullable',
-    //              'uang_bensin'               => 'nullable',
-    //              'bpjs_ketenagakerjaan'      => 'nullable',
-    //              'bpjs_kesehatan'            => 'nullable',
-    //          ]);
+             $request->validate([
+                 'pegawai_id' => 'required|exists:\App\Models\DatadiriUser,id',
+                 'gaji_pokok' => 'required',
+                 'potongan_gaji_pokok' => 'nullable',
+                 'potongan_uang_makan' => 'nullable',
+                 'potongan_kinerja' => 'nullable',
+                 'potongan_keterlambatan' => 'nullable',
+                 'potongan_pajak' => 'nullable',
+                 'potongan_bpjs_ketenagakerjaan' => 'nullable',
+                 'potongan_bpjs_kesehatan' => 'nullable',
+                 'potongan_kasbon' => 'nullable',
+                 'potongan_lainnya' => 'nullable',
+                 'keterangan_potongan_lainnya' => 'nullable',
+                 'insentif_kinerja' => 'nullable',
+                 'insentif_uang_makan' => 'nullable',
+                 'insentif_uang_bensin' => 'nullable',
+                 'insentif_penjualan' => 'nullable',
+                 'overtime' => 'nullable',
+                 'insentif_lainnya' => 'nullable',
+                 'year' => 'nullable',
+                 'month' => 'nullable',
+             ]);
              
-    //          $userId = DatadiriUser::where('id',$request->pegawai_id)->value('user_id');
+             $userId = DatadiriUser::where('id',$request->pegawai_id)->value('user_id');
+             //$tanggalGaji = Carbon::create($request->year,$request->month,1);
+             $tanggalGaji = Carbon::create(2025,4,1);
+             $hash = (string) Str::ulid();
 
-    //          $data = [
-    //             'user_id'               => $userId,
-    //             'pegawai_id'            => $request->pegawai_id,
-    //             'gaji_pokok'            => $request->gaji_pokok,
-    //             'uang_makan'            => $request->uang_makan,
-    //             'uang_bensin'           => $request->uang_bensin,
-    //             'bpjs_ketenagakerjaan'  => $request->bpjs_ketenagakerjaan,
-    //             'bpjs_kesehatan'        => $request->bpjs_kesehatan
-    //         ];
+             $data = [
+                'user_id'                       => $userId,
+                'pegawai_id'                    => $request->pegawai_id,
+                'hash'                          => $hash,
+                'tanggal_gaji'                  => $tanggalGaji,
+                'gaji_pokok'                    => $request->gaji_pokok,
+                'potongan_gaji_pokok'           => $request->potongan_gaji_pokok ?? 0,
+                'potongan_uang_makan'           => $request->potongan_uang_makan?? 0,
+                'potongan_kinerja'              => $request->potongan_kinerja?? 0,
+                'potongan_keterlambatan'        => $request->potongan_keterlambatan?? 0,
+                'potongan_pajak'                => $request->potongan_pajak?? 0,
+                'potongan_bpjs_ketenagakerjaan' => $request->potongan_bpjs_ketenagakerjaan?? 0,
+                'potongan_bpjs_kesehatan'       => $request->potongan_bpjs_kesehatan?? 0,
+                'potongan_kasbon'               => $request->potongan_kasbon?? 0,
+                'potongan_lainnya'              => $request->potongan_lainnya?? 0,
+                'insentif_kinerja'              => $request->insentif_kinerja?? 0,
+                'insentif_uang_makan'           => $request->insentif_uang_makan?? 0,
+                'insentif_uang_bensin'          => $request->insentif_uang_bensin?? 0,
+                'insentif_penjualan'            => $request->insentif_penjualan?? 0,
+                'overtime'                      => $request->overtime?? 0,
+                'insentif_lainnya'              => $request->insentif_lainnya?? 0,
+                'keterangan_potongan_lainnya'   => $request->keterangan_potongan_lainnya?? null,
+            ];
     
-    //         Gaji::create($data);
+            GajiBulanan::create($data);
              
-    //          DB::commit();
-    //          return redirect()->back()->with('success', 'Data Gaji Berhasil Diubah');
-    //      } catch (Exception $e) {
-    //          DB::rollback();
-    //          //return redirect()->back()->withInput()->with('error', 'Gagal Mengubah Data');
-    //          return redirect()->back()->withInput()->with('error', "{$e->getMessage()}");
-    //      }
-    // }
+             DB::commit();
+             return redirect()->back()->with('success', 'Data Gaji Bulanan Berhasil Ditambah');
+         } catch (Exception $e) {
+             DB::rollback();
+             //return redirect()->back()->withInput()->with('error', 'Gagal Mengubah Data');
+             return redirect()->back()->withInput()->with('error', "{$e->getMessage()}");
+         }
+    }
 
     public function update(Request $request,$id)
     {
@@ -210,7 +249,7 @@ class GajiBulananController extends Controller
             $gaji->update($updateData->toArray());
              
              DB::commit();
-             return redirect()->back()->with('success', 'Data Gaji Berhasil Diubah');
+             return redirect()->back()->with('success', 'Data Gaji Bulanan Berhasil Diubah');
          } catch (Exception $e) {
              DB::rollback();
              //return redirect()->back()->withInput()->with('error', 'Gagal Mengubah Data');
