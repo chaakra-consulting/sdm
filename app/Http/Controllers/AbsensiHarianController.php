@@ -43,8 +43,6 @@ class AbsensiHarianController extends Controller
         $authPegawaiId = $user->dataDiri ? $user->dataDiri->id : null;
         $pegawaiId = $id;
 
-        $buttonVerifikasi = $authPegawaiId == $pegawaiId ? true : false;
-
         if($user->role->slug == 'karyawan'){
             $id = $authPegawaiId;
         }
@@ -168,9 +166,21 @@ class AbsensiHarianController extends Controller
         $verifikasi = AbsensiVerifikasi::where('pegawai_id',$id)
             ->where('tahun',Carbon::now()->format('Y'))
             ->where('bulan',Carbon::now()->format('m'))->first();
-        if($verifikasi) $statusVerifikasi = 'Terverifikasi';
-        else $statusVerifikasi = 'Belum Terverifikasi';
+
+        $now = Carbon::now();
+        $deadline = Carbon::now()->setDay(26)->setHour(16)->setMinute(0)->setSecond(0);
+        if ($now->greaterThan($deadline)) {
+            $statusVerifikasi = 'Terlambat Verifikasi';
+        } elseif ($verifikasi) {
+            $statusVerifikasi = 'Terverifikasi';
+        } else {
+            $statusVerifikasi = 'Belum Terverifikasi';
+        }
+                   
         $tanggalVerifikasi = $verifikasi ? Carbon::parse($verifikasi->updated_at)->translatedFormat('d M Y H:i:s') : null;
+
+        if($statusVerifikasi != 'Terlambat Verifikasi') $buttonVerifikasi = $authPegawaiId == $pegawaiId ? true : false;
+        else $buttonVerifikasi = null;
         
         $data = [
             'title' => 'Detail Absensi',

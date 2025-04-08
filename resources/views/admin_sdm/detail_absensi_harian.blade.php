@@ -78,9 +78,6 @@
                         </select>
                         <!-- Tambahkan area untuk menampilkan pesan -->
                         <div id="warningMessage" class="text-danger mt-2" style="display: none;">
-                            <em>
-                            *Surat Keterangan Sakit wajib diupload Maks. H+1 dari Tanggal Kerja.
-                            </em>
                         </div>
                     </div>                   
                     <div class="col-md-6">
@@ -227,7 +224,12 @@
                                 <em>({{ $tanggal_verifikasi }})</em>
                             </span>
                         @endif  
-                    </div>                    
+                    </div>  
+                    @elseif($verifikasi == 'Terlambat Verifikasi')
+                    <div class="card-title fs-12 mb-1">
+                        Absensi Bulan {{ $month_text }} : 
+                        <span class="text-danger">{{ $verifikasi }}</span>
+                    </div>                                                                                                          
                     @else
                         <div class="card-title fs-12 mb-1">
                             Absensi Bulan {{ $month_text }} : 
@@ -663,7 +665,7 @@
         // const sekarang = new Date(); // Waktu saat ini
 
         // Hilangkan waktu jika slug termasuk kategori tertentu
-        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa'].includes(slug)) {
+        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa', 'ijin-direktur'].includes(slug)) {
         // Kosongkan nilai input dan nonaktifkan
             waktuMasukInput.value = '';
             waktuPulangInput.value = '';
@@ -690,9 +692,23 @@
                 uploadSuratDokterInput.disabled = false;
             }
             warningMessage.style.display = 'block';
+            message = '*Surat Keterangan Sakit wajib diupload Maks. H+1 dari Tanggal Kerja.';
         } else {
             uploadSuratDokterInput.disabled = false;
             warningMessage.style.display = 'none';
+            message = '';
+        }
+
+        if (slug === 'ijin-direktur') {
+            warningMessage.style.display = 'block';
+            message = '*Surat Pendukung wajib diisi dengan form surat ijin.';
+        }
+
+        if (message) {
+            warningMessage.innerHTML = `<em>${message}</em>`;
+        }else {
+            warningMessage.style.display = 'none';
+            message = '';
         }
     }
 
