@@ -633,6 +633,7 @@
         const waktuPulang = button.getAttribute('data-waktu_pulang');
         const durasiLembur = button.getAttribute('data-durasi_lembur');
         const tanggalKerja = button.getAttribute('data-tanggal_kerja');
+        const uploadSurat = button.getAttribute('data-upload_surat_dokter');
 
         // Set nilai form
         if (keteranganId) keteranganSelect.value = keteranganId;
@@ -641,6 +642,7 @@
         if (durasiLembur) durasiLemburInput.value = durasiLembur;
 
         keteranganSelect.setAttribute('data-tanggal_kerja', tanggalKerja);
+        keteranganSelect.setAttribute('data-upload_surat_dokter', uploadSurat);
 
         // Trigger fungsi untuk memperbarui tampilan form
         updateFormDisplay();
@@ -651,6 +653,7 @@
         const selectedOption = keteranganSelect.options[keteranganSelect.selectedIndex];
         const slug = selectedOption ? selectedOption.getAttribute('data-slug') : '';
         const tanggalKerja = keteranganSelect.getAttribute('data-tanggal_kerja');
+        const uploadSurat = keteranganSelect.getAttribute('data-upload_surat_dokter');
 
         let batasWaktu = null;
         if (tanggalKerja) {
@@ -685,7 +688,7 @@
             durasiLemburInput.value = ''; // Reset nilai
         }
 
-        if (slug === 'sakit') {
+        if (slug === 'sakit' && !uploadSurat) {
             if(batasWaktu && sekarang > batasWaktu){
                 uploadSuratDokterInput.disabled = true;
             }else{
@@ -699,7 +702,7 @@
             message = '';
         }
 
-        if (slug === 'ijin-direktur') {
+        if (slug === 'ijin-direktur' && !uploadSurat) {
             warningMessage.style.display = 'block';
             message = '*Surat Pendukung wajib diisi dengan form surat ijin.';
         }
