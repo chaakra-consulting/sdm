@@ -79,8 +79,8 @@
 
         .take-home-pay {
             text-align: right;
-            font-size: 18px;
-            font-weight: bold;
+            /* font-size: 18px; */
+            /* font-weight: bold; */
             margin-top: 20px;
         }
 
@@ -203,8 +203,20 @@
         </div>
 
         <div class="take-home-pay">
-            Total Gaji: <strong>Rp. {{ $gaji_total }}</strong>
-        </div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    @if($keterangan_potongan_lainnya != null)
+                    <td style="text-align: left; width: 50%; font-size: 13px;">
+                        Ket. Potongan: <br>
+                        {!! nl2br(e($keterangan_potongan_lainnya ?? '-')) !!}
+                    </td>
+                    @endif
+                    <td style="text-align: right; width: 50%; font-weight: bold; font-size: 18px;">
+                        Total Gaji: <strong>Rp. {{ $gaji_total }}</strong>
+                    </td>
+                </tr>
+            </table>
+        </div>        
 
         <div class="signature-section">
             <table style="width: 100%; border-collapse: collapse;">

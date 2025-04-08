@@ -178,6 +178,7 @@ class GajiBulananController extends Controller
                  'potongan_bpjs_kesehatan' => 'nullable',
                  'potongan_kasbon' => 'nullable',
                  'potongan_lainnya' => 'nullable',
+                 'keterangan_potongan_lainnya' => 'nullable',
                  'insentif_kinerja' => 'nullable',
                  'insentif_uang_makan' => 'nullable',
                  'insentif_uang_bensin' => 'nullable',
@@ -203,6 +204,7 @@ class GajiBulananController extends Controller
                 'insentif_penjualan'            => $request->insentif_penjualan?? 0,
                 'overtime'            => $request->overtime?? 0,
                 'insentif_lainnya'            => $request->insentif_lainnya?? 0,
+                'keterangan_potongan_lainnya'            => $request->keterangan_potongan_lainnya?? null,
             ]);
 
             $gaji->update($updateData->toArray());

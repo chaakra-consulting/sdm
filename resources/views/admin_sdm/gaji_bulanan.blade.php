@@ -141,6 +141,13 @@
                             <input type="text" name="potongan_lainnya" id="potongan_lainnya" value="{{ old('potongan_lainnya') }}"class="form-control">
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="keterangan_potongan_lainnya">Keterangan</label>
+                            {{-- <input type="text" name="keterangan_potongan_lainnya" id="keterangan_potongan_lainnya" value="{{ old('keterangan_potongan_lainnya') }}"class="form-control"> --}}
+                            <textarea name="keterangan_potongan_lainnya" id="keterangan_potongan_lainnya" value="{{ old('keterangan_potongan_lainnya') }}" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -253,7 +260,7 @@
                                                 >
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-                                            @if($role == "direktur")
+                                            @if($role == "admin_sdm")
                                             <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdrop" 
                                                 title="Edit"
@@ -358,6 +365,7 @@
             $("#potongan_bpjs_kesehatan").prop('disabled', false);
             $("#potongan_kasbon").prop('disabled', false);
             $("#potongan_lainnya").prop('disabled', false);
+            $("#keterangan_potongan_lainnya").prop('disabled', false);
             $("#insentif_kinerja").prop('disabled', false);
             $("#insentif_uang_bensin").prop('disabled', false);
             $("#insentif_uang_makan").prop('disabled', false);
@@ -410,6 +418,7 @@
             $("#potongan_bpjs_kesehatan").prop('disabled', true);
             $("#potongan_kasbon").prop('disabled', true);
             $("#potongan_lainnya").prop('disabled', true);
+            $("#keterangan_potongan_lainnya").prop('disabled', true);
             $("#insentif_kinerja").prop('disabled', true);
             $("#insentif_uang_bensin").prop('disabled', true);
             $("#insentif_uang_makan").prop('disabled', true);
@@ -422,32 +431,56 @@
     })
     
     document.addEventListener("DOMContentLoaded", function () {
-        const inputs = document.querySelectorAll('input[type="text"]');
+        const targetInputs = [
+            "potongan_gaji_pokok", 
+            "potongan_uang_makan", 
+            "potongan_kinerja", 
+            "potongan_keterlambatan",
+            "potongan_pajak",
+            "potongan_bpjs_ketenagakerjaan",
+            "potongan_bpjs_kesehatan",
+            "potongan_kasbon",
+            "potongan_lainnya",
+            "insentif_kinerja",
+            "insentif_uang_makan",
+            "insentif_uang_bensin",
+            "insentif_penjualan",
+            "insentif_lainnya",
+            "overtime",
+        ];
+        
+        function formatRupiah(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
 
         function applyInitialFormat() {
-            inputs.forEach(input => {
-                if (input.value) {
+            targetInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input && input.value) {
                     input.value = formatRupiah(input.value.replace(/\D/g, ""));
                 }
             });
         }
 
-        inputs.forEach(input => {
-            input.addEventListener('input', function () {
-                let value = this.value.replace(/\D/g, ""); 
-                this.value = value ? formatRupiah(value) : "";
-            });
+        targetInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function () {
+                    let value = this.value.replace(/\D/g, "");
+                    this.value = value ? formatRupiah(value) : "";
+                });
 
-            input.addEventListener("keypress", function (event) {
-                let charCode = event.which ? event.which : event.keyCode;
-                if (charCode < 48 || charCode > 57) {
-                    event.preventDefault();
-                }
-            });
+                input.addEventListener("keypress", function (event) {
+                    let charCode = event.which ? event.which : event.keyCode;
+                    if (charCode < 48 || charCode > 57) {
+                        event.preventDefault();
+                    }
+                });
 
-            input.addEventListener("blur", function () {
-                this.value = formatRupiah(this.value.replace(/\D/g, ""));
-            });
+                input.addEventListener("blur", function () {
+                    this.value = formatRupiah(this.value.replace(/\D/g, ""));
+                });
+            }
         });
 
         document.querySelectorAll('.modal').forEach(modal => {
@@ -460,16 +493,16 @@
 
         document.querySelectorAll("form").forEach(form => {
             form.addEventListener("submit", function () {
-                inputs.forEach(input => {
-                    input.value = input.value.replace(/\./g, "");
+                targetInputs.forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.value = input.value.replace(/\./g, "");
+                    }
                 });
             });
         });
-
-        function formatRupiah(angka) {
-            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
     });
+
 
     document.getElementById('applyFilter').addEventListener('click', function () {
         const year = document.getElementById('year').value;
