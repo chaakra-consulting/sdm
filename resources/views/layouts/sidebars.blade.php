@@ -214,29 +214,10 @@
                     </li> <!-- End::slide -->
 
                     <!-- Start::slide__category -->
-                    <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
+                    <li class="slide__category"><span class="category-name">Informasi Diri</span></li>
                     <!-- End::slide__category -->
-                    <!-- Start::slide -->
-                    <li class="slide has-sub">
-                        <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                            </svg>
-                            <span class="side-menu__label">Management Karyawan</span>
-                            <i class="fe fe-chevron-right side-menu__angle"></i>
-                        </a>
-                        <ul class="slide-menu child1">
-                            <li class="slide">
-                                <a href="/admin_sdm/kepegawaian"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/kepegawaian') ? 'active' : '' }}">Data
-                                    Kepegawaian</a>
-                            </li>
-                        </ul>
-                    </li> <!-- End::slide -->
 
+                    <!-- Start::slide__category -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -291,6 +272,30 @@
                         </ul>
                     </li> <!-- End::slide -->
                     @endif   
+
+                    <!-- Start::slide__category -->
+                    <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>
+                    <!-- End::slide__category -->
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span class="side-menu__label">Management Karyawan</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/admin_sdm/kepegawaian"
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/kepegawaian') ? 'active' : '' }}">Data
+                                    Kepegawaian</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
 
                     <!-- Start::slide -->
                     <li class="slide has-sub">
