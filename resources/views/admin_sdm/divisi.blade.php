@@ -57,10 +57,12 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama_divisi }}</td>
-                                    <td><a href="" class="btn btn-warning editDivisi" data-bs-toggle="modal"
+                                    <td>
+                                        <a href="javascript:void(0);" class="btn btn-warning editDivisi" data-bs-toggle="modal"
                                             data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
-                                            data-nama_divisi="{{ $item->nama_divisi }}"><i
-                                                class="fas fa-edit"></i></a>
+                                            data-nama_divisi="{{ $item->nama_divisi }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form action="/admin_sdm/divisi/delete/{{ $item->id }}" method="POST"
                                             class="d-inline">
                                             @csrf

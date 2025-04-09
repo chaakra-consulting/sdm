@@ -3,9 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Gaji;
+use App\Models\Role;
+use App\Models\DatadiriUser;
+use App\Models\UsersProject;
+use App\Models\PendidikanUser;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -82,5 +87,13 @@ class User extends Authenticatable
     public function users_project()
     {
         return $this->hasMany(UsersProject::class, 'user_id', 'id');
+    }
+    public function socialMedias()
+    {
+        return $this->hasMany(SocialMedia::class, 'user_id', 'id');
+    }
+    public function users_task()
+    {
+        return $this->hasMany(UsersTask::class, 'user_id', 'id');
     }
 }

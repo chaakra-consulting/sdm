@@ -133,4 +133,13 @@ class ManajerController extends Controller
 
         return redirect()->back()->with('success', 'Data Instansi berhasil di transfer');
     }
+
+    public function laporanKinerja()
+    {
+        $data = [
+            'title' => 'Laporan Kinerja'
+        ];
+
+        return view('manajer.laporan_kinerja', $data);
+    }
 }

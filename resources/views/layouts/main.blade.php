@@ -1911,6 +1911,12 @@
 
     <!-- Modal JS -->
     <script src="{{ asset('/Tema/dist/assets/js/modal.js') }}"></script>
+    
+    <!-- Apex Charts JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+
+    <!-- Internal Apex Radialbar Charts JS -->
+    <script src="{{ asset('/Tema/dist/assets/js/apexcharts-radialbar.js') }}"></script>
 
     <!-- Custom JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom.js') }}"></script>

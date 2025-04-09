@@ -39,7 +39,7 @@ class UsersProjectController extends Controller
         $title = 'Detail Project User';
         $project = UsersProject::where('project_perusahaan_id', $id)->with('project_perusahaan')->first();
 
-        return view('project.user_project.detail_project', compact('project', 'title'));
+        return view('user_project.detail_project', compact('project', 'title'));
     }
     public function getTasks($id)
     {
