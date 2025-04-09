@@ -395,11 +395,7 @@
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'manager')
                 <ul class="main-menu">
-                    <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Main</span></li>
-                    <!-- End::slide__category -->
-
-                    <!-- Start::slide -->
                     <li class="slide">
                         <a href="{{ route('manajer.dashboard') }}"
                             class="side-menu__item {{ request()->routeIs('manajer.dashboard') ? 'active' : '' }}">
@@ -412,13 +408,7 @@
                             <span class="side-menu__label">Dashboard</span>
                         </a>
                     </li>
-                    <!-- End::slide -->
-
-                    <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Manajer</span></li>
-                    <!-- End::slide__category -->
-
-                    <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -452,12 +442,9 @@
                             </li>
                         </ul>
                     </li>
-                    <!-- End::slide -->
-
-                    <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            class="side-menu__item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
@@ -470,21 +457,51 @@
                         </a>
                         <ul class="slide-menu child1">
                             <li class="slide side-menu__label1">
-                                <a href="javascript:void(0);">Management Projcet</a>
+                                <a href="javascript:void(0);">Management Project</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('manajer.perusahaan') }}"
-                                    class="side-menu__item {{ request()->routeIs('manajer.perusahaan') ? 'active' : '' }}">List
-                                    Instansi</a>
-                            </li>
-                            <li class="slide">
-                                <a href="{{ route('manajer.project') }}"
-                                    class="side-menu__item {{ request()->routeIs('manajer.project') ? 'active' : '' }}">List
-                                    Project</a>
+                                <a href="{{ route('manajer.project') }}" class="side-menu__item {{ request()->routeIs(['manajer.project', 'manajer.detail.project']) ? 'active' : '' }}">
+                                    List Project</a>
+                                <a href="{{ route('manajer.task') }}" class="side-menu__item {{ request()->routeIs(['manajer.task', 'manajer.detail.task']) ? 'active' : '' }}">
+                                    List Task</a>
                             </li>
                         </ul>
                     </li>
-                    <!-- End::slide__category -->
+                    <li class="slide">
+                        <a href="{{ route('manajer.laporan_kinerja') }}"
+                            class="side-menu__item {{ request()->routeIs(['manajer.laporan_kinerja', 'manajer.list.laporan_kinerja']) ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
+                                <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
+                            </svg>
+                            <span class="side-menu__label">Laporan Kinerja</span>
+                        </a>
+                    </li>
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0V0z" fill="none"></path>
+                                <path
+                                    d="M5 9h14V5H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5S7.83 8.5 7 8.5 5.5 7.83 5.5 7 6.17 5.5 7 5.5zM5 19h14v-4H5v4zm2-3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"
+                                    opacity=".3"></path>
+                                <path
+                                    d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H5v-4h14v4zm-12-.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 6H5V5h14v4zM7 8.5c.83 0 1.5-.67 1.5-1.5S7.83 5.5 7 5.5 5.5 6.17 5.5 7 6.17 8.5 7 8.5z">
+                                </path>
+                            </svg>
+                            <span class="side-menu__label">Master Data</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="{{ route('manajer.perusahaan') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.perusahaan') ? 'active' : '' }}">
+                                    Instansi</a>
+                                <a href="{{ route('manajer.tipe_task') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.tipe_task') ? 'active' : '' }}">
+                                    Tipe Task</a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'direktur')
