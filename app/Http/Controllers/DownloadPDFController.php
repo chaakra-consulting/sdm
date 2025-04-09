@@ -32,9 +32,9 @@ class DownloadPDFController extends Controller
         })
         ->value('nama_lengkap');
 
-        $potonganTotal = $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_kehadiran + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
+        $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
         // $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->insentif_lainnya;
-        $pendapatanTotal = $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->insentif_lainnya;
+        $pendapatanTotal = $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
         $gajiTotal = $pendapatanTotal - $potonganTotal;
 
         $start = $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->subMonth()->day(26)->translatedFormat('d F Y') : ' ';
@@ -58,19 +58,22 @@ class DownloadPDFController extends Controller
             'pendapatan_total' => number_format($pendapatanTotal ?? 0, 0, ',', '.'),
             'earnings' => [
                 ['name' => 'Gaji pokok', 'amount' => number_format($gajiBulanan->gaji_pokok ?? 0, 0, ',', '.')],
-                ['name' => 'Insentif Kinerja', 'amount' => number_format($gajiBulanan->insentif_kinerja ?? 0, 0, ',', '.')],
                 ['name' => 'Insentif Uang Makan', 'amount' => number_format($gajiBulanan->insentif_uang_makan ?? 0, 0, ',', '.')],
+                ['name' => 'Insentif Kinerja', 'amount' => number_format($gajiBulanan->insentif_kinerja ?? 0, 0, ',', '.')],
                 ['name' => 'Insentif Uang Bensin', 'amount' => number_format($gajiBulanan->insentif_uang_bensin ?? 0, 0, ',', '.')],
                 ['name' => 'Insentif Penjualan', 'amount' => number_format($gajiBulanan->insentif_penjualan ?? 0, 0, ',', '.')],
+                ['name' => 'Overtime', 'amount' => number_format($gajiBulanan->overtime ?? 0, 0, ',', '.')],
                 ['name' => 'Insentif Lainnya', 'amount' => number_format($gajiBulanan->insentif_lainnya ?? 0, 0, ',', '.')],
-
+                ['name' => '', 'amount' => ''],
             ],
             'deductions' => [
-                ['name' => 'BPJS Ketenagakerjaan', 'amount' => number_format($gajiBulanan->potongan_bpjs_ketenagakerjaan ?? 0, 0, ',', '.')],
-                ['name' => 'BPJS Kesehatan', 'amount' => number_format($gajiBulanan->potongan_bpjs_kesehatan ?? 0, 0, ',', '.')],
-                ['name' => 'Potongan Ketidakhadiran', 'amount' => number_format($gajiBulanan->potongan_kehadiran ?? 0, 0, ',', '.')],
+                ['name' => 'Potongan Gaji Pokok', 'amount' => number_format($gajiBulanan->potongan_gaji_pokok ?? 0, 0, ',', '.')],
+                ['name' => 'Potongan Uang Makan', 'amount' => number_format($gajiBulanan->potongan_uang_makan ?? 0, 0, ',', '.')],
+                ['name' => 'Potongan Keterlambatan', 'amount' => number_format($gajiBulanan->potongan_keterlambatan ?? 0, 0, ',', '.')],
                 ['name' => 'Potongan Kinerja', 'amount' => number_format($gajiBulanan->potongan_kinerja ?? 0, 0, ',', '.')],
                 ['name' => 'Potongan Kasbon', 'amount' => number_format($gajiBulanan->potongan_kasbon ?? 0, 0, ',', '.')],
+                ['name' => 'BPJS Ketenagakerjaan', 'amount' => number_format($gajiBulanan->potongan_bpjs_ketenagakerjaan ?? 0, 0, ',', '.')],
+                ['name' => 'BPJS Kesehatan', 'amount' => number_format($gajiBulanan->potongan_bpjs_kesehatan ?? 0, 0, ',', '.')],
                 ['name' => 'Potongan Lainnya', 'amount' => number_format($gajiBulanan->potongan_lainnya ?? 0, 0, ',', '.')],
             ],
         ];

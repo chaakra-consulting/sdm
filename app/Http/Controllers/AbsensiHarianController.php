@@ -20,10 +20,10 @@ use Illuminate\Validation\Rule;
 
 class AbsensiHarianController extends Controller
 {
-    // public function __construct(
-    //     protected GajiBulananService $gajiBulananService,
-    // ) {
-    // }
+    public function __construct(
+        protected GajiBulananService $gajiBulananService,
+    ) {
+    }
     //  /**
     //  * Display a listing of the resource.
     //  */
@@ -51,7 +51,7 @@ class AbsensiHarianController extends Controller
             'date_range'                   => 'nullable|string',
         ]);
 
-        $keteranganAbsensis = KeteranganAbsensi::all();
+        $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
 
         $widgetCollection = collect();
         if ($request->date_range) {
@@ -65,6 +65,7 @@ class AbsensiHarianController extends Controller
 
         $countHariKerja = 0;
         for ($date = clone $startDateRange; $date->lte($endDateRange); $date->addDay()) {
+            $startDateRange = $startDateRange->startOfDay();
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
             $isHariLibur = HariLibur::where('tanggal',$date)->first();
@@ -81,7 +82,7 @@ class AbsensiHarianController extends Controller
 
         $terlambatCount = $widget->filter(function ($item) {
             $data = json_decode($item->data ?? null, true);
-            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['batas_waktu_terlambat'] && $item->keteranganAbsensi->slug != 'ijin-direktur';
+            return isset($data['batas_waktu_terlambat']) && $item->waktu_masuk > $data['waktu_masuk'] && $item->keteranganAbsensi->slug != 'ijin-direktur';
         })->count();
 
         $widgetCollection->push((object)[
@@ -113,13 +114,15 @@ class AbsensiHarianController extends Controller
 
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
-            
+            $waktuMasuk = $data && $data['waktu_masuk'] ? $data['waktu_masuk'] : null;
+
             if($keterangan && ($keterangan->slug != 'ijin-direktur')){
-                if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat";
-                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat) $isTelat = "On Time";
+                if($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk > $batasWaktuTerlambat) $isTelat = "Terlambat (>= 10 Menit)";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk <= $batasWaktuTerlambat && $absensiHarian->waktu_masuk > $waktuMasuk) $isTelat = "Terlambat (< 10 Menit)";
+                elseif($batasWaktuTerlambat && $absensiHarian->waktu_masuk && $absensiHarian->waktu_masuk < $batasWaktuTerlambat) $isTelat = "On Time (<= 08:00)";
                 else $isTelat = "-";
             }else{
-                $isTelat =  "On Time";
+                $isTelat =  "On Time (<= 08:00)";
             }
 
             if ($day >= 26) $dateVerif = Carbon::create($year, $month + 1, 1);
@@ -337,7 +340,7 @@ class AbsensiHarianController extends Controller
     
             AbsensiVerifikasi::create($data);
 
-            // $this->gajiBulananService->generateGajiBulananPegawai($data);
+            $this->gajiBulananService->generateGajiBulananPegawai($data);
 
             DB::commit();
             return redirect()->back()->with('success', 'Verifikasi Berhasil');

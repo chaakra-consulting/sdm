@@ -103,8 +103,13 @@
             
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
+                <button type="submit" id="btn-submit" class="btn btn-primary">
+                    <span id="btn-text">Simpan</span>
+                    <span id="btn-loading" class="loading d-none">
+                        <i class="ri-loader-2-fill fs-16 me-2"></i> Loading...
+                    </span>
+                </button>
+            </div>            
             
         </form>
         </div>
@@ -279,8 +284,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-primary text-fixed-white">
+                    <div class="card bg-teal text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -291,8 +297,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-teal text-fixed-white">
+                    <div class="card bg-purple text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -303,8 +310,9 @@
                         </div>
                     </div>
                 </div>
+            
                 <div class="col-lg-3">
-                    <div class="card bg-purple text-fixed-white">
+                    <div class="card bg-dark text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                 <div class="mt-0 text-center">
@@ -315,55 +323,48 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="card bg-dark text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[6]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[6]->count }}</h3>
+                <div class="row justify-content-center">
+                    <div class="col-lg-3">
+                        <div class="card bg-secondary text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[6]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[6]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-secondary text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+            
+                    <div class="col-lg-3">
+                        <div class="card bg-pink text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[7]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[7]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-pink text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[8]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[8]->count }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card bg-success text-fixed-white">
-                        <div class="card-body text-fixed-white">
-                            <div class="row">
-                                <div class="mt-0 text-center">
-                                    <span class="text-fixed-white">{{ $widget[9]->nama }}</span>
-                                    <h3 class="text-fixed-white mb-0">{{ $widget[9]->count }}</h3>
+            
+                    <div class="col-lg-3">
+                        <div class="card bg-success text-fixed-white">
+                            <div class="card-body text-fixed-white">
+                                <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[8]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[8]->count }}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     {{-- </div>
     <div class="card custom-card"> --}}
@@ -407,9 +408,11 @@
                                 <td>{{ ($row->absensi && $row->absensi->waktu_pulang  ? $row->absensi->waktu_pulang : '-') }}</td>
                                 <td>
                                     @if ($row->absensi)
-                                        @if ($row->absensi->status_keterlambatan == 'Terlambat')
+                                        @if ($row->absensi->status_keterlambatan == 'Terlambat (>= 10 Menit)')
                                             <span style="color: red;">{{ $row->absensi->status_keterlambatan }}</span>
-                                        @elseif ($row->absensi->status_keterlambatan == 'On Time')
+                                        @elseif ($row->absensi->status_keterlambatan == 'Terlambat (< 10 Menit)')
+                                            <span style="color: #FF8C00;">{{ $row->absensi->status_keterlambatan }}</span>
+                                        @elseif ($row->absensi->status_keterlambatan == 'On Time (<= 08:00)')
                                             <span style="color: green;">{{ $row->absensi->status_keterlambatan }}</span>
                                         @else
                                             {{ $row->absensi->status_keterlambatan }}
@@ -534,7 +537,6 @@
 
     let id = "{{ $pegawai_id }}";
     $(document).ready(function () {
-        // Handler untuk tambah detail absensi
         $(".tambahDetailAbsensiHarian").click(function (e) {
             e.preventDefault();
 
@@ -553,11 +555,10 @@
             $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/store/' + id);
         });
 
-        $(".editDetailAbsensiHarian").click(function(e){
+        $(".editDetailAbsensiHarian").click(function (e) {
             e.preventDefault();
             $(".modal-title").text('Edit Detail Absensi');
 
-            // $("#pegawai_id").val($(this).data('pegawai_id'));
             $("#tanggal_kerja").val($(this).data('tanggal_kerja'));
             $("#hari_kerja").val($(this).data('hari_kerja'));
             $("#waktu_masuk").val($(this).data('waktu_masuk'));
@@ -566,14 +567,26 @@
             $("#keterangan").val($(this).data('keterangan'));
             $("#durasi_lembur").val($(this).data('durasi_lembur'));
 
-
             // Tambahkan input hidden untuk method spoofing
             if ($("#formDetailAbsensiHarian input[name='_method']").length === 0) {
                 $("#formDetailAbsensiHarian").append('<input type="hidden" name="_method" value="PUT">');
             }
-            $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/update/'+ id +'/' + $(this).data('absensi_id'));
+            $("#formDetailAbsensiHarian").attr('action', '/admin_sdm/absensi_harian/update/' + id + '/' + $(this).data('absensi_id'));
         });
-    })
+
+        // Tambahkan efek loading saat form disubmit
+        $("#formDetailAbsensiHarian").submit(function () {
+            let btnSubmit = $("#btn-submit");
+            let btnText = $("#btn-text");
+            let btnLoading = $("#btn-loading");
+
+            // Ubah tombol jadi loading
+            btnText.addClass("d-none");
+            btnLoading.removeClass("d-none");
+            btnSubmit.attr("disabled", true);
+        });
+    });
+
 
     document.querySelectorAll('button.btn-danger').forEach((button) => {
         const absensiId = button.getAttribute('data-id'); // Ambil ID dari atribut data

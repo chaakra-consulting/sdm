@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use App\Models\DatadiriUser;
 use App\Models\Gaji;
 use App\Models\User;
@@ -18,6 +19,7 @@ class GajiController extends Controller
     public function index()
     {
         $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
         $gajis = Gaji::whereHas('pegawai.kepegawaian', function ($query) {
             $query->where('is_active', 1);
         })->get(); 
@@ -31,17 +33,18 @@ class GajiController extends Controller
         
         $data = [
             'title' => 'Data Gaji Karyawan',
+            'role'  => $role,
             'pegawais' => $pegawais,
             'gajis' => $gajis,
             'gajis_not_active' => $gajisNotActive,
         ];
 
-        // return view('admin.sub_jabatan', $data);
-        if($roleSlug == 'admin-sdm'){
-            return view('admin_sdm.gaji', $data);
-        }else{
-            return redirect()->back()->with('error', 'Anda Tidak Memiliki Akses ke Halaman Ini');
-        }
+        return view('admin_sdm.gaji', $data);
+        // if($roleSlug == 'admin-sdm'){
+        //     return view('admin_sdm.gaji', $data);
+        // }else{
+        //     return redirect()->back()->with('error', 'Anda Tidak Memiliki Akses ke Halaman Ini');
+        // }
     }
 
     public function store(Request $request)

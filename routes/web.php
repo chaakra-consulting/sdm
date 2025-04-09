@@ -95,10 +95,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
-    // Route::get('/admin_sdm/get-kehadiran-data-value', [AdminSdmController::class, 'getDashboardKehadiranDataValue'])->name('admin_sdm.dashboard_kehadiran_data_value');
-    // Route::get('/admin_sdm/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
-    // Route::get('/admin_sdm/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
-    // Route::get('/admin_sdm/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
+    Route::get('/admin_sdm/dashboard_gaji', [AdminSdmController::class, 'dashboardGaji'])->name('admin_sdm.dashboard_gaji');
 
     //Management User 
     Route::get('/admin_sdm/users', [UserController::class, 'index'])->name('admin.users');
@@ -317,6 +314,7 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
 Route::middleware(['auth', 'role:direktur'])->group(function () {
     // Dashboard
     Route::get('/direktur/dashboard', [AdminSdmController::class, 'dashboard'])->name('direktur.dashboard');
+    Route::get('/direktur/dashboard_gaji', [AdminSdmController::class, 'dashboardGaji'])->name('direktur.dashboard_gaji');
 
     // Direktur : Kepegawaian
     Route::get('/direktur/kepegawaian', [KepegawaianController::class, 'index']);
@@ -328,6 +326,17 @@ Route::middleware(['auth', 'role:direktur'])->group(function () {
     Route::post('/direktur/absensi_harian/store/{id}', [AbsensiHarianController::class, 'store'])->name('direktur.absensi_harian.store');
     Route::put('/direktur/absensi_harian/update/{pegawai_id}/{id}', [AbsensiHarianController::class, 'update'])->name('direktur.absensi_harian.update');
     Route::delete('/direktur/absensi_harian/delete/{id}', [AbsensiHarianController::class, 'destroy'])->name('direktur.absensi_harian.delete'); // Delete a role
+
+    // Admin SDM : Gaji
+    Route::get('/direktur/gaji', [GajiController::class, 'index'])->name('direktur.gaji.index');
+    Route::post('/direktur/gaji/store', [GajiController::class, 'store'])->name('direktur.gaji.store');
+    Route::put('/direktur/gaji/update/{id}', [GajiController::class, 'update'])->name('direktur.gaji.update');
+
+    // Admin SDM : Gaji Bulanan
+    Route::get('/direktur/gaji_bulanan', [GajiBulananController::class, 'index'])->name('direktur.gaji_bulanan.index');
+    // Route::post('/direktur/gaji_bulanan/store', [GajiBulananController::class, 'store'])->name('direktur.gaji_bulanan.store');
+    Route::put('/direktur/gaji_bulanan/update/{id}', [GajiBulananController::class, 'update'])->name('direktur.gaji_bulanan.update');
+    Route::get('/direktur/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('direktur.gaji_bulanan.sync');
 
 });
 

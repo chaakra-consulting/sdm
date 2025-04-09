@@ -45,7 +45,7 @@ class AdminSdmController extends Controller
         $graphBarPercentageKehadiranPerHari = $this->dashboardService->graphBarPercentageKehadiranPerHari($graphDTO);
 
         $data = [
-            'title' => 'Dashboard',
+            'title' => 'Dashboard Absensi',
             'arr_year' => $arrYear,
             'widget_absensi' => $widgetAbsensi,
             'value_absensi_harian_by_ket' => $graphValueAbsensiHarianByKeterangan,
@@ -61,6 +61,42 @@ class AdminSdmController extends Controller
         return view('admin_sdm.dashboard', $data);
     }
     
+    public function dashboardGaji(Request $request)
+    {
+        $request->validate([
+            'month' => 'nullable|in:1,2,3,4,5,6,7,8,9,10,11,12',
+            'year' => 'nullable|in:' . implode(',', range(1900, date('Y'))),
+        ]);
+
+        $month = $request->month ?? Carbon::now()->format('m');
+        $year = $request->year ?? Carbon::now()->format('Y');
+        $month_text = Carbon::createFromDate($year, $month, 1)->translatedFormat('F');
+        $years = range(2022, now()->year);
+        $months = [
+            '1' => 'Januari', '2' => 'Februari', '3' => 'Maret',
+            '4' => 'April', '5' => 'Mei', '6' => 'Juni',
+            '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
+            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+
+        $startDateRange = Carbon::create($year, $month, 1)->startOfMonth();
+        // $endDateRange = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $graphDTO = new GraphDTO($startDateRange);
+        $widgetGaji = $this->dashboardService->widgetGaji($graphDTO);
+
+        $data = [
+            'title' => 'Dashboard Gaji',
+            'month' => $month,
+            'month_text' => $month_text,
+            'year' => $year,
+            'months' => $months,
+            'years' => $years,
+            'widget_gaji' => $widgetGaji,
+        ];
+
+        return view('admin_sdm.dashboard_gaji', $data);
+    }
 
     public function getDashboardKehadiranDataValue(Request $request)
     {

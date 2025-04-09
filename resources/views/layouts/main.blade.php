@@ -15,7 +15,7 @@
         content="admin dashboard template,admin panel html,bootstrap dashboard,admin dashboard,html template,template dashboard html,html css,bootstrap 5 admin template,bootstrap admin template,bootstrap 5 dashboard,admin panel html template,dashboard template bootstrap,admin dashboard html template,bootstrap admin panel,simple html template,admin dashboard bootstrap">
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('/Tema/dist/assets/images/brand-logos/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/chaakra-2.png') }}" type="image/x-icon">
 
     <!-- Choices JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>

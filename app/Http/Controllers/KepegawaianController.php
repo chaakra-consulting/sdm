@@ -27,11 +27,9 @@ class KepegawaianController extends Controller
     public function index()
     {
         //
-        $data_diri = DatadiriUser::whereHas('kepegawaian', function ($query) {
-            $query->where('is_active', true);
-        })
-        ->orWhereDoesntHave('kepegawaian')
-        ->get();
+        $data_diri = DatadiriUser::whereHas('kepegawaian', function ($query){
+                $query->where('is_active', true);
+            })->get();
 
         $data_diri_tidak_aktif = DatadiriUser::whereHas('kepegawaian', function ($query){
                 $query->where('is_active', false);
