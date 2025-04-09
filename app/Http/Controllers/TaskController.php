@@ -48,7 +48,7 @@ class TaskController extends Controller
             'project_perusahaan_id' => 'nullable',
             'nama_task' => 'required',
             'keterangan' => 'nullable',
-            'upload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'upload' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png|max:5120',
             'user.*' => 'required',
         ]);
 
@@ -96,7 +96,7 @@ class TaskController extends Controller
             'project_perusahaan_id' => 'nullable',
             'nama_task' => 'required',
             'keterangan' => 'nullable',
-            'upload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:5120',
+            'upload' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png,gif|max:5120',
             'user_id' => 'required',    
             'user.*' => 'required' 
         ]);

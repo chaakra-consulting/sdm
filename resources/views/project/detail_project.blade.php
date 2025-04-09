@@ -56,6 +56,7 @@
                         <div class="form-group">
                             <input type="hidden" name="tgl_task" id="tgl_task">
                             <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id">
+                            <input type="hidden" name="tipe_task" id="tipe_task" value="task-project">
                             <input type="hidden" name="user_id" id="user_id">
                             <input type="hidden" name="task_id" id="task_id">
                         </div>
@@ -480,6 +481,7 @@
                 $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
                 $("#project_perusahaan_id").val('{{ $project->id }}');
                 $("#user_id").val('{{ auth()->user()->id }}');
+                $("#tipe_task").val('task-project');
 
                 $("#previewImage, #previewPDF").hide().attr("src", "");
                 $("#detail_upload").html("");

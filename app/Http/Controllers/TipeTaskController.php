@@ -13,7 +13,7 @@ class TipeTaskController extends Controller
         $title = 'Master Tipe Task';
         $tipe = TipeTask::all();
 
-        return view('master.tipe_task.index', compact('title', 'tipe'));
+        return view('master.tipe_task', compact('title', 'tipe'));
     }
 
     public function store(Request $request)

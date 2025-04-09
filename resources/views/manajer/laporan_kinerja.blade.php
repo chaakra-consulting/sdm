@@ -14,13 +14,33 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Task</th>
-                                <th>Tipe Task</th>
-                                <th>Tanggal</th>
+                                <th>Nama</th>
+                                <th>Jabatan</th>
+                                <th>Jumlah Project</th>
+                                <th>Jumlah Task</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach ($getDataUser as $item)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '-' }}</td>
+                                    <td>{{ $item->users_project->count() ? $item->users_project->count() : 0 }} Project</td>
+                                    <td>{{ $item->users_task->count() ? $item->users_task->count() : 0 }} Task</td>
+                                    <td>
+                                        <a 
+                                        href="{{ route('manajer.list.laporan_kinerja', $item->id) }}" 
+                                        class="btn btn-secondary"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-custom-class="tooltip-secondary"
+                                            data-bs-placement="top" title="Detail Laporan Kinerja!"><i
+                                                class='bx bx-detail'></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

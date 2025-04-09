@@ -93,21 +93,21 @@
                                                     <option value="{{ $task->tipe_task->id }}" selected>{{ $task->tipe_task->nama_tipe }}</option>
                                                     @foreach ($tipeTask as $item)
                                                         <option value="{{ $item->id }}">{{ $item->nama_tipe }}</option>
-                                                    @endforeach         
+                                                    @endforeach      
                                                 @endif
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="nama_project" class="form-label">Nama Project</label>
                                             @if ($task->project_perusahaan == null)
-                                                <select name="nama_project" id="nama_project" data-trigger class="form-control" required>
+                                                <select name="nama_project" id="nama_project" data-trigger class="form-control">
                                                     <option value="" selected disabled>Pilih Project</option>
                                                     @foreach ($project as $item)
                                                         <option value="{{ $item->id }}">{{ $item->nama_project }} ({{ $item->perusahaan->nama_perusahaan }})</option>
                                                     @endforeach
                                                 </select>
                                             @else
-                                                <select name="nama_project" id="nama_project" data-trigger class="form-control" required>
+                                                <select name="nama_project" id="nama_project" data-trigger class="form-control">
                                                     <option value="{{ $task->project_perusahaan->id }}" selected>{{ $task->project_perusahaan->nama_project }} ({{ $task->project_perusahaan->perusahaan->nama_perusahaan }})</option>
                                                     @foreach ($project as $item)
                                                         <option value="{{ $item->id }}">{{ $item->nama_project }} ({{ $item->perusahaan->nama_perusahaan }})</option>
@@ -129,19 +129,35 @@
                                             <input type="file" class="form-control" name="upload" id="upload">
                                             @php
                                                 $file = $task->upload ?? null;
-                                                $isImage = $file && in_array(pathinfo($file, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']);
-                                                $isPDF = $file && pathinfo($file, PATHINFO_EXTENSION) === 'pdf';
+                                                $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
+                                                $isImage = $extension && in_array($extension, ['jpg', 'jpeg', 'png']);
+                                                $isPDF = $extension === 'pdf';
                                             @endphp
-                                            @if($isImage)
-                                                <img id="previewImage" src="{{ asset('uploads/' . $file) }}" alt="Lampiran Gambar"
-                                                    class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
-                                            @elseif($isPDF)
-                                                <iframe id="previewPDF" src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
+                                            @if ($file)
+                                                @if ($isImage)
+                                                    <img src="{{ asset('uploads/' . $file) }}" alt="Preview Gambar"
+                                                        class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
+                                                    <p class="text-center mt-2" id="detail_upload">
+                                                        <strong>Preview Gambar:</strong> 
+                                                        <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat Gambar</a>
+                                                    </p>
+                                                @elseif ($isPDF)
+                                                    <iframe src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
+                                                    <p class="text-center mt-2" id="detail_upload">
+                                                        <strong>Preview PDF:</strong> 
+                                                        <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat PDF</a>
+                                                    </p>
+                                                @else
+                                                    <p class="text-center mt-2 text-muted" id="detail_upload">
+                                                        <strong>File Terpilih:</strong> .{{ $extension }}
+                                                    </p>
+                                                @endif
                                             @else
-                                                <p class="text-center text-muted">Tidak ada file lampiran yang tersedia</p>
+                                                <p class="text-center text-muted mt-2" id="detail_upload">
+                                                    Tidak ada file lampiran yang tersedia
+                                                </p>
                                             @endif
-                                            <p class="text-center mt-2" id="detail_upload">{{ $file }}</p>
-                                        </div>   
+                                        </div>                                          
                                         <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">                                    
                                         @if ($task != null)
                                             <button type="button" class="btn btn-danger btn-batal-edit"
@@ -265,6 +281,7 @@
         </div>
         <div class="mb-3">
             <a href="/manajer/task" class="btn btn-secondary">Kembali</a>
+            <a href="/manajer/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
         </div>
     </div>
 @endsection

@@ -5,29 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Perusahaan;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class ManajerController extends Controller
 {
     public function index()
     {
-        $data = [
-            'title' => 'Dashboard'
-        ];
+        $title = 'Dashboard';
 
-        return view('manajer.index', $data);
+        return view('manajer.index', compact('title'));
     }
 
     // manajemen perusahaan : data perusahaan
     public function show()
     {
-        $getDataPerusahaan = Perusahaan::all();
-        $data = [
-            'title' => 'List Instansi',
-            'perusahaan' => $getDataPerusahaan
-        ];
+        $perusahaan = Perusahaan::all();
+        $title = 'List Instansi';
 
-        return view('manajer.daftar_perusahaan', $data);
+        return view('master.daftar_perusahaan', compact('title', 'perusahaan'));
     }
 
     public function store(Request $request)
@@ -136,10 +132,15 @@ class ManajerController extends Controller
 
     public function laporanKinerja()
     {
-        $data = [
-            'title' => 'Laporan Kinerja'
-        ];
+        $title = 'Laporan Kinerja';
+        $getDataUser = User::all();
 
-        return view('manajer.laporan_kinerja', $data);
+        return view('manajer.laporan_kinerja', compact('title', 'getDataUser'));
+    }
+    public function listLaporanKinerja($id)
+    {
+        $title = 'Laporan Kinerja';
+        $getDataUser = User::find($id);
+        return view('manajer.list_laporan_kinerja', compact('title', 'getDataUser'));
     }
 }
