@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UsersTask;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
+use App\Models\SubTask;
 use App\Models\TipeTask;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,15 @@ class TaskController extends Controller
         $tasks = Task::all();
         $tipeTask = TipeTask::all();
         $users = User::all();
-        return view('task.daftar_task', compact('title', 'tasks', 'tipeTask', 'users', 'project'));
+        $userTasks = UsersTask::where('user_id', Auth::user()->id)
+            ->with([
+                'task.tipe_task',
+                'task.project_perusahaan',
+                'task.users_task.user.socialMedias',
+                'task.users_task.user.dataDiri.kepegawaian.subJabatan',
+            ])
+            ->get();
+        return view('task.daftar_task', compact('title', 'tasks', 'tipeTask', 'users', 'project','userTasks'));
     }
     
     public function detail($id)
@@ -37,10 +46,11 @@ class TaskController extends Controller
             ->get();
         $existingUserIds = UsersTask::where('task_id', $id)->pluck('user_id')->toArray();
         $users = User::whereNotIn('id', $existingUserIds)->get();
+        $subTask = SubTask::where('task_id', $id)->with(['lampiran'])->get();
 
-        return view('task.detail_task', compact('title', 'task', 'user', 'users', 'tipeTask', 'project'));
+
+        return view('task.detail_task', compact('title', 'task', 'user', 'users', 'tipeTask', 'project', 'subTask'));
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -49,7 +59,7 @@ class TaskController extends Controller
             'nama_task' => 'required',
             'keterangan' => 'nullable',
             'upload' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png|max:5120',
-            'user.*' => 'required',
+            'user.*' => 'nullable',
         ]);
 
         $tipeTask = TipeTask::where('slug', $request->tipe_task)->first();
@@ -61,7 +71,7 @@ class TaskController extends Controller
         
         if($request->hasFile('upload')){
             $file = $request->file('upload');
-            $fileName = uniqid() . "_task_" . time(). "." . $file->getClientOriginalExtension();
+            $fileName = uniqid() . "_task_" . auth()->user()->name . "_" . time(). "." . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $fileName);
             $uploadPath = $fileName;
         }
@@ -78,12 +88,19 @@ class TaskController extends Controller
 
         $task = Task::create($data);
 
-        foreach ($request->user as $user_id) {
+        if (Auth::check() && Auth::user()->role->slug == 'manager') {
+            foreach ($request->user as $user_id) {
+                UsersTask::create([
+                    'task_id' => $task->id,
+                    'user_id' => $user_id,
+                ]);
+            }            
+        } else {
             UsersTask::create([
                 'task_id' => $task->id,
-                'user_id' => $user_id,
+                'user_id' => Auth::user()->id,
             ]);
-        }
+        } 
         return redirect()->back()->with('success', 'Task berhasil di tambahkan');
     }
     
@@ -95,12 +112,12 @@ class TaskController extends Controller
             'tipe_task' => 'nullable',
             'project_perusahaan_id' => 'nullable',
             'nama_task' => 'required',
-            'keterangan' => 'nullable',
+            'keterangan' => 'required',
             'upload' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png,gif|max:5120',
             'user_id' => 'required',    
             'user.*' => 'required' 
         ]);
-        
+
         $task->fill($request->except('upload'));
 
         if ($request->hasFile('upload')) {
@@ -111,7 +128,7 @@ class TaskController extends Controller
                 }
             }
             $file = $request->file('upload');
-            $filename = uniqid() . '_task_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_task_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $task->upload = $filename;
         }

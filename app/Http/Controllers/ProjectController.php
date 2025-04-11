@@ -17,10 +17,13 @@ class ProjectController extends Controller
     {
         $title = 'Daftar Project';
         $project = ProjectPerusahaan::with('perusahaan', 'project_users')->get();
+        $userProject = UsersProject::where('user_id', Auth::user()->id)
+            ->with(['project_perusahaan.perusahaan'])
+            ->get();
         $perusahaan = Perusahaan::all();
         $users = User::all();
 
-        return view('project.daftar_project', compact('title', 'project', 'perusahaan', 'users'));
+        return view('project.daftar_project', compact('title', 'project', 'perusahaan', 'users', 'userProject'));
     }
 
     public function store(Request $request)
