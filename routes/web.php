@@ -13,20 +13,22 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LoginSSOController;
+use App\Http\Controllers\TipeTaskController;
+use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
+use App\Http\Controllers\DownloadPDFController;
+use App\Http\Controllers\GajiBulananController;
 use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
-use App\Http\Controllers\DownloadPDFController;
-use App\Http\Controllers\GajiBulananController;
-use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -59,7 +61,7 @@ Route::controller(ExportController::class)->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin
-    
+
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     // Data Karyawan
     Route::get('/admin/data_karyawan', [AdminController::class, 'data_karyawan']);
@@ -124,7 +126,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/absensi_harian/store/{id}', [AbsensiHarianController::class, 'store'])->name('admin_sdm.absensi_harian.store');
     Route::put('/admin_sdm/absensi_harian/update/{pegawai_id}/{id}', [AbsensiHarianController::class, 'update'])->name('admin_sdm.absensi_harian.update');
     Route::delete('/admin_sdm/absensi_harian/delete/{id}', [AbsensiHarianController::class, 'destroy'])->name('admin_sdm.absensi_harian.delete'); // Delete a role
-    
+
     Route::get('/admin_sdm/absensi_verifikasi/store/{id}', [AbsensiHarianController::class, 'storeVerifikasi'])->name('admin_sdm.absensi_verifikasi.store');
 
     // Admin SDM : Gaji
@@ -231,13 +233,22 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     // karyawan: project
     Route::get('/karyawan/project', [ProjectController::class, 'show'])->name('karyawan.project');
     Route::post('/karyawan/project/store', [UsersProjectController::class, 'store'])->name('karyawan.project.store');
-    Route::get('/karyawan/project/detail/{id}', [UsersProjectController::class, 'detail'])->name('karyawan.detail.project');
+    Route::get('/karyawan/project/detail/{id}', [ProjectController::class, 'detail'])->name('karyawan.detail.project');
     Route::put('/karyawan/project/update/{id}', [UsersProjectController::class, 'update'])->name('karyawan.update.project');
-    Route::delete('/karyawan/project/delete/{id}', [ProjectController::class, 'destroyUserProject'])->name('karyawan.delete.project');
 
     // karyawan : Task
+    Route::get('/karyawan/task/', [TaskController::class, 'index'])->name('karyawan.task');
     Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
+    Route::get('/karyawan/task/detail/{id}', [TaskController::class, 'detail'])->name('karyawan.detail.task');
+    Route::delete('/karyawan/task/delete/{id}', [TaskController::class, 'destroy'])->name('karyawan.delete.task');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
+
+    // karyawan : sub task
+    Route::post('/karyawan/subtask/store', [SubTaskController::class, 'store'])->name('karyawan.subtask.store');
+
+    // karyawan : laporan kinerja
+    Route::get('/karayawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
+    // Route::get('/karyawan/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
 });
 
 
@@ -284,13 +295,28 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/project/store', [ProjectController::class, 'store'])->name('manajer.tambah.project');
     Route::get('/manajer/project/detail/{id}', [ProjectController::class, 'detail'])->name('manajer.detail.project');
     Route::put('/manajer/project/update/{id}', [ProjectController::class, 'update'])->name('manajer.update.project');
+    Route::post('/manajer/project/update/anggota', [ProjectController::class, 'updateUserProject'])->name('manajer.update.anggota.project');
     Route::delete('/manajer/project/delete/{id}', [ProjectController::class, 'destroy'])->name('manajer.delete.project');
-
+    Route::delete('/manajer/project/delete/anggota/{id}', [ProjectController::class, 'destroyUserProject'])->name('manajer.delete.anggota.project');
+    
     // manajer : task
-    // Route::get('/manajer/project/task/', [TaskController::class, 'index'])->name('manajer.task');
-    Route::post('/manajer/project/task/store', [TaskController::class, 'store'])->name('manajer.store.task');
-    Route::put('/manajer/project/task/update/{id}', [TaskController::class, 'update'])->name('manajer.update.task');
-    Route::delete('/manajer/project/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
+    Route::get('/manajer/task/', [TaskController::class, 'index'])->name('manajer.task');
+    Route::get('/manajer/task/{id}', [TaskController::class, 'detail'])->name('manajer.detail.task');
+    Route::post('/manajer/task/store', [TaskController::class, 'store'])->name('manajer.store.task');
+    Route::put('/manajer/task/update/{id}', [TaskController::class, 'update'])->name('manajer.update.task');
+    Route::post('/manajer/task/update/anggota', [TaskController::class, 'updateUserTask'])->name('manajer.update.anggota.task');
+    Route::delete('/manajer/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
+    Route::delete('/manajer/task/delete/anggota/{id}', [TaskController::class, 'destroyUserTask'])->name('manajer.delete.anggota.task');
+
+    // manajer : tipe task
+    Route::get('/manajer/tipe_task', [TipeTaskController::class, 'index'])->name('manajer.tipe_task');
+    Route::post('/manajer/tipe_task/store', [TipeTaskController::class, 'store'])->name('manajer.store.tipe_task');
+    Route::put('/manajer/tipe_task/update/{id}', [TipeTaskController::class, 'update'])->name('manajer.update.tipe_task');
+    Route::delete('/manajer/tipe_task/delete/{id}', [TipeTaskController::class, 'destroy'])->name('manajer.delete.tipe_task');
+
+    // manajer : laporan kinerja
+    Route::get('/manajer/laporan_kinerja', [ManajerController::class, 'laporanKinerja'])->name('manajer.laporan_kinerja');
+    Route::get('/manajer/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');

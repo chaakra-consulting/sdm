@@ -12,4 +12,8 @@ class SocialMedia extends Model
         'nama_social_media',
         'link',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

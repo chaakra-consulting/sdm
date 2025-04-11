@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Perusahaan;
-use App\Models\SocialMedia;
 use App\Models\UsersProject;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 class ProjectController extends Controller
 {
@@ -19,11 +17,13 @@ class ProjectController extends Controller
     {
         $title = 'Daftar Project';
         $project = ProjectPerusahaan::with('perusahaan', 'project_users')->get();
-        $userTakenProjects = UsersProject::where('user_id', Auth::user()->id)->pluck('project_perusahaan_id')->toArray();
+        $userProject = UsersProject::where('user_id', Auth::user()->id)
+            ->with(['project_perusahaan.perusahaan'])
+            ->get();
         $perusahaan = Perusahaan::all();
         $users = User::all();
 
-        return view('project.daftar_project', compact('title', 'project', 'userTakenProjects', 'perusahaan', 'users'));
+        return view('project.daftar_project', compact('title', 'project', 'perusahaan', 'users', 'userProject'));
     }
 
     public function store(Request $request)
@@ -32,11 +32,23 @@ class ProjectController extends Controller
             'nama_perusahaan' => 'required',
             'nama_project' => 'required',
             'skala_project' => 'required',
-            'status' => 'required',
             'waktu_mulai' => 'required',
             'deadline' => 'required',
             'user.*' => 'required',
         ]);
+
+        if ($request->waktu_mulai !== null) {
+            $waktuMulai = Carbon::parse($request->waktu_mulai);
+            $hariIni = Carbon::today();
+            if ($waktuMulai->lessThanOrEqualTo($hariIni)) {
+                $status = "proses";
+            } else {
+                $status = "belum";
+            }
+        } else {
+            $status = "belum";
+        }
+
         $data = [
             'perusahaan_id' => $request->nama_perusahaan,
             'nama_project' => $request->nama_project,
@@ -44,7 +56,7 @@ class ProjectController extends Controller
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
-            'status' => $request->status,
+            'status' => $status,
             'progres' => $request->progres,
         ];
         
@@ -54,7 +66,7 @@ class ProjectController extends Controller
             UsersProject::create([
                 'project_perusahaan_id' => $project->id,
                 'user_id' => $user_id,
-                'status' => $request->status,
+                'status' => $status,
             ]);
         }
 
@@ -63,19 +75,19 @@ class ProjectController extends Controller
 
     public function detail(string $id)
     {
+        $title = 'Detail Project';
         $project = ProjectPerusahaan::where('id', $id)->first();
-        $tasks = Task::where('project_perusahaan_id', $id)->get();
+        $tasks = Task::where('project_perusahaan_id', $id)->with('users_task')->get();
         $perusahaan = Perusahaan::all();
-        $users = UsersProject::where('project_perusahaan_id', $id)
-        ->with
-            ([
-                'user.dataDiri.socialMedias',
-                'user.dataDiri.kepegawaian.subJabatan'
+        $user = UsersProject::where('project_perusahaan_id', $id)
+            ->with([
+                'user.socialMedias',
+                'user.dataDiri.kepegawaian.subJabatan',
             ])
             ->get();
-        $title = 'Detail Project';
+        $existingUserIds = UsersProject::where('project_perusahaan_id', $id)->pluck('user_id')->toArray();
+        $users = User::whereNotIn('id', $existingUserIds)->get();
         $events = [];
-
         if ($project->waktu_mulai) {
             $events[] = [
                 'title' => 'Mulai: ' . $project->nama_project,
@@ -90,8 +102,8 @@ class ProjectController extends Controller
                 'color' => 'red'
             ];
         }
-    
-        return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'users'));
+
+        return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'user', 'users'));
     }
 
     public function update(Request $request, $id)
@@ -116,14 +128,46 @@ class ProjectController extends Controller
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
         ];
-        
+
         $project->update($data);
 
         return redirect()->back()->with('success', 'Project berhasil di update');
     }
 
+    public function updateUserProject(Request $request)
+    {
+        $request->validate([
+            'user.*' => 'required',
+            'project_perusahaan_id' => 'required',
+        ]);
+        if (empty($request->user)) {
+            return redirect()->back()->with('error', 'Tidak.');
+        }
+        $tambahUser = 0;
+        foreach ($request->user as $userId) {
+            $existing = UsersProject::where('user_id', $userId)
+                ->where('project_perusahaan_id', $request->project_perusahaan_id)
+                ->first();
+    
+            if (!$existing) {
+                UsersProject::create([
+                    'user_id' => $userId,
+                    'project_perusahaan_id' => $request->project_perusahaan_id,
+                ]);
+                $tambahUser++;
+            }
+        }
+
+        $message = $tambahUser > 0 
+            ? "$tambahUser anggota berhasil ditambahkan." 
+            : "Semua anggota sudah terdaftar di proyek ini.";
+    
+        return redirect()->back()->with('success', $message);
+    }
+
     public function destroy(string $id)
     {
+        Task::where('project_perusahaan_id', $id)->delete();
         UsersProject::where('project_perusahaan_id', $id)->delete();
         $project = ProjectPerusahaan::find($id);
 
@@ -134,16 +178,13 @@ class ProjectController extends Controller
 
     public function destroyUserProject($id)
     {
-            $userId = Auth::id();
-            
-            $deleted = UsersProject::where('user_id', $userId)
-                ->where('project_perusahaan_id', $id)
-                ->delete();
-                
-            if ($deleted) {
-                return back()->with('success', 'Project berhasil dihapus dari daftar Anda.');
-            } else {
-                return back()->with('error', 'Gagal menghapus project.');
-            }
+        $deleted = UsersProject::where('id', $id)
+            ->delete();
+
+        if ($deleted) {
+            return back()->with('success', 'Anggota berhasil dihapus dari Project.');
+        } else {
+            return back()->with('error', 'Gagal menghapus Anggota Project.');
+        }
     }
 }

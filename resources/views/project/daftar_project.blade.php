@@ -13,6 +13,10 @@
                     <form action="" method="POST" id="formProject">
                         @csrf
                         <div class="modal-body">
+                            <div class="form-group">
+                                <label for="nama_project">Nama Project</label>
+                                <input type="text" name="nama_project" id="nama_project" class="form-control" required>
+                            </div>
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="nama_perusahaan">Nama Instansi</label>
@@ -24,27 +28,12 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="nama_project">Nama Project</label>
-                                    <input type="text" name="nama_project" id="nama_project" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
                                     <label for="skala_project">Skala</label>
                                     <select name="skala_project" id="skala_project" data-trigger class="form-control" required>
                                         <option selected disabled>Pilih Skala</option>
                                         <option value="kecil">Kecil</option>
                                         <option value="sedang">Sedang</option>
                                         <option value="besar">Besar</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="status">Status</label>
-                                    <select name="status" id="status" data-trigger class="form-control" required>
-                                        <option selected disabled>Pilih Status</option>
-                                        <option value="belum">Belum</option>
-                                        <option value="proses">Proses</option>
-                                        <option value="selesai">Selesai</option>
                                     </select>
                                 </div>
                             </div>
@@ -121,13 +110,14 @@
                                         <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
                                         <td>{{ ucwords($item->skala_project) }}</td>
-                                        <td>{{ $item->deadline }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
                                         <td>{{ ucwords($item->status) }}</td>
                                         <td>
                                             <a href="{{ route('manajer.detail.project', $item->id) }}"
                                                 class="btn btn-secondary" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!"><i class='bx bx-detail'></i></a>
+                                                title="Detail Project!"><i class='bx bx-detail'></i>
+                                            </a>
                                             <form action="{{ route('manajer.delete.project', $item->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
@@ -145,56 +135,23 @@
                                 @endforeach
                             @endif
                             @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                @foreach ($project as $item)
+                                @foreach ($userProject as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
-                                        <td>{{ $item->nama_project }}</td>
-                                        <td>{{ ucwords($item->skala_project) }}</td>
-                                        <td>{{ $item->deadline }}</td>
-                                        <td>{{ ucwords($item->status) }}</td>
-                                        <td style="text-align: center">
-                                            @if (in_array($item->id, $userTakenProjects))
-                                                <a href="{{ route('karyawan.detail.project', $item->id) }}"
-                                                    class="btn btn-secondary" data-bs-toggle="tooltip"
-                                                    data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                    title="Detail Project!">
-                                                    <i class='bx bx-detail'></i>
-                                                </a>
-                                                <form action="{{ route('karyawan.delete.project', $item->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger delete-project"
-                                                        data-id="{{ $item->id }}"
-                                                        data-nama_project="{{ $item->nama_project }}"
-                                                        data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
-                                                        data-bs-placement="top" title="Hapus Project!">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('karyawan.project.store') }}" method="POST"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('post')
-                                                    <input type="hidden" name="project_perusahaan_id"
-                                                        value="{{ $item->id }}">
-                                                    <input type="hidden" name="user" value="{{ Auth::user()->id }}">
-                                                    <input type="hidden" name="status" value="{{ $item->status }}">
-                                                    <button type="submit" class="btn btn-info confirm-project"
-                                                        title="Ambil Project" data-id="{{ $item->id }}"
-                                                        data-nama_project="{{ $item->nama_project }}"
-                                                        data-status="{{ $item->status }}" data-bs-toggle="tooltip"
-                                                        data-bs-custom-class="tooltip-info" data-bs-placement="top"
-                                                        title="Ambil Project!">
-                                                        <i class="bi bi-rocket-takeoff"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->project_perusahaan->nama_project }}</td>
+                                        <td>{{ ucwords($item->project_perusahaan->skala_project) }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
+                                        <td>{{ ucwords($item->project_perusahaan->status) }}</td>
+                                        <td>
+                                            <a href="{{ route('karyawan.detail.project', $item->id) }}"
+                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                                data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
+                                                title="Detail Project!"><i class='bx bx-detail'></i>
+                                            </a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endforeach    
                             @endif
                         </tbody>
                     </table>
@@ -222,7 +179,7 @@
             flatpickr("#format-waktu_mulai", {
                 dateFormat: "Y-m-d",
                 altInput: true,
-                altFormat: "F d, Y",
+                altFormat: "d F Y",
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("waktu_mulai").value = dateStr;
                 },
@@ -231,7 +188,7 @@
             flatpickr("#format-deadline", {
                 dateFormat: "Y-m-d",
                 altInput: true,
-                altFormat: "F d, Y",
+                altFormat: "d F Y",
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("deadline").value = dateStr;
                 },
@@ -243,8 +200,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             new Choices('#user', {
                 removeItemButton: true,
-                // maxItemCount: 10,
-                searchEnabled: true
+                searchEnabled: true,
+                noResultsText: "Tidak ada hasil yang cocok",
+                noChoicesText: "Tidak ada pilihan tersedia"
             });
         });
     </script>
