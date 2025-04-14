@@ -177,7 +177,27 @@
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
-                    @endif                
+                    @endif    
+                    
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                                class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
+                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                            </svg>
+                            <span class="side-menu__label">Management Gaji</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/karyawan/gaji_bulanan/diri"
+                                    class="side-menu__item {{ request()->routeIs('/karyawan/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi Gaji
+                                    Bulanan</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
@@ -272,6 +292,26 @@
                         </ul>
                     </li> <!-- End::slide -->
                     @endif   
+
+                    <!-- Start::slide -->
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                                class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
+                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                            </svg>
+                            <span class="side-menu__label">Management Gaji</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href="/admin_sdm/gaji_bulanan/diri"
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi Gaji
+                                    Bulanan</a>
+                            </li>
+                        </ul>
+                    </li> <!-- End::slide -->
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">Informasi Karyawan</span></li>

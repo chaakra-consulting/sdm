@@ -127,6 +127,90 @@ class GajiBulananController extends Controller
         return view('admin_sdm.gaji_bulanan',$data);
     }
 
+    public function indexKaryawan(Request $request)
+    {
+        $user = Auth::user();
+        $authPegawaiId = $user->dataDiri ? $user->dataDiri->id : null;
+
+        $request->validate([
+            'year' => 'nullable|integer|in:' . implode(',', range(1900, date('Y'))),
+        ]);
+
+        // dd($request->all());
+
+        if (!$request->year) {
+            $year = Carbon::now()->format('Y');
+        }else{
+            $year = $request->year;
+        }
+
+        $gajiBulanans = GajiBulanan::where('pegawai_id',$authPegawaiId)
+        ->whereYear('tanggal_gaji',$year)
+        ->get(); 
+    
+        $collect = collect();
+        foreach($gajiBulanans as $gajiBulanan){
+            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
+            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
+            $gajiTotal = ($gajiBulanan->gaji_pokok + $insentifTotal) - $potonganTotal;
+
+            $collect->push((object)[
+                'id'                => $gajiBulanan->id,
+                'hash'                => $gajiBulanan->hash,
+                'pegawai_id'        => $gajiBulanan->pegawai_id,
+                'pegawai_nama'        => $gajiBulanan->pegawai && $gajiBulanan->pegawai->nama_lengkap ?  $gajiBulanan->pegawai->nama_lengkap : '-',
+                'tanggal_gaji'      => $gajiBulanan->tanggal_gaji,
+                'tanggal_gaji_text' => $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->format('d F Y') : '-',
+                'month_text' => $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->format('F') : '-',
+
+                'potongan_total' => $potonganTotal,
+                'potongan_gaji_pokok' => $gajiBulanan->potongan_gaji_pokok,
+                'potongan_uang_makan' => $gajiBulanan->potongan_uang_makan,
+                'potongan_kinerja' => $gajiBulanan->potongan_kinerja,
+                'potongan_keterlambatan' => $gajiBulanan->potongan_keterlambatan,
+                'potongan_pajak' => $gajiBulanan->potongan_pajak,
+                'potongan_bpjs_ketenagakerjaan' => $gajiBulanan->potongan_bpjs_ketenagakerjaan,
+                'potongan_bpjs_kesehatan' => $gajiBulanan->potongan_bpjs_kesehatan,
+                'potongan_kasbon' => $gajiBulanan->potongan_kasbon,
+                'potongan_lainnya' => $gajiBulanan->potongan_lainnya,
+                'keterangan_potongan_lainnya' => $gajiBulanan->keterangan_potongan_lainnya,
+
+                'insentif_total' => $insentifTotal,
+                'insentif_kinerja' => $gajiBulanan->insentif_kinerja,
+                'insentif_uang_makan' => $gajiBulanan->insentif_uang_makan,
+                'insentif_uang_bensin' => $gajiBulanan->insentif_uang_bensin,
+                'insentif_penjualan' => $gajiBulanan->insentif_penjualan,
+                'insentif_lainnya' => $gajiBulanan->insentif_lainnya,
+                'overtime' => $gajiBulanan->overtime,
+                'keterangan_insentif_lainnya' => $gajiBulanan->keterangan_insentif_lainnya,
+
+                'gaji_pokok' => $gajiBulanan->gaji_pokok,
+                'gaji_total' => $gajiTotal,
+            ]);
+        }
+        
+        $years = range(2022, now()->year);
+        // $months = [
+        //     '1' => 'Januari', '2' => 'Februari', '3' => 'Maret',
+        //     '4' => 'April', '5' => 'Mei', '6' => 'Juni',
+        //     '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
+        //     '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        // ];
+
+        $roleSlug = Auth::user()->role->slug;
+        $role = Functions::generateUrlByRoleSlug($roleSlug);
+
+        $data = [
+            'title' => 'Realisasi Gaji Bulanan',
+            'role'  => $role,
+            'year' => $year,
+            'years' => $years,
+            'gajis' => $collect,
+        ];
+
+        return view('karyawan.gaji_bulanan',$data);
+    }
+
     public function store(Request $request)
     {
          try {

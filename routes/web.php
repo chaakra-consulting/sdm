@@ -136,6 +136,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/gaji_bulanan/update/{id}', [GajiBulananController::class, 'update'])->name('admin_sdm.gaji_bulanan.update');
     Route::get('/admin_sdm/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('admin_sdm.gaji_bulanan.sync');
 
+    Route::get('/admin_sdm/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
+    
     // Admin SDM : Master Status Pekerjaan
     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
     Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
@@ -236,6 +238,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     // karyawan : Task
     Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
+
+    //karyawan : Gaji Bulanan
+    Route::get('/karyawan/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
 });
 
 
