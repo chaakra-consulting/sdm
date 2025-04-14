@@ -71,8 +71,7 @@ class AbsensiHarianController extends Controller
             $startDateRange = $startDateRange->startOfDay();
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            $isHariLibur = HariLibur::where('tanggal',$date)->first();
-
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
             if($isLibur == false && !$isHariLibur) $countHariKerja++;
         }
     
@@ -108,7 +107,7 @@ class AbsensiHarianController extends Controller
             $day = $date->format('d');
         
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            $isHariLibur = HariLibur::where('tanggal',$date)->first();
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
 
             $statusLibur = ($isLibur == true || $isHariLibur) ? true : false;
 
