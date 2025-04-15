@@ -61,15 +61,17 @@
                             <label for="keterangan">Keterangan</label>
                             <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5"></textarea>
                         </div>
-                        <div class="form-group row">
-                            <label for="user">Anggota Task</label>
-                            <select multiple class="form-select" aria-label="user" name="user[]"
-                                id="user" required>
-                                @foreach ($users as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                            <div class="form-group row">
+                                <label for="user">Anggota Task</label>
+                                <select multiple class="form-select" aria-label="user" name="user[]"
+                                    id="user" required>
+                                    @foreach ($users as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="form-group">
                             <label for="upload">Lampiran</label>
                                 <input type="file" class="form-control" name="upload" id="upload">
@@ -114,38 +116,76 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($tasks as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->nama_task }} ({{ $item->project_perusahaan->nama_project ?? '' }} - {{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '' }})</td>
-                                    <td>{{ $item->tipe_task->nama_tipe ?? '-' }}</td>
-                                    <td>{{ $item->tgl_task }}</td>
-                                    <td>
-                                        <a href="javascript:void(0);" class="btn btn-primary btnViewDokumenPdf"
-                                            data-nama_task="{{ $item->nama_task }}"
-                                            data-dokumen="{{ asset('uploads/' . $item->upload) }}"
-                                            data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
-                                            data-bs-placement="top" title="Lihat Lampiran!">
-                                            <i class="ti ti-file-search"></i>
-                                        </a>
-                                        <a href="{{ route('manajer.detail.task', $item->id) }}" class="btn btn-secondary"
-                                            data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
-                                            data-bs-placement="top" title="Detail Task!"><i class='bx bx-detail'></i>
-                                        </a>
-                                        <form action="{{ route('manajer.delete.task', $item->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger delete"
-                                                data-id="{{ $item->id }}" data-nama_task="{{ $item->nama_task }}"
-                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
-                                                data-bs-placement="top" title="Hapus Task!">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                @foreach ($tasks as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->nama_task }} ({{ $item->project_perusahaan->nama_project ?? '' }} - {{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '' }})</td>
+                                        <td>{{ $item->tipe_task->nama_tipe ?? '-' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tgl_task)->translatedFormat('l, d F Y') }}</td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="btn btn-primary btnViewDokumenPdf"
+                                                data-nama_task="{{ $item->nama_task }}"
+                                                data-dokumen="{{ asset('uploads/' . $item->upload) }}"
+                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
+                                                data-bs-placement="top" title="Lihat Lampiran!">
+                                                <i class="ti ti-file-search"></i>
+                                            </a>
+                                            <a href="{{ route('manajer.detail.task', $item->id) }}" class="btn btn-secondary"
+                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
+                                                data-bs-placement="top" title="Detail Task!"><i class='bx bx-detail'></i>
+                                            </a>
+                                            <form action="{{ route('manajer.delete.task', $item->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger delete"
+                                                    data-id="{{ $item->id }}" data-nama_task="{{ $item->nama_task }}"
+                                                    data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
+                                                    data-bs-placement="top" title="Hapus Task!">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach                                
+                            @endif
+                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                @foreach ($userTasks as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->task->nama_task }} ({{ $item->task->project_perusahaan->nama_project ?? '' }} - {{ $item->task->project_perusahaan->perusahaan->nama_perusahaan ?? '' }})</td>
+                                        <td>{{ $item->task->tipe_task->nama_tipe ?? '-' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->task->tgl_task)->translatedFormat('l, d F Y') }}</td>
+                                        <td class="text-center">
+                                            <a href="javascript:void(0);" class="btn btn-primary btnViewDokumenPdf"
+                                                data-nama_task="{{ $item->task->nama_task }}"
+                                                data-dokumen="{{ asset('uploads/' . $item->task->upload) }}"
+                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
+                                                data-bs-placement="top" title="Lihat Lampiran!">
+                                                <i class="ti ti-file-search"></i>
+                                            </a>
+                                            <a href="{{ route('karyawan.detail.task', $item->task->id) }}" class="btn btn-secondary"
+                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
+                                                data-bs-placement="top" title="Detail Task!"><i class='bx bx-detail'></i>
+                                            </a>
+                                            @if ($item->task->tipe_task->slug != 'task-project')
+                                                <form action="{{ route('karyawan.delete.task', $item->id) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger delete"
+                                                        data-id="{{ $item->id }}" data-nama_task="{{ $item->nama_task }}"
+                                                        data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
+                                                        data-bs-placement="top" title="Hapus Task!">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>                                           
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach                                    
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -208,8 +248,10 @@
                     $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
                 }
             });
+            const userRole = "{{ auth()->user()->role->slug }}";
             $(document).on('click', '.tambahTask', function(e) {
                 e.preventDefault();
+
                 $(".modal-title").text('Tambah Task');
                 $("#tipe_task").val('');
                 $("#nama_task").val('');
@@ -221,15 +263,14 @@
 
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
-                $("#formDaftarTask").attr('action', '/manajer/task/store');
-
+                let actionRoute = `/${userRole}/task/store`;
+                $("#formDaftarTask").attr('action', actionRoute);
                 $("#formDaftarTask input[name='_method']").remove();
-                
+
                 $('#projectWrapper').addClass('d-none');
                 $('#project_perusahaan_id').val('').prop('required', false);
                 $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
             });
-            
             $("#upload").change(function() {
                 let file = this.files[0];
                 if (file) {

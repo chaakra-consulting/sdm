@@ -13,23 +13,24 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ManajerController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AdminSdmController;
 use App\Http\Controllers\DatadiriController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LoginSSOController;
+use App\Http\Controllers\TipeTaskController;
+use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\KesahatanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\SubJabatanController;
+use App\Http\Controllers\DownloadPDFController;
+use App\Http\Controllers\GajiBulananController;
 use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
-use App\Http\Controllers\DownloadPDFController;
-use App\Http\Controllers\GajiBulananController;
-use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
-use App\Http\Controllers\TipeTaskController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
@@ -234,15 +235,25 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     // karyawan: project
     Route::get('/karyawan/project', [ProjectController::class, 'show'])->name('karyawan.project');
     Route::post('/karyawan/project/store', [UsersProjectController::class, 'store'])->name('karyawan.project.store');
-    Route::get('/karyawan/project/detail/{id}', [UsersProjectController::class, 'detail'])->name('karyawan.detail.project');
+    Route::get('/karyawan/project/detail/{id}', [ProjectController::class, 'detail'])->name('karyawan.detail.project');
     Route::put('/karyawan/project/update/{id}', [UsersProjectController::class, 'update'])->name('karyawan.update.project');
 
     // karyawan : Task
+    Route::get('/karyawan/task/', [TaskController::class, 'index'])->name('karyawan.task');
     Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
+    Route::get('/karyawan/task/detail/{id}', [TaskController::class, 'detail'])->name('karyawan.detail.task');
+    Route::delete('/karyawan/task/delete/{id}', [TaskController::class, 'destroy'])->name('karyawan.delete.task');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
 
     //karyawan : Gaji Bulanan
     Route::get('/karyawan/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
+
+    // karyawan : sub task
+    Route::post('/karyawan/subtask/store', [SubTaskController::class, 'store'])->name('karyawan.subtask.store');
+
+    // karyawan : laporan kinerja
+    Route::get('/karayawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
+    // Route::get('/karyawan/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
 });
 
 
