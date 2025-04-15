@@ -24,7 +24,8 @@
                             <div class="row">
                                 <label class="col-sm-2" for="keterangan">Keterangan</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" name="keterangan" id="keterangan" cols="30" rows="5"></textarea>
+                                    <textarea class="form-control" name="keterangan" id="keterangan" cols="30" rows="5" required></textarea>
+                                    <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda (-)</span>
                                 </div>
                             </div>
                         </div>
@@ -261,6 +262,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    @php
+                        $userRole = auth()->user()->role->slug;
+                    @endphp
+                    @if ($userRole == 'manager')
+                        <a href="/manajer/project" class="btn btn-secondary">Kembali</a>
+                    @elseif ($userRole == 'karyawan')
+                        <a href="/karyawan/project" class="btn btn-secondary">Kembali</a>
+                    @endif
+                </div>
             </div>
             <div class="col-xl-8 col-lg-4">
                 <div class="card">
@@ -315,14 +326,16 @@
                             </div>
                             <div class="tab-pane border-0 p-0" id="task">
                                 <div class="main-content-body main-content-body-mail">
-                                    <div class="main-mail-header p-0">
-                                        <div>
-                                            <button type="button" class="btn btn-outline-primary tambahTask"
-                                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                <i class="ri-file-line"></i> Buat Task
-                                            </button>
+                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                        <div class="main-mail-header p-0">
+                                            <div>
+                                                <button type="button" class="btn btn-outline-primary tambahTask"
+                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                    <i class="ri-file-line"></i> Buat Task
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                     <div class="table-responsive">
                                         <table id="datatable-basic" class="table table-bordered text-nowrap w-100">
                                             <thead>
@@ -341,6 +354,7 @@
                                                     </td>
                                                     <td>{{ $task->tgl_task }}</td>
                                                     <td class="text-center">
+                                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
                                                         <a href="javascript:void(0);" class="btn btn-warning updateTask"
                                                             data-id="{{ $task->id }}"
                                                             data-nama_task="{{ $task->nama_task }}"
@@ -375,6 +389,14 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
+                                                        @elseif (Auth::check() && Auth::user()->role->slug = 'karyawan')
+                                                            <a href="{{ route('karyawan.detail.task', $task->id) }}" class="btn btn-secondary"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-custom-class="tooltip-secondary"
+                                                                data-bs-placement="top" title="Detail Task!"><i
+                                                                    class='bx bx-detail'></i>
+                                                            </a>
+                                                        @endif
                                                     </td>
                                                 </tbody>
                                             @endforeach
@@ -390,19 +412,21 @@
 												<div class="card custom-card border shadow-none">
 													<div class="card-body  user-lock text-center">
                                                         <div class="d-flex justify-content-end">
-                                                            <form action="{{ route('manajer.delete.anggota.project', $item->id) }}"
-                                                                method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-icon btn-outline-danger rounded-circle border-0"
-                                                                    data-id="{{ $item->id }}"
-                                                                    data-nama="{{ $item->user->name }}"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-custom-class="tooltip-danger"
-                                                                    data-bs-placement="top" title="Hapus Anggota Project!">
-                                                                    <i class="bi bi-x-circle"></i>                                                                
-                                                                </button>
-                                                            </form>
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                                                <form action="{{ route('manajer.delete.anggota.project', $item->id) }}"
+                                                                    method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-icon btn-outline-danger rounded-circle border-0"
+                                                                        data-id="{{ $item->id }}"
+                                                                        data-nama="{{ $item->user->name }}"
+                                                                        data-bs-toggle="tooltip"
+                                                                        data-bs-custom-class="tooltip-danger"
+                                                                        data-bs-placement="top" title="Hapus Anggota Project!">
+                                                                        <i class="bi bi-x-circle"></i>                                                                
+                                                                    </button>
+                                                                </form>
+                                                            @endif
 														</div>
                                                         <div class="">
                                                             <div class="d-flex justify-content-center">
@@ -426,30 +450,29 @@
 												</div>
 											</div>
                                     @endforeach
-                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
-                                        <a href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdropAnggota">
-                                            <div class="card custom-card border shadow-none bg-info-gradient btn btn-info">
-                                                <div class="card-body user-lock text-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-plus-circle-fill mt-3" width="80" height="80" fill="white" viewBox="0 0 80 80">
-                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
-                                                        transform="scale(5) translate(0,0)"/>
-                                                    </svg>                                                                 
-                                                    <h5 class="fs-16 mb-0 mt-3 text-white fw-semibold">Tambah</h5>
-                                                    <p class="text-white">Anggota</p>
+                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')    
+                                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
+                                            <a href="javascript:void(0);" data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdropAnggota">
+                                                <div class="card custom-card border shadow-none bg-info-gradient btn btn-info">
+                                                    <div class="card-body user-lock text-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-plus-circle-fill mt-3" width="80" height="80" fill="white" viewBox="0 0 80 80">
+                                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
+                                                            transform="scale(5) translate(0,0)"/>
+                                                        </svg>                                                                 
+                                                        <h5 class="fs-16 mb-0 mt-3 text-white fw-semibold">Tambah</h5>
+                                                        <p class="text-white">Anggota</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>                                     
-                                    </div>
+                                            </a>                                     
+                                        </div>                                        
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mb-3">
-            <a href="/manajer/project" class="btn btn-secondary">Kembali</a>
         </div>
     </div>
 @endsection

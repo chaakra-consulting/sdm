@@ -30,9 +30,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tb_tasks', function (Blueprint $table) {
-            $table->dropForeign(['tipe_tasks_id']);
-            $table->dropColumn('tipe_tasks_id');
-            $table->foreignIdFor(ProjectPerusahaan::class, 'project_perusahaan_id')->nullable(false)->change();
+            if (Schema::hasColumn('tb_tasks', 'tipe_tasks_id')) {
+                $table->dropForeign(['tipe_tasks_id']);
+                $table->dropColumn('tipe_tasks_id');
+            }
+    
+            if (Schema::hasColumn('tb_tasks', 'project_perusahaan_id')) {
+                $table->foreignIdFor(ProjectPerusahaan::class, 'project_perusahaan_id')->nullable()->change();
+            }
         });
     }
+    
 };

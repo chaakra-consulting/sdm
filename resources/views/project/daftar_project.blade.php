@@ -110,7 +110,7 @@
                                         <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
                                         <td>{{ ucwords($item->skala_project) }}</td>
-                                        <td>{{ $item->deadline }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
                                         <td>{{ ucwords($item->status) }}</td>
                                         <td>
                                             <a href="{{ route('manajer.detail.project', $item->id) }}"
@@ -133,6 +133,25 @@
                                         </td>
                                     </tr>
                                 @endforeach
+                            @endif
+                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                @foreach ($userProject as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->project_perusahaan->nama_project }}</td>
+                                        <td>{{ ucwords($item->project_perusahaan->skala_project) }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
+                                        <td>{{ ucwords($item->project_perusahaan->status) }}</td>
+                                        <td>
+                                            <a href="{{ route('karyawan.detail.project', $item->id) }}"
+                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                                data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
+                                                title="Detail Project!"><i class='bx bx-detail'></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach    
                             @endif
                         </tbody>
                     </table>
