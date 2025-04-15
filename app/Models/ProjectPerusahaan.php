@@ -20,6 +20,6 @@ class ProjectPerusahaan extends Model
     }
     public function tasks()
     {
-        return $this->hasMany(Task::class, 'project_perusahaan_id');
+        return $this->hasMany(Task::class, 'project_perusahaan_id', 'id');
     }
 }
