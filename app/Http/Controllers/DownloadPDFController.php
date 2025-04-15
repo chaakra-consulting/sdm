@@ -56,6 +56,7 @@ class DownloadPDFController extends Controller
             'gaji_total' => number_format($gajiTotal ?? 0, 0, ',', '.'),
             'potongan_total' => number_format($potonganTotal ?? 0, 0, ',', '.'),
             'pendapatan_total' => number_format($pendapatanTotal ?? 0, 0, ',', '.'),
+            'keterangan_potongan_lainnya' => $gajiBulanan->keterangan_potongan_lainnya ?? null,
             'earnings' => [
                 ['name' => 'Gaji pokok', 'amount' => number_format($gajiBulanan->gaji_pokok ?? 0, 0, ',', '.')],
                 ['name' => 'Insentif Uang Makan', 'amount' => number_format($gajiBulanan->insentif_uang_makan ?? 0, 0, ',', '.')],
