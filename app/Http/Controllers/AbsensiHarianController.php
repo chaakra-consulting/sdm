@@ -40,8 +40,11 @@ class AbsensiHarianController extends Controller
     public function show(Request $request,$id)
     {
         $user = Auth::user();
+        $authPegawaiId = $user->dataDiri ? $user->dataDiri->id : null;
+        $pegawaiId = $id;
+
         if($user->role->slug == 'karyawan'){
-            $id = $user->dataDiri->id;
+            $id = $authPegawaiId;
         }
 
         $request->validate([
@@ -68,8 +71,7 @@ class AbsensiHarianController extends Controller
             $startDateRange = $startDateRange->startOfDay();
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            $isHariLibur = HariLibur::where('tanggal',$date)->first();
-
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
             if($isLibur == false && !$isHariLibur) $countHariKerja++;
         }
     
@@ -105,7 +107,7 @@ class AbsensiHarianController extends Controller
             $day = $date->format('d');
         
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            $isHariLibur = HariLibur::where('tanggal',$date)->first();
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
 
             $statusLibur = ($isLibur == true || $isHariLibur) ? true : false;
 
@@ -163,14 +165,29 @@ class AbsensiHarianController extends Controller
         $verifikasi = AbsensiVerifikasi::where('pegawai_id',$id)
             ->where('tahun',Carbon::now()->format('Y'))
             ->where('bulan',Carbon::now()->format('m'))->first();
-        if($verifikasi) $statusVerifikasi = 'Terverifikasi';
-        else $statusVerifikasi = 'Belum Terverifikasi';
+
+        $now = Carbon::now();
+        $deadline = Carbon::now()->setDay(26)->setHour(16)->setMinute(0)->setSecond(0);
+        if ($now->greaterThan($deadline)) {
+            $statusVerifikasi = 'Terlambat Verifikasi';
+        } elseif ($verifikasi) {
+            $statusVerifikasi = 'Terverifikasi';
+        } else {
+            $statusVerifikasi = 'Belum Terverifikasi';
+        }
+                   
+        $tanggalVerifikasi = $verifikasi ? Carbon::parse($verifikasi->updated_at)->translatedFormat('d M Y H:i:s') : null;
+
+        if($statusVerifikasi != 'Terlambat Verifikasi') $buttonVerifikasi = $authPegawaiId == $pegawaiId ? true : false;
+        else $buttonVerifikasi = null;
         
         $data = [
             'title' => 'Detail Absensi',
             'role'=>$role,
             'pegawai_id'=>$id,
+            'button_verifikasi' => $buttonVerifikasi,
             'verifikasi'=> $statusVerifikasi,
+            'tanggal_verifikasi' => $tanggalVerifikasi,
             'nama'=> $pegawai ? $pegawai->nama_lengkap : null,
             'foto_user'=> $pegawai ? $pegawai->foto_user : null,
             'nip'=> $kepegawaian ? $kepegawaian->nip : '-',
@@ -208,8 +225,13 @@ class AbsensiHarianController extends Controller
 
              $userId = DatadiriUser::where('id',$id)->value('user_id');
              $absensi = Absensi::where('hari',strtolower($request->hari_kerja))->first();
+             $keteranganSlug = KeteranganAbsensi::where('id',$request->keterangan_id)->value('slug');
 
             $filename = null;
+
+            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            }
 
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');
@@ -264,10 +286,16 @@ class AbsensiHarianController extends Controller
                 'upload_surat_dokter'       => 'nullable|mimes:pdf|max:2048',
             ]);
 
-            $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
+            // $userId = DatadiriUser::where('id',$pegawai_id)->value('user_id');
             $absensiHarian = AbsensiHarian::where('id',$id)->first();
+            $keteranganSlug = KeteranganAbsensi::where('id',$request->keterangan_id)->value('slug');
 
             $filename = null;
+
+            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            }
+
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');
                 $filename = uniqid() . time() . '.' . $file->getClientOriginalExtension();

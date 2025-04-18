@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -16,23 +15,6 @@
             @csrf
             <div class="modal-body">
                 <div class="row">
-                    <!-- Dropdown untuk Tambah Gaji -->
-                    <div class="form-group tambahGajiDropdown">
-                        <label for="pegawai_id_tambah" class="form-label">Pilih Karyawan</label>
-                        <select name="pegawai_id" id="pegawai_id_tambah" class="form-control">
-                            <option selected disabled>Pilih Karyawan</option>
-                            @foreach ($pegawais as $pegawai)
-                                <option value="{{ $pegawai->id }}">
-                                    {{ $pegawai->nama_lengkap }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <!-- Dropdown untuk Edit Gaji -->
-                    <div class="form-group editGajiDropdown" style="display: none;">
-                        <label for="pegawai_id_edit" class="form-label">Nama Karyawan</label>
-                        <input type="string" name="pegawai_nama" id="pegawai_nama" value= "pegawai_nama"class="form-control" disabled>
-                    </div>
                     {{-- <div class="form-group">
                         <label for="gaji_pokok">Gaji Pokok</label>
                         <input type="text" name="gaji_pokok" id="gaji_pokok" value="{{ old('gaji_pokok') }}" class="form-control">
@@ -161,36 +143,15 @@
 </div>
 
 <div class="container-fluid">
-    <div class="mb-2">
-        <button type="button" class="btn btn-primary tambahGaji" data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop">
-        Tambah Gaji Bulanan {{ $month_text }} {{ $year }}
-        </button>
-    </div>
     <div class="card custom-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="card-title">
                 Realisasi Gaji Bulanan
-            </div>
-            <button class="btn btn-sm btn-success ms-2" id="alert-parameter">Sinkronisasi Akun Gaji Buku Kas <i class="fas fa-sync"></i></button>
-            @if($sync_updated_at) 
-            <p class="mb-0 ms-1" style="opacity: 0.7; font-size: 11px;">
-                <em>Sinkronisasi Terakhir: {{ $sync_updated_at }}</em>
-            </p>
-            @endif     
+            </div>   
             <form action="" method="GET" class="ms-auto" style="max-width: 500px;">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-5">
-                        <select class="form-select" id="month" name="month">
-                            @foreach ($months as $key => $name)
-                                <option value="{{ $key }}" {{ $key == $month ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select" name="year">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-7">
+                        <select class="form-select w-100" name="year">
                             @foreach ($years as $y)
                                 <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>
                                     {{ $y }}
@@ -198,12 +159,11 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-5">
                         <button type="submit" id="applyFilter" class="btn btn-primary w-100">Filter</button>
                     </div>
                 </div>
-            </form> 
-            <p class="mb-0"><small><em><span class="text-danger">*</span>Wajib dilakukan sinkronisasi setelah gaji final diverifikasi</em></small></p>           
+            </form>            
         </div>
         
         <div class="card-body">
@@ -212,7 +172,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama Karyawan</th>
+                                    <th>Bulan</th>
                                     <th>Gaji Pokok</th>
                                     <th>Insentif</th>
                                     <th>Potongan</th>
@@ -224,7 +184,7 @@
                                 @foreach($gajis as $row)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $row->pegawai_nama ?  $row->pegawai_nama : '-'}}</td>
+                                        <td>{{ $row->month_text }}</td>
                                         <td>Rp. {{ number_format($row->gaji_pokok ?? 0, 0, ',', '.') }}</td>
                                         <td>Rp. {{ number_format($row->insentif_total ?? 0, 0, ',', '.') }}</td>
                                         <td>Rp. {{ number_format($row->potongan_total ?? 0, 0, ',', '.') }}</td>
@@ -260,36 +220,6 @@
                                                 >
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-                                            @if($role == "admin_sdm")
-                                            <a href="" class="btn btn-warning editGaji" data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop" 
-                                                title="Edit"
-                                                data-id="{{ $row->id }}"
-                                                data-pegawai_id="{{ $row->pegawai_id }}" 
-                                                data-pegawai_nama="{{ $row->pegawai_nama ?  $row->pegawai_nama : '-'}}" 
-                                                data-tanggal_gaji="{{ $row->tanggal_gaji }}" 
-                                                data-gaji_pokok="{{ $row->gaji_pokok }}" 
-                                                data-potongan_gaji_pokok="{{ $row->potongan_gaji_pokok }}" 
-                                                data-potongan_uang_makan="{{ $row->potongan_uang_makan }}" 
-                                                data-potongan_keterlambatan="{{ $row->potongan_keterlambatan }}" 
-                                                data-potongan_kinerja="{{ $row->potongan_kinerja }}" 
-                                                data-potongan_pajak="{{ $row->potongan_pajak }}" 
-                                                data-potongan_bpjs_ketenagakerjaan="{{ $row->potongan_bpjs_ketenagakerjaan }}" 
-                                                data-potongan_bpjs_kesehatan="{{ $row->potongan_bpjs_kesehatan }}"
-                                                data-potongan_kasbon="{{ $row->potongan_kasbon }}"
-                                                data-potongan_lainnya="{{ $row->potongan_lainnya }}"
-                                                data-keterangan_potongan_lainnya="{{ $row->keterangan_potongan_lainnya }}"
-                                                data-insentif_kinerja="{{ $row->insentif_kinerja }}"
-                                                data-insentif_uang_makan="{{ $row->insentif_uang_makan }}"
-                                                data-insentif_uang_bensin="{{ $row->insentif_uang_bensin }}"
-                                                data-insentif_penjualan="{{ $row->insentif_penjualan }}"
-                                                data-overtime="{{ $row->overtime }}"
-                                                data-insentif_lainnya="{{ $row->insentif_lainnya }}"
-                                                data-keterangan_insentif_lainnya="{{ $row->keterangan_insentif_lainnya }}"
-                                                >
-                                                <i class="fas fa-edit"></i>
-                                            </a>                                                                                            
-                                            @endif
                                             <a href="/cetak-payslip/{{ $row->hash }}" 
                                                 class="btn btn-danger" 
                                                 data-bs-toggle="tooltip"
@@ -315,88 +245,6 @@
 @section('script')
 <script>
     $(document).ready(function(){
-        $(".tambahGaji").click(function(){
-            $(".modal-title").text('Tambah Gaji Karyawan');
-            $(".tambahGajiDropdown").show();
-            $(".editGajiDropdown").hide();
-
-            $("#pegawai_id").prop('disabled', false);
-            $("#gaji_pokok").prop('disabled', false);
-            $("#potongan_gaji_pokok").prop('disabled', false);
-            $("#potongan_uang_makan").prop('disabled', false);
-            $("#potongan_keterlambatan").prop('disabled', false);
-            $("#potongan_kinerja").prop('disabled', false);
-            $("#potongan_pajak").prop('disabled', false);
-            $("#potongan_bpjs_ketenagakerjaan").prop('disabled', false);
-            $("#potongan_bpjs_kesehatan").prop('disabled', false);
-            $("#potongan_kasbon").prop('disabled', false);
-            $("#potongan_lainnya").prop('disabled', false);
-            $("#keterangan_potongan_lainnya").prop('disabled', false);
-            $("#insentif_kinerja").prop('disabled', false);
-            $("#insentif_uang_bensin").prop('disabled', false);
-            $("#insentif_uang_makan").prop('disabled', false);
-            $("#insentif_penjualan").prop('disabled', false);
-            $("#overtime").prop('disabled', false);
-            $("#insentif_lainnya").prop('disabled', false);
-            
-            $("#formGaji").append('<input type="hidden" name="_method" value="POST">');
-            $("#formGaji").attr('action', '/{{ $role }}/gaji_bulanan/store');      
-        })
-        // <form action="" method="POST" id="formGaji">
-
-        $(".editGaji").click(function(e){
-            e.preventDefault();
-            $(".modal-title").text('Edit Gaji Bulanan');
-            $(".editGajiDropdown").show();
-            $(".tambahGajiDropdown").hide();
-
-            $("#pegawai_id_edit").val($(this).data('pegawai_id'));
-            $("#pegawai_nama").val($(this).data('pegawai_nama'));
-            $("#gaji_pokok").val($(this).data('gaji_pokok'));
-
-            $("#potongan_gaji_pokok").val($(this).data('potongan_gaji_pokok'));
-            $("#potongan_uang_makan").val($(this).data('potongan_uang_makan'));
-            $("#potongan_kinerja").val($(this).data('potongan_kinerja'));
-            $("#potongan_keterlambatan").val($(this).data('potongan_keterlambatan'));
-            $("#potongan_pajak").val($(this).data('potongan_pajak'));
-            $("#potongan_bpjs_ketenagakerjaan").val($(this).data('potongan_bpjs_ketenagakerjaan'));
-            $("#potongan_bpjs_kesehatan").val($(this).data('potongan_bpjs_kesehatan'));
-            $("#potongan_kasbon").val($(this).data('potongan_kasbon'));
-            $("#potongan_lainnya").val($(this).data('potongan_lainnya'));
-            $("#keterangan_potongan_lainnya").val($(this).data('keterangan_potongan_lainnya'));
-            
-            $("#insentif_kinerja").val($(this).data('insentif_kinerja'));
-            $("#insentif_uang_makan").val($(this).data('insentif_uang_makan'));
-            $("#insentif_uang_bensin").val($(this).data('insentif_uang_bensin'));
-            $("#insentif_penjualan").val($(this).data('insentif_penjualan'));
-            $("#overtime").val($(this).data('overtime'));
-            $("#insentif_lainnya").val($(this).data('insentif_lainnya'));
-            $("#keterangan_insentif_lainnya").val($(this).data('keterangan_insentif_lainnya'));
-
-            $("#pegawai_id").prop('disabled', true);
-            $("#gaji_pokok").prop('disabled', false);
-            $("#potongan_gaji_pokok").prop('disabled', false);
-            $("#potongan_uang_makan").prop('disabled', false);
-            $("#potongan_keterlambatan").prop('disabled', false);
-            $("#potongan_kinerja").prop('disabled', false);
-            $("#potongan_pajak").prop('disabled', false);
-            $("#potongan_bpjs_ketenagakerjaan").prop('disabled', false);
-            $("#potongan_bpjs_kesehatan").prop('disabled', false);
-            $("#potongan_kasbon").prop('disabled', false);
-            $("#potongan_lainnya").prop('disabled', false);
-            $("#keterangan_potongan_lainnya").prop('disabled', false);
-            $("#insentif_kinerja").prop('disabled', false);
-            $("#insentif_uang_bensin").prop('disabled', false);
-            $("#insentif_uang_makan").prop('disabled', false);
-            $("#insentif_penjualan").prop('disabled', false);
-            $("#overtime").prop('disabled', false);
-            $("#insentif_lainnya").prop('disabled', false);
-
-            $("#submitButton").show();
-            $("#formGaji").append('<input type="hidden" name="_method" value="PUT">');
-            $("#formGaji").attr('action', '/{{ $role }}/gaji_bulanan/update/' + $(this).data('id'));
-        })
-
         $(".showGaji").click(function(e){
             e.preventDefault();
             $(".modal-title").text('Lihat Gaji Bulanan');
@@ -543,35 +391,6 @@
         // Redirect to the filtered URL
         window.location.href = finalUrl;
     });
-
-    document.getElementById('alert-parameter').onclick = function () {
-        const year = document.getElementById('year').textContent;
-        const month = document.getElementById('month').value;
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success ms-2',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        });
-
-        swalWithBootstrapButtons.fire({
-            title: 'Apakah anda Yakin ingin melakukan Sinkronisasi Data?',
-            text: "Aksi ini akan mengubah Data Akun Penggajian {{ $month_text }} {{ $year }} pada Sistem Bukukas!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Sinkronisasi data!',
-            cancelButtonText: 'Batalkan',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Redirect ke endpoint Laravel untuk verifikasi
-                // window.location.href = "/admin_sdm/gaji_bulanan/sync/{{ $sync_id }}";
-                window.location.href = `/{{ $role }}/gaji_bulanan/sync?year=${year}&month=${month}`;
-            } 
-            // Tidak perlu else karena cancel hanya menutup tanpa notif tambahan
-        });
-    }
 
 </script>
 @endsection

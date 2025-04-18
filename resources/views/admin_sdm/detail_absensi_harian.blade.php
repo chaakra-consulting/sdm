@@ -75,8 +75,11 @@
                                     {{ $row->nama }}
                                 </option>
                             @endforeach
-                        </select>               
-                    </div>                    
+                        </select>
+                        <!-- Tambahkan area untuk menampilkan pesan -->
+                        <div id="warningMessage" class="text-danger mt-2" style="display: none;">
+                        </div>
+                    </div>                   
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="keterangan">Note</label>
@@ -91,12 +94,11 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="upload_surat_dokter" class="form-label">Surat Pendukung</label>
-                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="pdf/*">
-                            {{-- onchange="validateFile(this, 'preview_surat', 'error_surat')">
-                        <!-- Preview gambar akan diupdate setelah pengguna memilih file -->
-                        <img id="preview_surat" alt="Preview File"
-                            style="max-width: 150px; margin-top: 10px; display: none;"> --}}
-                        {{-- <small id="error_surat" class="text-danger" style="display: none;"></small> --}}
+                        <input type="file" class="form-control" id="upload_surat_dokter" name="upload_surat_dokter" accept="application/pdf">
+                        <div id="pdfPreviewContainer" class="mt-3" style="display: none;">
+                            <iframe id="pdfPreview" width="100%" height="400px"></iframe>
+                        </div>
+                        <div id="fileError" class="text-danger mt-2" style="display: none;">Masukkan file dengan format PDF.</div>
                     </div>
                 </div>
             </div>
@@ -214,14 +216,25 @@
                     <div class="card-title fs-12 mb-1">{{ $nip }}</div>
                     <div class="card-title text-muted fs-11 mb-1">{{ $jabatan }} / {{ $divisi }}</div>
                     @if($verifikasi == 'Terverifikasi')
-                        <div class="card-title fs-12 mb-1">
-                            Absensi Bulan {{ $month_text }} : <span class="text-success">{{ $verifikasi }}</span>
-                        </div> 
+                    <div class="card-title fs-12 mb-4">
+                        Absensi Bulan {{ $month_text }} : 
+                        <span class="text-success">{{ $verifikasi }}</span>  
+                        @if($tanggal_verifikasi)  
+                            <span style="opacity: 0.7; font-size: 11px;">
+                                <em>({{ $tanggal_verifikasi }})</em>
+                            </span>
+                        @endif  
+                    </div>  
+                    @elseif($verifikasi == 'Terlambat Verifikasi')
+                    <div class="card-title fs-12 mb-1">
+                        Absensi Bulan {{ $month_text }} : 
+                        <span class="text-danger">{{ $verifikasi }}</span>
+                    </div>                                                                                                          
                     @else
                         <div class="card-title fs-12 mb-1">
                             Absensi Bulan {{ $month_text }} : 
                             <span class="text-danger">{{ $verifikasi }}</span>
-                            @if($role=='admin_sdm')
+                            @if($button_verifikasi == true)
                             <button class="btn btn-sm btn-success ms-2" id="alert-parameter">Verifikasi?</button>  
                             @endif 
                         </div>                                                                                        
@@ -603,9 +616,11 @@
     const waktuMasukInput = document.getElementById('waktu_masuk');
     const waktuPulangInput = document.getElementById('waktu_pulang');
     const durasiLemburInput = document.getElementById('durasi_lembur');
+    const uploadSuratDokterInput = document.getElementById('upload_surat_dokter');
     const durasiLemburContainer = document.getElementById('durasiLemburContainer');
     const waktuMasukGroup = document.getElementById('waktuMasukGroup');
     const waktuPulangGroup = document.getElementById('waktuPulangGroup');
+    const warningMessage = document.getElementById('warningMessage');
 
     // Fungsi untuk mengatur form berdasarkan data dari tombol yang diklik
     function handleButtonClick(event) {
@@ -617,12 +632,17 @@
         const waktuMasuk = button.getAttribute('data-waktu_masuk');
         const waktuPulang = button.getAttribute('data-waktu_pulang');
         const durasiLembur = button.getAttribute('data-durasi_lembur');
+        const tanggalKerja = button.getAttribute('data-tanggal_kerja');
+        const uploadSurat = button.getAttribute('data-upload_surat_dokter');
 
         // Set nilai form
         if (keteranganId) keteranganSelect.value = keteranganId;
         if (waktuMasuk) waktuMasukInput.value = waktuMasuk;
         if (waktuPulang) waktuPulangInput.value = waktuPulang;
         if (durasiLembur) durasiLemburInput.value = durasiLembur;
+
+        keteranganSelect.setAttribute('data-tanggal_kerja', tanggalKerja);
+        keteranganSelect.setAttribute('data-upload_surat_dokter', uploadSurat);
 
         // Trigger fungsi untuk memperbarui tampilan form
         updateFormDisplay();
@@ -632,9 +652,23 @@
     function updateFormDisplay() {
         const selectedOption = keteranganSelect.options[keteranganSelect.selectedIndex];
         const slug = selectedOption ? selectedOption.getAttribute('data-slug') : '';
+        const tanggalKerja = keteranganSelect.getAttribute('data-tanggal_kerja');
+        const uploadSurat = keteranganSelect.getAttribute('data-upload_surat_dokter');
+
+        let batasWaktu = null;
+        if (tanggalKerja) {
+            const tanggalKerjaDate = new Date(tanggalKerja);
+            batasWaktu = new Date(tanggalKerjaDate);
+            batasWaktu.setDate(batasWaktu.getDate() + 1); // Tambahkan 1 hari
+            batasWaktu.setHours(23, 59, 59, 999); // Set jam batas ke 23:59:59
+        }
+
+        const sekarang = new Date(); // Waktu saat ini
+
+        // const sekarang = new Date(); // Waktu saat ini
 
         // Hilangkan waktu jika slug termasuk kategori tertentu
-        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa'].includes(slug)) {
+        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa', 'ijin-direktur'].includes(slug)) {
         // Kosongkan nilai input dan nonaktifkan
             waktuMasukInput.value = '';
             waktuPulangInput.value = '';
@@ -652,6 +686,32 @@
         } else {
             durasiLemburContainer.style.display = 'none';
             durasiLemburInput.value = ''; // Reset nilai
+        }
+
+        if (slug === 'sakit' && !uploadSurat) {
+            if(batasWaktu && sekarang > batasWaktu){
+                uploadSuratDokterInput.disabled = true;
+            }else{
+                uploadSuratDokterInput.disabled = false;
+            }
+            warningMessage.style.display = 'block';
+            message = '*Surat Keterangan Sakit wajib diupload Maks. H+1 dari Tanggal Kerja.';
+        } else {
+            uploadSuratDokterInput.disabled = false;
+            warningMessage.style.display = 'none';
+            message = '';
+        }
+
+        if (slug === 'ijin-direktur' && !uploadSurat) {
+            warningMessage.style.display = 'block';
+            message = '*Surat Pendukung wajib diisi dengan form surat ijin.';
+        }
+
+        if (message) {
+            warningMessage.innerHTML = `<em>${message}</em>`;
+        }else {
+            warningMessage.style.display = 'none';
+            message = '';
         }
     }
 
@@ -694,35 +754,30 @@
     //     }
     // });
 
-    function validateFile(input, previewId, errorId) {
-        const file = input.files[0];
-        const maxSize = 2 * 1024 * 1024;
-        const errorElement = document.getElementById(errorId);
-        const previewElement = document.getElementById(previewId);
-
-        // Reset pesan error dan preview gambar
-        errorElement.style.display = 'none';
-        errorElement.textContent = '';
-        previewElement.style.display = 'none';
-        previewElement.src = '';
+    document.getElementById('upload_surat_dokter').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
+        const pdfPreview = document.getElementById('pdfPreview');
+        const fileError = document.getElementById('fileError');
 
         if (file) {
-            if (file.size > maxSize) {
-                // Jika ukuran file lebih dari 2MB
-                errorElement.style.display = 'block';
-                errorElement.textContent = 'Ukuran file tidak boleh lebih dari 2MB.';
-                input.value = ''; // Reset input file
+            if (file.type === "application/pdf") {
+                const fileURL = URL.createObjectURL(file);
+                pdfPreview.src = fileURL;
+                pdfPreviewContainer.style.display = 'block';
+                fileError.style.display = 'none';
             } else {
-                // Jika ukuran file valid, tampilkan preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewElement.style.display = 'block'; // Tampilkan elemen gambar
-                    previewElement.src = e.target.result; // Setel sumber gambar
-                };
-                reader.readAsDataURL(file);
+                pdfPreview.src = '';
+                pdfPreviewContainer.style.display = 'none';
+                fileError.style.display = 'block';
+                event.target.value = '';
             }
+        } else {
+            pdfPreview.src = '';
+            pdfPreviewContainer.style.display = 'none';
+            fileError.style.display = 'none';
         }
-    }
+    });
 
     flatpickr("#date_range", {
         mode: "range",
@@ -750,7 +805,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirect ke endpoint Laravel untuk verifikasi
-                window.location.href = "/admin_sdm/absensi_verifikasi/store/{{ $pegawai_id }}";
+                window.location.href = "/absensi_verifikasi/store/{{ $pegawai_id }}";
             } 
             // Tidak perlu else karena cancel hanya menutup tanpa notif tambahan
         });
