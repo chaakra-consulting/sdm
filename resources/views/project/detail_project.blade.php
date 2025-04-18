@@ -592,7 +592,6 @@
                 $("#upload").prop("disabled", false);
                 $("#btnSubmit").text("Update").show();
             });
-
             $("#staticBackdrop").on("hidden.bs.modal", function () {
                 $(".form-group:has(#user)").show();
             });

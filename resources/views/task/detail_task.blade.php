@@ -61,13 +61,13 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="input-group">
-                                            <input type="number" min="0" name="durasi_jam" class="form-control" placeholder="Jam" required>
+                                            <input type="number" min="0" name="durasi_jam" class="form-control" placeholder="Jam">
                                             <span class="input-group-text">Jam</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="input-group">
-                                            <input type="number" min="0" max="59" name="durasi_menit" class="form-control" placeholder="Menit" required>
+                                            <input type="number" min="0" max="59" name="durasi_menit" class="form-control" placeholder="Menit">
                                             <span class="input-group-text">Menit</span>
                                         </div>
                                     </div>
@@ -290,7 +290,9 @@
                         @endif
                     @elseif ($userRole == 'karyawan')
                         <a href="/karyawan/task" class="btn btn-secondary">Kembali</a>
-                        <a href="/karyawan/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                        @if ($task->project_perusahaan != null)
+                            <a href="/karyawan/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -600,5 +602,5 @@
                 appendTo: document.getElementById("staticBackdrop")
             });
         });
-    </script>    
+    </script>
 @endsection

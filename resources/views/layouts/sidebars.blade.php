@@ -182,7 +182,7 @@
                         </ul>
                     </li> <!-- End::slide -->
                     @endif                
-                    {{-- <li class="slide has-sub">
+                    <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -218,7 +218,7 @@
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'admin-sdm')

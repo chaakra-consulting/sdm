@@ -245,9 +245,12 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
 
     // karyawan : sub task
     Route::post('/karyawan/subtask/store', [SubTaskController::class, 'store'])->name('karyawan.subtask.store');
+    Route::put('/karyawan/subtask/update/{id}', [SubTaskController::class, 'update'])->name('karyawan.subtask.update');
+    Route::delete('/karyawan/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('karyawan.subtask.delete');
 
     // karyawan : laporan kinerja
-    Route::get('/karayawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
+    Route::get('/karyawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
+    Route::get('/karyawan/laporan_kinerja/getDataByDate',[SubTaskController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
     // Route::get('/karyawan/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
 });
 
