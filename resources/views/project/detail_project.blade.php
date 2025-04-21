@@ -181,29 +181,10 @@
                                                 value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="skala_project" class="form-label">Skala</label>
-                                            <select class="form-control" id="skala_project" data-trigger
-                                                name="skala_project" required>
-                                                <option value="">Pilih Skala Project</option>
-                                                <option value="kecil"
-                                                    {{ $project->skala_project == 'kecil' ? 'selected' : '' }}>
-                                                    Kecil
-                                                </option>
-                                                <option value="sedang"
-                                                    {{ $project->skala_project == 'sedang' ? 'selected' : '' }}>
-                                                    Sedang
-                                                </option>
-                                                <option value="besar"
-                                                    {{ $project->skala_project == 'besar' ? 'selected' : '' }}>
-                                                    Besar
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label for="status" class="form-label">Status</label>
                                             <select class="form-control" id="status" data-trigger name="status"
                                                 required>
-                                                <option value="">Pilih Skala Project</option>
+                                                <option value="">Pilih Status Project</option>
                                                 <option value="belum"
                                                     {{ $project->status == 'belum' ? 'selected' : '' }}>
                                                     Belum

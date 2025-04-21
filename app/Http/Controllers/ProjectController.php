@@ -31,7 +31,6 @@ class ProjectController extends Controller
         $request->validate([
             'nama_perusahaan' => 'required',
             'nama_project' => 'required',
-            'skala_project' => 'required',
             'waktu_mulai' => 'required',
             'deadline' => 'required',
             'user.*' => 'required',
@@ -52,14 +51,13 @@ class ProjectController extends Controller
         $data = [
             'perusahaan_id' => $request->nama_perusahaan,
             'nama_project' => $request->nama_project,
-            'skala_project' => $request->skala_project,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
             'status' => $status,
             'progres' => $request->progres,
         ];
-        
+
         $project = ProjectPerusahaan::create($data);
 
         foreach ($request->user as $user_id) {
@@ -113,7 +111,6 @@ class ProjectController extends Controller
         $request->validate([
             'perusahaan_id' => 'required',
             'nama_project' => 'required',
-            'skala_project' => 'required',
             'status' => 'required',
             'waktu_mulai' => 'required',
             'waktu_berakhir' => 'nullable',
@@ -122,7 +119,6 @@ class ProjectController extends Controller
         $data = [
             'perusahaan_id' => $request->perusahaan_id,
             'nama_project' => $request->nama_project,
-            'skala_project' => $request->skala_project,
             'status' => $request->status,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
@@ -148,7 +144,7 @@ class ProjectController extends Controller
             $existing = UsersProject::where('user_id', $userId)
                 ->where('project_perusahaan_id', $request->project_perusahaan_id)
                 ->first();
-    
+
             if (!$existing) {
                 UsersProject::create([
                     'user_id' => $userId,
@@ -158,10 +154,10 @@ class ProjectController extends Controller
             }
         }
 
-        $message = $tambahUser > 0 
-            ? "$tambahUser anggota berhasil ditambahkan." 
+        $message = $tambahUser > 0
+            ? "$tambahUser anggota berhasil ditambahkan."
             : "Semua anggota sudah terdaftar di proyek ini.";
-    
+
         return redirect()->back()->with('success', $message);
     }
 

@@ -17,25 +17,14 @@
                                 <label for="nama_project">Nama Project</label>
                                 <input type="text" name="nama_project" id="nama_project" class="form-control" required>
                             </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="nama_perusahaan">Nama Instansi</label>
-                                    <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
-                                        <option selected disabled>Pilih Instansi</option>
-                                        @foreach ($perusahaan as $item)
-                                            <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="skala_project">Skala</label>
-                                    <select name="skala_project" id="skala_project" data-trigger class="form-control" required>
-                                        <option selected disabled>Pilih Skala</option>
-                                        <option value="kecil">Kecil</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="besar">Besar</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label for="nama_perusahaan">Nama Instansi</label>
+                                <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
+                                    <option selected disabled>Pilih Instansi</option>
+                                    @foreach ($perusahaan as $item)
+                                        <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -96,7 +85,6 @@
                                 <th>No</th>
                                 <th>Nama Perusahaan</th>
                                 <th>Nama Project</th>
-                                <th>Skala Project</th>
                                 <th>Deadline</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -109,7 +97,6 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
-                                        <td>{{ ucwords($item->skala_project) }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
                                         <td>{{ ucwords($item->status) }}</td>
                                         <td>
@@ -140,7 +127,6 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->project_perusahaan->nama_project }}</td>
-                                        <td>{{ ucwords($item->project_perusahaan->skala_project) }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
                                         <td>{{ ucwords($item->project_perusahaan->status) }}</td>
                                         <td>
@@ -168,7 +154,6 @@
                 $(".modal-title").text('Tambah Project');
                 $("#nama_perusahaan").change().val('Pilih Perusahaan');
                 $("#nama_project").val('');
-                $("#skala_project").change().val('Pilih Skala Project');
                 $("#deadline").val('');
                 $("#formProject").attr('action', '/manajer/project/store');
             });

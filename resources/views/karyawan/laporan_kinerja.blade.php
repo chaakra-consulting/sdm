@@ -102,13 +102,13 @@
                         <button type="button" class="btn btn-outline-primary tambahSubTask" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             <i class="bi bi-plus"></i> Tambah Sub Task
                         </button>
-                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop">Kirim
+                        <button type="button" class="btn btn-outline-warning">
+                            Kirim
                         </button>
                     </div>
                     <div class="">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop">Detail
+                        <button type="button" class="btn btn-outline-secondary">
+                            Detail
                         </button>
                     </div>
                 </div>        

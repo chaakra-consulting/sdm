@@ -229,41 +229,7 @@
                                         <div class="form-group">
                                             <label for="keterangan">Keterangan</label>
                                             <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5">{{ old('keterangan', $task->keterangan) }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="upload">Lampiran</label>
-                                            <input type="file" class="form-control" name="upload" id="upload">
-                                            @php
-                                                $file = $task->upload ?? null;
-                                                $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
-                                                $isImage = $extension && in_array($extension, ['jpg', 'jpeg', 'png']);
-                                                $isPDF = $extension === 'pdf';
-                                            @endphp
-                                            @if ($file)
-                                                @if ($isImage)
-                                                    <img src="{{ asset('uploads/' . $file) }}" alt="Preview Gambar"
-                                                        class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
-                                                    <p class="text-center mt-2" id="detail_upload">
-                                                        <strong>Preview Gambar:</strong> 
-                                                        <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat Gambar</a>
-                                                    </p>
-                                                @elseif ($isPDF)
-                                                    <iframe src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
-                                                    <p class="text-center mt-2" id="detail_upload">
-                                                        <strong>Preview PDF:</strong> 
-                                                        <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat PDF</a>
-                                                    </p>
-                                                @else
-                                                    <p class="text-center mt-2 text-muted" id="detail_upload">
-                                                        <strong>File Terpilih:</strong> .{{ $extension }}
-                                                    </p>
-                                                @endif
-                                            @else
-                                                <p class="text-center text-muted mt-2" id="detail_upload">
-                                                    Tidak ada file lampiran yang tersedia
-                                                </p>
-                                            @endif
-                                        </div>                                          
+                                        </div>                                         
                                         <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">                                    
                                         @if ($task != null)
                                             <button type="button" class="btn btn-danger btn-batal-edit"
@@ -305,6 +271,12 @@
                                     <a href="#home" data-bs-toggle="tab" class="active" aria-expanded="true">
                                         <i class="bi bi-calendar-check"></i>
                                         <span class="hidden-xs">SUB TASK</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#lampiran" data-bs-toggle="tab" aria-expanded="false">
+                                        <i class="bi bi-paperclip"></i>
+                                        <span class="hidden-xs">LAMPIRAN</span>
                                     </a>
                                 </li>
                                 <li class="">
@@ -374,6 +346,41 @@
                                         </table>
                                     </div>                                    
                                 @endif
+                            </div>
+                            <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">       
+                                <div class="form-group">
+                                    <input type="file" class="form-control" name="upload" id="upload">
+                                    @php
+                                        $file = $task->upload ?? null;
+                                        $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
+                                        $isImage = $extension && in_array($extension, ['jpg', 'jpeg', 'png']);
+                                        $isPDF = $extension === 'pdf';
+                                    @endphp
+                                    @if ($file)
+                                        @if ($isImage)
+                                            <img src="{{ asset('uploads/' . $file) }}" alt="Preview Gambar"
+                                                class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
+                                            <p class="text-center mt-2" id="detail_upload">
+                                                <strong>Preview Gambar:</strong> 
+                                                <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat Gambar</a>
+                                            </p>
+                                        @elseif ($isPDF)
+                                            <iframe src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
+                                            <p class="text-center mt-2" id="detail_upload">
+                                                <strong>Preview PDF:</strong> 
+                                                <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat PDF</a>
+                                            </p>
+                                        @else
+                                            <p class="text-center mt-2 text-muted" id="detail_upload">
+                                                <strong>File Terpilih:</strong> .{{ $extension }}
+                                            </p>
+                                        @endif
+                                    @else
+                                        <p class="text-center text-muted mt-2" id="detail_upload">
+                                            Tidak ada file lampiran yang tersedia
+                                        </p>
+                                    @endif
+                                </div>                        
                             </div>
                             <div class="tab-pane border-0 p-0" id="anggota" role="tabpanel">
                                 <div class="row">
