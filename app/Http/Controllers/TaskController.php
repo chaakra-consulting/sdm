@@ -118,6 +118,11 @@ class TaskController extends Controller
             'user.*' => 'required' 
         ]);
 
+        $tipeTask = TipeTask::where('slug', $request->tipe_task)->first();
+        if (!$tipeTask) {
+            return redirect()->back()->with('error', 'Tipe Task tidak ditemukan!.');
+        }
+
         $task->fill($request->except('upload'));
 
         if ($request->hasFile('upload')) {
@@ -134,7 +139,7 @@ class TaskController extends Controller
         }
         
         $data = [
-            'tipe_tasks_id' => $request->tipe_task,
+            'tipe_tasks_id' => $tipeTask->id,
             'nama_project' => $request->project_perusahaan_id,
             'user_id' => $request->user_id,
             'nama_task' => $request->nama_task,
@@ -173,6 +178,32 @@ class TaskController extends Controller
         : "Semua anggota sudah terdaftar di task ini.";
 
         return redirect()->back()->with('success', $message);
+    }
+
+    public function updateLampiran(Request $request, $id)
+    {
+        $task = Task::find($id);
+
+        $request->validate([
+            'upload' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png,gif|max:5120',
+        ]);
+
+        if ($request->hasFile('upload')) {
+            if ($task->upload) {
+                $oldPhotoPath = public_path('uploads/' . $task->upload);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
+            }
+            $file = $request->file('upload');
+            $filename = uniqid() . '_task_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $task->upload = $filename;
+        }
+
+        $task->save();
+
+        return redirect()->back()->with('success', 'Lampiran berhasil di update');
     }
 
     public function destroy($id)

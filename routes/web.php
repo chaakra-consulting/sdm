@@ -307,6 +307,7 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::get('/manajer/task/{id}', [TaskController::class, 'detail'])->name('manajer.detail.task');
     Route::post('/manajer/task/store', [TaskController::class, 'store'])->name('manajer.store.task');
     Route::put('/manajer/task/update/{id}', [TaskController::class, 'update'])->name('manajer.update.task');
+    Route::put('/manajer/task/update/lampiran/{id}', [TaskController::class, 'updateLampiran'])->name('manajer.update.lampiran.task');
     Route::post('/manajer/task/update/anggota', [TaskController::class, 'updateUserTask'])->name('manajer.update.anggota.task');
     Route::delete('/manajer/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
     Route::delete('/manajer/task/delete/anggota/{id}', [TaskController::class, 'destroyUserTask'])->name('manajer.delete.anggota.task');

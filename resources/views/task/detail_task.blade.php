@@ -189,19 +189,24 @@
                                         @method('put')
                                         <div class="form-group">
                                             <label for="tipe_task">Tipe Task</label>
-                                            <select name="tipe_task" id="tipe_task" data-trigger class="form-control" required>
+                                            <select name="tipe_task" id="tipe_task" class="form-control" 
+                                                {{ $task->tipe_task == null ? '' : 'disabled' }} required>
                                                 @if ($task->tipe_task == null)
                                                     <option value="" selected disabled>Pilih Tipe Task</option>
                                                     @foreach ($tipeTask as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->nama_tipe }}</option>
+                                                        <option value="{{ $item->slug }}">{{ $item->nama_tipe }}</option>
                                                     @endforeach
                                                 @else
-                                                    <option value="{{ $task->tipe_task->id }}" selected>{{ $task->tipe_task->nama_tipe }}</option>
+                                                    <option value="{{ $task->tipe_task->slug }}" selected>{{ $task->tipe_task->nama_tipe }}</option>
                                                     @foreach ($tipeTask as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->nama_tipe }}</option>
+                                                        <option value="{{ $item->slug }}">{{ $item->nama_tipe }}</option>
                                                     @endforeach      
                                                 @endif
                                             </select>
+
+                                            @if ($task->tipe_task != null)
+                                                <input type="hidden" name="tipe_task" value="{{ $task->tipe_task->slug }}">
+                                            @endif
                                         </div>
                                         <div class="form-group">
                                             <label for="nama_project" class="form-label">Nama Project</label>
@@ -329,7 +334,7 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>                                                        
                                                         <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d F Y') }}</td>
-                                                        <td>{{ $item->durasi }}</td>
+                                                        <td>{{ $item->durasi/60 }} Jam, {{ $item->durasi%60 }} Menit</td>
                                                         <td>{{ $item->keterangan }}</td>
                                                         <td>
                                                             @if ($item->lampiran->count())
@@ -347,40 +352,47 @@
                                     </div>                                    
                                 @endif
                             </div>
-                            <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">       
-                                <div class="form-group">
-                                    <input type="file" class="form-control" name="upload" id="upload">
-                                    @php
-                                        $file = $task->upload ?? null;
-                                        $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
-                                        $isImage = $extension && in_array($extension, ['jpg', 'jpeg', 'png']);
-                                        $isPDF = $extension === 'pdf';
-                                    @endphp
-                                    @if ($file)
-                                        @if ($isImage)
-                                            <img src="{{ asset('uploads/' . $file) }}" alt="Preview Gambar"
-                                                class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
-                                            <p class="text-center mt-2" id="detail_upload">
-                                                <strong>Preview Gambar:</strong> 
-                                                <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat Gambar</a>
-                                            </p>
-                                        @elseif ($isPDF)
-                                            <iframe src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
-                                            <p class="text-center mt-2" id="detail_upload">
-                                                <strong>Preview PDF:</strong> 
-                                                <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat PDF</a>
-                                            </p>
+                            <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">  
+                                <form action="{{ route('manajer.update.lampiran.task', $task->id) }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('put')
+                                    <div class="form-group">
+                                        <input type="file" class="form-control" name="upload" id="upload">
+                                        @php
+                                            $file = $task->upload ?? null;
+                                            $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
+                                            $isImage = $extension && in_array($extension, ['jpg', 'jpeg', 'png']);
+                                            $isPDF = $extension === 'pdf';
+                                        @endphp
+                                        @if ($file)
+                                            @if ($isImage)
+                                                <img src="{{ asset('uploads/' . $file) }}" alt="Preview Gambar"
+                                                    class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px;">
+                                                <p class="text-center mt-2" id="detail_upload">
+                                                    <strong>Preview Gambar:</strong> 
+                                                    <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat Gambar</a>
+                                                </p>
+                                            @elseif ($isPDF)
+                                                <iframe src="{{ asset('uploads/' . $file) }}" width="100%" height="400px"></iframe>
+                                                <p class="text-center mt-2" id="detail_upload">
+                                                    <strong>Preview PDF:</strong> 
+                                                    <a href="{{ asset('uploads/' . $file) }}" target="_blank">Lihat PDF</a>
+                                                </p>
+                                            @else
+                                                <p class="text-center mt-2 text-muted" id="detail_upload">
+                                                    <strong>File Terpilih:</strong> .{{ $extension }}
+                                                </p>
+                                            @endif
                                         @else
-                                            <p class="text-center mt-2 text-muted" id="detail_upload">
-                                                <strong>File Terpilih:</strong> .{{ $extension }}
+                                            <p class="text-center text-muted mt-2" id="detail_upload">
+                                                Tidak ada file lampiran yang tersedia
                                             </p>
                                         @endif
-                                    @else
-                                        <p class="text-center text-muted mt-2" id="detail_upload">
-                                            Tidak ada file lampiran yang tersedia
-                                        </p>
-                                    @endif
-                                </div>                        
+                                    </div> 
+                                    <button type="submit" class="btn btn-primary btn-submit-task">
+                                        Update
+                                    </button>                       
+                                </form>     
                             </div>
                             <div class="tab-pane border-0 p-0" id="anggota" role="tabpanel">
                                 <div class="row">

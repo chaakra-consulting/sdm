@@ -54,7 +54,6 @@ class ProjectController extends Controller
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,
-            'status' => $status,
             'progres' => $request->progres,
         ];
 
@@ -64,7 +63,6 @@ class ProjectController extends Controller
             UsersProject::create([
                 'project_perusahaan_id' => $project->id,
                 'user_id' => $user_id,
-                'status' => $status,
             ]);
         }
 
@@ -111,7 +109,6 @@ class ProjectController extends Controller
         $request->validate([
             'perusahaan_id' => 'required',
             'nama_project' => 'required',
-            'status' => 'required',
             'waktu_mulai' => 'required',
             'waktu_berakhir' => 'nullable',
             'deadline' => 'required',
@@ -119,7 +116,6 @@ class ProjectController extends Controller
         $data = [
             'perusahaan_id' => $request->perusahaan_id,
             'nama_project' => $request->nama_project,
-            'status' => $request->status,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
             'deadline' => $request->deadline,

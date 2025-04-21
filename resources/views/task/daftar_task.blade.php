@@ -169,7 +169,7 @@
                                                 data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" title="Detail Task!"><i class='bx bx-detail'></i>
                                             </a>
-                                            @if ($item->task->tipe_task->slug != 'task-project')
+                                            @if ($item->task->tipe_task->slug != 'task-project' && $item->task->tipe_task->slug != 'task-wajib')
                                                 <form action="{{ route('karyawan.delete.task', $item->id) }}" method="POST"
                                                     class="d-inline">
                                                     @csrf
