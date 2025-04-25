@@ -668,7 +668,7 @@
         // const sekarang = new Date(); // Waktu saat ini
 
         // Hilangkan waktu jika slug termasuk kategori tertentu
-        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa', 'ijin-direktur'].includes(slug)) {
+        if (['wfh', 'cuti', 'ijin', 'sakit', 'alpa'].includes(slug)) {
         // Kosongkan nilai input dan nonaktifkan
             waktuMasukInput.value = '';
             waktuPulangInput.value = '';
@@ -702,10 +702,10 @@
             message = '';
         }
 
-        if (slug === 'ijin-direktur' && !uploadSurat) {
-            warningMessage.style.display = 'block';
-            message = '*Surat Pendukung wajib diisi dengan form surat ijin.';
-        }
+        // if (slug === 'ijin-direktur' && !uploadSurat) {
+        //     warningMessage.style.display = 'block';
+        //     message = '*Surat Pendukung wajib diisi dengan form surat ijin.';
+        // }
 
         if (message) {
             warningMessage.innerHTML = `<em>${message}</em>`;
