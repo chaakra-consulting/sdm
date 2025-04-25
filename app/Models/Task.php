@@ -9,10 +9,10 @@ class Task extends Model
     protected $table = 'tb_tasks';
     protected $guarded = ['id'];
     protected $fillable = [
-        'id', 
+        'id',
         'tipe_tasks_id',
-        'project_perusahaan_id', 
-        'user_id', 
+        'project_perusahaan_id',
+        'user_id',
         'nama_task',
         'tgl_task',
         'keterangan',
@@ -37,5 +37,9 @@ class Task extends Model
     public function tipe_task()
     {
         return $this->belongsTo(TipeTask::class, 'tipe_tasks_id', 'id');
+    }
+    public function status_pengerjaan()
+    {
+        return $this->belongsTo(StatusPengerjaan::class, 'status_pengerjaans_id', 'id');
     }
 }

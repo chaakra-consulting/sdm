@@ -117,14 +117,7 @@
                                         <h5 class="main-profile-name" style="text-transform: capitalize;">
                                             {{ $project->nama_project }}</h5>
                                         <p class="main-profile-name-text text-muted fs-16 text-uppercase">
-                                            @if ($project->status == 'selesai')
-                                                <span class="text-success">
-                                                @elseif ($project->status == 'proses')
-                                                    <span class="text-warning">
-                                                    @elseif ($project->status == 'belum')
-                                                        <span class="text-danger">
-                                            @endif
-                                            {{ $project->status }}</span>
+                                            {{ $project->status_pengerjaan->nama_status_pengerjaan }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -185,18 +178,11 @@
                                             <select class="form-control" id="status" data-trigger name="status"
                                                 required>
                                                 <option value="">Pilih Status Project</option>
-                                                <option value="belum"
-                                                    {{ $project->status == 'belum' ? 'selected' : '' }}>
-                                                    Belum
-                                                </option>
-                                                <option value="proses"
-                                                    {{ $project->status == 'proses' ? 'selected' : '' }}>
-                                                    Proses
-                                                </option>
-                                                <option value="selesai"
-                                                    {{ $project->status == 'selesai' ? 'selected' : '' }}>
-                                                    Selesai
-                                                </option>
+                                                @foreach ($statusPengerjaan as $item)
+                                                    <option value="{{ $item->slug }}" {{ $project->status_pengerjaan?->slug == $item->slug ? 'selected' : '' }}>
+                                                        {{ $item->nama_status_pengerjaan }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -333,7 +319,7 @@
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
-                                                    <td>{{ $task->tgl_task }}</td>
+                                                    <td>{{ Carbon\Carbon::parse($task->tgl_task)->translatedFormat('l, d F Y') }}</td>
                                                     <td class="text-center">
                                                         @if (Auth::check() && Auth::user()->role->slug == 'manager')
                                                         <a href="javascript:void(0);" class="btn btn-warning updateTask"
@@ -483,7 +469,6 @@
                 $("#formTask").append('<input type="hidden" name="_method" value="POST">');
 
                 $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
-                $("#project_perusahaan_id").val('{{ $project->id }}');
                 $("#user_id").val('{{ auth()->user()->id }}');
                 $("#tipe_task").val('task-project');
 

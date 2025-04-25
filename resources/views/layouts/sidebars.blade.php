@@ -536,6 +536,9 @@
                                 <a href="{{ route('manajer.tipe_task') }}"
                                     class="side-menu__item {{ request()->routeIs('manajer.tipe_task') ? 'active' : '' }}">
                                     Tipe Task</a>
+                                <a href="{{ route('manajer.status_pengerjaan') }}"
+                                    class="side-menu__item {{ request()->routeIs('manajer.status_pengerjaan') ? 'active' : '' }}">
+                                    Status Pengerjaan</a>
                             </li>
                         </ul>
                     </li>

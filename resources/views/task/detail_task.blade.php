@@ -357,7 +357,9 @@
                                     @csrf
                                     @method('put')
                                     <div class="form-group">
-                                        <input type="file" class="form-control" name="upload" id="upload">
+                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                            <input type="file" class="form-control" name="upload" id="upload" required>
+                                        @endif
                                         @php
                                             $file = $task->upload ?? null;
                                             $extension = $file ? strtolower(pathinfo($file, PATHINFO_EXTENSION)) : null;
@@ -389,9 +391,11 @@
                                             </p>
                                         @endif
                                     </div> 
-                                    <button type="submit" class="btn btn-primary btn-submit-task">
-                                        Update
-                                    </button>                       
+                                    @if (Auth::check() & Auth::user()->role->slug == 'manager')
+                                        <button type="submit" class="btn btn-primary btn-submit-task">
+                                            Update
+                                        </button>                       
+                                    @endif
                                 </form>     
                             </div>
                             <div class="tab-pane border-0 p-0" id="anggota" role="tabpanel">

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StatusPengerjaan;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\StatusPengerjaan;
 
 class StatusPengerjaanController extends Controller
 {
@@ -12,7 +13,9 @@ class StatusPengerjaanController extends Controller
      */
     public function index()
     {
-        //
+        $title = 'Status Pengerjaan';
+        $getStatusPengerjaan = StatusPengerjaan::all();
+        return view('master.status_pengerjaan', compact('title', 'getStatusPengerjaan'));
     }
 
     /**
@@ -28,7 +31,16 @@ class StatusPengerjaanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_status_pengerjaan' => 'required'
+        ]);
+        $data = [
+            'nama_status_pengerjaan' => $request->nama_status_pengerjaan,
+            'slug' => Str::slug($request->nama_status_pengerjaan)
+        ];
+        StatusPengerjaan::create($data);
+
+        return redirect()->back()->with('success', 'Status Pengerjaan Berhasil Ditambahkan!');
     }
 
     /**

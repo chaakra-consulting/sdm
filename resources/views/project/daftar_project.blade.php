@@ -98,7 +98,7 @@
                                         <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
-                                        <td>{{ ucwords($item->status) }}</td>
+                                        <td>{{ ucwords($item->status_pengerjaan->nama_status_pengerjaan) ?? '-' }}</td>
                                         <td>
                                             <a href="{{ route('manajer.detail.project', $item->id) }}"
                                                 class="btn btn-secondary" data-bs-toggle="tooltip"
@@ -128,9 +128,9 @@
                                         <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->project_perusahaan->nama_project }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
-                                        <td>{{ ucwords($item->project_perusahaan->status) }}</td>
+                                        <td>{{ ucwords($item->project_perusahaan->status_pengerjaan?->nama_status_pengerjaan) ?? '-' }}</td>
                                         <td>
-                                            <a href="{{ route('karyawan.detail.project', $item->id) }}"
+                                            <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
                                                 class="btn btn-secondary" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
                                                 title="Detail Project!"><i class='bx bx-detail'></i>
