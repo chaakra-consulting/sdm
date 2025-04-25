@@ -271,21 +271,40 @@
                                     <div class="col-md-6" id="progres-bar"></div>
                                     <div class="col-md-6">
                                         <dl class="row mb-0">
-                                            <dt class="col-md-4 p-0">Nama Entitas</dt>
-                                            <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
-                                            <dt class="col-md-4 p-0">Capaian Target</dt>
-                                            <dd class="col-md-8 p-0">: - </dd>
-                                            <dt class="col-md-4 p-0">Target Task</dt>
-                                            <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
-                                            <div class="form-group p-0 ">
-                                                <label for="nama_project" class="form-label"><strong>Realisasi -
-                                                    {{ $project->nama_project }}</strong></label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
-                                                    aria-describedby="button-addon1">
-                                                    <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')  
+                                                <dt class="col-md-4 p-0">Nama Entitas</dt>
+                                                <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
+                                                <dt class="col-md-4 p-0">Capaian Target</dt>
+                                                <dd class="col-md-8 p-0">: - </dd>
+                                                <dt class="col-md-4 p-0">Target Task</dt>
+                                                <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
+                                                <div class="form-group p-0 ">
+                                                    <label for="nama_project" class="form-label"><strong>Realisasi -
+                                                        {{ $project->nama_project }}</strong></label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
+                                                        aria-describedby="button-addon1">
+                                                        <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                <dt class="col-md-4 p-0">Nama Entitas</dt>
+                                                <dd class="col-md-8 p-0">: {{ $userProject->project_perusahaan->nama_project }}</dd>
+                                                <dt class="col-md-4 p-0">Capaian Target</dt>
+                                                <dd class="col-md-8 p-0">: - </dd>
+                                                <dt class="col-md-4 p-0">Target Task</dt>
+                                                <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
+                                                <div class="form-group p-0 ">
+                                                    <label for="nama_project" class="form-label"><strong>Realisasi -
+                                                        {{ $userProject->project_perusahaan->nama_project }}</strong></label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
+                                                        aria-describedby="button-addon1">
+                                                        <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                                    </div>
+                                                </div>
+
+                                            @endif
                                         </dl>
                                     </div>
                                 </div>
@@ -319,6 +338,7 @@
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
+                                                    <td>{{ Carbon\Carbon::parse($task->tgl_task)->translatedFormat('l, d F Y') }}</td>
                                                     <td>{{ Carbon\Carbon::parse($task->tgl_task)->translatedFormat('l, d F Y') }}</td>
                                                     <td class="text-center">
                                                         @if (Auth::check() && Auth::user()->role->slug == 'manager')

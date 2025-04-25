@@ -106,7 +106,6 @@ class ProjectController extends Controller
                 'color' => 'red'
             ];
         }
-
         return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'user', 'users', 'statusPengerjaan', 'userProject'));
     }
 
