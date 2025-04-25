@@ -94,7 +94,11 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id" value="{{ $project->id }}">
+                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id" value="{{ $project->id }}">
+                            @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id" value="{{ $userProject->project_perusahaan->id }}">
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -114,18 +118,19 @@
                             <div class="main-profile-overview">
                                 <div class="d-flex justify-content-between mb-4">
                                     <div>
-                                        <h5 class="main-profile-name" style="text-transform: capitalize;">
-                                            {{ $project->nama_project }}</h5>
-                                        <p class="main-profile-name-text text-muted fs-16 text-uppercase">
-                                            @if ($project->status == 'selesai')
-                                                <span class="text-success">
-                                                @elseif ($project->status == 'proses')
-                                                    <span class="text-warning">
-                                                    @elseif ($project->status == 'belum')
-                                                        <span class="text-danger">
-                                            @endif
-                                            {{ $project->status }}</span>
-                                        </p>
+                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                            <h5 class="main-profile-name" style="text-transform: capitalize;">
+                                                {{ $project->nama_project }}</h5>
+                                            <p class="main-profile-name-text text-muted fs-16 text-uppercase">
+                                                {{ $project->status_pengerjaan->nama_status_pengerjaan }}</span>
+                                            </p>
+                                        @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                            <h5 class="main-profile-name" style="text-transform: capitalize;">
+                                                {{ $userProject->project_perusahaan->nama_project }}</h5>
+                                            <p class="main-profile-name-text text-muted fs-16 text-uppercase">
+                                                {{ $userProject->project_perusahaan->status_pengerjaan->nama_status_pengerjaan }}</span>
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                                 @if ($errors->any())
@@ -156,89 +161,161 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="container-project" {{ $project->waktu_mulai != null ? '' : 'hidden' }}>
-                                    <form action="{{ route('manajer.update.project', $project->id) }}" method="post">
-                                        @csrf
-                                        @method('put')
-                                        <div class="form-group">
-                                            <label for="perusahaan_id" class="form-label">Nama Instansi</label>
-                                            <select name="perusahaan_id" data-trigger id="perusahaan_id"
-                                                class="form-control">
-                                                <option selected disabled>Pilih Perusahaan</option>
-                                                @foreach ($perusahaan as $key => $row)
-                                                    <option
-                                                        {{ old('perusahaan_id', $project == null ? '' : $project->perusahaan_id) == $row->id ? 'selected' : '' }}
-                                                        value="{{ $row->id }}">
-                                                        {{ $row->nama_perusahaan }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="nama_project" class="form-label">Nama Project</label>
-                                            <input type="text" name="nama_project" id="nama_project"
-                                                class="form-control"
-                                                value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="status" class="form-label">Status</label>
-                                            <select class="form-control" id="status" data-trigger name="status"
-                                                required>
-                                                <option value="">Pilih Status Project</option>
-                                                <option value="belum"
-                                                    {{ $project->status == 'belum' ? 'selected' : '' }}>
-                                                    Belum
-                                                </option>
-                                                <option value="proses"
-                                                    {{ $project->status == 'proses' ? 'selected' : '' }}>
-                                                    Proses
-                                                </option>
-                                                <option value="selesai"
-                                                    {{ $project->status == 'selesai' ? 'selected' : '' }}>
-                                                    Selesai
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="waktu_mulai">Tanggal Mulai</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="waktu_mulai"
-                                                    value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
-                                                    id="humanfrienndlydate" placeholder="Waktu Mulai">
+                                @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                    <div class="container-project" {{ $project->waktu_mulai != null ? '' : 'hidden' }}>
+                                        <form action="{{ route('manajer.update.project', $project->id) }}" method="post">
+                                            @csrf
+                                            @method('put')
+                                            <div class="form-group">
+                                                <label for="perusahaan_id" class="form-label">Nama Instansi</label>
+                                                <select name="perusahaan_id" data-trigger id="perusahaan_id"
+                                                    class="form-control">
+                                                    <option selected disabled>Pilih Perusahaan</option>
+                                                    @foreach ($perusahaan as $key => $row)
+                                                        <option
+                                                            {{ old('perusahaan_id', $project == null ? '' : $project->perusahaan_id) == $row->id ? 'selected' : '' }}
+                                                            value="{{ $row->id }}">
+                                                            {{ $row->nama_perusahaan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="waktu_berakhir">Tanggal Berakhir</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="waktu_berakhir"
-                                                    value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
-                                                    id="humanfrienndlydate" placeholder="Waktu Berakhir">
+                                            <div class="form-group">
+                                                <label for="nama_project" class="form-label">Nama Project</label>
+                                                <input type="text" name="nama_project" id="nama_project"
+                                                    class="form-control"
+                                                    value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="deadline">Deadline</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="deadline"
-                                                    value="{{ $project->deadline != null ? $project->deadline : '' }}"
-                                                    id="humanfrienndlydate" placeholder="deadline">
+                                            <div class="form-group">
+                                                <label for="status" class="form-label">Status</label>
+                                                <select class="form-control" id="status" data-trigger name="status"
+                                                    required>
+                                                    <option value="">Pilih Status Project</option>
+                                                    @foreach ($statusPengerjaan as $item)
+                                                        <option value="{{ $item->slug }}" {{ $project->status_pengerjaan?->slug == $item->slug ? 'selected' : '' }}>
+                                                            {{ $item->nama_status_pengerjaan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </div>
-                                        @if ($project != null)
-                                            <button type="button" class="btn btn-danger btn-batal-edit"
-                                                hidden>Batal</button>
-                                            <button type="button" class="btn btn-warning btn-edit-project">Edit</button>
-                                        @endif
-                                        <button type="submit" class="btn btn-primary btn-submit-project"
-                                            {{ $project != null ? 'hidden' : '' }}>{{ $project != null ? 'Update' : 'Simpan' }}
-                                        </button>
-                                    </form>
-                                </div>
+                                            <div class="form-group">
+                                                <label for="waktu_mulai">Tanggal Mulai</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="waktu_mulai"
+                                                        value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
+                                                        id="humanfrienndlydate" placeholder="Waktu Mulai">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="waktu_berakhir">Tanggal Berakhir</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="waktu_berakhir"
+                                                        value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
+                                                        id="humanfrienndlydate" placeholder="Waktu Berakhir">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="deadline">Deadline</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="deadline"
+                                                        value="{{ $project->deadline != null ? $project->deadline : '' }}"
+                                                        id="humanfrienndlydate" placeholder="deadline">
+                                                </div>
+                                            </div>
+                                            @if ($project != null)
+                                                <button type="button" class="btn btn-danger btn-batal-edit"
+                                                    hidden>Batal</button>
+                                                <button type="button" class="btn btn-warning btn-edit-project">Edit</button>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary btn-submit-project"
+                                                {{ $project != null ? 'hidden' : '' }}>{{ $project != null ? 'Update' : 'Simpan' }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                    <div class="container-project" {{ $userProject->project_perusahaan->waktu_mulai != null ? '' : 'hidden' }}>
+                                        <form action="{{ route('manajer.update.project', $userProject->project_perusahaan->id) }}" method="post">
+                                            @csrf
+                                            @method('put')
+                                            <div class="form-group">
+                                                <label for="perusahaan_id" class="form-label">Nama Instansi</label>
+                                                <select name="perusahaan_id" data-trigger id="perusahaan_id"
+                                                    class="form-control">
+                                                    <option selected disabled>Pilih Perusahaan</option>
+                                                    @foreach ($perusahaan as $key => $row)
+                                                        <option
+                                                            {{ old('perusahaan_id', $userProject->project_perusahaan == null ? '' : $userProject->project_perusahaan->perusahaan_id) == $row->id ? 'selected' : '' }}
+                                                            value="{{ $row->id }}">
+                                                            {{ $row->nama_perusahaan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nama_project" class="form-label">Nama Project</label>
+                                                <input type="text" name="nama_project" id="nama_project"
+                                                    class="form-control"
+                                                    value="{{ old('nama_project', $userProject->project_perusahaan == null ? '' : $userProject->project_perusahaan->nama_project) }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="status" class="form-label">Status</label>
+                                                <select class="form-control" id="status" data-trigger name="status"
+                                                    required>
+                                                    <option value="">Pilih Status Project</option>
+                                                    @foreach ($statusPengerjaan as $item)
+                                                        <option value="{{ $item->slug }}" {{ $userProject->project_perusahaan->status_pengerjaan?->slug == $item->slug ? 'selected' : '' }}>
+                                                            {{ $item->nama_status_pengerjaan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="waktu_mulai">Tanggal Mulai</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="waktu_mulai"
+                                                        value="{{ $userProject->project_perusahaan->waktu_mulai != null ? $userProject->project_perusahaan->waktu_mulai : '' }}"
+                                                        id="humanfrienndlydate" placeholder="Waktu Mulai">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="waktu_berakhir">Tanggal Berakhir</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="waktu_berakhir"
+                                                        value="{{ $userProject->project_perusahaan->waktu_berakhir != null ? $userProject->project_perusahaan->waktu_berakhir : '' }}"
+                                                        id="humanfrienndlydate" placeholder="Waktu Berakhir">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="deadline">Deadline</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="deadline"
+                                                        value="{{ $userProject->project_perusahaan->deadline != null ? $userProject->project_perusahaan->deadline : '' }}"
+                                                        id="humanfrienndlydate" placeholder="deadline">
+                                                </div>
+                                            </div>
+                                            @if ($userProject->project_perusahaan != null)
+                                                <button type="button" class="btn btn-danger btn-batal-edit"
+                                                    hidden>Batal</button>
+                                                <button type="button" class="btn btn-warning btn-edit-project">Edit</button>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary btn-submit-project"
+                                                {{ $userProject->project_perusahaan != null ? 'hidden' : '' }}>{{ $userProject->project_perusahaan != null ? 'Update' : 'Simpan' }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -285,21 +362,40 @@
                                     <div class="col-md-6" id="progres-bar"></div>
                                     <div class="col-md-6">
                                         <dl class="row mb-0">
-                                            <dt class="col-md-4 p-0">Nama Entitas</dt>
-                                            <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
-                                            <dt class="col-md-4 p-0">Capaian Target</dt>
-                                            <dd class="col-md-8 p-0">: - </dd>
-                                            <dt class="col-md-4 p-0">Target Task</dt>
-                                            <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
-                                            <div class="form-group p-0 ">
-                                                <label for="nama_project" class="form-label"><strong>Realisasi -
-                                                    {{ $project->nama_project }}</strong></label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
-                                                    aria-describedby="button-addon1">
-                                                    <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')  
+                                                <dt class="col-md-4 p-0">Nama Entitas</dt>
+                                                <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
+                                                <dt class="col-md-4 p-0">Capaian Target</dt>
+                                                <dd class="col-md-8 p-0">: - </dd>
+                                                <dt class="col-md-4 p-0">Target Task</dt>
+                                                <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
+                                                <div class="form-group p-0 ">
+                                                    <label for="nama_project" class="form-label"><strong>Realisasi -
+                                                        {{ $project->nama_project }}</strong></label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
+                                                        aria-describedby="button-addon1">
+                                                        <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                <dt class="col-md-4 p-0">Nama Entitas</dt>
+                                                <dd class="col-md-8 p-0">: {{ $userProject->project_perusahaan->nama_project }}</dd>
+                                                <dt class="col-md-4 p-0">Capaian Target</dt>
+                                                <dd class="col-md-8 p-0">: - </dd>
+                                                <dt class="col-md-4 p-0">Target Task</dt>
+                                                <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
+                                                <div class="form-group p-0 ">
+                                                    <label for="nama_project" class="form-label"><strong>Realisasi -
+                                                        {{ $userProject->project_perusahaan->nama_project }}</strong></label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
+                                                        aria-describedby="button-addon1">
+                                                        <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
+                                                    </div>
+                                                </div>
+
+                                            @endif
                                         </dl>
                                     </div>
                                 </div>
@@ -333,7 +429,7 @@
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
-                                                    <td>{{ $task->tgl_task }}</td>
+                                                    <td>{{ Carbon\Carbon::parse($task->tgl_task)->translatedFormat('l, d F Y') }}</td>
                                                     <td class="text-center">
                                                         @if (Auth::check() && Auth::user()->role->slug == 'manager')
                                                         <a href="javascript:void(0);" class="btn btn-warning updateTask"
@@ -483,7 +579,6 @@
                 $("#formTask").append('<input type="hidden" name="_method" value="POST">');
 
                 $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
-                $("#project_perusahaan_id").val('{{ $project->id }}');
                 $("#user_id").val('{{ auth()->user()->id }}');
                 $("#tipe_task").val('task-project');
 

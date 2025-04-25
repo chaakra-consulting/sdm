@@ -22,4 +22,8 @@ class ProjectPerusahaan extends Model
     {
         return $this->hasMany(Task::class, 'project_perusahaan_id', 'id');
     }
+    public function status_pengerjaan()
+    {
+        return $this->belongsTo(StatusPengerjaan::class, 'status_pengerjaans_id', 'id');
+    }
 }

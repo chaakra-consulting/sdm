@@ -9,6 +9,7 @@ use App\Models\Perusahaan;
 use App\Models\UsersProject;
 use Illuminate\Http\Request;
 use App\Models\ProjectPerusahaan;
+use App\Models\StatusPengerjaan;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -16,14 +17,13 @@ class ProjectController extends Controller
     public function show()
     {
         $title = 'Daftar Project';
-        $project = ProjectPerusahaan::with('perusahaan', 'project_users')->get();
-        $userProject = UsersProject::where('user_id', Auth::user()->id)
-            ->with(['project_perusahaan.perusahaan'])
-            ->get();
+        $project = ProjectPerusahaan::with('perusahaan', 'project_users', 'status_pengerjaan')->get();
+        $userProject = UsersProject::where('user_id', Auth::user()->id)->with('project_perusahaan.perusahaan')->get();
         $perusahaan = Perusahaan::all();
+        $statusPengerjaan = StatusPengerjaan::all();
         $users = User::all();
 
-        return view('project.daftar_project', compact('title', 'project', 'perusahaan', 'users', 'userProject'));
+        return view('project.daftar_project', compact('title', 'project', 'perusahaan', 'users', 'userProject', 'statusPengerjaan'));
     }
 
     public function store(Request $request)
@@ -48,8 +48,14 @@ class ProjectController extends Controller
             $status = "belum";
         }
 
+        $statusPengerjaan = StatusPengerjaan::where('slug', $status)->first();
+        if (!$statusPengerjaan) {
+            return redirect()->back()->with('error', 'Status pengerjaan tidak ditemukan.');
+        }
+
         $data = [
             'perusahaan_id' => $request->nama_perusahaan,
+            'status_pengerjaans_id' => $statusPengerjaan->id,
             'nama_project' => $request->nama_project,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,
@@ -72,10 +78,12 @@ class ProjectController extends Controller
     public function detail(string $id)
     {
         $title = 'Detail Project';
-        $project = ProjectPerusahaan::where('id', $id)->first();
+        $project = ProjectPerusahaan::where('id', $id)->with('status_pengerjaan')->first();
+        $userProject = UsersProject::where('id', $id)->with('project_perusahaan', 'user')->first();
+        $statusPengerjaan = StatusPengerjaan::all();
         $tasks = Task::where('project_perusahaan_id', $id)->with('users_task')->get();
         $perusahaan = Perusahaan::all();
-        $user = UsersProject::where('project_perusahaan_id', $id)
+        $user = UsersProject::where('id', $id)
             ->with([
                 'user.socialMedias',
                 'user.dataDiri.kepegawaian.subJabatan',
@@ -84,22 +92,40 @@ class ProjectController extends Controller
         $existingUserIds = UsersProject::where('project_perusahaan_id', $id)->pluck('user_id')->toArray();
         $users = User::whereNotIn('id', $existingUserIds)->get();
         $events = [];
-        if ($project->waktu_mulai) {
-            $events[] = [
-                'title' => 'Mulai: ' . $project->nama_project,
-                'start' => $project->waktu_mulai,
-                'color' => 'green'
-            ];
-        }
-        if ($project->deadline) {
-            $events[] = [
-                'title' => 'Deadline: ' . $project->nama_project,
-                'start' => $project->deadline,
-                'color' => 'red'
-            ];
+        
+        if (Auth::check() && Auth::user()->role->slug == 'manager') {
+            if ($project->waktu_mulai) {
+                $events[] = [
+                    'title' => 'Mulai: ' . $project->nama_project,
+                    'start' => $project->waktu_mulai,
+                    'color' => 'green'
+                ];
+            }
+            if ($project->deadline) {
+                $events[] = [
+                    'title' => 'Deadline: ' . $project->nama_project,
+                    'start' => $project->deadline,
+                    'color' => 'red'
+                ];
+            }
+        } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
+            if ($userProject->project_perusahaan->waktu_mulai) {
+                $events[] = [
+                    'title' => 'Mulai: ' . $userProject->project_perusahaan->nama_project,
+                    'start' => $userProject->project_perusahaan->waktu_mulai,
+                    'color' => 'green'
+                ];
+            }
+            if ($userProject->project_perusahaan->deadline) {
+                $events[] = [
+                    'title' => 'Deadline: ' . $userProject->project_perusahaan->nama_project,
+                    'start' => $userProject->project_perusahaan->deadline,
+                    'color' => 'red'
+                ];
+            }
         }
 
-        return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'user', 'users'));
+        return view('project.detail_project', compact('project', 'title', 'perusahaan', 'tasks', 'events', 'user', 'users', 'statusPengerjaan', 'userProject'));
     }
 
     public function update(Request $request, $id)
@@ -112,9 +138,16 @@ class ProjectController extends Controller
             'waktu_mulai' => 'required',
             'waktu_berakhir' => 'nullable',
             'deadline' => 'required',
+            'status' => 'required',
         ]);
+        $status = StatusPengerjaan::where('slug', $request->status)->first();
+        if (!$status) {
+            return redirect()->back()->with('error', 'Status pengerjaan tidak ditemukan.');
+        }
+
         $data = [
             'perusahaan_id' => $request->perusahaan_id,
+            'status_pengerjaans_id' => $status->id,
             'nama_project' => $request->nama_project,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_berakhir' => $request->waktu_berakhir,

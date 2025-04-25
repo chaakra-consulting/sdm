@@ -31,6 +31,7 @@ use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
+use App\Http\Controllers\StatusPengerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
@@ -251,7 +252,6 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     // karyawan : laporan kinerja
     Route::get('/karyawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
     Route::get('/karyawan/laporan_kinerja/getDataByDate',[SubTaskController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
-    // Route::get('/karyawan/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
 });
 
 
@@ -318,9 +318,16 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::put('/manajer/tipe_task/update/{id}', [TipeTaskController::class, 'update'])->name('manajer.update.tipe_task');
     Route::delete('/manajer/tipe_task/delete/{id}', [TipeTaskController::class, 'destroy'])->name('manajer.delete.tipe_task');
 
+    // manajer : status pengerjaan
+    Route::get('/manajer/status_pengerjaan', [StatusPengerjaanController::class, 'index'])->name('manajer.status_pengerjaan');
+    Route::post('/manajer/status_pengerjaan/store', [StatusPengerjaanController::class, 'store'])->name('manajer.status_pengerjaan.store');
+    Route::put('/manajer/status_pengerjaan/update/{id}', [StatusPengerjaanController::class, 'update'])->name('manajer.status_pengerjaan.update');
+    Route::delete('/manajer/status_pengerjaan/delete/{id}', [StatusPengerjaanController::class, 'destroy'])->name('manajer.status_pengerjaan.delete');
+
     // manajer : laporan kinerja
     Route::get('/manajer/laporan_kinerja', [ManajerController::class, 'laporanKinerja'])->name('manajer.laporan_kinerja');
     Route::get('/manajer/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
+    Route::delete('/manajer/laporan_kinerja/delete/{id}', [ManajerController::class, 'destroyLaporanKinerja'])->name('manajer.laporan_kinerja.delete');
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
