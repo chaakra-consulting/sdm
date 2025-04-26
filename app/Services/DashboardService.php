@@ -9,6 +9,7 @@ use App\Models\AbsensiHarian;
 use App\Models\DatadiriUser;
 use App\Models\DataKepegawaian;
 use App\Models\GajiBulanan;
+use App\Models\HariLibur;
 use App\Models\KeteranganAbsensi;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
@@ -47,8 +48,9 @@ class DashboardService
             for ($date = $startDatePegawai->copy(); $date->lte($endDatePegawai); $date->addDay()) {
                 $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
                 $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+                $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
         
-                if (!$isLibur) $countHariKerjaPegawai++;
+                if (!$isLibur && !$isHariLibur) $countHariKerjaPegawai++;
             }
         } 
      
@@ -63,7 +65,7 @@ class DashboardService
         $data->push((object)[
             'nama' => 'PERSENTASE KEHADIRAN',
             'slug' => 'persentase-kehadiran',
-            'count'    => $countHariKerjaPegawai ? round(($countKehadiran/$countHariKerjaPegawai) * 100,2) : 0,
+            'count'    => $countHariKerjaPegawai ? min(100, round(($countKehadiran / $countHariKerjaPegawai) * 100, 2)) : 0,
             // 'color' => Functions::generateColorForKeteranganAbsensi('hari-kerja'),
         ]);
 
@@ -137,7 +139,9 @@ class DashboardService
         for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
             $hari = $date->translatedFormat('l') ?? '-';          
             $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            if($isLibur == false) $countHariKerja++;
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+        
+            if (!$isLibur && !$isHariLibur) $countHariKerja++;
         } 
         // Buat data
         $data = collect(
@@ -183,7 +187,12 @@ class DashboardService
             $endPegawai = min($endDate, $kepegawaian->tgl_berakhir ? Carbon::parse($kepegawaian->tgl_berakhir) : $endDate);
         
             return collect(CarbonPeriod::create($startPegawai, $endPegawai))
-                ->filter(fn($date) => !in_array($date->translatedFormat('l'), $hariLibur))
+                // ->filter(fn($date) => !in_array($date->translatedFormat('l'), $hariLibur))
+                ->filter(function ($date) use ($hariLibur) {
+                    $isWeekend = in_array($date->translatedFormat('l'), $hariLibur);
+                    $isHariLibur = HariLibur::whereDate('tanggal', $date->format('Y-m-d'))->exists();
+                    return !$isWeekend && !$isHariLibur;
+                })
                 ->count();
         });
 
@@ -199,8 +208,9 @@ class DashboardService
             for ($date = $startDatePegawai->copy(); $date->lte($endDatePegawai); $date->addDay()) {
                 $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
                 $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+                $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
         
-                if (!$isLibur) $countHariKerjaPegawai++;
+                if (!$isLibur && !$isHariLibur) $countHariKerjaPegawai++;
             }
         } 
 
@@ -328,7 +338,7 @@ class DashboardService
             $date = Carbon::create($year, $month, 1);
             $start = $date->copy()->startOfMonth();
             $end = $date->copy()->endOfMonth();
-    
+
             // Hitung hari kerja pegawai dalam bulan ini
             // $countHariKerjaPegawai = 0;
         
@@ -341,13 +351,22 @@ class DashboardService
             //         if (!$isLibur) $countHariKerjaPegawai++;
             //     }
             // } 
+            
             $countHariKerjaPegawai = $kepegawaians->sum(function ($kepegawaian) use ($start, $end) {
                 $period = CarbonPeriod::create(
                     max($start, $kepegawaian->tgl_masuk),
                     min($end, $kepegawaian->tgl_berakhir ?? $end)
                 );
-                return collect($period)->reject(fn($date) => Absensi::where('hari', $date->translatedFormat('l'))->value('is_libur'))->count();
+                
+                return collect($period)->filter(function ($date) {
+                    $hari = $date->translatedFormat('l') ?? '-';          
+                    $isLibur = Absensi::where('hari',$hari)->value('is_libur');
+                    $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+                    return !$isLibur && !$isHariLibur;
+                })->count();
             });
+
+            //dd($countHariKerjaPegawai);
 
             // Hitung persentase kehadiran untuk setiap keterangan
             $dataKeterangan = $keteranganAbsensis->map(function ($keterangan) use ($absensiHarians, $month, $countHariKerjaPegawai) {

@@ -42,20 +42,24 @@ class GajiBulananService
             $absensi = Absensi::where('hari',$hari)->first();
             $dendaTerlambat = $absensi ? $absensi->denda_terlambat : 0;
             $overtime = $absensi ? $absensi->denda_terlambat : 0;
-            $isLibur = $absensi ? $absensi->is_libur : false;
-            $isHariLibur = HariLibur::where('tanggal',$date)->first();
+            // $isLibur = $absensi ? $absensi->is_libur : false;
+            // $isHariLibur = HariLibur::where('tanggal',$date)->first();
+
+            $isLibur = Absensi::where('hari', $hari)->value('is_libur');
+            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+    
+            if (!$isLibur && !$isHariLibur) $countHariKerja++;
 
             $absensiHarian = AbsensiHarian::where('pegawai_id',$pegawaiId)->where('tanggal_kerja', $date->toDateString())->first();           
             $keterangan = $absensiHarian ? $absensiHarian->keteranganAbsensi : null;
             $durasiLembur = $absensiHarian ? $absensiHarian->durasi_lembur : 0;
-            //$keteranganNote = $absensiHarian ? $absensiHarian->keterangan : null;
 
             $data = json_decode($absensiHarian->data ?? null, true);
             $batasWaktuTerlambat = $data && $data['batas_waktu_terlambat'] ? $data['batas_waktu_terlambat'] : null;
             $waktuMasuk = $data && $data['waktu_masuk'] ? $data['waktu_masuk'] : null;
 
             //*! untuk menghitung jumlah hari kerja
-            if($isLibur == false && !$isHariLibur) $countHariKerja++;
+            // if(!$isLibur && !$isHariLibur) $countHariKerja++;
             
             //*! untuk menghitung jumlah terlambat
             if($keterangan && ($keterangan->slug != 'ijin-direktur')){
@@ -67,7 +71,7 @@ class GajiBulananService
             }
 
             //*! untuk menghitung jumlah kehadiran
-            if((!$absensiHarian && $isLibur == false) || $keterangan && in_array($keterangan->slug,['alpa'])) $countKetidakhadiran++;
+            if((!$absensiHarian && (!$isLibur && !$isHariLibur)) || $keterangan && in_array($keterangan->slug,['alpa'])) $countKetidakhadiran++;
             
             //*! untuk menghitung jumlah lembur
             if($keterangan && in_array($keterangan->slug,['lembur'])) {
