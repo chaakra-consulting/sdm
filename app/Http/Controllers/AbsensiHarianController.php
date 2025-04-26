@@ -168,7 +168,7 @@ class AbsensiHarianController extends Controller
 
         $now = Carbon::now();
         $deadline = Carbon::now()->setDay(26)->setHour(16)->setMinute(0)->setSecond(0);
-        if ($now->greaterThan($deadline)) {
+        if ($now->greaterThan($deadline) && !$verifikasi) {
             $statusVerifikasi = 'Terlambat Verifikasi';
         } elseif ($verifikasi) {
             $statusVerifikasi = 'Terverifikasi';
