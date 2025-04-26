@@ -27,7 +27,7 @@ class GajiBulananService
         $gaji = Gaji::where('pegawai_id', $pegawaiId)->first();
     
         if (!$gaji) {
-            throw new \Exception("Gaji belum diisi. Silahkan lakukan pengisian di Halaman Data Gaji");
+            throw new \Exception("Gaji belum diisi. Silahkan Hubungi Divisi SDM!");
         }
 
         $gajiPokok = $gaji->gaji_pokok;
