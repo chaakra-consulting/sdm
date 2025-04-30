@@ -57,6 +57,7 @@ Route::get('/csrf-token', function () {
 
 Route::controller(ExportController::class)->group(function () {
     Route::get('/report/excel-kepegawaian', 'exportKepegawaian')->name('api.export.excel_kepegawaian');
+    Route::get('/report/excel-absensi', 'exportAbsensi')->name('api.export.excel_absensi');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -76,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/roles', [RoleController::class, 'create'])->name('admin.roles'); // Display all roles
     Route::post('/admin/roles/store', [RoleController::class, 'store'])->name('admin.roles.store'); // Store a new role
     Route::put('/admin/roles/update/{id}', [RoleController::class, 'update'])->name('admin.roles.update'); // Update an existing role
-    Route::delete('/admin/roles/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy'); // Delete a role
+    Route::delete('/admin/rolyes/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy'); // Delete a role
 
     // Admin : Absensi
     Route::get('/admin/absensi', [AbsensiController::class, 'index']);
@@ -189,6 +190,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/hari_libur/store', [HariLiburController::class, 'store'])->name('admin_sdm.hari_libur.store');
     Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
     Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
+    
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {

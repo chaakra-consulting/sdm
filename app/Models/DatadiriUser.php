@@ -69,4 +69,10 @@ class DatadiriUser extends Model
     {
         return $this->hasMany(SocialMedia::class, 'user_id', 'user_id');
     }
+
+    public function absensiHarian()
+    {
+        return $this->hasMany(AbsensiHarian::class, 'pegawai_id');
+    }
+
 }
