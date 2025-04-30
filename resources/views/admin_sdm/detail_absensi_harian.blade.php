@@ -725,9 +725,9 @@
         }
     });
 
-    // Listener untuk perubahan pada select keterangan
-    keteranganSelect.addEventListener('change', updateFormDisplay);
-});
+        // Listener untuk perubahan pada select keterangan
+        keteranganSelect.addEventListener('change', updateFormDisplay);
+    });
 
 
     // document.addEventListener("DOMContentLoaded", function () {

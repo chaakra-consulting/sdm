@@ -54,9 +54,10 @@ class GajiBulananController extends Controller
     
         $collect = collect();
         foreach($gajiBulanans as $gajiBulanan){
-            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
-            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
-            $gajiTotal = ($gajiBulanan->gaji_pokok + $insentifTotal) - $potonganTotal;
+            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
+            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
+            $gajiPokokUangMakan = $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_uang_makan; 
+            $gajiTotal = ($gajiPokokUangMakan + $insentifTotal) - $potonganTotal;
 
             $collect->push((object)[
                 'id'                => $gajiBulanan->id,
@@ -65,6 +66,7 @@ class GajiBulananController extends Controller
                 'pegawai_nama'        => $gajiBulanan->pegawai && $gajiBulanan->pegawai->nama_lengkap ?  $gajiBulanan->pegawai->nama_lengkap : '-',
                 'tanggal_gaji'      => $gajiBulanan->tanggal_gaji,
                 'tanggal_gaji_text' => $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->format('d F Y') : '-',
+                'month_text' => $gajiBulanan->tanggal_gaji ? Carbon::parse($gajiBulanan->tanggal_gaji)->format('F') : '-',
 
                 'potongan_total' => $potonganTotal,
                 'potongan_gaji_pokok' => $gajiBulanan->potongan_gaji_pokok,
@@ -88,6 +90,8 @@ class GajiBulananController extends Controller
                 'keterangan_insentif_lainnya' => $gajiBulanan->keterangan_insentif_lainnya,
 
                 'gaji_pokok' => $gajiBulanan->gaji_pokok,
+                
+                'gaji_dan_tunjangan' => $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_uang_makan,
                 'gaji_total' => $gajiTotal,
             ]);
         }
@@ -150,9 +154,10 @@ class GajiBulananController extends Controller
     
         $collect = collect();
         foreach($gajiBulanans as $gajiBulanan){
-            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
-            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->insentif_uang_makan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
-            $gajiTotal = ($gajiBulanan->gaji_pokok + $insentifTotal) - $potonganTotal;
+            $potonganTotal = $gajiBulanan->potongan_gaji_pokok + $gajiBulanan->potongan_uang_makan + $gajiBulanan->potongan_kinerja + $gajiBulanan->potongan_keterlambatan + $gajiBulanan->potongan_pajak + $gajiBulanan->potongan_kasbon + $gajiBulanan->potongan_lainnya;
+            $insentifTotal = $gajiBulanan->insentif_kinerja + $gajiBulanan->potongan_bpjs_ketenagakerjaan + $gajiBulanan->potongan_bpjs_kesehatan + $gajiBulanan->insentif_uang_bensin + $gajiBulanan->insentif_penjualan + $gajiBulanan->overtime + $gajiBulanan->insentif_lainnya;
+            $gajiPokokUangMakan = $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_uang_makan; 
+            $gajiTotal = ($gajiPokokUangMakan + $insentifTotal) - $potonganTotal;
 
             $collect->push((object)[
                 'id'                => $gajiBulanan->id,
@@ -185,6 +190,8 @@ class GajiBulananController extends Controller
                 'keterangan_insentif_lainnya' => $gajiBulanan->keterangan_insentif_lainnya,
 
                 'gaji_pokok' => $gajiBulanan->gaji_pokok,
+                
+                'gaji_dan_tunjangan' => $gajiBulanan->gaji_pokok + $gajiBulanan->insentif_uang_makan,
                 'gaji_total' => $gajiTotal,
             ]);
         }
@@ -364,8 +371,6 @@ class GajiBulananController extends Controller
             $totalPotonganKinerja = $gajiBulanan->sum('potongan_kinerja');
             $totalPotonganKeterlambatan = $gajiBulanan->sum('potongan_keterlambatan');
             $totalPotonganPajak = $gajiBulanan->sum('potongan_pajak');
-            $totalPotonganBPJSKetenagakerjaan = $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan');
-            $totalPotonganBPJSKesehatan = $gajiBulanan->sum('potongan_bpjs_kesehatan');
             $totalPotonganKasbon = $gajiBulanan->sum('potongan_kasbon');
             $totalPotonganLainnya = $gajiBulanan->sum('potongan_lainnya');
 
@@ -375,11 +380,13 @@ class GajiBulananController extends Controller
             $totalInsentifPenjualan = $gajiBulanan->sum('insentif_penjualan');
             $totalInsentifLainnya = $gajiBulanan->sum('insentif_lainnya');
             $totalOvertime = $gajiBulanan->sum('overtime');
+            $totalPotonganBPJSKetenagakerjaan = $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan');
+            $totalPotonganBPJSKesehatan = $gajiBulanan->sum('potongan_bpjs_kesehatan');
 
             $gajiPokokTotal = $gajiBulanan->sum('gaji_pokok');
             
-            $potonganTotal = $totalPotonganGajiPokok + $totalPotonganUangMakan + $totalPotonganKinerja + $totalPotonganKeterlambatan + $totalPotonganPajak + $totalPotonganBPJSKetenagakerjaan + $totalPotonganBPJSKesehatan + $totalPotonganKasbon + $totalPotonganLainnya;
-            $insentifTotal = $totalInsentifKinerja + $totalInsentifUangMakan + $totalInsentifUangBensin + $totalInsentifPenjualan + $totalOvertime + $totalInsentifLainnya;
+            $potonganTotal = $totalPotonganGajiPokok + $totalPotonganUangMakan + $totalPotonganKinerja + $totalPotonganKeterlambatan + $totalPotonganPajak + $totalPotonganKasbon + $totalPotonganLainnya;
+            $insentifTotal = $totalInsentifKinerja + $totalInsentifUangMakan + $totalInsentifUangBensin + $totalInsentifPenjualan + $totalOvertime + $totalInsentifLainnya + $totalPotonganBPJSKetenagakerjaan + $totalPotonganBPJSKesehatan;
             $gajiTotal = ($gajiPokokTotal + $insentifTotal) - $potonganTotal;
 
             if ($invoice && $invoiceItems) {

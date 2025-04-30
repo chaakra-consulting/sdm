@@ -493,8 +493,8 @@ class DashboardService
         ->where('tanggal_gaji', '<=', $startDate)
         ->get();
 
-        $potongan = $gajiBulanan->sum('potongan_gaji_pokok') + $gajiBulanan->sum('potongan_uang_makan') + $gajiBulanan->sum('potongan_kinerja') + $gajiBulanan->sum('potongan_keterlambatan') + $gajiBulanan->sum('potongan_pajak') + $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan') + $gajiBulanan->sum('potongan_bpjs_kesehatan') + $gajiBulanan->sum('potongan_kasbon') + $gajiBulanan->sum('potongan_lainnya');
-        $pemasukan = $gajiBulanan->sum('gaji_pokok') + $gajiBulanan->sum('insentif_kinerja') + $gajiBulanan->sum('insentif_uang_makan') + $gajiBulanan->sum('insentif_uang_bensin') + $gajiBulanan->sum('insentif_penjualan') + $gajiBulanan->sum('insentif_lainnya') + $gajiBulanan->sum('overtime');
+        $potongan = $gajiBulanan->sum('potongan_gaji_pokok') + $gajiBulanan->sum('potongan_uang_makan') + $gajiBulanan->sum('potongan_kinerja') + $gajiBulanan->sum('potongan_keterlambatan') + $gajiBulanan->sum('potongan_pajak') + $gajiBulanan->sum('potongan_kasbon') + $gajiBulanan->sum('potongan_lainnya');
+        $pemasukan = $gajiBulanan->sum('gaji_pokok') + $gajiBulanan->sum('insentif_kinerja') + $gajiBulanan->sum('potongan_bpjs_ketenagakerjaan') + $gajiBulanan->sum('potongan_bpjs_kesehatan') + $gajiBulanan->sum('insentif_uang_makan') + $gajiBulanan->sum('insentif_uang_bensin') + $gajiBulanan->sum('insentif_penjualan') + $gajiBulanan->sum('insentif_lainnya') + $gajiBulanan->sum('overtime');
         $totalGaji = $pemasukan - $potongan;
         
         $data->push((object)[
