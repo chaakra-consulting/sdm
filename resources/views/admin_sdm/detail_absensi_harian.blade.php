@@ -688,19 +688,19 @@
             durasiLemburInput.value = ''; // Reset nilai
         }
 
-        if (slug === 'sakit' && !uploadSurat) {
-            if(batasWaktu && sekarang > batasWaktu){
-                uploadSuratDokterInput.disabled = true;
-            }else{
-                uploadSuratDokterInput.disabled = false;
-            }
-            warningMessage.style.display = 'block';
-            message = '*Surat Keterangan Sakit wajib diupload Maks. H+1 dari Tanggal Kerja.';
-        } else {
-            uploadSuratDokterInput.disabled = false;
-            warningMessage.style.display = 'none';
-            message = '';
-        }
+        // if (slug === 'sakit' && !uploadSurat) {
+        //     if(batasWaktu && sekarang > batasWaktu){
+        //         uploadSuratDokterInput.disabled = true;
+        //     }else{
+        //         uploadSuratDokterInput.disabled = false;
+        //     }
+        //     warningMessage.style.display = 'block';
+        //     message = '*Surat Keterangan Sakit wajib diupload Maks. H+1 dari Tanggal Kerja.';
+        // } else {
+        //     uploadSuratDokterInput.disabled = false;
+        //     warningMessage.style.display = 'none';
+        //     message = '';
+        // }
 
         // if (slug === 'ijin-direktur' && !uploadSurat) {
         //     warningMessage.style.display = 'block';
