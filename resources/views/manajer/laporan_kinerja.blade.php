@@ -29,10 +29,9 @@
                                     <td>{{ $item->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '-' }}</td>
                                     <td>{{ $item->users_project->count() ? $item->users_project->count() : 0 }} Project</td>
                                     <td>{{ $item->users_task->count() ? $item->users_task->count() : 0 }} Task</td>
-                                    <td>
-                                        <a 
-                                        href="{{ route('manajer.list.laporan_kinerja', $item->id) }}" 
-                                        class="btn btn-secondary"
+                                    <td class="text-center">
+                                        <a href="{{ route('manajer.list.laporan_kinerja', $item->id) }}" 
+                                            class="btn btn-secondary btn-sm" 
                                             data-bs-toggle="tooltip"
                                             data-bs-custom-class="tooltip-secondary"
                                             data-bs-placement="top" title="Detail Laporan Kinerja!"><i

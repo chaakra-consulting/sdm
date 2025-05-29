@@ -96,4 +96,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(UsersTask::class, 'user_id', 'id');
     }
+    public function subtask()
+    {
+        return $this->hasMany(SubTask::class, 'user_id', 'id');
+    }
 }

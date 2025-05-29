@@ -83,8 +83,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Perusahaan</th>
                                 <th>Nama Project</th>
+                                <th>Nama Instansi</th>
                                 <th>Deadline</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -95,13 +95,29 @@
                                 @foreach ($project as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
-                                        <td>{{ ucwords($item->status_pengerjaan->nama_status_pengerjaan) ?? '-' }}</td>
-                                        <td>
+                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                        <td class="text-center">
+                                            @if($item->deadline && \Carbon\Carbon::parse($item->deadline)->isPast() && $item->status != 'selesai')
+                                                <span class="badge bg-danger">Telat</span>
+                                            @else
+                                                @if($item->status == 'selesai')
+                                                    <span class="badge bg-success">
+                                                @elseif($item->status == 'proses')
+                                                    <span class="badge bg-info">
+                                                @elseif($item->status == 'belum')
+                                                    <span class="badge bg-warning">
+                                                @else
+                                                    <span class="badge bg-secondary">
+                                                @endif
+                                                {{ ucwords($item?->status) ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
                                             <a href="{{ route('manajer.detail.project', $item->id) }}"
-                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
                                                 title="Detail Project!"><i class='bx bx-detail'></i>
                                             </a>
@@ -109,7 +125,7 @@
                                                 class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger delete"
+                                                <button type="submit" class="btn btn-danger btn-sm delete"
                                                     data-id="{{ $item->id }}"
                                                     data-nama_project="{{ $item->nama_project }}" data-bs-toggle="tooltip"
                                                     data-bs-custom-class="tooltip-danger" data-bs-placement="top"
@@ -121,19 +137,40 @@
                                     </tr>
                                 @endforeach
                             @endif
-                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                                 @foreach ($userProject as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->project_perusahaan->nama_project }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
-                                        <td>{{ ucwords($item->project_perusahaan->status_pengerjaan?->nama_status_pengerjaan) ?? '-' }}</td>
-                                        <td>
-                                            <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
-                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->project_perusahaan->deadline ? \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                        <td class="text-center">
+                                            @if($item->project_perusahaan->deadline && \Carbon\Carbon::parse($item->project_perusahaan->deadline)->isPast() && $item->project_perusahaan->status != 'selesai')
+                                                <span class="badge bg-danger">Telat</span>
+                                            @else
+                                            @if($item->project_perusahaan->status == 'selesai')
+                                                    <span class="badge bg-success">
+                                                @elseif($item->project_perusahaan->status == 'proses')
+                                                    <span class="badge bg-info">
+                                                @elseif($item->project_perusahaan->status == 'belum')
+                                                    <span class="badge bg-warning">
+                                                @else
+                                                    <span class="badge bg-secondary">
+                                                @endif
+                                                {{ ucwords($item->project_perusahaan->status) ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>                                
+                                        <td class="text-center">
+                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')                                           
+                                                <a href="{{ route('admin_sdm.detail.project', $item->project_perusahaan_id) }}"
+                                            @endif
+                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!"><i class='bx bx-detail'></i>
+                                                title="Detail Project!">
+                                                <i class='bx bx-detail'></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -165,6 +202,7 @@
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
+                locale: 'id',
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("waktu_mulai").value = dateStr;
                 },
@@ -174,6 +212,7 @@
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
+                locale: 'id',
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("deadline").value = dateStr;
                 },

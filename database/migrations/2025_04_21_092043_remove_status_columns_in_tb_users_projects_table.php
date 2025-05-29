@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::table('tb_users_projects', function (Blueprint $table) {
             $table->dropColumn('status');
         });
-        Schema::table('tb_project_perusahaans', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
     }
 
     /**
@@ -26,9 +23,6 @@ return new class extends Migration
     {
         Schema::table('tb_users_projects', function (Blueprint $table) {
             $table->enum('status', ['belum', 'proses', 'selesai'])->after('user_id')->nullable();
-        });
-        Schema::table('tb_project_perusahaans', function (Blueprint $table) {
-            $table->enum('status', ['belum', 'proses', 'selesai'])->after('progres')->nullable();
         });
     }
 };
