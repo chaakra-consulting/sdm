@@ -4,30 +4,31 @@ namespace App\Observers;
 
 use Carbon\Carbon;
 use App\Models\ProjectPerusahaan;
-use App\Models\ProjectPerusahaanEksternal;
 
-class ProjectPerusahaanObserver
+class ProjectObserver
 {
     /**
      * Handle the ProjectPerusahaan "created" event.
      */
-    // public function created(ProjectPerusahaan $projectPerusahaan): void
-    // {
-    //     $deadline = Carbon::parse($projectPerusahaan->deadline);
-
-    //     ProjectPerusahaanEksternal::create([
-    //         'tahun' => $deadline->year,
-    //         'nama' => $projectPerusahaan->nama_project,
-    //         'create_at' => now(),
-    //     ]);
-    // }
+    public function created(ProjectPerusahaan $projectPerusahaan): void
+    {
+        //
+    }
 
     /**
      * Handle the ProjectPerusahaan "updated" event.
      */
-    public function updated(ProjectPerusahaan $projectPerusahaan): void
+    public function updating(ProjectPerusahaan $projectPerusahaan): void
     {
-        //
+        $projectPerusahaan->progres = $projectPerusahaan->calculateProgress();
+        
+        if ($projectPerusahaan->progres >= 100) {
+            $projectPerusahaan->status = 'selesai';
+        } else if ($projectPerusahaan->deadline && Carbon::parse($projectPerusahaan->deadline)->isPast()) {
+            $projectPerusahaan->status = 'telat';
+        } else if ($projectPerusahaan->waktu_mulai && Carbon::parse($projectPerusahaan->waktu_mulai)->isPast()) {
+            $projectPerusahaan->status = 'proses';
+        }
     }
 
     /**

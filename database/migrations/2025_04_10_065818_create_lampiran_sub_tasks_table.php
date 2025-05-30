@@ -7,9 +7,6 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('lampiran_sub_tasks', function (Blueprint $table) {

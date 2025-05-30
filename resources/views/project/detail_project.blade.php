@@ -20,12 +20,41 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <div class="row align-items-center">
+                                    <label class="col-sm-4" for="format-waktu_mulai">Tanggal Mulai</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
+                                            <input type="text" class="form-control" name="format-waktu_mulai"
+                                                id="format-waktu_mulai" placeholder="Tanggal Mulai" required>
+                                            <input type="hidden" name="tgl_task" id="tgl_task">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="row align-items-center">
+                                    <label class="col-sm-2" for="format-deadline_task">Deadline</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
+                                            <input type="text" class="form-control" name="format-deadline_task"
+                                                id="format-deadline_task" placeholder="Deadline" required>
+                                            <input type="hidden" name="deadline_task" id="deadline_task">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-sm-2" for="keterangan">Keterangan</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control" name="keterangan" id="keterangan" cols="30" rows="5" required></textarea>
-                                    <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda (-)</span>
+                                    <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda
+                                        (-)</span>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +63,7 @@
                                 <label class="col-sm-2" for="user">Anggota Task</label>
                                 <div class="col-sm-10">
                                     <select name="user[]" id="user" multiple class="form-control">
-                                        @foreach($user as $item)
+                                        @foreach ($user as $item)
                                             <option value="{{ $item->user_id }}">{{ $item->user->name }}</option>
                                         @endforeach
                                     </select>
@@ -55,8 +84,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="hidden" name="tgl_task" id="tgl_task">
-                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id">
+                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id"
+                                value="{{ $project->id }}">
                             <input type="hidden" name="tipe_task" id="tipe_task" value="task-project">
                             <input type="hidden" name="user_id" id="user_id">
                             <input type="hidden" name="task_id" id="task_id">
@@ -70,15 +99,16 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="staticBackdropAnggota" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="staticBackdropAnggota" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title" id="staticBackdropLabel">Tambah Anggota</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('manajer.update.anggota.project') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('manajer.update.anggota.project') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -86,7 +116,7 @@
                                 <label class="col-sm-2" for="user">Anggota Project</label>
                                 <div class="col-sm-10">
                                     <select name="user[]" id="user2" multiple class="form-control">
-                                        @foreach($users as $item)
+                                        @foreach ($users as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
@@ -94,7 +124,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id" value="{{ $project->id }}">
+                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id"
+                                value="{{ $project->id }}">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -116,16 +147,23 @@
                                     <div>
                                         <h5 class="main-profile-name" style="text-transform: capitalize;">
                                             {{ $project->nama_project }}</h5>
-                                        <p class="main-profile-name-text text-muted fs-16 text-uppercase">
-                                            @if ($project->status == 'selesai')
-                                                <span class="text-success">
-                                                @elseif ($project->status == 'proses')
-                                                    <span class="text-warning">
-                                                    @elseif ($project->status == 'belum')
-                                                        <span class="text-danger">
+                                        @if ($project->status == 'selesai')
+                                            @if ($project->tgl_selesai && \Carbon\Carbon::parse($project->tgl_selesai)->gt(\Carbon\Carbon::parse($project->deadline)))
+                                                <span class="badge bg-warning">Selesai (Telat)</span>
+                                            @else
+                                                <span class="badge bg-success">Selesai</span>
                                             @endif
-                                            {{ $project->status }}</span>
-                                        </p>
+                                        @else
+                                            @if ($project->deadline && \Carbon\Carbon::parse($project->deadline)->isPast())
+                                                <span class="badge bg-danger">Telat</span>
+                                            @else
+                                                @if ($project->status == 'proses')
+                                                    <span class="badge bg-info">Proses</span>
+                                                @elseif ($project->status == 'belum')
+                                                    <span class="badge bg-secondary">Belum</span>
+                                                @endif
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                                 @if ($errors->any())
@@ -138,7 +176,8 @@
                                     </div>
                                 @endif
                                 <div class="modal fade" id="infoModal" tabindex="-1"
-                                    aria-labelledby="exampleModalScrollable2" data-bs-keyboard="false" aria-hidden="true">
+                                    aria-labelledby="exampleModalScrollable2" data-bs-keyboard="false"
+                                    aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -181,32 +220,11 @@
                                                 value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="skala_project" class="form-label">Skala</label>
-                                            <select class="form-control" id="skala_project" data-trigger
-                                                name="skala_project" required>
-                                                <option value="">Pilih Skala Project</option>
-                                                <option value="kecil"
-                                                    {{ $project->skala_project == 'kecil' ? 'selected' : '' }}>
-                                                    Kecil
-                                                </option>
-                                                <option value="sedang"
-                                                    {{ $project->skala_project == 'sedang' ? 'selected' : '' }}>
-                                                    Sedang
-                                                </option>
-                                                <option value="besar"
-                                                    {{ $project->skala_project == 'besar' ? 'selected' : '' }}>
-                                                    Besar
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label for="status" class="form-label">Status</label>
-                                            <select class="form-control" id="status" data-trigger name="status"
-                                                required>
-                                                <option value="">Pilih Skala Project</option>
+                                            <select class="form-control" id="status" data-trigger name="status">
+                                                <option value="">Pilih Status Project</option>
                                                 <option value="belum"
-                                                    {{ $project->status == 'belum' ? 'selected' : '' }}>
-                                                    Belum
+                                                    {{ $project->status == 'belum' ? 'selected' : '' }}>Belum
                                                 </option>
                                                 <option value="proses"
                                                     {{ $project->status == 'proses' ? 'selected' : '' }}>
@@ -225,7 +243,7 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="waktu_mulai"
                                                     value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
-                                                    id="humanfrienndlydate" placeholder="Waktu Mulai">
+                                                    id="waktu_mulai" placeholder="Waktu Mulai">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -235,7 +253,7 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="waktu_berakhir"
                                                     value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
-                                                    id="humanfrienndlydate" placeholder="Waktu Berakhir">
+                                                    id="waktu_berakhir" placeholder="Waktu Berakhir">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -245,17 +263,20 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="deadline"
                                                     value="{{ $project->deadline != null ? $project->deadline : '' }}"
-                                                    id="humanfrienndlydate" placeholder="deadline">
+                                                    id="deadline" placeholder="deadline">
                                             </div>
                                         </div>
-                                        @if ($project != null)
-                                            <button type="button" class="btn btn-danger btn-batal-edit"
-                                                hidden>Batal</button>
-                                            <button type="button" class="btn btn-warning btn-edit-project">Edit</button>
+                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                            @if ($project != null)
+                                                <button type="button" class="btn btn-danger btn-batal-edit"
+                                                    hidden>Batal</button>
+                                                <button type="button"
+                                                    class="btn btn-warning btn-edit-project">Edit</button>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary btn-submit-project"
+                                                {{ $project != null ? 'hidden' : '' }}>{{ $project != null ? 'Update' : 'Simpan' }}
+                                            </button>
                                         @endif
-                                        <button type="submit" class="btn btn-primary btn-submit-project"
-                                            {{ $project != null ? 'hidden' : '' }}>{{ $project != null ? 'Update' : 'Simpan' }}
-                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -267,9 +288,13 @@
                         $userRole = auth()->user()->role->slug;
                     @endphp
                     @if ($userRole == 'manager')
-                        <a href="/manajer/project" class="btn btn-secondary">Kembali</a>
+                        <a href="/manajer/project" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
                     @elseif ($userRole == 'karyawan')
-                        <a href="/karyawan/project" class="btn btn-secondary">Kembali</a>
+                        <a href="/karyawan/project" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
                     @endif
                 </div>
             </div>
@@ -301,23 +326,26 @@
                         <div class="tab-content border border-top-0 p-4 br-dark">
                             <div class="tab-pane border-0 p-0 active" id="home">
                                 <div class="row">
-                                    <div class="col-md-6" id="progres-bar"></div>
+                                    <div class="col-md-6" id="progres-bar"></div>                     
                                     <div class="col-md-6">
                                         <dl class="row mb-0">
                                             <dt class="col-md-4 p-0">Nama Entitas</dt>
                                             <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
                                             <dt class="col-md-4 p-0">Capaian Target</dt>
-                                            <dd class="col-md-8 p-0">: - </dd>
+                                            <dd class="col-md-8 p-0">: {{ Carbon\Carbon::parse($project->deadline)->translatedFormat('l, d F Y') }}</dd>
                                             <dt class="col-md-4 p-0">Target Task</dt>
-                                            <dd class="col-md-8 p-0">: {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
+                                            <dd class="col-md-8 p-0">:
+                                                {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
                                             <div class="form-group p-0 ">
                                                 <label for="nama_project" class="form-label"><strong>Realisasi -
-                                                    {{ $project->nama_project }}</strong></label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" 
-                                                    aria-describedby="button-addon1">
-                                                    <button class="btn btn-success" type="button" id="button-addon1">Verifikasi</button>
-                                                </div>
+                                                        {{ $project->nama_project }}</strong></label>
+                                                {{-- <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" placeholder=""
+                                                        aria-label="Example text with button addon"
+                                                        aria-describedby="button-addon1">
+                                                    <button class="btn btn-success" type="button"
+                                                        id="button-addon1">Verifikasi</button>
+                                                </div> --}}
                                             </div>
                                         </dl>
                                     </div>
@@ -338,31 +366,54 @@
                                     @endif
                                     <div class="table-responsive">
                                         <table id="datatable-basic" class="table table-bordered text-nowrap w-100">
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Task</th>
-                                                    <th>Tanggal</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            @foreach ($tasks as $task)
+                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Task</th>
+                                                        <th>Deadline</th>
+                                                        <th class="text-center">Status</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                @foreach ($tasks as $task)
                                                 <tbody>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
-                                                    <td>{{ $task->tgl_task }}</td>
+                                                    <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
+                                                    </td>
                                                     <td class="text-center">
-                                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                                        <a href="javascript:void(0);" class="btn btn-warning updateTask"
+                                                        @if ($task->status == 'selesai')
+                                                            @if ($task->tgl_selesai && \Carbon\Carbon::parse($task->tgl_selesai)->gt(\Carbon\Carbon::parse($task->deadline)))
+                                                                <span class="badge bg-warning">Selesai (Telat)</span>
+                                                            @else
+                                                                <span class="badge bg-success">Selesai</span>
+                                                            @endif
+                                                        @else
+                                                            @if ($task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast())
+                                                                <span class="badge bg-danger">Telat</span>
+                                                            @else
+                                                                @if ($task->status == 'proses')
+                                                                    <span class="badge bg-info">Proses</span>
+                                                                @elseif ($task->status == 'belum')
+                                                                    <span class="badge bg-secondary">Belum</span>
+                                                                @endif
+                                                            @endif
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-warning btn-sm updateTask"
                                                             data-id="{{ $task->id }}"
                                                             data-nama_task="{{ $task->nama_task }}"
                                                             data-tgl_task="{{ $task->tgl_task }}"
+                                                            data-deadline_task="{{ $task->deadline }}"
                                                             data-keterangan="{{ $task->keterangan }}"
                                                             data-project="{{ $task->project_perusahaan_id }}"
                                                             data-user="{{ Auth::user()->id }}"
-                                                            data-users="{{ json_encode($task->users_task->pluck('id')->toArray()) }}" 
+                                                            data-users="{{ json_encode($task->users_task->pluck('id')->toArray()) }}"
                                                             data-upload="{{ $task->upload }}" data-bs-toggle="modal"
                                                             data-bs-target="#staticBackdrop">
                                                             <i data-bs-toggle="tooltip"
@@ -370,8 +421,8 @@
                                                                 data-bs-placement="top" title="Update Task!"
                                                                 class="bi bi-pencil-square"></i>
                                                         </a>
-                                                        <a href="{{ route('manajer.detail.task', $task->id) }}" class="btn btn-secondary"
-                                                            data-bs-toggle="tooltip"
+                                                        <a href="{{ route('manajer.detail.task', $task->id) }}"
+                                                            class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                             data-bs-custom-class="tooltip-secondary"
                                                             data-bs-placement="top" title="Detail Task!"><i
                                                                 class='bx bx-detail'></i>
@@ -380,7 +431,8 @@
                                                             method="POST" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger delete-task"
+                                                            <button type="submit"
+                                                                class="btn btn-danger btn-sm delete-task"
                                                                 data-id="{{ $task->id }}"
                                                                 data-nama_task="{{ $task->nama_task }}"
                                                                 data-bs-toggle="tooltip"
@@ -389,17 +441,59 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        @elseif (Auth::check() && Auth::user()->role->slug = 'karyawan')
-                                                            <a href="{{ route('karyawan.detail.task', $task->id) }}" class="btn btn-secondary"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-custom-class="tooltip-secondary"
-                                                                data-bs-placement="top" title="Detail Task!"><i
-                                                                    class='bx bx-detail'></i>
-                                                            </a>
-                                                        @endif
                                                     </td>
                                                 </tbody>
-                                            @endforeach
+                                                @endforeach
+                                                @elseif (Auth::check() && (Auth::user()->role->slug = 'karyawan'))
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Task</th>
+                                                        <th>Deadline</th>
+                                                        <th>Status</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                @foreach ($userstasks as $item)
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $item->task->nama_task }}</td>
+                                                        <td>
+                                                            {{ $item->task?->deadline ? Carbon\Carbon::parse($item->task?->deadline)->translatedFormat('l, d F Y') : '-' }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if ($item->task?->status == 'selesai')
+                                                                @if ($item->task?->tgl_selesai && \Carbon\Carbon::parse($item->task?->tgl_selesai)->gt(\Carbon\Carbon::parse($item->task?->deadline)))
+                                                                    <span class="badge bg-warning">Selesai (Telat)</span>
+                                                                @else
+                                                                    <span class="badge bg-success">Selesai</span>
+                                                                @endif
+                                                            @else
+                                                                @if ($item->task?->deadline && \Carbon\Carbon::parse($item->task?->deadline)->isPast())
+                                                                    <span class="badge bg-danger">Telat</span>
+                                                                @else
+                                                                    @if ($item->task?->status == 'proses')
+                                                                        <span class="badge bg-info">Proses</span>
+                                                                    @elseif ($item->task?->status == 'belum')
+                                                                        <span class="badge bg-secondary">Belum</span>
+                                                                    @endif
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
+                                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                                                data-bs-custom-class="tooltip-secondary"
+                                                                data-bs-placement="top" title="Detail Task!">
+                                                                <i class='bx bx-detail'></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                    
+                                                @endforeach
+                                                @endif
                                         </table>
                                     </div>
                                     <div class="mg-lg-b-30"></div>
@@ -408,64 +502,76 @@
                             <div class="tab-pane border-0 p-0" id="anggota" role="tabpanel">
                                 <div class="row">
                                     @foreach ($user as $item)
-											<div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
-												<div class="card custom-card border shadow-none">
-													<div class="card-body  user-lock text-center">
-                                                        <div class="d-flex justify-content-end">
-                                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                                                <form action="{{ route('manajer.delete.anggota.project', $item->id) }}"
-                                                                    method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-icon btn-outline-danger rounded-circle border-0"
-                                                                        data-id="{{ $item->id }}"
-                                                                        data-nama="{{ $item->user->name }}"
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-bs-custom-class="tooltip-danger"
-                                                                        data-bs-placement="top" title="Hapus Anggota Project!">
-                                                                        <i class="bi bi-x-circle"></i>                                                                
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-														</div>
-                                                        <div class="">
-                                                            <div class="d-flex justify-content-center">
-                                                                <img alt="avatar" class="rounded-circle"
-                                                                    src="{{ $item->user->dataDiri ? asset('uploads/' . $item->user->dataDiri->foto_user) : asset('/images/default-images.svg') }}">
-                                                            </div>                                                                                                                        
-                                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">{{ $item->user->name }}</h5>
-															<span class="text-muted">{{ $item->user->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '' }}</span>
-															<div class="d-flex justify-content-center">
-                                                                @foreach ($item->user->socialMedias as $item)
-                                                                    <a href="{{ $item->link }}" target="_blank" class="btn btn-icon btn-outline-primary rounded-circle border mt-3"
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-bs-custom-class="tooltip-primary"
-                                                                        data-bs-placement="bottom" title="{{ $item->nama_social_media }}">
-                                                                        <i class="bx bxl-{{ $item->nama_social_media }} fs-16 align-middle"></i>
-                                                                    </a>
-                                                                @endforeach
-															</div>
+                                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
+                                            <div class="card custom-card border shadow-none">
+                                                <div class="card-body  user-lock text-center">
+                                                    <div class="d-flex justify-content-end">
+                                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                                            <form
+                                                                action="{{ route('manajer.delete.anggota.project', $item->id) }}"
+                                                                method="POST" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-icon btn-outline-danger rounded-circle border-0"
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-nama="{{ $item->user->name }}"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-custom-class="tooltip-danger"
+                                                                    data-bs-placement="top"
+                                                                    title="Hapus Anggota Project!">
+                                                                    <i class="bi bi-x-circle"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                    <div class="">
+                                                        <div class="d-flex justify-content-center">
+                                                            <img alt="avatar" class="rounded-circle"
+                                                                src="{{ $item->user->dataDiri ? asset('uploads/' . $item->user->dataDiri->foto_user) : asset('/images/default-images.svg') }}">
                                                         </div>
-													</div>
-												</div>
-											</div>
+                                                        <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">
+                                                            {{ $item->user->name }}</h5>
+                                                        <span
+                                                            class="text-muted">{{ $item->user->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '' }}</span>
+                                                        <div class="d-flex justify-content-center">
+                                                            @foreach ($item->user->socialMedias as $item)
+                                                                <a href="{{ $item->link }}" target="_blank"
+                                                                    class="btn btn-icon btn-outline-primary rounded-circle border mt-3"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-custom-class="tooltip-primary"
+                                                                    data-bs-placement="bottom"
+                                                                    title="{{ $item->nama_social_media }}">
+                                                                    <i
+                                                                        class="bx bxl-{{ $item->nama_social_media }} fs-16 align-middle"></i>
+                                                                </a>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')    
+                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
                                         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
                                             <a href="javascript:void(0);" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdropAnggota">
-                                                <div class="card custom-card border shadow-none bg-info-gradient btn btn-info">
+                                                <div
+                                                    class="card custom-card border shadow-none bg-info-gradient btn btn-info">
                                                     <div class="card-body user-lock text-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-plus-circle-fill mt-3" width="80" height="80" fill="white" viewBox="0 0 80 80">
-                                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
-                                                            transform="scale(5) translate(0,0)"/>
-                                                        </svg>                                                                 
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="bi bi-plus-circle-fill mt-3" width="80"
+                                                            height="80" fill="white" viewBox="0 0 80 80">
+                                                            <path
+                                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
+                                                                transform="scale(5) translate(0,0)" />
+                                                        </svg>
                                                         <h5 class="fs-16 mb-0 mt-3 text-white fw-semibold">Tambah</h5>
                                                         <p class="text-white">Anggota</p>
                                                     </div>
                                                 </div>
-                                            </a>                                     
-                                        </div>                                        
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -480,6 +586,26 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            let flatpickrInstance = flatpickr("#format-waktu_mulai", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d F Y",
+                locale: 'id',
+                onChange: function(selectedDates, dateStr, instance) {
+                    document.getElementById("tgl_task").value = dateStr;
+                },
+                appendTo: document.getElementById("staticBackdrop")
+            });
+            let flatpickrInstance1 = flatpickr("#format-deadline_task", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d F Y",
+                locale: 'id',
+                onChange: function(selectedDates, dateStr, instance) {
+                    document.getElementById("deadline_task").value = dateStr;
+                },
+                appendTo: document.getElementById("staticBackdrop")
+            });
             $(".update-project").click(function() {
                 $(".container-peringatan").slideUp(200);
                 $(".container-project").prop('hidden', false).slideDown(200);
@@ -502,7 +628,6 @@
                 $("#formTask").append('<input type="hidden" name="_method" value="POST">');
 
                 $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
-                $("#project_perusahaan_id").val('{{ $project->id }}');
                 $("#user_id").val('{{ auth()->user()->id }}');
                 $("#tipe_task").val('task-project');
 
@@ -545,10 +670,12 @@
                 let id = $(this).data("id");
                 let nama = $(this).data("nama_task");
                 let tgl = $(this).data("tgl_task");
+                let deadline_task = $(this).data("deadline_task");
                 let keterangan = $(this).data("keterangan");
                 let project = $(this).data("project");
                 let user = $(this).data("user");
                 let upload = $(this).data("upload");
+                console.log(tgl);
 
                 $(".modal-title").text("Update Task");
 
@@ -558,7 +685,9 @@
 
                 $("#nama_task").val(nama);
                 $("#keterangan").val(keterangan);
-                $("#tgl_task").val(tgl);
+                flatpickrInstance.setDate(tgl, true);
+                flatpickrInstance1.setDate(deadline_task, true);
+                // $("#format-waktu_mulai").val(tgl);
                 $("#task_id").val(id);
                 $("#project_perusahaan_id").val(project);
                 $("#user_id").val(user);
@@ -592,9 +721,10 @@
                 $("#upload").prop("disabled", false);
                 $("#btnSubmit").text("Update").show();
             });
-
-            $("#staticBackdrop").on("hidden.bs.modal", function () {
+            $("#staticBackdrop").on("hidden.bs.modal", function() {
                 $(".form-group:has(#user)").show();
+                flatpickrInstance.clear();
+                flatpickrInstance1.clear();
             });
             $(".delete-task").click(function(e) {
                 e.preventDefault();
@@ -709,13 +839,26 @@
     </script>
     <script>
         var options = {
-            series: [50],
+            series: [{{ $progress }}],
             chart: {
                 type: 'radialBar',
                 height: 320,
                 offsetY: -20,
                 sparkline: {
                     enabled: true
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                },
+                tooltip: {
+                    enabled: true,
+                    y: {
+                        formatter: function(val) {
+                            return val + "% Complete";
+                        }
+                    }
                 }
             },
             plotOptions: {
@@ -725,7 +868,7 @@
                     track: {
                         background: "#fff",
                         strokeWidth: '97%',
-                        margin: 5, // margin is in pixels
+                        margin: 5,
                         dropShadow: {
                             enabled: false,
                             top: 2,
@@ -746,7 +889,13 @@
                     }
                 }
             },
-            colors: ["#0162e8"],
+            colors: [
+                function({ value }) {
+                    if(value < 30) return '#ff0000';
+                    if(value < 70) return '#ffd700';
+                    return '#00ff00';
+                }
+            ],
             grid: {
                 padding: {
                     top: -10
@@ -767,10 +916,18 @@
         };
         var chart = new ApexCharts(document.querySelector("#progres-bar"), options);
         chart.render();
+
+        setInterval(() => {
+            fetch(`/project/{{ $project->id }}/progress`)
+                .then(response => response.json())
+                .then(data => {
+                    chart.updateSeries([data.progress]);
+                });
+        }, 5000);
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll("#user, #user2").forEach(function (element) {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("#user, #user2").forEach(function(element) {
                 new Choices(element, {
                     removeItemButton: true,
                     searchEnabled: true,
@@ -778,6 +935,15 @@
                     noChoicesText: "Tidak ada pilihan tersedia"
                 });
             });
+            const dateConfig = {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d F Y",
+                locale: 'id',
+            };
+            flatpickr("#waktu_mulai", dateConfig);
+            flatpickr("#waktu_berakhir", dateConfig);
+            flatpickr("#deadline", dateConfig);
         });
     </script>
 @endsection

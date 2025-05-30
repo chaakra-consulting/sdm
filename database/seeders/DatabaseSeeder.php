@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PerusahaanSeeder::class,
             KeteranganAbsensiSeeder::class,
             StatusPekerjaanSeeder::class,
+            TipeTaskSeeder::class,
         ]);
 
         // User::factory()->create([

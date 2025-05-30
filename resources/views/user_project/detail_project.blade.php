@@ -30,26 +30,6 @@
                                     </div>
                                     <hr class="border-1">
                                     <h6 class="fs-14">Deskripsi</h6>
-                                    <div class="skill-bar mb-3 clearfix mt-3">
-                                        <span>Skala Project : </span>
-                                        <span
-                                            class="text-sm font-bold">{{ ucwords($project->project_perusahaan->skala_project) }}</span>
-                                        <div class="progress progress-sm mt-2">
-                                            @if ($project->project_perusahaan->skala_project == 'kecil')
-                                                <div class="progress-bar bg-primary-gradient" role="progressbar"
-                                                    aria-valuenow="33.3" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 33.3%"></div>
-                                            @elseif ($project->project_perusahaan->skala_project == 'sedang')
-                                                <div class="progress-bar bg-primary-gradient" role="progressbar"
-                                                    aria-valuenow="66.6" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 66.6%"></div>
-                                            @elseif ($project->project_perusahaan->skala_project == 'besar')
-                                                <div class="progress-bar bg-primary-gradient" role="progressbar"
-                                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 100%"></div>
-                                            @endif
-                                        </div>
-                                    </div>
                                     <div class="skill-bar mb-1 clearfix">
                                         <span>Timeline</span>
                                         <div class="form-group">

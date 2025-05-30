@@ -17,25 +17,14 @@
                                 <label for="nama_project">Nama Project</label>
                                 <input type="text" name="nama_project" id="nama_project" class="form-control" required>
                             </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="nama_perusahaan">Nama Instansi</label>
-                                    <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
-                                        <option selected disabled>Pilih Instansi</option>
-                                        @foreach ($perusahaan as $item)
-                                            <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="skala_project">Skala</label>
-                                    <select name="skala_project" id="skala_project" data-trigger class="form-control" required>
-                                        <option selected disabled>Pilih Skala</option>
-                                        <option value="kecil">Kecil</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="besar">Besar</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label for="nama_perusahaan">Nama Instansi</label>
+                                <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
+                                    <option selected disabled>Pilih Instansi</option>
+                                    @foreach ($perusahaan as $item)
+                                        <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -94,9 +83,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Perusahaan</th>
                                 <th>Nama Project</th>
-                                <th>Skala Project</th>
+                                <th>Nama Instansi</th>
                                 <th>Deadline</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -107,14 +95,29 @@
                                 @foreach ($project as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->nama_project }}</td>
-                                        <td>{{ ucwords($item->skala_project) }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y')}}</td>
-                                        <td>{{ ucwords($item->status) }}</td>
-                                        <td>
+                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                        <td class="text-center">
+                                            @if($item->deadline && \Carbon\Carbon::parse($item->deadline)->isPast() && $item->status != 'selesai')
+                                                <span class="badge bg-danger">Telat</span>
+                                            @else
+                                                @if($item->status == 'selesai')
+                                                    <span class="badge bg-success">
+                                                @elseif($item->status == 'proses')
+                                                    <span class="badge bg-info">
+                                                @elseif($item->status == 'belum')
+                                                    <span class="badge bg-warning">
+                                                @else
+                                                    <span class="badge bg-secondary">
+                                                @endif
+                                                {{ ucwords($item?->status) ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
                                             <a href="{{ route('manajer.detail.project', $item->id) }}"
-                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
                                                 title="Detail Project!"><i class='bx bx-detail'></i>
                                             </a>
@@ -122,7 +125,7 @@
                                                 class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger delete"
+                                                <button type="submit" class="btn btn-danger btn-sm delete"
                                                     data-id="{{ $item->id }}"
                                                     data-nama_project="{{ $item->nama_project }}" data-bs-toggle="tooltip"
                                                     data-bs-custom-class="tooltip-danger" data-bs-placement="top"
@@ -134,20 +137,40 @@
                                     </tr>
                                 @endforeach
                             @endif
-                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                                 @foreach ($userProject as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
                                         <td>{{ $item->project_perusahaan->nama_project }}</td>
-                                        <td>{{ ucwords($item->project_perusahaan->skala_project) }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') }}</td>
-                                        <td>{{ ucwords($item->project_perusahaan->status) }}</td>
-                                        <td>
-                                            <a href="{{ route('karyawan.detail.project', $item->id) }}"
-                                                class="btn btn-secondary" data-bs-toggle="tooltip"
+                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                        <td>{{ $item->project_perusahaan->deadline ? \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                        <td class="text-center">
+                                            @if($item->project_perusahaan->deadline && \Carbon\Carbon::parse($item->project_perusahaan->deadline)->isPast() && $item->project_perusahaan->status != 'selesai')
+                                                <span class="badge bg-danger">Telat</span>
+                                            @else
+                                            @if($item->project_perusahaan->status == 'selesai')
+                                                    <span class="badge bg-success">
+                                                @elseif($item->project_perusahaan->status == 'proses')
+                                                    <span class="badge bg-info">
+                                                @elseif($item->project_perusahaan->status == 'belum')
+                                                    <span class="badge bg-warning">
+                                                @else
+                                                    <span class="badge bg-secondary">
+                                                @endif
+                                                {{ ucwords($item->project_perusahaan->status) ?? '-' }}
+                                                </span>
+                                            @endif
+                                        </td>                                
+                                        <td class="text-center">
+                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')                                           
+                                                <a href="{{ route('admin_sdm.detail.project', $item->project_perusahaan_id) }}"
+                                            @endif
+                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!"><i class='bx bx-detail'></i>
+                                                title="Detail Project!">
+                                                <i class='bx bx-detail'></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -168,7 +191,6 @@
                 $(".modal-title").text('Tambah Project');
                 $("#nama_perusahaan").change().val('Pilih Perusahaan');
                 $("#nama_project").val('');
-                $("#skala_project").change().val('Pilih Skala Project');
                 $("#deadline").val('');
                 $("#formProject").attr('action', '/manajer/project/store');
             });
@@ -180,6 +202,7 @@
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
+                locale: 'id',
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("waktu_mulai").value = dateStr;
                 },
@@ -189,6 +212,7 @@
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
+                locale: 'id',
                 onChange: function(selectedDates, dateStr, instance){
                     document.getElementById("deadline").value = dateStr;
                 },
