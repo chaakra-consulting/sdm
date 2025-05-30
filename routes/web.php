@@ -68,6 +68,7 @@ Route::get('/csrf-token', function () {
 
 Route::controller(ExportController::class)->group(function () {
     Route::get('/report/excel-kepegawaian', 'exportKepegawaian')->name('api.export.excel_kepegawaian');
+    Route::get('/report/excel-absensi', 'exportAbsensi')->name('api.export.excel_absensi');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -87,7 +88,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/roles', [RoleController::class, 'create'])->name('admin.roles'); // Display all roles
     Route::post('/admin/roles/store', [RoleController::class, 'store'])->name('admin.roles.store'); // Store a new role
     Route::put('/admin/roles/update/{id}', [RoleController::class, 'update'])->name('admin.roles.update'); // Update an existing role
-    Route::delete('/admin/roles/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy'); // Delete a role
+    Route::delete('/admin/rolyes/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy'); // Delete a role
 
     // Admin : Absensi
     Route::get('/admin/absensi', [AbsensiController::class, 'index']);
@@ -138,7 +139,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/absensi_harian/update/{pegawai_id}/{id}', [AbsensiHarianController::class, 'update'])->name('admin_sdm.absensi_harian.update');
     Route::delete('/admin_sdm/absensi_harian/delete/{id}', [AbsensiHarianController::class, 'destroy'])->name('admin_sdm.absensi_harian.delete'); // Delete a role
 
-    Route::get('/admin_sdm/absensi_verifikasi/store/{id}', [AbsensiHarianController::class, 'storeVerifikasi'])->name('admin_sdm.absensi_verifikasi.store');
+    //Route::get('/admin_sdm/absensi_verifikasi/store/{id}', [AbsensiHarianController::class, 'storeVerifikasi'])->name('admin_sdm.absensi_verifikasi.store');
 
     // Admin SDM : Gaji
     Route::get('/admin_sdm/gaji', [GajiController::class, 'index'])->name('admin_sdm.gaji.index');
@@ -147,10 +148,12 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
 
     // Admin SDM : Gaji Bulanan
     Route::get('/admin_sdm/gaji_bulanan', [GajiBulananController::class, 'index'])->name('admin_sdm.gaji_bulanan.index');
-    // Route::post('/admin_sdm/gaji_bulanan/store', [GajiBulananController::class, 'store'])->name('admin_sdm.gaji_bulanan.store');
+    Route::post('/admin_sdm/gaji_bulanan/store', [GajiBulananController::class, 'store'])->name('admin_sdm.gaji_bulanan.store');
     Route::put('/admin_sdm/gaji_bulanan/update/{id}', [GajiBulananController::class, 'update'])->name('admin_sdm.gaji_bulanan.update');
     Route::get('/admin_sdm/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('admin_sdm.gaji_bulanan.sync');
 
+    Route::get('/admin_sdm/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
+    
     // Admin SDM : Master Status Pekerjaan
     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
     Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
@@ -259,6 +262,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::put('/karyawan/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('karyawan.update.detail.task');
     Route::delete('/karyawan/task/delete/{id}', [TaskController::class, 'destroy'])->name('karyawan.delete.task');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
+
+    //karyawan : Gaji Bulanan
+    Route::get('/karyawan/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
 
     // karyawan : sub task
     Route::get('/karyawan/subtask', [SubTaskController::class, 'show'])->name('karyawan.subtask');
@@ -404,4 +410,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-kehadiran-data-percentage', [AdminSdmController::class, 'getDashboardKehadiranDataPercentage'])->name('admin_sdm.dashboard_kehadiran_data');
     Route::get('/get-kehadiran-data-value-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataValuePerHari'])->name('admin_sdm.dashboard_kehadiran_value_per_hari');
     Route::get('/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
+
+    Route::get('/absensi_verifikasi/store/{id}', [AbsensiHarianController::class, 'storeVerifikasi'])->name('admin_sdm.absensi_verifikasi.store');
 });
