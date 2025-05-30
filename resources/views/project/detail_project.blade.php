@@ -332,7 +332,7 @@
                                             <dt class="col-md-4 p-0">Nama Entitas</dt>
                                             <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
                                             <dt class="col-md-4 p-0">Capaian Target</dt>
-                                            <dd class="col-md-8 p-0">: - </dd>
+                                            <dd class="col-md-8 p-0">: {{ Carbon\Carbon::parse($project->deadline)->translatedFormat('l, d F Y') }}</dd>
                                             <dt class="col-md-4 p-0">Target Task</dt>
                                             <dd class="col-md-8 p-0">:
                                                 {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>

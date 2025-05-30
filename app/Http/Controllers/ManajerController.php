@@ -13,6 +13,7 @@ use App\Models\RevisiLaporan;
 use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\DB;
 use App\Events\SubtaskStatusChanged;
+use App\Models\DetailSubTask;
 use GrahamCampbell\ResultType\Success;
 
 class ManajerController extends Controller
@@ -359,19 +360,30 @@ class ManajerController extends Controller
         $dates = explode('_', $request->periode);
         $startDate = Carbon::parse($dates[0])->startOfDay();
         $endDate = Carbon::parse($dates[1])->endOfDay();
-        
-        $subtasks = SubTask::where('user_id', $id)
-            ->whereHas('detail_sub_task', function ($query) use ($startDate, $endDate) {
-                $query->where('is_active', 1)
-                    ->whereBetween('tanggal', [$startDate, $endDate]);
-            })
-            ->get();
-        
-        $updated = SubTask::whereIn('id', $subtasks->pluck('id'))
+
+        $updated = DetailSubTask::where('user_id', $id)
+            ->where('is_active', 1)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->update(['status' => 'approve']);
         
+        $subtasks = SubTask::where('user_id', $id)
+            ->with(['detail_sub_task' => function($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            }])
+            ->get();
+            
         foreach ($subtasks as $subtask) {
-            event(new SubtaskStatusChanged($subtask->task));
+            $allApproved = $subtask->detail_sub_task->every(function ($detail) {
+                return $detail->status === 'approve';
+            });
+            
+            if ($allApproved) {
+                $subtask->update([
+                    'status' => 'approve',
+                    'tgl_selesai' => now()
+                ]);
+                event(new SubtaskStatusChanged($subtask->task));
+            }
         }
 
         if ($updated > 0) {

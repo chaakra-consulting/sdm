@@ -378,7 +378,9 @@
                                                         <td>{{ $item->nama_subtask ?? '-' }}</td>
                                                         <td>{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
                                                         <td class="text-center">
-                                                            @if($item->status === 'revise')
+                                                            @if($item->detail_sub_task->isEmpty())
+                                                                <span class="badge bg-info">Belum ada laporan kinerja</span>
+                                                            @elseif($item->status === 'revise')
                                                                 <span class="badge bg-warning"
                                                                     data-bs-toggle="tooltip" 
                                                                     data-bs-custom-class="tooltip-secondary"
@@ -429,7 +431,9 @@
                                                         <td>{{ $item->nama_subtask ?? '-' }}</td>
                                                         <td>{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
                                                         <td class="text-center">
-                                                            @if($item->status === 'revise')
+                                                            @if($item->detail_sub_task->isEmpty())
+                                                                <span class="badge bg-info">Belum ada laporan kinerja</span>
+                                                            @elseif($item->status === 'revise')
                                                                 <span class="badge bg-warning"
                                                                     data-bs-toggle="tooltip" 
                                                                     data-bs-custom-class="tooltip-secondary"

@@ -157,6 +157,9 @@ class TaskController extends Controller
         ];
         $task = Task::create($data);
 
+        if ($request->user == null) {
+            return redirect()->back()->with('success', 'Task berhasil di tambahkan harap tambahkan anggota');
+        } else {
         if (Auth::check() && Auth::user()->role->slug == 'manager') {
             foreach ($request->user as $user_id) {
                 UsersTask::create([
@@ -171,6 +174,8 @@ class TaskController extends Controller
             ]);
         } 
         return redirect()->back()->with('success', 'Task berhasil di tambahkan');
+
+        }
     }
     
     public function update(Request $request, $id)

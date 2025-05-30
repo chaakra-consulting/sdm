@@ -16,7 +16,6 @@ class DetailSubTask extends Model
         'durasi',
         'status',
         'is_active',
-
     ];
 
     public function subtask()
