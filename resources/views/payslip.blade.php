@@ -137,8 +137,8 @@
             <img src="{{ public_path('images/chaakra.png') }}" alt="Company Logo" class="logo">
             <div class="kop-text">
                 <h2>Chaakra Consulting</h2>
-                <p>Jl. Jambangan VII B No.14, Jambangan, Kec. Jambangan, Surabaya, Jawa Timur 60232</p>
-                <p>Website: https://chaakra-consulting.com | Telp: 0856-4820-0701</p>
+                <p>Jalan Karah Agung No.01 PIK A, Jambangan, Kec. Jambangan, Surabaya, Jawa Timur </p>
+                <p>Website: https://chaakra-consulting.com | Telp: 0857-4550-9992</p>
             </div>
         </div>
         <div class="header">
@@ -207,8 +207,7 @@
                 <tr>
                     @if($keterangan_potongan_lainnya != null)
                     <td style="text-align: left; width: 50%; font-size: 13px;">
-                        Ket. Potongan: <br>
-                        {!! nl2br(e($keterangan_potongan_lainnya ?? '-')) !!}
+                        Ket. Potongan: {!! nl2br(e($keterangan_potongan_lainnya ?? '-')) !!}
                     </td>
                     @endif
                     <td style="text-align: right; width: 50%; font-weight: bold; font-size: 18px;">

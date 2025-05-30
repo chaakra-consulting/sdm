@@ -7,4 +7,8 @@ return[
         "github",
         "linkedin",
     ],
+    'beban' => [
+        "bpjs-ketenagakerjaan",
+        "bpjs-kesehatan",
+    ],
 ];

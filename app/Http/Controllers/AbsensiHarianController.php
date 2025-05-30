@@ -168,7 +168,7 @@ class AbsensiHarianController extends Controller
 
         $now = Carbon::now();
         $deadline = Carbon::now()->setDay(26)->setHour(16)->setMinute(0)->setSecond(0);
-        if ($now->greaterThan($deadline)) {
+        if ($now->greaterThan($deadline) && !$verifikasi) {
             $statusVerifikasi = 'Terlambat Verifikasi';
         } elseif ($verifikasi) {
             $statusVerifikasi = 'Terverifikasi';
@@ -229,9 +229,9 @@ class AbsensiHarianController extends Controller
 
             $filename = null;
 
-            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
-                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
-            }
+            // if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+            //     throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            // }
 
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');
@@ -292,9 +292,9 @@ class AbsensiHarianController extends Controller
 
             $filename = null;
 
-            if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
-                throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
-            }
+            // if($keteranganSlug == 'ijin-direktur' && !$request->hasFile('upload_surat_dokter')){
+            //     throw new \Exception("Surat Pendukung wajib diisi dengan form surat ijin!");
+            // }
 
             if ($request->hasFile('upload_surat_dokter')) {
                 $file = $request->file('upload_surat_dokter');

@@ -19,7 +19,7 @@
                         <label for="gaji_pokok">Gaji Pokok</label>
                         <input type="text" name="gaji_pokok" id="gaji_pokok" value="{{ old('gaji_pokok') }}" class="form-control">
                     </div> --}}
-                    <label class="d-block text-center fw-bold"><h6>Pendapatan</h6></label>
+                    <label class="d-block text-center fw-bold"><h6>Gaji Pokok dan Tunjangan</h6></label>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="gaji_pokok">Gaji Pokok</label>
@@ -30,6 +30,19 @@
                         <div class="form-group">
                             <label for="insentif_uang_makan">Uang Makan</label>
                             <input type="text" name="insentif_uang_makan" id="insentif_uang_makan" value="{{ old('insentif_uang_makan') }}"class="form-control">
+                        </div>
+                    </div>
+                    <label class="d-block text-center fw-bold"><h6>Insentif</h6></label>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="potongan_bpjs_ketenagakerjaan">BPJS Ketenagakerjaan</label>
+                            <input type="text" name="potongan_bpjs_ketenagakerjaan" id="potongan_bpjs_ketenagakerjaan" value="{{ old('potongan_bpjs_ketenagakerjaan') }}"class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="potongan_bpjs_kesehatan">BPJS Kesehatan</label>
+                            <input type="text" name="potongan_bpjs_kesehatan" id="potongan_bpjs_kesehatan" value="{{ old('potongan_bpjs_kesehatan') }}"class="form-control">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -101,18 +114,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="potongan_bpjs_ketenagakerjaan">BPJS Ketenagakerjaan</label>
-                            <input type="text" name="potongan_bpjs_ketenagakerjaan" id="potongan_bpjs_ketenagakerjaan" value="{{ old('potongan_bpjs_ketenagakerjaan') }}"class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="potongan_bpjs_kesehatan">BPJS Kesehatan</label>
-                            <input type="text" name="potongan_bpjs_kesehatan" id="potongan_bpjs_kesehatan" value="{{ old('potongan_bpjs_kesehatan') }}"class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label for="potongan_kasbon">Kasbon</label>
                             <input type="text" name="potongan_kasbon" id="potongan_kasbon" value="{{ old('potongan_kasbon') }}"class="form-control">
                         </div>
@@ -173,7 +174,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Bulan</th>
-                                    <th>Gaji Pokok</th>
+                                    <th>Gaji Pokok dan Tunjangan</th>
                                     <th>Insentif</th>
                                     <th>Potongan</th>
                                     <th>Total Gaji</th>
@@ -185,7 +186,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $row->month_text }}</td>
-                                        <td>Rp. {{ number_format($row->gaji_pokok ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($row->gaji_dan_tunjangan ?? 0, 0, ',', '.') }}</td>
                                         <td>Rp. {{ number_format($row->insentif_total ?? 0, 0, ',', '.') }}</td>
                                         <td>Rp. {{ number_format($row->potongan_total ?? 0, 0, ',', '.') }}</td>
                                         <td>
