@@ -176,7 +176,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide -->
+                    </li> <!-- End::slide -->  
                     @endif    
                     
                     <!-- Start::slide -->
@@ -199,7 +199,7 @@
                         </ul>
                     </li> <!-- End::slide -->
                                  
-                    {{-- <li class="slide has-sub">
+                    <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -219,11 +219,13 @@
                                     class="side-menu__item {{ request()->routeIs(['karyawan.project', 'karyawan.detail.project']) ? 'active' : '' }}">
                                     List Project
                                 </a>
-                            </li>
-                            <li class="slide">
                                 <a href="{{ route('karyawan.task') }}"
-                                    class="side-menu__item {{ request()->routeIs('karyawan.task') ? 'active' : '' }}">
+                                    class="side-menu__item {{ request()->routeIs('karyawan.task', 'karyawan.detail.task') ? 'active' : '' }}">
                                     List Task
+                                </a>
+                                <a href="{{ route('karyawan.subtask') }}"
+                                    class="side-menu__item {{ request()->routeIs('karyawan.subtask', 'karyawan.subtask.detail') ? 'active' : '' }}">
+                                    List Sub Task
                                 </a>
                             </li>
                         </ul>
@@ -236,7 +238,7 @@
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             @endif
             @if (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
@@ -401,7 +403,7 @@
                         </ul>
                     </li> <!-- End::slide -->
 
-                    {{-- <!-- Start::slide -->
+                    <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -420,7 +422,47 @@
                                     Gaji Karyawan</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide --> --}}
+                    </li> <!-- End::slide -->
+                                    
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);"
+                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="currentColor"
+                                class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 2a1 1 0 0 1 .707 .293l1.708 1.707h4.585a3 3 0 0 1 2.995 2.824l.005 .176v7a3 3 0 0 1 -3 3h-1v1a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3v-9a3 3 0 0 1 3 -3h1v-1a3 3 0 0 1 3 -3zm-6 6h-1a1 1 0 0 0 -1 1v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1 -1v-1h-7a3 3 0 0 1 -3 -3z" />
+                            </svg>
+                            <span class="side-menu__label">Management Project</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            <li class="slide">
+                                <a href=""
+                                    class="side-menu__item ">
+                                    List Project
+                                </a>
+                                <a href=""
+                                    class="side-menu__item ">
+                                    List Task
+                                </a>
+                                <a href=""
+                                    class="side-menu__item">
+                                    List Sub Task
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="slide">
+                        <a href=""
+                            class="side-menu__item ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
+                                <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
+                            </svg>
+                            <span class="side-menu__label">Laporan Kinerja</span>
+                        </a>
+                    </li>
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">General</span></li>
@@ -560,10 +602,15 @@
                                 <a href="javascript:void(0);">Management Project</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('manajer.project') }}" class="side-menu__item {{ request()->routeIs(['manajer.project', 'manajer.detail.project']) ? 'active' : '' }}">
+                                <a href="{{ route('manajer.project') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['manajer.project', 'manajer.detail.project']) ? 'active' : '' }}">
                                     List Project</a>
-                                <a href="{{ route('manajer.task') }}" class="side-menu__item {{ request()->routeIs(['manajer.task', 'manajer.detail.task']) ? 'active' : '' }}">
+                                <a href="{{ route('manajer.task') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['manajer.task', 'manajer.detail.task']) ? 'active' : '' }}">
                                     List Task</a>
+                                <a href="{{ route('manajer.subtask') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['manajer.subtask', 'manajer.subtask.detail']) ? 'active' : '' }}">
+                                    List Sub Task</a>
                             </li>
                         </ul>
                     </li>
@@ -576,6 +623,7 @@
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
                     </li>
+                    <li class="slide__category"><span class="category-name">General</span></li>
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">

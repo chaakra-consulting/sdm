@@ -1907,6 +1907,7 @@
     
     <!-- Date & Time Picker JS -->
     <script src="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
     <script src="{{ asset('/Tema/dist/assets/js/date&time_pickers.js') }}"></script>
 
     <!-- Modal JS -->
@@ -1917,6 +1918,18 @@
 
     <!-- Internal Apex Radialbar Charts JS -->
     <script src="{{ asset('/Tema/dist/assets/js/apexcharts-radialbar.js') }}"></script>
+    
+        <!-- Custom-Switcher JS -->
+    <script src="{{ asset('/Tema/dist/assets/js/custom-switcher.min.js') }}"></script>
+
+    <!-- Swiper JS -->
+    <script src="{{ asset('/Tema/dist/assets/libs/swiper/swiper-bundle.min.js') }}"></script>
+
+    <!-- Internal Swiper JS -->
+    <script src="{{ asset('/Tema/dist/assets/js/swiper.js') }}"></script>
+
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script> --}}
 
     <!-- Custom JS -->
     <script src="{{ asset('/Tema/dist/assets/js/custom.js') }}"></script>

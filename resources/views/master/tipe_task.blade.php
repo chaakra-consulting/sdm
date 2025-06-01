@@ -55,22 +55,24 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->nama_tipe }}</td>
                                             <td>
-                                                <a href="javascript:void(0);" class="btn btn-warning editTipeTask" data-bs-toggle="modal"
-                                                    data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
-                                                    data-nama_tipe="{{ $item->nama_tipe }}">
-                                                    <i data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary" data-bs-placement="top" 
-                                                    title="Edit Tipe Task!" class="fas fa-edit"></i>
-                                                </a>
-                                                <form action="/manajer/tipe_task/update/{{ $item->id }}" method="POST"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger delete" 
-                                                    data-id="{{ $item->id }}" data-nama_tipe="{{ $item->nama_tipe }}" data-bs-toggle="tooltip" 
-                                                    data-bs-custom-class="tooltip-danger" data-bs-placement="top" title="Hapus Tipe Task!">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                @if ($item->slug != 'task-project' && $item->slug != 'task-wajib')
+                                                    <a href="javascript:void(0);" class="btn btn-warning editTipeTask" data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdrop" data-id="{{ $item->id }}"
+                                                        data-nama_tipe="{{ $item->nama_tipe }}">
+                                                        <i data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary" data-bs-placement="top" 
+                                                        title="Edit Tipe Task!" class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="/manajer/tipe_task/delete/{{ $item->id }}" method="POST"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger delete" 
+                                                        data-id="{{ $item->id }}" data-nama_tipe="{{ $item->nama_tipe }}" data-bs-toggle="tooltip" 
+                                                        data-bs-custom-class="tooltip-danger" data-bs-placement="top" title="Hapus Tipe Task!">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

@@ -1,6 +1,9 @@
 <?php
 
+use Mockery\Matcher\Subset;
+use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GajiController;
@@ -29,6 +32,7 @@ use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\LaporanKinerjaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -46,6 +50,13 @@ Route::post('/login-proses', [AuthController::class, 'login'])->name('login-pros
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::post('/sso/login', [LoginSSOController::class, 'loginSSO'])->withoutMiddleware([VerifyCsrfToken::class])->name('sso.login');
 Route::post('/sso/login/form', [LoginSSOController::class, 'loginSSOForm'])->name('sso.login.form');
+Route::post('/external-project', [ProjectController::class, 'storeFromExternal'])->name('external.project.store')->withoutMiddleware([VerifyCsrfToken::class]);
+Route::get('/project/{id}/progress', function (Request $request, $id) {
+    $project = ProjectPerusahaan::findOrFail($id);
+    return response()->json([
+        'progress' => $project->calculateProgress()
+    ]);
+})->withoutMiddleware('auth');
 
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
@@ -190,7 +201,11 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/hari_libur/store', [HariLiburController::class, 'store'])->name('admin_sdm.hari_libur.store');
     Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
     Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
-    
+
+    Route::get('/admin_sdm/project', [ProjectController::class, 'show'])->name('admin_sdm.project');
+    Route::get('/admin_sdm/project/detail/{id}', [ProjectController::class, 'detail'])->name('admin_sdm.detail.project');
+    // Route::post('/admin_sdm/project/store', [UsersProjectController::class, 'store'])->name('admin_sdm.project.store');
+    // Route::put('/admin_sdm/project/update/{id}', [UsersProjectController::class, 'update'])->name('admin_sdm.update.project');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
@@ -244,6 +259,7 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/karyawan/task/', [TaskController::class, 'index'])->name('karyawan.task');
     Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
     Route::get('/karyawan/task/detail/{id}', [TaskController::class, 'detail'])->name('karyawan.detail.task');
+    Route::put('/karyawan/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('karyawan.update.detail.task');
     Route::delete('/karyawan/task/delete/{id}', [TaskController::class, 'destroy'])->name('karyawan.delete.task');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
 
@@ -251,11 +267,26 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/karyawan/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
 
     // karyawan : sub task
+    Route::get('/karyawan/subtask', [SubTaskController::class, 'show'])->name('karyawan.subtask');
     Route::post('/karyawan/subtask/store', [SubTaskController::class, 'store'])->name('karyawan.subtask.store');
+    Route::get('/karyawan/subtask/detail/{id}', [SubTaskController::class, 'detail'])->name('karyawan.subtask.detail');
+    Route::put('/karyawan/subtask/detail/kirim/{id}', [SubTaskController::class, 'kirim'])->name('karyawan.subtask.detail.kirim');
+    Route::put('/karyawan/subtask/detail/batal/{id}', [SubTaskController::class, 'batal'])->name('karyawan.subtask.detail.batal');
+    Route::put('/karyawan/subtask/detail/update/{id}', [SubTaskController::class, 'updateDetail'])->name('karyawan.subtask.update.detail');
+    Route::put('/karyawan/subtask/detail/update/lampiran/{id}', [SubTaskController::class, 'updateDetailLampiran'])->name('karyawan.subtask.update.detail.lampiran');
+    Route::delete('/karyawan/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('lampiran-subtask.delete');
+    Route::put('/karyawan/subtask/update/{id}', [SubTaskController::class, 'update'])->name('karyawan.subtask.update');
+    Route::delete('/karyawan/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('karyawan.subtask.delete');
 
     // karyawan : laporan kinerja
-    Route::get('/karayawan/laporan_kinerja', [SubTaskController::class, 'show'])->name('karyawan.laporan_kinerja');
-    // Route::get('/karyawan/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
+    Route::get('/karyawan/laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('karyawan.laporan_kinerja');
+    Route::post('/karyawan/laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('karyawan.laporan_kinerja.store');
+    Route::put('/karyawan/laporan_kinerja/update/{id}', [LaporanKinerjaController::class, 'update'])->name('karyawan.laporan_kinerja.update');
+    Route::get('/karyawan/laporan_kinerja/getDataByDate',[LaporanKinerjaController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
+    Route::get('/karyawan/laporan_kinerja/detail/{id}/{month?}/{year?}',[LaporanKinerjaController::class, 'detail'])->name('karyawan.laporan_kinerja.detail');
+    Route::put('/karyawan/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('karyawan.laporan_kinerja.kirim');
+    Route::put('/karyawan/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('karyawan.laporan_kinerja.batal');
+    Route::delete('/karyawan/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('karyawan.laporan_kinerja.delete');
 });
 
 
@@ -305,12 +336,14 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/project/update/anggota', [ProjectController::class, 'updateUserProject'])->name('manajer.update.anggota.project');
     Route::delete('/manajer/project/delete/{id}', [ProjectController::class, 'destroy'])->name('manajer.delete.project');
     Route::delete('/manajer/project/delete/anggota/{id}', [ProjectController::class, 'destroyUserProject'])->name('manajer.delete.anggota.project');
-    
+
     // manajer : task
     Route::get('/manajer/task/', [TaskController::class, 'index'])->name('manajer.task');
     Route::get('/manajer/task/{id}', [TaskController::class, 'detail'])->name('manajer.detail.task');
     Route::post('/manajer/task/store', [TaskController::class, 'store'])->name('manajer.store.task');
     Route::put('/manajer/task/update/{id}', [TaskController::class, 'update'])->name('manajer.update.task');
+    Route::put('/manajer/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('manajer.update.detail.task');
+    Route::put('/manajer/task/update/lampiran/{id}', [TaskController::class, 'updateLampiran'])->name('manajer.update.lampiran.task');
     Route::post('/manajer/task/update/anggota', [TaskController::class, 'updateUserTask'])->name('manajer.update.anggota.task');
     Route::delete('/manajer/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
     Route::delete('/manajer/task/delete/anggota/{id}', [TaskController::class, 'destroyUserTask'])->name('manajer.delete.anggota.task');
@@ -321,9 +354,19 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::put('/manajer/tipe_task/update/{id}', [TipeTaskController::class, 'update'])->name('manajer.update.tipe_task');
     Route::delete('/manajer/tipe_task/delete/{id}', [TipeTaskController::class, 'destroy'])->name('manajer.delete.tipe_task');
 
+    // manajer : sub task
+    Route::get('/manajer/subtask', [SubTaskController::class, 'show'])->name('manajer.subtask');
+    Route::get('/manajer/subtask/detail/{id}', [SubTaskController::class, 'detail'])->name('manajer.subtask.detail');
+
     // manajer : laporan kinerja
     Route::get('/manajer/laporan_kinerja', [ManajerController::class, 'laporanKinerja'])->name('manajer.laporan_kinerja');
     Route::get('/manajer/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
+    Route::get('/manajer/laporan_kinerja/detail/{id}', [ManajerController::class, 'detailLaporanKinerja'])->name('manajer.detail.laporan_kinerja');
+    Route::post('/manajer/laporan_kinerja/approve/{id}', [ManajerController::class, 'approveLaporanKinerja'])->name('manajer.approve.laporan_kinerja');
+    Route::post('/manajer/laporan_kinerja/approve/subtask/{id}', [ManajerController::class, 'approveSubtask'])->name('manajer.approve.subtask');
+    Route::post('/manajer/laporan_kinerja/revise/{id}', [ManajerController::class, 'reviseLaporanKinerja'])->name('manajer.revise.laporan_kinerja');
+    Route::post('/manajer/laporan_kinerja/revise/subtask/{id}', [ManajerController::class, 'reviseSubtask'])->name('manajer.revise.subtask');
+    Route::delete('/manajer/laporan_kinerja/delete/{id}', [ManajerController::class, 'destroyLaporanKinerja'])->name('manajer.laporan_kinerja.delete');
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
