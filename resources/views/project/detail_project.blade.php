@@ -149,18 +149,18 @@
                                             {{ $project->nama_project }}</h5>
                                         @if ($project->status == 'selesai')
                                             @if ($project->tgl_selesai && \Carbon\Carbon::parse($project->tgl_selesai)->gt(\Carbon\Carbon::parse($project->deadline)))
-                                                <span class="badge bg-warning">Selesai (Telat)</span>
+                                                <span class="badge bg-warning fs-6 px-2 py-1">Selesai (Telat)</span>
                                             @else
-                                                <span class="badge bg-success">Selesai</span>
+                                                <span class="badge bg-success fs-6 px-2 py-1">Selesai</span>
                                             @endif
                                         @else
                                             @if ($project->deadline && \Carbon\Carbon::parse($project->deadline)->isPast())
-                                                <span class="badge bg-danger">Telat</span>
+                                                <span class="badge bg-danger fs-6 px-2 py-1">Telat</span>
                                             @else
                                                 @if ($project->status == 'proses')
-                                                    <span class="badge bg-info">Proses</span>
+                                                    <span class="badge bg-info fs-6 px-2 py-1">Proses</span>
                                                 @elseif ($project->status == 'belum')
-                                                    <span class="badge bg-secondary">Belum</span>
+                                                    <span class="badge bg-secondary fs-6 px-2 py-1">Belum</span>
                                                 @endif
                                             @endif
                                         @endif

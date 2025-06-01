@@ -89,9 +89,9 @@
                                             {{ $subtask->nama_subtask ?? '-' }}
                                         </h5>
                                         @if($subtask->detail_sub_task->isEmpty())
-                                            <span class="badge bg-info">Belum ada laporan kinerja</span>
+                                            <span class="badge bg-info fs-6 px-2 py-1">Belum ada laporan kinerja</span>
                                         @elseif($subtask->status === 'revise')
-                                            <span class="badge bg-warning"
+                                            <span class="badge bg-warning fs-6 px-2 py-1"
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" 
@@ -100,9 +100,9 @@
                                                 <i class="fas fa-info-circle ms-1"></i>
                                             </span>
                                         @elseif($subtask->status === 'approve')
-                                            <span class="badge bg-success">Approve</span>
+                                            <span class="badge bg-success fs-6 px-2 py-1">Approve</span>
                                         @else
-                                            <span class="badge bg-secondary">Belum Dicek</span>
+                                            <span class="badge bg-secondary fs-6 px-2 py-1">Belum Dicek</span>
                                         @endif
                                     </div>
                                 </div>
