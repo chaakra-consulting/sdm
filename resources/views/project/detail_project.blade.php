@@ -295,6 +295,10 @@
                         <a href="/karyawan/project" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Kembali
                         </a>
+                    @elseif ($userRole == 'admin-sdm')
+                        <a href="/admin_sdm/project" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
                     @endif
                 </div>
             </div>
@@ -382,7 +386,8 @@
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
-                                                    <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
+                                                    <td>
+                                                        {{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
                                                     </td>
                                                     <td class="text-center">
                                                         @if ($task->status == 'selesai')
@@ -444,7 +449,7 @@
                                                     </td>
                                                 </tbody>
                                                 @endforeach
-                                                @elseif (Auth::check() && (Auth::user()->role->slug = 'karyawan'))
+                                                @elseif (Auth::check() && (Auth::user()->role->slug == 'karyawan') || (Auth::user()->role->slug == 'admin-sdm'))
                                                 <thead>
                                                     <tr>
                                                         <th>No</th>
@@ -482,7 +487,11 @@
                                                             @endif
                                                         </td>
                                                         <td class="text-center">
-                                                            <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
+                                                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    <a href="{{ route('admin_sdm.detail.task', $item->task?->id) }}"
+                                                            @endif
                                                                 class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                                 data-bs-custom-class="tooltip-secondary"
                                                                 data-bs-placement="top" title="Detail Task!">
@@ -490,10 +499,9 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                </tbody>
-                                                    
+                                                </tbody>     
                                                 @endforeach
-                                                @endif
+                                            @endif
                                         </table>
                                     </div>
                                     <div class="mg-lg-b-30"></div>

@@ -136,8 +136,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                            @endif
-                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                                 @foreach ($userProject as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -164,17 +163,17 @@
                                         <td class="text-center">
                                             @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                                                 <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
-                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')                                           
-                                                <a href="{{ route('admin_sdm.detail.project', $item->project_perusahaan_id) }}"
+                                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                    <a href="{{ route('admin_sdm.detail.project', $item->project_perusahaan_id) }}"
                                             @endif
-                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                                data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!">
-                                                <i class='bx bx-detail'></i>
-                                            </a>
+                                                    class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                                    data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
+                                                    title="Detail Project!">
+                                                    <i class='bx bx-detail'></i>
+                                                </a>
                                         </td>
                                     </tr>
-                                @endforeach    
+                                @endforeach  
                             @endif
                         </tbody>
                     </table>

@@ -202,10 +202,19 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
     Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
 
+    // admin SDM: Project
     Route::get('/admin_sdm/project', [ProjectController::class, 'show'])->name('admin_sdm.project');
     Route::get('/admin_sdm/project/detail/{id}', [ProjectController::class, 'detail'])->name('admin_sdm.detail.project');
-    // Route::post('/admin_sdm/project/store', [UsersProjectController::class, 'store'])->name('admin_sdm.project.store');
-    // Route::put('/admin_sdm/project/update/{id}', [UsersProjectController::class, 'update'])->name('admin_sdm.update.project');
+    Route::post('/admin_sdm/project/store', [UsersProjectController::class, 'store'])->name('admin_sdm.project.store');
+    Route::put('/admin_sdm/project/update/{id}', [UsersProjectController::class, 'update'])->name('admin_sdm.update.project');
+
+    // admin SDM : Task
+    Route::get('/admin_sdm/task/', [TaskController::class, 'index'])->name('admin_sdm.task');
+    Route::post('/admin_sdm/task/store', [TaskController::class, 'store'])->name('admin_sdm.task.store');
+    Route::get('/admin_sdm/task/detail/{id}', [TaskController::class, 'detail'])->name('admin_sdm.detail.task');
+    Route::put('/admin_sdm/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('admin_sdm.update.detail.task');
+    Route::delete('/admin_sdm/task/delete/{id}', [TaskController::class, 'destroy'])->name('admin_sdm.delete.task');
+    Route::get('/admin_sdm/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('admin_sdm.project.tasks');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
