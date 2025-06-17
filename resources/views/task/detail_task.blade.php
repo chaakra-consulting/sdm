@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -200,8 +200,6 @@
                                 <div class="container-project">
                                     @if (Auth::check() && Auth::user()->role->slug == 'manager')
                                         <form action="{{ route('manajer.update.detail.task', $task->id) }}" method="post" enctype="multipart/form-data">
-                                    @elseif (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                        <form action="{{ route('karyawan.update.detail.task', $task->id) }}" method="post" enctype="multipart/form-data">
                                     @endif
                                         @csrf
                                         @method('put')
@@ -313,6 +311,13 @@
                         @if ($task->project_perusahaan != null)
                             <a href="/karyawan/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
                         @endif
+                    @elseif ($userRole == 'admin-sdm')
+                        <a href="/admin_sdm/task" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                        @if ($task->project_perusahaan != null)
+                            <a href="/admin_sdm/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -409,7 +414,7 @@
                                         </table>
                                     </div>
                                 @endif
-                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                     <button type="button" class="btn btn-outline-primary tambahSubTask mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                         Tambah Sub Task
                                     </button>
@@ -465,13 +470,23 @@
                                                                     data-bs-placement="top" title="Update Sub Task!"
                                                                     class="bi bi-pencil-square"></i>
                                                             </a>
-                                                            <a href="{{ route('karyawan.subtask.detail', $item->id) }}"
+                                                            <a 
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                href="{{ route('karyawan.subtask.detail', $item->id) }}"
+                                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    href="{{ route('admin_sdm.subtask.detail', $item->id) }}"                                                            
+                                                            @endif
                                                                 class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                                 data-bs-custom-class="tooltip-secondary"
                                                                 data-bs-placement="top" title="Detail Task!"><i
                                                                     class='bx bx-detail'></i>
                                                             </a>
-                                                            <form action="{{ route('karyawan.subtask.delete', $item->id) }}"
+                                                            <form 
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                action="{{ route('karyawan.subtask.delete', $item->id) }}" 
+                                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    action="{{ route('admin_sdm.subtask.delete', $item->id) }}"
+                                                            @endif
                                                                 method="POST" class="d-inline">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -624,6 +639,7 @@
 @section('script')
     <script>
         $(document).ready(function () {
+            const userRole = "{{ auth()->user()->role->slug }}";
             let flatpickrInstance = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -674,7 +690,12 @@
 
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
-                $("#formSubTask").attr("action", "/karyawan/subtask/store");
+
+                if (userRole == 'karyawan') {
+                    $("#formSubTask").attr("action", "/karyawan/subtask/store");
+                } else if (userRole == 'admin-sdm') {
+                    $("#formSubTask").attr("action", "/admin_sdm/subtask/store");      
+                }
                 $("#formSubTask input[name='_method']").remove();
 
                 $('#projectWrapper').addClass('d-none');
@@ -696,7 +717,11 @@
                 
                 $(".modal-title").text("Update Sub Task");
 
-                $("#formSubTask").attr("action", "/karyawan/subtask/update/" + id);
+                if (userRole == 'karyawan') {
+                    $("#formSubTask").attr("action", "/karyawan/subtask/update/" + id);
+                } else if (userRole == 'admin-sdm') {
+                    $("#formSubTask").attr("action", "/admin_sdm/subtask/update/" + id);
+                }
                 $("#formSubTask input[name='_method']").remove();
                 $("#formSubTask").append('<input type="hidden" name="_method" value="PUT">');
 
@@ -755,6 +780,12 @@
 
                 let id = $(this).data("id");
                 let nama = $(this).data("nama_subtask");
+                let actionUrl = '';
+                if (userRole == 'karyawan') {
+                    actionUrl = '/karyawan/subtask/delete/' + id;
+                } else if (userRole == 'admin-sdm') {
+                    actionUrl = '/admin_sdm/subtask/delete/' + id;
+                }
 
                 Swal.fire({
                     title: "Konfirmasi Hapus Sub Task!",
@@ -768,7 +799,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let form = $("<form>", {
-                            action: "/karyawan/subtask/delete/" + id,
+                            action: actionUrl,
                             method: "POST"
                         }).append(
                             $("<input>", {

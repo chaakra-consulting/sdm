@@ -127,7 +127,7 @@ class TaskController extends Controller
         
         if($request->hasFile('upload')){
             $file = $request->file('upload');
-            $fileName = uniqid() . "_task_" . auth()->user->name . "_" . time(). "." . $file->getClientOriginalExtension();
+            $fileName = uniqid() . "_task_" . Auth::user()->name . "_" . time(). "." . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $fileName);
             $uploadPath = $fileName;
         }
@@ -206,7 +206,7 @@ class TaskController extends Controller
                 }
             }
             $file = $request->file('upload');
-            $filename = uniqid() . '_task_' . auth()->user->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_task_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $task->upload = $filename;
         }
@@ -335,7 +335,7 @@ class TaskController extends Controller
                 }
             }
             $file = $request->file('upload');
-            $filename = uniqid() . '_task_' . auth()->user->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_task_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $task->upload = $filename;
         }

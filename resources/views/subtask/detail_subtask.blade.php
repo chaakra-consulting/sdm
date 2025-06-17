@@ -161,13 +161,13 @@
                                         </div>
                                         <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
                                         <input type="hidden" name="user_id" value="{{ $subtask->user_id }}">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                                             @if ($subtask != null)
-                                                <button type="button" class="btn btn-danger btn-batal-edit"
+                                                <button type="button" class="btn btn-danger btn-sm btn-batal-edit"
                                                     hidden>Batal</button>
-                                                <button type="button" class="btn btn-warning btn-edit-task">Edit</button>
+                                                <button type="button" class="btn btn-warning btn-sm btn-edit-task">Edit</button>
                                             @endif
-                                            <button type="submit" class="btn btn-primary btn-submit-task"
+                                            <button type="submit" class="btn btn-primary btn-sm btn-submit-task"
                                                 {{ $subtask != null ? 'hidden' : '' }}>{{ $subtask != null ? 'Update' : 'Simpan' }}
                                             </button>
                                         @endif
@@ -195,6 +195,14 @@
                         </a>
                         @if ($subtask->task != null)
                             <a href="/karyawan/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
+                                Task</a>
+                        @endif
+                    @elseif ($userRole == 'admin-sdm')
+                        <a href="/admin_sdm/subtask" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                        @if ($subtask->task != null)
+                            <a href="/admin_sdm/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
                                 Task</a>
                         @endif
                     @endif
@@ -226,26 +234,38 @@
                                         <div class="d-flex gap-2">
                                             <form action="{{ route('manajer.approve.subtask', $subtaskManager->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="btn btn-outline-primary mb-3">Approve</button>
+                                                <button type="submit" class="btn btn-outline-primary mb-1">Approve</button>
                                             </form>
-                                            <button class="btn btn-outline-warning mb-3" data-bs-toggle="modal" data-bs-target="#revisiModal">Revise</button>                                        </div>
+                                            <button class="btn btn-outline-warning mb-1" data-bs-toggle="modal" data-bs-target="#revisiModal">Revise</button>                                        </div>
                                     @endif
-                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                        <button type="button" class="btn btn-outline-primary tambahLaporanKinerja mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
+                                        <button type="button" class="btn btn-outline-primary btn-sm tambahLaporanKinerja mb-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                             <i class="bi bi-plus"></i> Update Pekerjaan
                                         </button>
-                                        <form action="{{ route('karyawan.subtask.detail.kirim', ['id' => $subtask->id]) }}" method="POST" id="formKirim">
+                                        <form 
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                            action="{{ route('karyawan.subtask.detail.kirim', ['id' => $subtask->id]) }}"
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                action="{{ route('admin_sdm.subtask.detail.kirim', ['id' => $subtask->id]) }}"                                           
+                                        @endif
+                                        method="POST" id="formKirim">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="btn btn-outline-warning">
+                                            <button type="submit" class="btn btn-outline-warning btn-sm">
                                                 <i class="bi bi-send"></i> Kirim
                                             </button>
                                         </form>
-                                        <form action="{{ route('karyawan.subtask.detail.batal', ['id' => $subtask->id]) }}" method="POST" id="formBatal">
+                                        <form 
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                            action="{{ route('karyawan.subtask.detail.batal', ['id' => $subtask->id]) }}" 
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                action="{{ route('admin_sdm.subtask.detail.batal', ['id' => $subtask->id]) }}"                                        
+                                        @endif
+                                        method="POST" id="formBatal">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="tanggal" id="tanggal_terpilih_batal">
-                                            <button type="submit" class="btn btn-outline-danger">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                                 <i class="bi bi-x-circle"></i> Batal
                                             </button>
                                         </form>
@@ -253,7 +273,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <table id="datatable-basic" class="table table-bordered w-100">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
@@ -291,7 +311,13 @@
                                                                     data-bs-placement="top" title="Edit Update Pekerjaan!"
                                                                     class="bi bi-pencil-square"></i>
                                                             </a>
-                                                            <form action="{{ route('karyawan.laporan_kinerja.delete', $item->id) }}}" method="POST" class="d-inline">
+                                                            <form 
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                action="{{ route('karyawan.laporan_kinerja.delete', $item->id) }}" 
+                                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    action="{{ route('admin_sdm.laporan_kinerja.delete', $item->id) }}"
+                                                            @endif
+                                                            method="POST" class="d-inline">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm delete"
@@ -339,7 +365,13 @@
                                 </div>      
                             </div>
                             <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">
-                                <form action="{{ route('karyawan.subtask.update.detail.lampiran', $subtask->id) }}" method="POST" enctype="multipart/form-data">
+                                <form 
+                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                    action="{{ route('karyawan.subtask.update.detail.lampiran', $subtask->id) }}" 
+                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                        action="{{ route('admin_sdm.subtask.update.detail.lampiran', $subtask->id) }}"                                
+                                @endif
+                                method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('put')
                                     <div class="form-group">
@@ -372,8 +404,8 @@
                                         </div>
                                         @endforeach
                                     </div>
-                                    @if (Auth::check() && (Auth::user()->role->slug == 'karyawan'))
-                                        <button type="submit" class="btn btn-primary btn-submit-task">
+                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
+                                        <button type="submit" class="btn btn-primary btn-sm btn-submit-task">
                                             Update
                                         </button>
                                     @endif

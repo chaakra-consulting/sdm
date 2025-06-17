@@ -62,7 +62,7 @@ class SubTaskController extends Controller
 
         if ($request->hasFile('upload')) {
             foreach ($request->file('upload') as $file) {
-                $fileName = uniqid() . '_lampiran_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $fileName = uniqid() . '_lampiran_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads'), $fileName);
 
                 LampiranSubTask::create([
@@ -130,7 +130,7 @@ class SubTaskController extends Controller
             }
 
             foreach ($request->file('upload') as $file) {
-                $fileName = uniqid() . '_lampiran_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $fileName = uniqid() . '_lampiran_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads'), $fileName);
 
                 LampiranSubTask::create([
@@ -176,7 +176,7 @@ class SubTaskController extends Controller
 
         if ($request->hasFile('upload')) {
             foreach ($request->file('upload') as $file) {
-                $fileName = uniqid() . '_lampiran_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $fileName = uniqid() . '_lampiran_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads'), $fileName);
 
                 LampiranSubTask::create([
@@ -193,8 +193,7 @@ class SubTaskController extends Controller
     public function kirim($id)
     {
         $updated = DetailSubTask::where('sub_task_id', $id)
-            ->where('user_id', auth()->id())
-            ->where('is_active', 0)
+            ->where('user_id', Auth::user()->id)            ->where('is_active', 0)
             ->update(['is_active' => 1]);
         if ($updated > 0) {
             return redirect()->back()->with('success', 'Laporan Kinerja berhasil di kirim');
@@ -204,8 +203,7 @@ class SubTaskController extends Controller
     public function batal($id)
     {
         $updated = DetailSubTask::where('sub_task_id', $id)
-            ->where('user_id', auth()->id())
-            ->where('is_active', 1)
+            ->where('user_id', Auth::user()->id)            ->where('is_active', 1)
             ->update(['is_active' => 0]);
         if ($updated > 0) {
             return redirect()->back()->with('success', 'Laporan Kinerja batal di kirim');
@@ -226,7 +224,7 @@ class SubTaskController extends Controller
     public function destroyLampiran($id)
     {
         $lampiran = LampiranSubTask::findOrFail($id);
-        if($lampiran->sub_task->user_id != auth()->id()) {
+        if($lampiran->sub_task->user_id != Auth::user()->id) {
             abort(403);
         }
         $filePath = public_path('uploads/' . $lampiran->lampiran);

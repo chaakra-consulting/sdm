@@ -215,6 +215,18 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('admin_sdm.update.detail.task');
     Route::delete('/admin_sdm/task/delete/{id}', [TaskController::class, 'destroy'])->name('admin_sdm.delete.task');
     Route::get('/admin_sdm/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('admin_sdm.project.tasks');
+
+    // admin SDM : subtask
+    Route::get('/admin_sdm/subtask', [SubTaskController::class, 'show'])->name('admin_sdm.subtask');
+    Route::post('/admin_sdm/subtask/store', [SubTaskController::class, 'store'])->name('admin_sdm.subtask.store');
+    Route::get('/admin_sdm/subtask/detail/{id}', [SubTaskController::class, 'detail'])->name('admin_sdm.subtask.detail');
+    Route::put('/admin_sdm/subtask/detail/kirim/{id}', [SubTaskController::class, 'kirim'])->name('admin_sdm.subtask.detail.kirim');
+    Route::put('/admin_sdm/subtask/detail/batal/{id}', [SubTaskController::class, 'batal'])->name('admin_sdm.subtask.detail.batal');
+    Route::put('/admin_sdm/subtask/detail/update/{id}', [SubTaskController::class, 'updateDetail'])->name('admin_sdm.subtask.update.detail');
+    Route::put('/admin_sdm/subtask/detail/update/lampiran/{id}', [SubTaskController::class, 'updateDetailLampiran'])->name('admin_sdm.subtask.update.detail.lampiran');
+    Route::delete('/admin_sdm/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('lampiran-subtask.delete');
+    Route::put('/admin_sdm/subtask/update/{id}', [SubTaskController::class, 'update'])->name('admin_sdm.subtask.update');
+    Route::delete('/admin_sdm/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('admin_sdm.subtask.delete');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {

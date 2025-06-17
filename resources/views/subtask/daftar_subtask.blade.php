@@ -136,7 +136,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Auth::check() && Auth::user()->role->slug == ('karyawan'))
+                            @if (Auth::check() && Auth::user()->role->slug == ('karyawan') || Auth::user()->role->slug == ('admin-sdm'))
                                 @foreach ($userSubtasks as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -174,11 +174,21 @@
                                             @else
                                                 <span class="text-muted">Tidak ada lampiran</span> </br>
                                             @endif
-                                            <a href="{{ route('karyawan.subtask.detail', $item->id) }}" class="btn btn-secondary btn-sm"
+                                            <a 
+                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                href="{{ route('karyawan.subtask.detail', $item->id) }}" class="btn btn-secondary btn-sm"
+                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                    href="{{ route('admin_sdm.subtask.detail', $item->id) }}" class="btn btn-secondary btn-sm"
+                                            @endif
                                                 data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" title="Detail Task!"><i class='bx bx-detail'></i>
                                             </a>
-                                            <form action="{{ route('karyawan.subtask.delete', $item->id) }}" method="POST"
+                                            <form 
+                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                action="{{ route('karyawan.subtask.delete', $item->id) }}" method="POST"
+                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                    action="{{ route('admin_sdm.subtask.delete', $item->id) }}" method="POST"
+                                            @endif
                                                 class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -260,6 +270,7 @@
     </style>
     <script>
         $(document).ready(function(){
+            const userRole = "{{ auth()->user()->role->slug }}";
             let flatpickrInstance = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -346,6 +357,12 @@
 
                 let id = $(this).data("id");
                 let subtask = $(this).data("nama_subtask");
+                let actionUrl = '';
+                if (userRole == 'karyawan') {
+                    actionUrl = '/karyawan/subtask/delete/' + id;
+                } else if (userRole == 'admin-sdm') {
+                    actionUrl = '/admin_sdm/subtask/delete/' + id;
+                }
 
                 Swal.fire({
                     title: "Konfirmasi Hapus Sub Task",
@@ -358,14 +375,22 @@
                     cancelButtonText: "Batal"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        let form = $('<form action="/karyawan/subtask/delete/' + id +
-                            '" method="POST">' +
-                            '@csrf' +
-                            '@method('DELETE')' +
-                            '</form>');
-
-                        $('body').append(form);
-                        form.submit();
+                        let form = $("<form>", {
+                            action: actionUrl,
+                            method: "POST"
+                        }).append(
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_token",
+                                value: "{{ csrf_token() }}"
+                            }),
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_method",
+                                value: "DELETE"
+                            })
+                        );
+                        $("body").append(form);
                     }
                 });
             });
