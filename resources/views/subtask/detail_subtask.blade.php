@@ -89,9 +89,9 @@
                                             {{ $subtask->nama_subtask ?? '-' }}
                                         </h5>
                                         @if($subtask->detail_sub_task->isEmpty())
-                                            <span class="badge bg-info">Belum ada laporan kinerja</span>
+                                            <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Belum ada laporan kinerja</span>
                                         @elseif($subtask->status === 'revise')
-                                            <span class="badge bg-warning"
+                                            <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill"
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" 
@@ -100,9 +100,9 @@
                                                 <i class="fas fa-info-circle ms-1"></i>
                                             </span>
                                         @elseif($subtask->status === 'approve')
-                                            <span class="badge bg-success">Approve</span>
+                                            <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Approve</span>
                                         @else
-                                            <span class="badge bg-secondary">Belum Dicek</span>
+                                            <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum Dicek</span>
                                         @endif
                                     </div>
                                 </div>
@@ -383,7 +383,7 @@
                                         @foreach($subtask->lampiran as $lampiran)
                                         <div class="col-md-3 mb-3 lampiran-item">
                                             <div class="card shadow-sm position-relative">
-                                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                                     <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-lampiran" 
                                                             data-id="{{ $lampiran->id }}" 
                                                             style="z-index: 2">
@@ -496,6 +496,7 @@
     </style>
     <script>
         $(document).ready(function() {
+            const userRole = "{{ auth()->user()->role->slug }}";
             let flatpickrInstance = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -532,7 +533,11 @@
                 $("#keterangan").val('');
 
                 $("#btnSubmit").text("Simpan").show();
-                $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                if (userRole === 'karyawan'){
+                    $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                } else if (userRole === 'admin-sdm') {
+                    $("#formLaporanKinerja").attr("action", "/admin_sdm/laporan_kinerja/store");
+                }
                 $("#formLaporanKinerja input[name='_method']").remove();
 
                 $("input[name='durasi_jam']").val("");
@@ -547,6 +552,12 @@
 
                 let jam = Math.floor(durasi / 60);
                 let menit = durasi % 60;
+                let actionUrl = '';
+                if (userRole === 'karyawan'){
+                    actionUrl = `/karyawan/laporan_kinerja/update/${id}`;
+                } else if (userRole === 'admin-sdm') {
+                    actionUrl = `/admin_sdm/laporan_kinerja/update/${id}`;
+                }
 
                 $(".modal-title").text('Edit Update Pekerjaan');
                 
@@ -559,7 +570,7 @@
                 $("input[name='durasi_menit']").val(menit);
                 $("#keterangan").val(keterangan);
 
-                $("#formLaporanKinerja").attr("action", `/karyawan/laporan_kinerja/update/${id}`);
+                $("#formLaporanKinerja").attr("action", actionUrl);
 
                 if ($("#formLaporanKinerja input[name='_method']").length === 0) {
                     $("#formLaporanKinerja").append(`<input type="hidden" name="_method" value="PUT">`);
@@ -669,23 +680,43 @@
                 
                 const lampiranId = this.dataset.id
                 const card = this.closest('.col-md-3')
-                
-                if(confirm('Yakin ingin menghapus lampiran ini?')) {
-                    fetch(`/karyawan/subtask/detail/lampiran/${lampiranId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        }
-                    })
-                    .then(response => {
-                        if(response.ok) {
-                            card.remove()
-                        } else {
-                            alert('Gagal menghapus lampiran')
-                        }
-                    })
+                const userRole = '{{ auth()->user()->role->slug }}'
+                let actionUrl = '';
+                if (userRole === 'karyawan'){
+                    actionUrl = `/karyawan/subtask/detail/lampiran/${lampiranId}`
+                } else if (userRole === 'admin-sdm') {
+                    actionUrl = `/admin_sdm/subtask/detail/lampiran/${lampiranId}`
                 }
+                Swal.fire({
+                    title: "Konfirmasi Hapus Lampiran!",
+                    text: "Apakah Kamu yakin ingin menghapus lampiran ini ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#cf0202",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = $("<form>", {
+                            action: actionUrl,
+                            method: "POST"
+                        }).append(
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_token",
+                                value: "{{ csrf_token() }}"
+                            }),
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_method",
+                                value: "DELETE"
+                            })
+                        );
+                        $("body").append(form);
+                        form.submit();
+                    }
+                })
             })
         })
     </script>

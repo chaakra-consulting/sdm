@@ -233,6 +233,6 @@ class SubTaskController extends Controller
         }
         $lampiran->delete();
         
-        return response()->json(['success' => true]);
+        return redirect()->back()->with('success', 'Lampiran berhasil dihapus.');
     }
 }

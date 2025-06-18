@@ -446,15 +446,15 @@
                                 <a href="{{ route('admin_sdm.task') }}" 
                                     class="side-menu__item {{ request()->routeIs(['admin_sdm.task', 'admin_sdm.detail.task']) ? 'active' : '' }}">
                                     List Task</a>
-                                {{-- <a href="{{ route('admin_sdm.subtask') }}" 
+                                <a href="{{ route('admin_sdm.subtask') }}" 
                                     class="side-menu__item {{ request()->routeIs(['admin_sdm.subtask', 'admin_sdm.subtask.detail']) ? 'active' : '' }}">
-                                    List Sub Task</a> --}}
+                                    List Sub Task</a>
                             </li>
                         </ul>
                     </li>
                     <li class="slide">
-                        <a href=""
-                            class="side-menu__item ">
+                        <a href="{{ route('admin_sdm.laporan_kinerja') }}"
+                            class="side-menu__item {{ request()->routeIs(['admin_sdm.laporan_kinerja', 'admin_sdm.list.laporan_kinerja']) ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
                                 <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
                             </svg>

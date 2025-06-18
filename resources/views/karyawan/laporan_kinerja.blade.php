@@ -69,7 +69,11 @@
                     <span class="text-muted">{{ $getDataUser->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '-' }}</span>
                 </div>
                 <div class="d-flex justify-content-end mb-3">
+                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                     <form action="{{ route('karyawan.laporan_kinerja') }}" method="GET" class="d-flex gap-2">
+                        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                        <form action="{{ route('admin_sdm.laporan_kinerja') }}" method="GET" class="d-flex gap-2">
+                    @endif
                         <select name="month" class="form-select form-select-sm">
                             @foreach($months as $key => $month)
                                 <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>
@@ -137,7 +141,11 @@
                             data-bs-target="#staticBackdrop">
                             <i class="bi bi-plus"></i> Update Pekerjaan
                         </button>
+                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                         <form action="{{ route('karyawan.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
+                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <form action="{{ route('admin_sdm.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
+                        @endif
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="tanggal" id="tanggal_terpilih_kirim">
@@ -145,7 +153,11 @@
                                 <i class="bi bi-send"></i> Kirim
                             </button>
                         </form>
+                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                         <form action="{{ route('karyawan.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
+                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <form action="{{ route('admin_sdm.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
+                        @endif
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="tanggal" id="tanggal_terpilih_batal">
@@ -155,6 +167,7 @@
                         </form>
                     </div>
                     <div class="">
+                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                         <a href="{{ route('karyawan.laporan_kinerja.detail', [
                             'id' => auth()->user()->id,
                             'month' => $selectedMonth,
@@ -162,6 +175,15 @@
                         ]) }}" class="btn btn-outline-secondary">
                             Detail
                         </a>
+                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <a href="{{ route('admin_sdm.laporan_kinerja.detail', [
+                                'id' => auth()->user()->id,
+                                'month' => $selectedMonth,
+                                'year' => $selectedYear
+                            ]) }}" class="btn btn-outline-secondary">
+                                Detail
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -223,6 +245,7 @@
     </style>
 
     <script>
+        const userRole = "{{ Auth::user()->role->slug }}";
         document.querySelectorAll('.slide-item').forEach(slide => {
             slide.addEventListener('click', function() {
                 document.querySelectorAll('.slide-item').forEach(s => {
@@ -239,6 +262,10 @@
                     month: 'long',
                     year: 'numeric'
                 })}`;
+                let actionUrl = '';
+                if (userRole === 'karyawan') {
+                    
+                }
                 document.getElementById('tanggal_terpilih').value = selectedDate;
                 document.getElementById('tanggal_terpilih_kirim').value = selectedDate;
                 document.getElementById('tanggal_terpilih_batal').value = selectedDate;

@@ -148,21 +148,21 @@
                                             {{ $task->nama_task }}</h5>
                                             @if ($task->status == 'selesai')
                                                 @if ($task->tgl_selesai && \Carbon\Carbon::parse($task->tgl_selesai)->gt(\Carbon\Carbon::parse($task->deadline)))
-                                                    <span class="badge bg-warning">Selesai (Telat)</span>
+                                                    <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill">Selesai (Telat)</span>
                                                 @else
-                                                    <span class="badge bg-success">Selesai</span>
+                                                    <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Selesai</span>
                                                 @endif
                                             @else
                                                 @if ($progressPercentage === 100)
-                                                    <span class="badge bg-success">Selesai (100%)</span>
+                                                    <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Selesai (100%)</span>
                                                 @else
                                                     @if ($task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast())
-                                                        <span class="badge bg-danger">Telat</span>
+                                                        <span class="badge bg-danger fs-6 px-2 py-1 rounded-pill">Telat</span>
                                                     @else
                                                         @if ($task->status == 'proses')
-                                                            <span class="badge bg-info">Proses ({{ $progressPercentage }}%)</span>
+                                                            <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Proses ({{ $progressPercentage }}%)</span>
                                                         @elseif ($task->status == 'belum')
-                                                            <span class="badge bg-secondary">Belum</span>
+                                                            <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum</span>
                                                         @endif
                                                     @endif
                                                 @endif

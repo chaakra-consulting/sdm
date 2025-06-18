@@ -143,24 +143,24 @@
                     <div class="card-body">
                         <div class="ps-0">
                             <div class="main-profile-overview">
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between mb-3">
                                     <div>
                                         <h5 class="main-profile-name" style="text-transform: capitalize;">
                                             {{ $project->nama_project }}</h5>
                                         @if ($project->status == 'selesai')
                                             @if ($project->tgl_selesai && \Carbon\Carbon::parse($project->tgl_selesai)->gt(\Carbon\Carbon::parse($project->deadline)))
-                                                <span class="badge bg-warning">Selesai (Telat)</span>
+                                                <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill">Selesai (Telat)</span>
                                             @else
-                                                <span class="badge bg-success">Selesai</span>
+                                                <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Selesai</span>
                                             @endif
                                         @else
                                             @if ($project->deadline && \Carbon\Carbon::parse($project->deadline)->isPast())
-                                                <span class="badge bg-danger">Telat</span>
+                                                <span class="badge bg-danger fs-6 px-2 py-1 rounded-pill">Telat</span>
                                             @else
                                                 @if ($project->status == 'proses')
-                                                    <span class="badge bg-info">Proses</span>
+                                                    <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Proses</span>
                                                 @elseif ($project->status == 'belum')
-                                                    <span class="badge bg-secondary">Belum</span>
+                                                    <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum</span>
                                                 @endif
                                             @endif
                                         @endif
@@ -332,7 +332,7 @@
                                 <div class="row">
                                     <div class="col-md-6" id="progres-bar"></div>                     
                                     <div class="col-md-6">
-                                        <dl class="row mb-0">
+                                        <dl class="row mb-0 justified-content-between">
                                             <dt class="col-md-4 p-0">Nama Entitas</dt>
                                             <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
                                             <dt class="col-md-4 p-0">Capaian Target</dt>
@@ -340,17 +340,17 @@
                                             <dt class="col-md-4 p-0">Target Task</dt>
                                             <dd class="col-md-8 p-0">:
                                                 {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
-                                            <div class="form-group p-0 ">
+                                            {{-- <div class="form-group p-0 ">
                                                 <label for="nama_project" class="form-label"><strong>Realisasi -
                                                         {{ $project->nama_project }}</strong></label>
-                                                {{-- <div class="input-group mb-3">
+                                                <div class="input-group mb-3">
                                                     <input type="text" class="form-control" placeholder=""
                                                         aria-label="Example text with button addon"
                                                         aria-describedby="button-addon1">
                                                     <button class="btn btn-success" type="button"
                                                         id="button-addon1">Verifikasi</button>
-                                                </div> --}}
-                                            </div>
+                                                </div>
+                                            </div> --}}
                                         </dl>
                                     </div>
                                 </div>

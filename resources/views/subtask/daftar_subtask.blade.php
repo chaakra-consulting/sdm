@@ -199,7 +199,7 @@
                                                     data-bs-toggle="tooltip"
                                                     data-bs-custom-class="tooltip-danger" d
                                                     ata-bs-placement="top"
-                                                    title="Hapus Project!">
+                                                    title="Hapus Sub Task!">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -302,7 +302,11 @@
     
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
-                $("#formSubtask").attr("action", "/karyawan/subtask/store");
+                if (userRole === 'karyawan') {
+                    $("#formSubtask").attr("action", "/karyawan/subtask/store");
+                } else if (userRole === 'admin-sdm') {
+                    $("#formSubtask").attr("action", "/admin_sdm/subtask/store");
+                }
                 $("#formSubtask input[name='_method']").remove();
             });
             $("#upload").change(function () {
@@ -358,15 +362,15 @@
                 let id = $(this).data("id");
                 let subtask = $(this).data("nama_subtask");
                 let actionUrl = '';
-                if (userRole == 'karyawan') {
+                if (userRole === 'karyawan') {
                     actionUrl = '/karyawan/subtask/delete/' + id;
-                } else if (userRole == 'admin-sdm') {
+                } else if (userRole === 'admin-sdm') {
                     actionUrl = '/admin_sdm/subtask/delete/' + id;
                 }
 
                 Swal.fire({
                     title: "Konfirmasi Hapus Sub Task",
-                    text: "Apakah kamu yakin ingin menghapus project '" + subtask + "'?",
+                    text: "Apakah kamu yakin ingin menghapus subtask '" + subtask + "' ?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
@@ -391,9 +395,11 @@
                             })
                         );
                         $("body").append(form);
+                        form.submit();
                     }
                 });
             });
+
         });
     </script>
     <script>
