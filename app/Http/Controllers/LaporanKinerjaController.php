@@ -237,6 +237,7 @@ class LaporanKinerjaController extends Controller
             $subtask = $detailSubtask->subtask;
             return [
                 'id' => $detailSubtask->id,
+                'sub_task_id' => $subtask->id ?? '-',
                 'nama_subtask' => $subtask->nama_subtask ?? '-',
                 'nama_task' => $subtask->task->nama_task ?? '-',
                 'nama_tipe' => $subtask->task->tipe_task->nama_tipe ?? '-',

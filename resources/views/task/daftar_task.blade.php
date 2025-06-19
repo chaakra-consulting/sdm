@@ -140,7 +140,7 @@
                                         <td>
                                             {{ $item->deadline ? Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             @if ($item->status == 'selesai')
                                                 @if ($item->tgl_selesai && \Carbon\Carbon::parse($item->tgl_selesai)->gt(\Carbon\Carbon::parse($item->deadline)))
                                                     <span class="badge bg-warning">Selesai (Telat)</span>
@@ -202,7 +202,7 @@
                                         <td>
                                             {{ $item->task->deadline ? Carbon\Carbon::parse($item->task->deadline)->translatedFormat('l, d F Y') : '-' }}
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             @if ($item->task->status == 'selesai')
                                                 @if (
                                                     $item->task->tgl_selesai &&

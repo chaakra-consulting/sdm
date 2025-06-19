@@ -70,8 +70,8 @@
                 </div>
                 <div class="d-flex justify-content-end mb-3">
                     @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                    <form action="{{ route('karyawan.laporan_kinerja') }}" method="GET" class="d-flex gap-2">
-                        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                        <form action="{{ route('karyawan.laporan_kinerja') }}" method="GET" class="d-flex gap-2">
+                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                         <form action="{{ route('admin_sdm.laporan_kinerja') }}" method="GET" class="d-flex gap-2">
                     @endif
                         <select name="month" class="form-select form-select-sm">
@@ -118,7 +118,7 @@
                                     <div class="card slide-item {{ $isDisabled ? 'bg-light text-muted' : ($isActive ? 'active-slide bg-primary text-white' : 'bg-white') }}"
                                         style="min-width: 120px; min-height: 120px"
                                         @if($isDisabled) title="Hari Libur" @endif
-                                        data-date="{{ $date->format('Y-m-d') }}">
+                                            data-date="{{ $date->format('Y-m-d') }}">
                                         @if($isDisabled)
                                             <div class="ribbon ribbon-top bg-danger">Libur</div>
                                         @endif
@@ -127,7 +127,7 @@
                                             <div class="fs-6">{{ $date->translatedFormat('F Y') }}</div>
                                             <div class="fs-12">Durasi : {{ $jam ? $jam . ' Jam' : '-' }} <br>
                                                 {{ $menit ? $menit . ' Menit' : '' }}</div>
-                                            <div class="fs-12">Task : {{ $jumlahTask ? $jumlahTask : '-' }}</div>
+                                            <div class="fs-12">Sub Task : {{ $jumlahTask ? $jumlahTask : '-' }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -142,8 +142,8 @@
                             <i class="bi bi-plus"></i> Update Pekerjaan
                         </button>
                         @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                        <form action="{{ route('karyawan.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
-                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <form action="{{ route('karyawan.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
+                        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                             <form action="{{ route('admin_sdm.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
                         @endif
                             @csrf
@@ -154,8 +154,8 @@
                             </button>
                         </form>
                         @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                        <form action="{{ route('karyawan.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
-                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <form action="{{ route('karyawan.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
+                        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                             <form action="{{ route('admin_sdm.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
                         @endif
                             @csrf
@@ -168,14 +168,14 @@
                     </div>
                     <div class="">
                         @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                        <a href="{{ route('karyawan.laporan_kinerja.detail', [
-                            'id' => auth()->user()->id,
-                            'month' => $selectedMonth,
-                            'year' => $selectedYear
-                        ]) }}" class="btn btn-outline-secondary">
-                            Detail
-                        </a>
-                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                            <a href="{{ route('karyawan.laporan_kinerja.detail', [
+                                'id' => auth()->user()->id,
+                                'month' => $selectedMonth,
+                                'year' => $selectedYear
+                            ]) }}" class="btn btn-outline-secondary">
+                                Detail
+                            </a>
+                        @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                             <a href="{{ route('admin_sdm.laporan_kinerja.detail', [
                                 'id' => auth()->user()->id,
                                 'month' => $selectedMonth,
@@ -264,13 +264,15 @@
                 })}`;
                 let actionUrl = '';
                 if (userRole === 'karyawan') {
-                    
+                    actionUrl = '/karyawan/laporan_kinerja/getDataByDate'
+                } else if (userRole === 'admin-sdm') {
+                    actionUrl = '/admin_sdm/laporan_kinerja/getDataByDate'
                 }
                 document.getElementById('tanggal_terpilih').value = selectedDate;
                 document.getElementById('tanggal_terpilih_kirim').value = selectedDate;
                 document.getElementById('tanggal_terpilih_batal').value = selectedDate;
                 $.ajax({
-                    url: '/karyawan/laporan_kinerja/getDataByDate',
+                    url: actionUrl,
                     method: 'GET',
                     data: {
                         tanggal: selectedDate
@@ -281,12 +283,7 @@
                         
                         if (response.data.length > 0) {
                             response.data.forEach((detail, index) => {
-                                const hasLampiran = detail.subtask?.lampiran?.length > 0;
-                                const lampiranButton = hasLampiran ?
-                                    `<button type="button" class="btn btn-primary btn-sm" onclick="previewLampiran(${detail.subtask?.id}, ${JSON.stringify(subtask.lampiran)})">
-                                        <i class="ti ti-file-search" title="Lihat Lampiran"></i>
-                                    </button>` :
-                                    `<span class="text-muted">Tidak ada lampiran</span> </br>`;
+                                const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                                 const row = `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -301,26 +298,28 @@
                                             <td>${Math.floor(detail.durasi / 60)} Jam ${detail.durasi % 60} Menit</td>
                                             <td>${detail.keterangan}</td>
                                             <td class="text-center">
-                                                ${hasLampiran ? `
-                                                <button type="button" class="btn btn-primary btn-sm" 
-                                                    onclick="previewLampiran(${detail.subtask?.id}, ${JSON.stringify(detail.subtask?.lampiran)})">
-                                                    <i class="ti ti-file-search" title="Lihat Lampiran"></i>
-                                                </button>` : 
-                                                `<span class="text-muted">Tidak ada lampiran</span> </br>`}
                                                 ${detail.is_active == 0 ? `
-                                                <a href="#" class="btn btn-warning btn-sm updateSubTask" 
+                                                <a href="javascript:void(0);" class="btn btn-warning btn-sm updateSubTask" 
                                                     data-id="${detail.id}" 
-                                                    data-task_id="${detail.subtask?.task_id}">
+                                                    data-subtask_id="${detail.sub_task_id}"
+                                                    data-durasi="${detail.durasi}"
+                                                    data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                <form action="/karyawan/laporan_kinerja/delete/${detail.id}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
+                                                <form action=
+                                                @if(Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                    "/karyawan/laporan_kinerja/delete/${detail.id}" 
+                                                @elseif(Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                    "/admin_sdm/laporan_kinerja/delete/${detail.id}"
+                                                @endif
+                                                method="POST" class="d-inline">
+                                                    <input type="hidden" name="_token" value="${csrf}">
+                                                    <input type="hidden" name="_method" value="DELETE">
                                                     <button type="submit" class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
-                                                ` : ''}
+                                                ` : '<span class="badge bg-success">Sudah Dikirim</span>'}
                                             </td>
                                         </tr>`;
                                 tableBody.append(row);
@@ -395,6 +394,7 @@
                 allowHTML: true,
                 resetScrollPosition: false
             });
+            const userRole = "{{ Auth::user()->role->slug }}";
             let originalTaskOptions = $('#sub_task_id').html();
 
             $('#staticBackdrop').on('hidden.bs.modal', function() {
@@ -413,16 +413,16 @@
                     subTaskSelect.destroy();
                     subTaskSelect.init();
                 }
-
-                $('#preview-area').empty();
-                $('#detail_upload').empty();
-                $('#upload').val('');
                 $('input[name="_method"]').remove();
                 $('input[name="durasi_jam"], input[name="durasi_menit"]').val('');
                 $('#keterangan').val('');
                 $('.is-invalid').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
-                $('#formLaporanKinerja').attr('action', '/karyawan/laporan_kinerja/store');
+                if (userRole === 'karyawan') {
+                    $('#formLaporanKinerja').attr('action', '/karyawan/laporan_kinerja/store');
+                } else if (userRole === 'admin-sdm') {
+                    $('#formLaporanKinerja').attr('action', '/admin_sdm/laporan_kinerja/store');   
+                }
             });
             $(document).on('click', '.tambahLaporanKinerja', function() {
                 $(".modal-title").text('Update Pekerjaan');
@@ -433,7 +433,12 @@
 
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
-                $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                if (userRole === 'karyawan') {
+                    $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                } else if (userRole === 'admin-sdm') {
+                    $("#formLaporanKinerja").attr("action", "/admin_sdm/laporan_kinerja/store");
+                    
+                }
                 $("#formLaporanKinerja input[name='_method']").remove();
 
                 $('#projectWrapper').addClass('d-none');
@@ -457,25 +462,29 @@
                 $("input[name='durasi_menit']").val("");
             });
             $(document).on('click', '.updateSubTask', function() {
-                const subtaskId = $(this).data('id');
-                const taskId = $(this).data('task_id').toString();
+                const subtaskId = $(this).data('id').toString();
+                const subTaskOptionId = $(this).data('subtask_id').toString();
                 const durasi = $(this).data('durasi');
                 const keterangan = $(this).data('keterangan');
-                const lampiran = $(this).data('lampiran');
-
                 const jam = Math.floor(durasi / 60);
                 const menit = durasi % 60;
-
+                const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+                modal.show();
+                
                 $(".modal-title").text('Update Sub Task');
                 subTaskSelect.removeActiveItems();
-                subTaskSelect.setChoiceByValue(taskId);
+                subTaskSelect.setChoiceByValue(subTaskOptionId);
                 subTaskSelect.input.focus();
 
                 $("input[name='durasi_jam']").val(jam);
                 $("input[name='durasi_menit']").val(menit);
                 $("#keterangan").val(keterangan);
 
-                $("#formLaporanKinerja").attr("action", `/karyawan/subtask/update/${subtaskId}`);
+                if (userRole === 'karyawan') {
+                    $("#formLaporanKinerja").attr("action", `/karyawan/laporan_kinerja/update/${subtaskId}`);
+                } else if (userRole === 'admin-sdm') {
+                    $("#formLaporanKinerja").attr("action", `/admin_sdm/laporan_kinerja/update/${subtaskId}`);
+                }
 
                 if ($("#formLaporanKinerja input[name='_method']").length === 0) {
                     $("#formLaporanKinerja").append(`<input type="hidden" name="_method" value="PUT">`);
@@ -484,45 +493,6 @@
                 }
 
                 $("#btnSubmit").text("Update");
-                $("#upload").prop("disabled", false);
-
-                $("#preview-area").html("");
-                $("#detail_upload").html("");
-
-                if (lampiran && lampiran.length > 0) {
-                    lampiran.forEach(item => {
-                        const file = item.lampiran;
-                        const extension = file.split('.').pop().toLowerCase();
-
-                        let previewHTML = '';
-
-                        if (['jpg', 'jpeg', 'png'].includes(extension)) {
-                            previewHTML = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <img src="/uploads/${file}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2">${file}</p>
-                                </div>
-                            `;
-                        } else if (extension === 'pdf') {
-                            previewHTML = `
-                                <div class="col-md-6 mb-3 text-center">
-                                    <iframe src="/uploads/${file}" class="rounded border" width="100%" height="150px"></iframe>
-                                    <p class="small mt-2">${file}</p>
-                                </div>
-                            `;
-                        } else {
-                            previewHTML = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <div class="alert alert-secondary p-2 mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        <i class="fa fa-file me-2"></i>${file}
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                        $("#preview-area").append(previewHTML);
-                    });
-                }
             });
         })
     </script>
@@ -539,121 +509,6 @@
                     $(".btn-submit-project").prop('hidden', true);
                 })
             });
-            $("#upload").change(function() {
-                const files = this.files;
-                const previewArea = $("#preview-area");
-                const detailUpload = $("#detail_upload");
-    
-                previewArea.html('');
-                detailUpload.html('');
-    
-                if (files.length > 0) {
-                    detailUpload.html(`<strong>${files.length} file dipilih:</strong><br>`);
-    
-                    Array.from(files).forEach(file => {
-                        if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} melebihi batas maksimal 5MB`);
-                            return;
-                        }
-    
-                        let fileUrl = URL.createObjectURL(file);
-                        let fileName = file.name;
-                        let ext = fileName.split('.').pop().toLowerCase();
-    
-                        detailUpload.append(`${fileName}<br>`);
-    
-                        let previewItem = '';
-    
-                        if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-                            previewItem = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2">${fileName}</p>
-                                </div>
-                            `;
-                        } else if (ext === 'pdf') {
-                            previewItem = `
-                                <div class="col-md-6 mb-3 text-center">
-                                    <iframe src="${fileUrl}" class="rounded border" width="100%" height="150px"></iframe>
-                                    <p class="small mt-2">${fileName}</p>
-                                </div>
-                            `;
-                        } else {
-                            previewItem = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <div class="alert alert-secondary p-2 mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        <i class="fa fa-file me-2"></i>${fileName}
-                                    </div>
-                                </div>
-                            `;
-                        }
-    
-                        previewArea.append(previewItem);
-                    });
-                }
-            });
         });
-    </script>
-    <script>
-        function previewLampiran(subTaskId, lampiranList) {
-            let htmlContent = '';
-            if (lampiranList.length > 0) {
-                htmlContent += `
-                    <div id="carouselDynamicLampiran" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                `;
-
-                lampiranList.forEach((lampiran, index) => {
-                    const file = lampiran.lampiran;
-                    const extension = file.split('.').pop().toLowerCase();
-                    const isImage = ['jpg', 'jpeg', 'png'].includes(extension);
-                    const isPDF = extension === 'pdf';
-
-                    htmlContent += `<div class="carousel-item ${index === 0 ? 'active' : ''}">`;
-                    if (isImage) {
-                        htmlContent +=
-                            `<img src="/uploads/${file}" class="d-block mx-auto img-fluid" style="max-height: 500px;">`;
-                    } else if (isPDF) {
-                        htmlContent +=
-                            `<iframe src="/uploads/${file}" class="d-block mx-auto" width="100%" height="500px"></iframe>`;
-                    } else {
-                        htmlContent +=
-                            `<div class="text-center text-muted">File tidak bisa dipreview: <a href="/uploads/${file}" target="_blank">Download</a></div>`;
-                    }
-                    htmlContent += `</div>`;
-                });
-
-                htmlContent += `
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselDynamicLampiran" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselDynamicLampiran" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    </div>
-                `;
-            } else {
-                htmlContent = '<p class="text-center text-muted">Tidak ada lampiran yang tersedia</p>';
-            }
-            const modalHTML = `
-                <div class="modal fade" id="dynamicLampiranModal" tabindex="-1" aria-labelledby="lampiranModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Lampiran Sub Task</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="$('#dynamicLampiranModal').remove();"></button>
-                            </div>
-                            <div class="modal-body">
-                                ${htmlContent}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            $('body').append(modalHTML);
-            const lampiranModal = new bootstrap.Modal(document.getElementById('dynamicLampiranModal'));
-            lampiranModal.show();
-        }
     </script>
 @endsection
