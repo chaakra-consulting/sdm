@@ -198,7 +198,7 @@
                             </li>
                         </ul>
                     </li>
-                    <!-- End::slide -->             
+                    <!-- End::slide -->       
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -401,7 +401,7 @@
                         </ul>
                     </li> <!-- End::slide -->
 
-                    {{-- <!-- Start::slide -->
+                    <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
