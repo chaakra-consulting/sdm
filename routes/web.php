@@ -153,7 +153,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('admin_sdm.gaji_bulanan.sync');
 
     Route::get('/admin_sdm/gaji_bulanan/diri', [GajiBulananController::class, 'indexKaryawan'])->name('admin_sdm.gaji_bulanan.index_karyawan');
-    
+
     // Admin SDM : Master Status Pekerjaan
     Route::get('/admin_sdm/status_pekerjaan', [StatusPekerjaanController::class, 'index'])->name('admin_sdm.status_pekerjaan'); // Display all status_pekerjaan
     Route::post('/admin_sdm/status_pekerjaan/store', [StatusPekerjaanController::class, 'store'])->name('admin_sdm.status_pekerjaan.store'); // Store a new role
@@ -202,10 +202,41 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/hari_libur/update/{id}', [HariLiburController::class, 'update'])->name('admin_sdm.hari_libur.update');
     Route::delete('/admin_sdm/hari_libur/delete/{id}', [HariLiburController::class, 'destroy'])->name('admin_sdm.hari_libur.destroy');
 
+    // admin SDM: Project
     Route::get('/admin_sdm/project', [ProjectController::class, 'show'])->name('admin_sdm.project');
     Route::get('/admin_sdm/project/detail/{id}', [ProjectController::class, 'detail'])->name('admin_sdm.detail.project');
-    // Route::post('/admin_sdm/project/store', [UsersProjectController::class, 'store'])->name('admin_sdm.project.store');
-    // Route::put('/admin_sdm/project/update/{id}', [UsersProjectController::class, 'update'])->name('admin_sdm.update.project');
+    Route::post('/admin_sdm/project/store', [UsersProjectController::class, 'store'])->name('admin_sdm.project.store');
+    Route::put('/admin_sdm/project/update/{id}', [UsersProjectController::class, 'update'])->name('admin_sdm.update.project');
+
+    // admin SDM : Task
+    Route::get('/admin_sdm/task/', [TaskController::class, 'index'])->name('admin_sdm.task');
+    Route::post('/admin_sdm/task/store', [TaskController::class, 'store'])->name('admin_sdm.task.store');
+    Route::get('/admin_sdm/task/detail/{id}', [TaskController::class, 'detail'])->name('admin_sdm.detail.task');
+    Route::put('/admin_sdm/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('admin_sdm.update.detail.task');
+    Route::delete('/admin_sdm/task/delete/{id}', [TaskController::class, 'destroy'])->name('admin_sdm.delete.task');
+    Route::get('/admin_sdm/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('admin_sdm.project.tasks');
+
+    // admin SDM : subtask
+    Route::get('/admin_sdm/subtask', [SubTaskController::class, 'show'])->name('admin_sdm.subtask');
+    Route::post('/admin_sdm/subtask/store', [SubTaskController::class, 'store'])->name('admin_sdm.subtask.store');
+    Route::get('/admin_sdm/subtask/detail/{id}', [SubTaskController::class, 'detail'])->name('admin_sdm.subtask.detail');
+    Route::put('/admin_sdm/subtask/detail/kirim/{id}', [SubTaskController::class, 'kirim'])->name('admin_sdm.subtask.detail.kirim');
+    Route::put('/admin_sdm/subtask/detail/batal/{id}', [SubTaskController::class, 'batal'])->name('admin_sdm.subtask.detail.batal');
+    Route::put('/admin_sdm/subtask/detail/update/{id}', [SubTaskController::class, 'updateDetail'])->name('admin_sdm.subtask.update.detail');
+    Route::put('/admin_sdm/subtask/detail/update/lampiran/{id}', [SubTaskController::class, 'updateDetailLampiran'])->name('admin_sdm.subtask.update.detail.lampiran');
+    Route::delete('/admin_sdm/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('lampiran-subtask.delete');
+    Route::put('/admin_sdm/subtask/update/{id}', [SubTaskController::class, 'update'])->name('admin_sdm.subtask.update');
+    Route::delete('/admin_sdm/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('admin_sdm.subtask.delete');
+
+    // admin SDM : laporan Kinerja
+    Route::get('/admin_sdm/laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('admin_sdm.laporan_kinerja');
+    Route::post('/admin_sdm/laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('admin_sdm.laporan_kinerja.store');
+    Route::put('/admin_sdm/laporan_kinerja/update/{id}', [LaporanKinerjaController::class, 'update'])->name('admin_sdm.laporan_kinerja.update');
+    Route::get('/admin_sdm/laporan_kinerja/getDataByDate', [LaporanKinerjaController::class, 'getDataByDate'])->name('admin_sdm.laporan_kinerja.getDataByDate');
+    Route::get('/admin_sdm/laporan_kinerja/detail/{id}/{month?}/{year?}', [LaporanKinerjaController::class, 'detail'])->name('admin_sdm.laporan_kinerja.detail');
+    Route::put('/admin_sdm/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('admin_sdm.laporan_kinerja.kirim');
+    Route::put('/admin_sdm/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('admin_sdm.laporan_kinerja.batal');
+    Route::delete('/admin_sdm/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('admin_sdm.laporan_kinerja.delete');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
@@ -282,8 +313,8 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/karyawan/laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('karyawan.laporan_kinerja');
     Route::post('/karyawan/laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('karyawan.laporan_kinerja.store');
     Route::put('/karyawan/laporan_kinerja/update/{id}', [LaporanKinerjaController::class, 'update'])->name('karyawan.laporan_kinerja.update');
-    Route::get('/karyawan/laporan_kinerja/getDataByDate',[LaporanKinerjaController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
-    Route::get('/karyawan/laporan_kinerja/detail/{id}/{month?}/{year?}',[LaporanKinerjaController::class, 'detail'])->name('karyawan.laporan_kinerja.detail');
+    Route::get('/karyawan/laporan_kinerja/getDataByDate', [LaporanKinerjaController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
+    Route::get('/karyawan/laporan_kinerja/detail/{id}/{month?}/{year?}', [LaporanKinerjaController::class, 'detail'])->name('karyawan.laporan_kinerja.detail');
     Route::put('/karyawan/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('karyawan.laporan_kinerja.kirim');
     Route::put('/karyawan/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('karyawan.laporan_kinerja.batal');
     Route::delete('/karyawan/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('karyawan.laporan_kinerja.delete');
@@ -398,7 +429,6 @@ Route::middleware(['auth', 'role:direktur'])->group(function () {
     // Route::post('/direktur/gaji_bulanan/store', [GajiBulananController::class, 'store'])->name('direktur.gaji_bulanan.store');
     Route::put('/direktur/gaji_bulanan/update/{id}', [GajiBulananController::class, 'update'])->name('direktur.gaji_bulanan.update');
     Route::get('/direktur/gaji_bulanan/sync', [GajiBulananController::class, 'sync'])->name('direktur.gaji_bulanan.sync');
-
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -127,7 +127,7 @@ class TaskController extends Controller
         
         if($request->hasFile('upload')){
             $file = $request->file('upload');
-            $fileName = uniqid() . "_task_" . auth()->user()->name . "_" . time(). "." . $file->getClientOriginalExtension();
+            $fileName = uniqid() . "_task_" . Auth::user()->name . "_" . time(). "." . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $fileName);
             $uploadPath = $fileName;
         }
@@ -157,9 +157,6 @@ class TaskController extends Controller
         ];
         $task = Task::create($data);
 
-        if ($request->user == null) {
-            return redirect()->back()->with('success', 'Task berhasil di tambahkan harap tambahkan anggota');
-        } else {
         if (Auth::check() && Auth::user()->role->slug == 'manager') {
             foreach ($request->user as $user_id) {
                 UsersTask::create([
@@ -172,10 +169,9 @@ class TaskController extends Controller
                 'task_id' => $task->id,
                 'user_id' => Auth::user()->id,
             ]);
-        } 
-        return redirect()->back()->with('success', 'Task berhasil di tambahkan');
-
         }
+        return redirect()->back()->with('success', 'Task berhasil di tambahkan');
+        
     }
     
     public function update(Request $request, $id)
@@ -210,7 +206,7 @@ class TaskController extends Controller
                 }
             }
             $file = $request->file('upload');
-            $filename = uniqid() . '_task_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_task_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $task->upload = $filename;
         }
@@ -339,7 +335,7 @@ class TaskController extends Controller
                 }
             }
             $file = $request->file('upload');
-            $filename = uniqid() . '_task_' . auth()->user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '_task_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $task->upload = $filename;
         }

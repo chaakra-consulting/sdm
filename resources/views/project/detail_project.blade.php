@@ -143,24 +143,24 @@
                     <div class="card-body">
                         <div class="ps-0">
                             <div class="main-profile-overview">
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between mb-3">
                                     <div>
                                         <h5 class="main-profile-name" style="text-transform: capitalize;">
                                             {{ $project->nama_project }}</h5>
                                         @if ($project->status == 'selesai')
                                             @if ($project->tgl_selesai && \Carbon\Carbon::parse($project->tgl_selesai)->gt(\Carbon\Carbon::parse($project->deadline)))
-                                                <span class="badge bg-warning fs-6 px-2 py-1">Selesai (Telat)</span>
+                                                <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill">Selesai (Telat)</span>
                                             @else
-                                                <span class="badge bg-success fs-6 px-2 py-1">Selesai</span>
+                                                <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Selesai</span>
                                             @endif
                                         @else
                                             @if ($project->deadline && \Carbon\Carbon::parse($project->deadline)->isPast())
-                                                <span class="badge bg-danger fs-6 px-2 py-1">Telat</span>
+                                                <span class="badge bg-danger fs-6 px-2 py-1 rounded-pill">Telat</span>
                                             @else
                                                 @if ($project->status == 'proses')
-                                                    <span class="badge bg-info fs-6 px-2 py-1">Proses</span>
+                                                    <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Proses</span>
                                                 @elseif ($project->status == 'belum')
-                                                    <span class="badge bg-secondary fs-6 px-2 py-1">Belum</span>
+                                                    <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum</span>
                                                 @endif
                                             @endif
                                         @endif
@@ -295,6 +295,10 @@
                         <a href="/karyawan/project" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Kembali
                         </a>
+                    @elseif ($userRole == 'admin-sdm')
+                        <a href="/admin_sdm/project" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
                     @endif
                 </div>
             </div>
@@ -328,7 +332,7 @@
                                 <div class="row">
                                     <div class="col-md-6" id="progres-bar"></div>                     
                                     <div class="col-md-6">
-                                        <dl class="row mb-0">
+                                        <dl class="row mb-0 justified-content-between">
                                             <dt class="col-md-4 p-0">Nama Entitas</dt>
                                             <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
                                             <dt class="col-md-4 p-0">Capaian Target</dt>
@@ -336,17 +340,17 @@
                                             <dt class="col-md-4 p-0">Target Task</dt>
                                             <dd class="col-md-8 p-0">:
                                                 {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
-                                            <div class="form-group p-0 ">
+                                            {{-- <div class="form-group p-0 ">
                                                 <label for="nama_project" class="form-label"><strong>Realisasi -
                                                         {{ $project->nama_project }}</strong></label>
-                                                {{-- <div class="input-group mb-3">
+                                                <div class="input-group mb-3">
                                                     <input type="text" class="form-control" placeholder=""
                                                         aria-label="Example text with button addon"
                                                         aria-describedby="button-addon1">
                                                     <button class="btn btn-success" type="button"
                                                         id="button-addon1">Verifikasi</button>
-                                                </div> --}}
-                                            </div>
+                                                </div>
+                                            </div> --}}
                                         </dl>
                                     </div>
                                 </div>
@@ -382,7 +386,8 @@
                                                     <td width="45%">
                                                         <strong>{{ $task->nama_task }}</strong>
                                                     </td>
-                                                    <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
+                                                    <td>
+                                                        {{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
                                                     </td>
                                                     <td class="text-center">
                                                         @if ($task->status == 'selesai')
@@ -444,7 +449,7 @@
                                                     </td>
                                                 </tbody>
                                                 @endforeach
-                                                @elseif (Auth::check() && (Auth::user()->role->slug = 'karyawan'))
+                                                @elseif (Auth::check() && (Auth::user()->role->slug == 'karyawan') || (Auth::user()->role->slug == 'admin-sdm'))
                                                 <thead>
                                                     <tr>
                                                         <th>No</th>
@@ -482,7 +487,11 @@
                                                             @endif
                                                         </td>
                                                         <td class="text-center">
-                                                            <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
+                                                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    <a href="{{ route('admin_sdm.detail.task', $item->task?->id) }}"
+                                                            @endif
                                                                 class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                                 data-bs-custom-class="tooltip-secondary"
                                                                 data-bs-placement="top" title="Detail Task!">
@@ -490,10 +499,9 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                </tbody>
-                                                    
+                                                </tbody>     
                                                 @endforeach
-                                                @endif
+                                            @endif
                                         </table>
                                     </div>
                                     <div class="mg-lg-b-30"></div>

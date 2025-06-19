@@ -197,8 +197,8 @@
                                     Bulanan</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide -->
-                                 
+                    </li>
+                    <!-- End::slide -->       
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -392,13 +392,11 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/admin_sdm/gaji"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji') ? 'active' : '' }}">Data
-                                    Gaji</a>
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji') ? 'active' : '' }}">Data Gaji</a>
                             </li>
                             <li class="slide">
                                 <a href="/admin_sdm/gaji_bulanan"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan') ? 'active' : '' }}">Realisasi Gaji
-                                    Bulanan</a>
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan') ? 'active' : '' }}">Realisasi Gaji Bulanan</a>
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
@@ -422,11 +420,11 @@
                                     Gaji Karyawan</a>
                             </li>
                         </ul>
-                    </li> <!-- End::slide -->
-                                    
+                    </li>
+                    <!-- End::slide --> --}}
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            class="side-menu__item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
@@ -438,25 +436,25 @@
                             <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
                         <ul class="slide-menu child1">
+                            <li class="slide side-menu__label1">
+                                <a href="javascript:void(0);">Management Project</a>
+                            </li>
                             <li class="slide">
-                                <a href=""
-                                    class="side-menu__item ">
-                                    List Project
-                                </a>
-                                <a href=""
-                                    class="side-menu__item ">
-                                    List Task
-                                </a>
-                                <a href=""
-                                    class="side-menu__item">
-                                    List Sub Task
-                                </a>
+                                <a href="{{ route('admin_sdm.project') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['admin_sdm.project', 'admin_sdm.detail.project']) ? 'active' : '' }}">
+                                    List Project</a>
+                                <a href="{{ route('admin_sdm.task') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['admin_sdm.task', 'admin_sdm.detail.task']) ? 'active' : '' }}">
+                                    List Task</a>
+                                <a href="{{ route('admin_sdm.subtask') }}" 
+                                    class="side-menu__item {{ request()->routeIs(['admin_sdm.subtask', 'admin_sdm.subtask.detail']) ? 'active' : '' }}">
+                                    List Sub Task</a>
                             </li>
                         </ul>
                     </li>
                     <li class="slide">
-                        <a href=""
-                            class="side-menu__item ">
+                        <a href="{{ route('admin_sdm.laporan_kinerja') }}"
+                            class="side-menu__item {{ request()->routeIs(['admin_sdm.laporan_kinerja', 'admin_sdm.list.laporan_kinerja']) ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
                                 <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
                             </svg>

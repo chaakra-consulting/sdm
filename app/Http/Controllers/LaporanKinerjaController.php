@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\DetailSubTask;
 use App\Models\LampiranSubTask;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class LaporanKinerjaController extends Controller
@@ -19,7 +20,7 @@ class LaporanKinerjaController extends Controller
     {
         $title = 'Laporan Kinerja';
         Carbon::setLocale('id');
-        $subtasks = SubTask::where('user_id', auth()->user()->id)
+        $subtasks = SubTask::where('user_id', Auth::user()->id)
             ->with([
                 'task',
                 'task.tipe_task',
@@ -27,7 +28,7 @@ class LaporanKinerjaController extends Controller
                 'detail_sub_task'])
             ->get();
         $today = Carbon::now();
-        $getDataUser = User::where('id', auth()->user()->id)->first();        
+        $getDataUser = User::where('id', Auth::user()->id)->first();        
         $selectedMonth = $request->input('month', $today->month);
         $selectedYear = $request->input('year', $today->year);
 
@@ -63,7 +64,7 @@ class LaporanKinerjaController extends Controller
             $endDate->addMonth();
         }
         $dates = collect();
-        $detailSubtasks = DetailSubTask::where('user_id', auth()->id())
+        $detailSubtasks = DetailSubTask::where('user_id', Auth::user()->id)
         ->whereBetween('tanggal', [$startDate, $endDate])
         ->with([
             'subtask.task.tipe_task',
@@ -137,7 +138,7 @@ class LaporanKinerjaController extends Controller
     {
         $title = 'Detail Laporan Kinerja';
         Carbon::setLocale('id');
-        $getDataUser = User::where('id', auth()->user()->id)->first();
+        $getDataUser = User::where('id', Auth::user()->id)->first();
         $selectedMonth = $request->has('month') ? (int)$request->month : (int)date('m');
         $selectedYear = $request->has('year') ? (int)$request->year : (int)date('Y');
         $selectedMonth = (int)$selectedMonth;
@@ -229,13 +230,14 @@ class LaporanKinerjaController extends Controller
                 'subtask.task.project_perusahaan.perusahaan'
             ])
             ->whereDate('tanggal', $tanggal)
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', Auth::user()->id)
             ->get();
             
         $data = $detailSubtasks->map(function ($detailSubtask) {
             $subtask = $detailSubtask->subtask;
             return [
                 'id' => $detailSubtask->id,
+                'sub_task_id' => $subtask->id ?? '-',
                 'nama_subtask' => $subtask->nama_subtask ?? '-',
                 'nama_task' => $subtask->task->nama_task ?? '-',
                 'nama_tipe' => $subtask->task->tipe_task->nama_tipe ?? '-',

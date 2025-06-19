@@ -56,11 +56,19 @@
                     <span class="text-muted">{{ $getDataUser->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '-' }}</span>
                 </div>
                 <div class="d-flex justify-content-end mb-3">
-                    <form action="{{ route('karyawan.laporan_kinerja.detail', [
-                        'id' => auth()->user()->id,
-                        'month' => $selectedMonth,
-                        'year' => $selectedYear
-                    ]) }}" method="GET" class="d-flex gap-2">
+                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                        <form action="{{ route('karyawan.laporan_kinerja.detail', [
+                            'id' => auth()->user()->id,
+                            'month' => $selectedMonth,
+                            'year' => $selectedYear
+                        ]) }}" method="GET" class="d-flex gap-2">
+                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                        <form action="{{ route('admin_sdm.laporan_kinerja.detail', [
+                            'id' => $getDataUser->id,
+                            'month' => $selectedMonth,
+                            'year' => $selectedYear
+                        ]) }}" method="GET" class="d-flex gap-2">
+                    @endif
                         <select name="month" class="form-select form-select-sm" style="width: 120px;">
                             @foreach($months as $key => $month)
                                 <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>
@@ -80,12 +88,22 @@
             <div class="card-body">
                 <div class="mb-4 d-flex justify-content-between align-items-center">
                     <span class="text-muted">Periode: {{ $startDate->translatedFormat('d F Y') }} s/d {{ $endDate->translatedFormat('d F Y') }}</span>
-                    <a href="{{ route('karyawan.laporan_kinerja', [
-                        'month' => $selectedMonth,
-                        'year' => $selectedYear
-                    ]) }}" class="btn btn-outline-secondary">
-                        Kembali
-                    </a>
+                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                        <a href="{{ route('karyawan.laporan_kinerja', [
+                            'month' => $selectedMonth,
+                            'year' => $selectedYear
+                        ]) }}" class="btn btn-outline-secondary">
+                            Kembali
+                        </a>
+                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                        <a href="{{ route('admin_sdm.laporan_kinerja', [
+                            'id' => $getDataUser->id,
+                            'month' => $selectedMonth,
+                            'year' => $selectedYear
+                        ]) }}" class="btn btn-outline-secondary">
+                            Kembali
+                        </a>
+                    @endif
                 </div>
                 <div class="table-responsive">
                     <table id="datatable-basic" class="table table-bordered text-nowrap w-100">

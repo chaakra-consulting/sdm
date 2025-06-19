@@ -89,9 +89,9 @@
                                             {{ $subtask->nama_subtask ?? '-' }}
                                         </h5>
                                         @if($subtask->detail_sub_task->isEmpty())
-                                            <span class="badge bg-info fs-6 px-2 py-1">Belum ada laporan kinerja</span>
+                                            <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Belum ada laporan kinerja</span>
                                         @elseif($subtask->status === 'revise')
-                                            <span class="badge bg-warning fs-6 px-2 py-1"
+                                            <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill"
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" 
@@ -100,9 +100,9 @@
                                                 <i class="fas fa-info-circle ms-1"></i>
                                             </span>
                                         @elseif($subtask->status === 'approve')
-                                            <span class="badge bg-success fs-6 px-2 py-1">Approve</span>
+                                            <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Approve</span>
                                         @else
-                                            <span class="badge bg-secondary fs-6 px-2 py-1">Belum Dicek</span>
+                                            <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum Dicek</span>
                                         @endif
                                     </div>
                                 </div>
@@ -161,13 +161,13 @@
                                         </div>
                                         <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
                                         <input type="hidden" name="user_id" value="{{ $subtask->user_id }}">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
                                             @if ($subtask != null)
-                                                <button type="button" class="btn btn-danger btn-batal-edit"
+                                                <button type="button" class="btn btn-danger btn-sm btn-batal-edit"
                                                     hidden>Batal</button>
-                                                <button type="button" class="btn btn-warning btn-edit-task">Edit</button>
+                                                <button type="button" class="btn btn-warning btn-sm btn-edit-task">Edit</button>
                                             @endif
-                                            <button type="submit" class="btn btn-primary btn-submit-task"
+                                            <button type="submit" class="btn btn-primary btn-sm btn-submit-task"
                                                 {{ $subtask != null ? 'hidden' : '' }}>{{ $subtask != null ? 'Update' : 'Simpan' }}
                                             </button>
                                         @endif
@@ -195,6 +195,14 @@
                         </a>
                         @if ($subtask->task != null)
                             <a href="/karyawan/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
+                                Task</a>
+                        @endif
+                    @elseif ($userRole == 'admin-sdm')
+                        <a href="/admin_sdm/subtask" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                        @if ($subtask->task != null)
+                            <a href="/admin_sdm/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
                                 Task</a>
                         @endif
                     @endif
@@ -226,26 +234,38 @@
                                         <div class="d-flex gap-2">
                                             <form action="{{ route('manajer.approve.subtask', $subtaskManager->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="btn btn-outline-primary mb-3">Approve</button>
+                                                <button type="submit" class="btn btn-outline-primary mb-1">Approve</button>
                                             </form>
-                                            <button class="btn btn-outline-warning mb-3" data-bs-toggle="modal" data-bs-target="#revisiModal">Revise</button>                                        </div>
+                                            <button class="btn btn-outline-warning mb-1" data-bs-toggle="modal" data-bs-target="#revisiModal">Revise</button>                                        </div>
                                     @endif
-                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                        <button type="button" class="btn btn-outline-primary tambahLaporanKinerja mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
+                                        <button type="button" class="btn btn-outline-primary btn-sm tambahLaporanKinerja mb-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                             <i class="bi bi-plus"></i> Update Pekerjaan
                                         </button>
-                                        <form action="{{ route('karyawan.subtask.detail.kirim', ['id' => $subtask->id]) }}" method="POST" id="formKirim">
+                                        <form 
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                            action="{{ route('karyawan.subtask.detail.kirim', ['id' => $subtask->id]) }}"
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                action="{{ route('admin_sdm.subtask.detail.kirim', ['id' => $subtask->id]) }}"                                           
+                                        @endif
+                                        method="POST" id="formKirim">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="btn btn-outline-warning">
+                                            <button type="submit" class="btn btn-outline-warning btn-sm">
                                                 <i class="bi bi-send"></i> Kirim
                                             </button>
                                         </form>
-                                        <form action="{{ route('karyawan.subtask.detail.batal', ['id' => $subtask->id]) }}" method="POST" id="formBatal">
+                                        <form 
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                            action="{{ route('karyawan.subtask.detail.batal', ['id' => $subtask->id]) }}" 
+                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                action="{{ route('admin_sdm.subtask.detail.batal', ['id' => $subtask->id]) }}"                                        
+                                        @endif
+                                        method="POST" id="formBatal">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="tanggal" id="tanggal_terpilih_batal">
-                                            <button type="submit" class="btn btn-outline-danger">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                                 <i class="bi bi-x-circle"></i> Batal
                                             </button>
                                         </form>
@@ -253,7 +273,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <table id="datatable-basic" class="table table-bordered w-100">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
@@ -291,7 +311,13 @@
                                                                     data-bs-placement="top" title="Edit Update Pekerjaan!"
                                                                     class="bi bi-pencil-square"></i>
                                                             </a>
-                                                            <form action="{{ route('karyawan.laporan_kinerja.delete', $item->id) }}}" method="POST" class="d-inline">
+                                                            <form 
+                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                                action="{{ route('karyawan.laporan_kinerja.delete', $item->id) }}" 
+                                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                                                    action="{{ route('admin_sdm.laporan_kinerja.delete', $item->id) }}"
+                                                            @endif
+                                                            method="POST" class="d-inline">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm delete"
@@ -339,7 +365,13 @@
                                 </div>      
                             </div>
                             <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">
-                                <form action="{{ route('karyawan.subtask.update.detail.lampiran', $subtask->id) }}" method="POST" enctype="multipart/form-data">
+                                <form 
+                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                    action="{{ route('karyawan.subtask.update.detail.lampiran', $subtask->id) }}" 
+                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
+                                        action="{{ route('admin_sdm.subtask.update.detail.lampiran', $subtask->id) }}"                                
+                                @endif
+                                method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('put')
                                     <div class="form-group">
@@ -351,7 +383,7 @@
                                         @foreach($subtask->lampiran as $lampiran)
                                         <div class="col-md-3 mb-3 lampiran-item">
                                             <div class="card shadow-sm position-relative">
-                                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
+                                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                                     <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-lampiran" 
                                                             data-id="{{ $lampiran->id }}" 
                                                             style="z-index: 2">
@@ -372,8 +404,8 @@
                                         </div>
                                         @endforeach
                                     </div>
-                                    @if (Auth::check() && (Auth::user()->role->slug == 'karyawan'))
-                                        <button type="submit" class="btn btn-primary btn-submit-task">
+                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
+                                        <button type="submit" class="btn btn-primary btn-sm btn-submit-task">
                                             Update
                                         </button>
                                     @endif
@@ -464,6 +496,7 @@
     </style>
     <script>
         $(document).ready(function() {
+            const userRole = "{{ auth()->user()->role->slug }}";
             let flatpickrInstance = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -500,7 +533,11 @@
                 $("#keterangan").val('');
 
                 $("#btnSubmit").text("Simpan").show();
-                $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                if (userRole === 'karyawan'){
+                    $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
+                } else if (userRole === 'admin-sdm') {
+                    $("#formLaporanKinerja").attr("action", "/admin_sdm/laporan_kinerja/store");
+                }
                 $("#formLaporanKinerja input[name='_method']").remove();
 
                 $("input[name='durasi_jam']").val("");
@@ -515,6 +552,12 @@
 
                 let jam = Math.floor(durasi / 60);
                 let menit = durasi % 60;
+                let actionUrl = '';
+                if (userRole === 'karyawan'){
+                    actionUrl = `/karyawan/laporan_kinerja/update/${id}`;
+                } else if (userRole === 'admin-sdm') {
+                    actionUrl = `/admin_sdm/laporan_kinerja/update/${id}`;
+                }
 
                 $(".modal-title").text('Edit Update Pekerjaan');
                 
@@ -527,7 +570,7 @@
                 $("input[name='durasi_menit']").val(menit);
                 $("#keterangan").val(keterangan);
 
-                $("#formLaporanKinerja").attr("action", `/karyawan/laporan_kinerja/update/${id}`);
+                $("#formLaporanKinerja").attr("action", actionUrl);
 
                 if ($("#formLaporanKinerja input[name='_method']").length === 0) {
                     $("#formLaporanKinerja").append(`<input type="hidden" name="_method" value="PUT">`);
@@ -637,23 +680,43 @@
                 
                 const lampiranId = this.dataset.id
                 const card = this.closest('.col-md-3')
-                
-                if(confirm('Yakin ingin menghapus lampiran ini?')) {
-                    fetch(`/karyawan/subtask/detail/lampiran/${lampiranId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        }
-                    })
-                    .then(response => {
-                        if(response.ok) {
-                            card.remove()
-                        } else {
-                            alert('Gagal menghapus lampiran')
-                        }
-                    })
+                const userRole = '{{ auth()->user()->role->slug }}'
+                let actionUrl = '';
+                if (userRole === 'karyawan'){
+                    actionUrl = `/karyawan/subtask/detail/lampiran/${lampiranId}`
+                } else if (userRole === 'admin-sdm') {
+                    actionUrl = `/admin_sdm/subtask/detail/lampiran/${lampiranId}`
                 }
+                Swal.fire({
+                    title: "Konfirmasi Hapus Lampiran!",
+                    text: "Apakah Kamu yakin ingin menghapus lampiran ini ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#cf0202",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = $("<form>", {
+                            action: actionUrl,
+                            method: "POST"
+                        }).append(
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_token",
+                                value: "{{ csrf_token() }}"
+                            }),
+                            $("<input>", {
+                                type: "hidden",
+                                name: "_method",
+                                value: "DELETE"
+                            })
+                        );
+                        $("body").append(form);
+                        form.submit();
+                    }
+                })
             })
         })
     </script>
