@@ -92,12 +92,20 @@ class AbsensiHarianController extends Controller
             'count'    => $widget ? $terlambatCount : 0,
         ]);
 
+        $countRealisasi = 0;
+
         foreach($keteranganAbsensis as $keterangan){
             $widgetCollection->push((object)[
                 'nama' => $keterangan->nama ?? '-',
                 'count'    => $widget ? $widget->where('keterangan_id', $keterangan->id)->count() : 0,
             ]);
+            $countRealisasi += (in_array($keterangan->slug,['wfo','wfh','lembur','ijin-direktur'])) ? $widget->where('keterangan_id', $keterangan->id)->count() : 0;
         }
+
+        $widgetCollection->push((object)[
+            'nama' => 'Realisasi Masuk Kerja',
+            'count'    => $countRealisasi ? $countRealisasi : 0,
+        ]);
 
         $absensiCollection = collect();
         for ($date = $startDateRange->copy(); $date->lte($endDateRange); $date->addDay()) {

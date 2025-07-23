@@ -259,7 +259,7 @@
         </div>        
         <div class="container">
             <div class="row">             
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="card bg-success-gradient text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
@@ -271,8 +271,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="card bg-warning-gradient text-fixed-white">
+                        <div class="card-body text-fixed-white">
+                            <div class="row">
+                                    <div class="mt-0 text-center">
+                                        <span class="text-fixed-white">{{ $widget[9]->nama }}</span>
+                                        <h3 class="text-fixed-white mb-0">{{ $widget[9]->count }}</h3>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-danger-gradient text-fixed-white">
                         <div class="card-body text-fixed-white">
                             <div class="row">
                                     <div class="mt-0 text-center">
