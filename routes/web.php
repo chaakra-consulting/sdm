@@ -116,7 +116,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/users/{id}/updateSubJabatan', [UserController::class, 'updateSubJabatan'])->name('admin.users.updateSubJabatan');
 
     // Aadmin SDM : Kepegawaian
-    Route::get('/admin_sdm/kepegawaian', [KepegawaianController::class, 'index']);
+    Route::get('/admin_sdm/kepegawaian', [KepegawaianController::class, 'index'])->name('admin_sdm.kepegawaian');
     Route::get('/admin_sdm/detail_kepegawaian/{id}', [KepegawaianController::class, 'show']);
 
     Route::post('/admin_sdm/kepegawaian/store', [KepegawaianController::class, 'store']);
@@ -166,6 +166,9 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/datadiri/update/{id}', [DatadiriController::class, 'update'])->name('admin_sdm.datadiri.update');
     Route::post('/admin_sdm/datadiri/pendidikan', [DataDiriController::class, 'pendidikanstore'])->name('admin_sdm.pendidikan.store');
     Route::put('/admin_sdm/datadiri/pendidikan/{id}', [DatadiriController::class, 'pendidikanupdate'])->name('admin_sdm.pendidikan.update');
+
+    Route::get('/admin_sdm/datadiri/sdm', [DatadiriController::class, 'indexSDM'])->name('admin_sdm.datadiri.index_sdm');
+    Route::post('/admin_sdm/datadiri/store-sdm', [DataDiriController::class, 'storeFromSDM'])->name('admin_sdm.datadiri.store_sdm');
 
     // admin SDM : Pengalaman Kerja
     Route::get('/admin_sdm/pengalaman_kerja/', [PengalamanKerjaController::class, 'index'])->name('admin_sdm.pengalaman_kerja');

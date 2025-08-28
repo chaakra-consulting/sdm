@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\DataKesehatan;
 use App\Models\DataPelatihan;
 use App\Models\PendidikanUser;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -112,6 +113,117 @@ class DatadiriController extends Controller
             return redirect()->route('manajer.datadiri')->with('success', 'Data diri berhasil ditambahkan!');
         }
     }
+    
+    public function indexSDM()
+    {
+        $title = 'Data Diri';
+
+        $datadiri = $pendidikan = $kesehatan = $kepegawaian = null;
+    
+        return view('admin_sdm.form-datadiri', compact('datadiri', 'pendidikan', 'kesehatan', 'title', 'kepegawaian'));
+    }    
+
+    public function storeFromSDM(Request $request)
+    {
+        // Validasi input
+        // dd('test');
+        $request->validate([
+            'nik' => 'required|numeric|digits:16|unique:tb_datadiris,nik',
+            'nama_lengkap' => 'required|string|max:255',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'alamat_ktp' => 'required|string|max:255',
+            'email_nonchaakra' => 'required',
+            'alamat_domisili' => 'nullable|string|max:255',
+            'agama' => 'required|string|max:50',
+            'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+            'no_hp' => 'required|numeric',
+            'hubungan_emergency' => 'nullable|string|max:255',
+            'nama_emergency' => 'nullable|string|max:255',
+            'no_emergency' => ['required', 'numeric', Rule::notIn([$request->no_hp])],
+            'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            'nama_sekolah' => 'required|string|max:255',
+            'jurusan_sekolah' => 'required|string|max:255',
+            'alamat_sekolah' => 'required|string',
+            'tahun_mulai' => 'required|numeric|digits:4',
+            'tahun_lulus' => 'required|numeric|digits:4',
+        ], [
+            'no_emergency.not_in' => 'Nomor HP dan Nomor Emergency tidak boleh sama!',
+        ]);
+     
+        $user = User::create([
+            'name' => $request->nama_lengkap,
+            'email' => Carbon::now()->format('YmdHis') . '@chaakraconsulting.com',
+            'password' => bcrypt('chaakra123'),
+            'role_id' => 3,
+        ]);
+
+        // Simpan foto jika ada
+        $fotoPath = null;
+        $fotoPath2 = null;
+
+        if ($request->hasFile('foto_user')) {
+            $file = $request->file('foto_user');
+            $filename = uniqid() . '_user_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $fotoPath = $filename;
+        }
+
+        if ($request->hasFile('foto_ktp')) {
+            $file = $request->file('foto_ktp');
+            $filename = uniqid() . '_ktp_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $fotoPath2 = $filename;
+        }
+
+        // Validasi jika kedua foto diunggah dan hash-nya sama
+        if ($fotoPath && $fotoPath2) {
+            $fotoUserHash = md5_file(public_path('uploads/' . $fotoPath));
+            $fotoKtpHash = md5_file(public_path('uploads/' . $fotoPath2));
+
+            if ($fotoUserHash == $fotoKtpHash) {
+                return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
+            }
+        }
+
+        $data = [
+            'nik' => $request->nik,
+            'nama_lengkap' => $request->nama_lengkap,
+            'user_id' => $user->id,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'alamat_ktp' => $request->alamat_ktp,
+            'email_nonchaakra' => $request->email_nonchaakra,
+            'alamat_domisili' => $request->alamat_domisili,
+            'agama' => $request->agama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'no_hp' => $request->no_hp,
+            'hubungan_emergency' => $request->hubungan_emergency,
+            'nama_emergency' => $request->nama_emergency,
+            'no_emergency' => $request->no_emergency,
+            'foto_user' => $fotoPath,
+            'foto_ktp' => $fotoPath2,
+            'status_pernikahan' => $request->status_pernikahan
+        ];
+
+        DatadiriUser::create($data);
+
+        PendidikanUser::create([
+            'user_id' => $user->id,
+            'nama_sekolah' => $request->nama_sekolah,
+            'jurusan_sekolah' => $request->jurusan_sekolah,
+            'alamat_sekolah' => $request->alamat_sekolah,
+            'tahun_mulai' => $request->tahun_mulai,
+            'tahun_lulus' => $request->tahun_lulus,
+        ]);
+
+        if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
+            return redirect()->route('admin_sdm.kepegawaian')->with('success', 'Data diri berhasil ditambahkan!');
+        }
+    }
+
     public function update(Request $request, $id)
     {
         // Validasi input
