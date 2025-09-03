@@ -32,12 +32,12 @@
                                 <label for="nik" class="form-label">NIK</label>
                                 <input type="text" class="form-control" id="nik" name="nik"
                                      maxlength="16" minlength="16"
-                                    placeholder="Masukkan NIK" required>
+                                    placeholder="Masukkan NIK">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
-                                     placeholder="Masukkan Nama Lengkap" required>
+                                     placeholder="Masukkan Nama Lengkap">
                             </div>
                             {{-- <div class="col-md-6 mb-3">
                                 <label for="nip" class="form-label">NIP</label>
@@ -46,16 +46,16 @@
                             <div class="col-md-6 mb-3">
                                 <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
                                 <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir"
-                                    placeholder="Masukkan Tempat Lahir" required>
+                                    placeholder="Masukkan Tempat Lahir">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
                                 <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir"
-                                    placeholder="Pilih Tanggal Lahir" required>
+                                    placeholder="Pilih Tanggal Lahir">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="alamat_ktp" class="form-label">Alamat KTP</label>
-                                <textarea class="form-control" id="alamat_ktp" name="alamat_ktp" placeholder="Masukkan Alamat KTP" required></textarea>
+                                <textarea class="form-control" id="alamat_ktp" name="alamat_ktp" placeholder="Masukkan Alamat KTP"></textarea>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="alamat_domisili" class="form-label">Alamat Domisili</label>
@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="agama" class="form-label">Agama</label>
-                                <select class="form-select" id="agama" name="agama" required>
+                                <select class="form-select" id="agama" name="agama">
                                     <option value="">Pilih Agama</option>
                                     <option value="Islam">Islam
                                     </option>
@@ -85,7 +85,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                                <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
+                                <select class="form-select" id="jenis_kelamin" name="jenis_kelamin">
                                     <option value="">Pilih Jenis Kelamin</option>
                                     <option value="Laki-laki">Laki-laki
                                     </option>
@@ -96,12 +96,12 @@
                             <div class="col-md-6 mb-3">
                                 <label for="no_hp" class="form-label">No HP</label>
                                 <input type="text" class="form-control" id="no_hp" name="no_hp"
-                                    placeholder="Masukkan Nomor HP" required>
+                                    placeholder="Masukkan Nomor HP">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="hubungan_emergency" class="form-label">Hubungan Emergency</label>
                                 <select class="form-select" id="hubungan_emergency" name="hubungan_emergency"
-                                    required>
+                                >
                                     <option value="">Pilih Hubungan Emergency</option>
                                     <option value="Bapak">
                                         Bapak
@@ -126,17 +126,17 @@
                             <div class="col-md-6 mb-3">
                                 <label for="nama_emergency" class="form-label">Nama Emergency</label>
                                 <input type="text" class="form-control" id="nama_emergency" name="nama_emergency"
-                                    placeholder="Masukkan Nomor HP" required>
+                                    placeholder="Masukkan Nomor HP">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="no_emergency" class="form-label">No HP Emergency</label>
                                 <input type="text" class="form-control" id="no_emergency" name="no_emergency"
-                                    placeholder="Masukkan Nomor HP" required>
+                                    placeholder="Masukkan Nomor HP">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="email_nonchaakra" class="form-label">Email Non Chaakra</label>
                                 <input type="email" class="form-control" id="email_nonchaakra"
-                                    name="email_nonchaakra" placeholder="Masukkan Email Non Chaakra" required>
+                                    name="email_nonchaakra" placeholder="Masukkan Email Non Chaakra">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="status_pernikahan" class="form-label">Status Pernikahan</label>
@@ -172,30 +172,30 @@
                                 <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
                                 <input type="text" class="form-control" id="nama_sekolah" name="nama_sekolah"
                                     placeholder="Masukkan Nama Sekolah"
-                                    required>
+                                >
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="jurusan_sekolah" class="form-label">Jurusan Sekolah</label>
                                 <input type="text" class="form-control" id="jurusan_sekolah"
                                     name="jurusan_sekolah"
-                                    placeholder="Masukkan Jurusan Sekolah" required>
+                                    placeholder="Masukkan Jurusan Sekolah">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="alamat_sekolah" class="form-label">Alamat Sekolah</label>
                                 <textarea class="form-control" id="alamat_sekolah" name="alamat_sekolah" placeholder="Masukkan Alamat Sekolah"
-                                    required></textarea>
+                                ></textarea>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tahun_mulai" class="form-label">Tahun Masuk</label>
                                 <input type="number" class="form-control" id="tahun_mulai" name="tahun_mulai"
                                     min="1900" max="2099"
-                                    step="1" maxlength="4" required>
+                                    step="1" maxlength="4">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tahun_lulus" class="form-label">Tahun Lulus</label>
                                 <input type="number" class="form-control" id="tahun_lulus" name="tahun_lulus"
                                      min="1900" max="2099"
-                                    step="1" maxlength="4" required>
+                                    step="1" maxlength="4">
                             </div>
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary">Kirim</button>
