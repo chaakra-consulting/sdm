@@ -112,7 +112,7 @@ class GajiBulananController extends Controller
         $pegawais = DatadiriUser::whereHas('kepegawaian', function ($query) {
             $query->where('is_active', 1);
         })->whereHas('kepegawaian.statusPekerjaan', function ($query) {
-            $query->where('slug', 'freelance');
+            $query->whereIn('slug', ['freelance','magang','surveyor']);
         })->get(); 
         
         $data = [
