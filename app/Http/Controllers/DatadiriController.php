@@ -227,6 +227,7 @@ class DatadiriController extends Controller
     public function update(Request $request, $id)
     {
         // Validasi input
+        // dd($request->hasFile('foto_ktp'));
         $request->validate([
             'nik' => ['required', 'numeric', 'digits:16', Rule::unique('tb_datadiris', 'nik')->ignore($request->id),],
             'nama_lengkap' => 'required|string|max:255',
@@ -241,8 +242,8 @@ class DatadiriController extends Controller
             'hubungan_emergency' => 'nullable|string|max:255',
             'nama_emergency' => 'nullable|string|max:255',
             'no_emergency' => ['required', 'numeric', Rule::notIn([$request->no_hp])],
-            'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto_user' => 'nullable|image|max:2048',
+            'foto_ktp' => 'nullable|image|max:2048',
         ], [
             'no_emergency.not_in' => 'Nomor HP dan Nomor Emergency tidak boleh sama!',
         ]);
@@ -304,27 +305,30 @@ class DatadiriController extends Controller
             $datadiri->foto_ktp = $filename;
         }
 
-        // dd($datadiri);
-        if ($datadiri->foto_user && $datadiri->foto_ktp) {
-            $fotoUserHash = md5_file(public_path('uploads/' . $datadiri->foto_user));
-            $fotoKtpHash = md5_file(public_path('uploads/' . $datadiri->foto_ktp));
-            // dd($fotoUserHash, $fotoKtpHash);
+        // if ($datadiri->foto_user && $datadiri->foto_ktp) {
+        //     $fotoUserHash = md5_file(public_path('uploads/' . $datadiri->foto_user));
+        //     $fotoKtpHash = md5_file(public_path('uploads/' . $datadiri->foto_ktp));
+        //     // dd($fotoUserHash, $fotoKtpHash);
 
-            if ($fotoUserHash == $fotoKtpHash) {
-                return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
-            }
+        //     if ($fotoUserHash == $fotoKtpHash) {
+        //         return redirect()->back()->with('error', 'Foto KTP dan Foto User tidak boleh sama!');
+        //     }
 
-        }
+        // }
 
         // Simpan perubahan ke database
         $datadiri->update();
 
-        if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
-            return redirect()->route('admin_sdm.datadiri')->with('success', 'Data diri berhasil di Update!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
-            return redirect()->route('karyawan.datadiri')->with('success', 'Data diri berhasil di Update!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
-            return redirect()->route('manajer.datadiri')->with('success', 'Data diri berhasil di Update!');
+        if($request->jenis_page == 'page_detail_kepegawaian'){
+            return redirect()->back()->with('success', 'Data diri berhasil di Update!');
+        }else{    
+            if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
+                return redirect()->route('admin_sdm.datadiri')->with('success', 'Data diri berhasil di Update!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
+                return redirect()->route('karyawan.datadiri')->with('success', 'Data diri berhasil di Update!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
+                return redirect()->route('manajer.datadiri')->with('success', 'Data diri berhasil di Update!');
+            }
         }
     }
 
@@ -341,7 +345,7 @@ class DatadiriController extends Controller
 
         // Simpan data pendidikan ke database
         PendidikanUser::create([
-            'user_id' => Auth::id(),
+            'user_id' => $request->user_id ? $request->user_id : Auth::id(),
             'nama_sekolah' => $request->nama_sekolah,
             'jurusan_sekolah' => $request->jurusan_sekolah,
             'alamat_sekolah' => $request->alamat_sekolah,
@@ -349,12 +353,16 @@ class DatadiriController extends Controller
             'tahun_lulus' => $request->tahun_lulus,
         ]);
 
-        if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
-            return redirect()->route('admin_sdm.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
-            return redirect()->route('karyawan.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
-            return redirect()->route('manajer.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+        if($request->jenis_page == 'page_detail_kepegawaian'){
+            return redirect()->back()->with('success', 'Data Pendidikan berhasil di Update!');
+        }else{  
+            if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
+                return redirect()->route('admin_sdm.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
+                return redirect()->route('karyawan.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
+                return redirect()->route('manajer.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            }
         }
     }
 
@@ -386,12 +394,17 @@ class DatadiriController extends Controller
         // Simpan perubahan ke database
         $pendidikanUser->save();
 
-        if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
-            return redirect()->route('admin_sdm.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
-            return redirect()->route('karyawan.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
-        } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
-            return redirect()->route('manajer.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+        
+        if($request->jenis_page == 'page_detail_kepegawaian'){
+            return redirect()->back()->with('success', 'Data Pendidikan berhasil di Update!');
+        }else{    
+            if (Auth::check() && Auth::user()->role->slug == 'admin-sdm') {
+                return redirect()->route('admin_sdm.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'karyawan') {
+                return redirect()->route('karyawan.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            } elseif (Auth::check() && Auth::user()->role->slug == 'manager') {
+                return redirect()->route('manajer.datadiri')->with('success', 'Data pendidikan berhasil diperbarui!');
+            }
         }
     }
 }

@@ -40,17 +40,17 @@ class KesahatanController extends Controller
         //
         $request->validate([
             'golongan_darah' => 'required',
-            'riwayat_alergi' => 'required',
-            'riwayat_penyakit' => 'required',
-            'riwayat_penyakit_lain' => 'required',
+            'riwayat_alergi' => 'nullable',
+            'riwayat_penyakit' => 'nullable',
+            'riwayat_penyakit_lain' => 'nullable',
         ]);
 
         $data = [
-            'user_id' => $this->getUSer()->id,
+            'user_id' => $request->user_id ? $request->user_id :$this->getUSer()->id,
             'golongan_darah' => $request->golongan_darah,
-            'riwayat_alergi' => $request->riwayat_alergi,
-            'riwayat_penyakit' =>  $request->riwayat_penyakit,
-            'riwayat_penyakit_lain' => $request->riwayat_penyakit_lain
+            'riwayat_alergi' => $request->riwayat_alergi ?? '-',
+            'riwayat_penyakit' =>  $request->riwayat_penyakit ?? '-',
+            'riwayat_penyakit_lain' => $request->riwayat_penyakit_lain ?? '-'
         ];
         
 
@@ -83,16 +83,16 @@ class KesahatanController extends Controller
         //
         $request->validate([
             'golongan_darah' => 'required',
-            'riwayat_alergi' => 'required',
-            'riwayat_penyakit' => 'required',
-            'riwayat_penyakit_lain' => 'required',
+            'riwayat_alergi' => 'nullable',
+            'riwayat_penyakit' => 'nullable',
+            'riwayat_penyakit_lain' => 'nullable',
         ]);
 
         $data = [
             'golongan_darah' => $request->golongan_darah,
-            'riwayat_alergi' => $request->riwayat_alergi,
-            'riwayat_penyakit' =>  $request->riwayat_penyakit,
-            'riwayat_penyakit_lain' => $request->riwayat_penyakit_lain
+            'riwayat_alergi' => $request->riwayat_alergi ?? '-',
+            'riwayat_penyakit' =>  $request->riwayat_penyakit ?? '-',
+            'riwayat_penyakit_lain' => $request->riwayat_penyakit_lain ?? '-'
         ];
 
         $getKesehatan = DataKesehatan::findOrFail($id);
