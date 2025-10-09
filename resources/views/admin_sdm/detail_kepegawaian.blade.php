@@ -321,8 +321,10 @@
                                                 <label class="form-label fw-medium fs-6">:</label>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="text" class="form-control fs-6" name="nip" id="nip" value="{{ old('nip', (!$kepegawaian && !$kepegawaian->nip ? '' : $kepegawaian->nip)) }}" {{ ($kepegawaian != null ? 'disabled' : '') }}>
-                                            </div>
+                                                <input type="text" class="form-control fs-6"
+                                                name="nip" id="nip"
+                                                value="{{ old('nip', $kepegawaian?->nip ?? '') }}"
+                                                {{ $kepegawaian ? 'disabled' : '' }}></div>
                                         </div>   
                                     </div>  
                                     <div class="form-group mb-3"> 
@@ -584,7 +586,7 @@
                                         </div>   
                                     </div>  
                                     <button type="button" class="btn btn-danger btn-batal-kesehatan" hidden>Batal</button>
-                                    @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                    @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                         <button type="button" class="btn btn-warning btn-edit-kesehatan">Edit</button>
                                     @endif  
                                     <button type="submit" class="btn btn-primary btn-submit-kesehatan" hidden>{{ ($kesehatan != null ? 'Update' : 'Simpan') }}</button>         
@@ -675,7 +677,7 @@
                                         </div>   
                                     </div> 
                                     <button type="button" class="btn btn-danger btn-batal-pendidikan" hidden>Batal</button>
-                                    @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                    @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                     <button type="button" class="btn btn-warning btn-edit-pendidikan">Edit</button>
                                     @endif 
                                     <button type="submit" class="btn btn-primary btn-submit-pendidikan" hidden>{{ ($pendidikan != null ? 'Update' : 'Simpan') }}</button>
@@ -685,7 +687,7 @@
                         </div>
                         <div class="tab-pane border-0 p-0" id="pengalaman_kerja">
                             <div class="table-responsive">
-                                @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                 <div class="mb-2">
                                     <button type="button" class="btn btn-primary tambahPengalaman" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdrop">
@@ -697,7 +699,7 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                            @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                             <th>Aksi</th>
                                             @endif
                                             <th>Nama Perusahaan</th>
@@ -745,7 +747,7 @@
                         </div>
                         <div class="tab-pane border-0 p-0" id="pelatihan" role="tabpanel">
                             <div class="table-responsive">
-                                @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                 <div class="mb-2">
                                     <button type="button" class="btn btn-primary tambahPelatihan" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropPelatihan">
@@ -757,7 +759,7 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                            @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                             <th>Aksi</th>
                                             @endif
                                             <th>Nama Pelatihan</th>
@@ -771,7 +773,7 @@
                                         @foreach($pelatihan as $row)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                                @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                                 <td>
                                                     <a href="" class="btn btn-warning editPelatihan" data-bs-toggle="modal"
                                                         data-bs-target="#staticBackdropPelatihan" 
@@ -802,7 +804,7 @@
                             </div>
                         </div>
                         <div class="tab-pane border-0 p-0" id="social">
-                            @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                            @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                             <div class="mb-2">
                                 <button type="button" class="btn btn-primary tambahSocialMedia" data-bs-toggle="modal"
                                     data-bs-target="#staticBackdropSocialMedia">
