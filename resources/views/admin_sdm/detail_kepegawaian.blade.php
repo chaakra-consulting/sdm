@@ -713,7 +713,7 @@
                                         @foreach($pengalaman_kerja as $row)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                @if($role == 'admin_sdm' && $kepegawaian->status_pekerjaan_id == '4')
+                                                @if($role == 'admin_sdm' && $kepegawaian?->status_pekerjaan_id == '4')
                                                 <td>
                                                     <a href="" class="btn btn-warning editPengalaman" data-bs-toggle="modal"
                                                     data-bs-target="#staticBackdropPengalaman" data-id_pengalaman="{{ $row->id }}"
