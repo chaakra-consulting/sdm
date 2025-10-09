@@ -36,29 +36,75 @@ class AdminSdmController extends Controller
         $graphDTO = new GraphDTO($startDateRange,$endDateRange);
 
         $widgetAbsensi = $this->dashboardService->widgetAbsensi($graphDTO);
-        $graphValueAbsensiHarianByKeterangan = $this->dashboardService->graphValueAbsensiHarianByKeterangan($graphDTO);
-        $graphPercentageAbsensiHarianByKeterangan = $this->dashboardService->graphPercentageAbsensiHarianByKeterangan($graphDTO);
-        $graphBarPegawaiByJamMasuk = $this->dashboardService->graphBarPegawaiByJamMasuk($graphDTO);
-        $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
-        $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
-        $graphBarValueKehadiranPerHari = $this->dashboardService->graphBarValueKehadiranPerHari($graphDTO);
-        $graphBarPercentageKehadiranPerHari = $this->dashboardService->graphBarPercentageKehadiranPerHari($graphDTO);
-
+        // $graphValueAbsensiHarianByKeterangan = $this->dashboardService->graphValueAbsensiHarianByKeterangan($graphDTO);
+        // $graphPercentageAbsensiHarianByKeterangan = $this->dashboardService->graphPercentageAbsensiHarianByKeterangan($graphDTO);
+        // $graphBarPegawaiByJamMasuk = $this->dashboardService->graphBarPegawaiByJamMasuk($graphDTO);
+        // $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
+        // $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
+        // $graphBarValueKehadiranPerHari = $this->dashboardService->graphBarValueKehadiranPerHari($graphDTO);
+        // $graphBarPercentageKehadiranPerHari = $this->dashboardService->graphBarPercentageKehadiranPerHari($graphDTO);
+        //dd(url('/').'/admin_sdm/dashboard_chart?type=bar_pegawai_by_jam_masuk&date_range='.$request->date_range);
+        // dd($request->date_range);
         $data = [
             'title' => 'Dashboard Absensi',
+            'date_range' => $request->date_range,
             'arr_year' => $arrYear,
             'widget_absensi' => $widgetAbsensi,
-            'value_absensi_harian_by_ket' => $graphValueAbsensiHarianByKeterangan,
-            'percentage_absensi_harian_by_ket' => $graphPercentageAbsensiHarianByKeterangan,
-            'bar_pegawai_by_jam_masuk' => $graphBarPegawaiByJamMasuk,
-            'bar_value_kehadiran_per_bulan' => $graphBarValueKehadiranPerBulan,
-            'bar_percentage_kehadiran_per_bulan' => $graphBarPercentageKehadiranPerBulan,
-            'bar_value_kehadiran_per_hari' => $graphBarValueKehadiranPerHari,
-            'bar_percentage_kehadiran_per_hari' => $graphBarPercentageKehadiranPerHari,
+            'url'=> url('/'),
             'default_range' => $startDateRange . ' to ' . $endDateRange,
         ];
 
         return view('admin_sdm.dashboard', $data);
+    }
+
+    public function dashboardChart(Request $request)
+    {
+        $request->validate([
+            'date_range' => 'nullable|string',
+            'chart' => 'nullable|string',
+        ]);
+
+        if ($request->date_range) {
+            [$startDateRange, $endDateRange] = explode(" to ", $request->date_range . " to ");
+            $endDateRange = $endDateRange ?: $startDateRange;
+            
+            $startDateRange = Carbon::parse($startDateRange);
+            $endDateRange = Carbon::parse($endDateRange);
+        }else{
+            $startDateRange = Carbon::now()->subMonth()->day(26);
+            $endDateRange = Carbon::now()->day(25);           
+        }
+
+        // $arrYear = range(max($startDateRange->year, $endDateRange->year), min($startDateRange->year, $endDateRange->year));
+        // $arrYear = [2025,2024];
+        $graphDTO = new GraphDTO($startDateRange,$endDateRange);
+
+        switch($request->chart){
+            case 'value_absensi_harian_by_ket':
+                $graphValueAbsensiHarianByKeterangan = $this->dashboardService->graphValueAbsensiHarianByKeterangan($graphDTO);
+                return $graphValueAbsensiHarianByKeterangan;
+            case 'percentage_absensi_harian_by_ket':
+                $graphPercentageAbsensiHarianByKeterangan = $this->dashboardService->graphPercentageAbsensiHarianByKeterangan($graphDTO);
+                return $graphPercentageAbsensiHarianByKeterangan;
+            case 'bar_pegawai_by_jam_masuk':
+                $graphBarPegawaiByJamMasuk = $this->dashboardService->graphBarPegawaiByJamMasuk($graphDTO);
+                return $graphBarPegawaiByJamMasuk;
+            case 'bar_value_kehadiran_per_bulan':
+                $graphBarValueKehadiranPerBulan = $this->dashboardService->graphBarValueKehadiranPerBulan($graphDTO);
+                return $graphBarValueKehadiranPerBulan;
+            case 'bar_percentage_kehadiran_per_bulan':
+                $graphBarPercentageKehadiranPerBulan = $this->dashboardService->graphBarPercentageKehadiranPerBulan($graphDTO);
+                return $graphBarPercentageKehadiranPerBulan;
+            case 'bar_value_kehadiran_per_hari':
+                $graphBarValueKehadiranPerHari = $this->dashboardService->graphBarValueKehadiranPerHari($graphDTO);
+                return $graphBarValueKehadiranPerHari;
+            case 'bar_percentage_kehadiran_per_hari':
+                $graphBarPercentageKehadiranPerHari = $this->dashboardService->graphBarPercentageKehadiranPerHari($graphDTO);
+                return $graphBarPercentageKehadiranPerHari;
+            default:
+                //jika tidak ada chart yang dipilih, kembalikan semua data chart
+                break;
+        }
     }
     
     public function dashboardGaji(Request $request)

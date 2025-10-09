@@ -96,14 +96,26 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane show active text-muted" id="keterangan-absensi-percentage"
-                            role="tabpanel">
-                            <canvas id="keteranganAbsensiPercentage" class="chartjs-chart"></canvas>
+                        <div class="tab-pane show active text-muted" id="keterangan-absensi-percentage" role="tabpanel">
+                            <div id="chart-wrapper-keteranganAbsensiPercentage" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="keteranganAbsensiPercentage" class="chartjs-chart" style="display:none;"></canvas>
+                            </div>
+                            
                         </div>
+                    
                         <div class="tab-pane text-muted" id="keterangan-absensi-value" role="tabpanel">
-                            <canvas id="keteranganAbsensiValue" class="chartjs-chart"></canvas>
+                            <div id="chart-wrapper-keteranganAbsensiValue" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="keteranganAbsensiValue" class="chartjs-chart" style="display:none;"></canvas>
+                            </div>
+                            
                         </div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div> 
@@ -143,12 +155,21 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane show active text-muted" id="kehadiran-percentage"
-                            role="tabpanel">
-                            <canvas id="barKehadiranPercentage" class="chartjs-chart"></canvas>
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranPercentage" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranPercentage" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>                        
                         </div>
                         <div class="tab-pane text-muted" id="kehadiran-value" role="tabpanel">
-                            <canvas id="barKehadiranValue" class="chartjs-chart"></canvas>
+                            <div id="chart-wrapper-barKehadiranValue" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranValue" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -212,12 +233,21 @@
                 
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane show active text-muted" id="kehadiran-percentage-per-hari"
-                            role="tabpanel">
-                            <canvas id="barKehadiranPercentagePerHari" class="chartjs-chart"></canvas>
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage-per-hari" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranPercentagePerHari" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranPercentagePerHari" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
                         </div>
                         <div class="tab-pane text-muted" id="kehadiran-value-per-hari" role="tabpanel">
-                            <canvas id="barKehadiranValuePerHari" class="chartjs-chart"></canvas>
+                            <div id="chart-wrapper-barKehadiranValuePerHari" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranValuePerHari" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +259,12 @@
                     <div class="card-title">Data Rata-Rata Jam Masuk</div>
                 </div>
                 <div class="card-body">
-                    <canvas id="barAbsensi" class="chartjs-chart"></canvas>
+                    <div id="chart-wrapper-barAbsensi" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <canvas id="barAbsensi" class="chartjs-chart"style="display:none;"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -587,25 +622,62 @@
     <!-- /row -->
 </div>
 <script>
-    var absensiHarianByKetValue = @json($value_absensi_harian_by_ket);
-    var absensiHarianByKetPercentage = @json($percentage_absensi_harian_by_ket);
-    var pegawaiByJamMasuk = @json($bar_pegawai_by_jam_masuk);
-    var kehadiranPerBulanValue = @json($bar_value_kehadiran_per_bulan);
-    var kehadiranPerBulanPercentage = @json($bar_percentage_kehadiran_per_bulan);
-    var kehadiranPerHariValue = @json($bar_value_kehadiran_per_hari);
-    var kehadiranPerHariPercentage = @json($bar_percentage_kehadiran_per_hari);
+
+    const url = "{{ url('/admin_sdm/dashboard_chart') }}";
+    const default_range = @json($default_range);
+
+    const absensiHarianByKetValueUrl = `${url}?chart=value_absensi_harian_by_ket&date_range=${default_range}`;
+    const absensiHarianByKetPercentageUrl = `${url}?chart=percentage_absensi_harian_by_ket&date_range=${default_range}`;
+    const pegawaiByJamMasukUrl = `${url}?chart=bar_pegawai_by_jam_masuk&date_range=${default_range}`;
+    const kehadiranPerBulanValueUrl = `${url}?chart=bar_value_kehadiran_per_bulan&date_range=${default_range}`;
+    const kehadiranPerBulanPercentageUrl = `${url}?chart=bar_percentage_kehadiran_per_bulan&date_range=${default_range}`;
+    const kehadiranPerHariValueUrl = `${url}?chart=bar_value_kehadiran_per_hari&date_range=${default_range}`;
+    const kehadiranPerHariPercentageUrl = `${url}?chart=bar_percentage_kehadiran_per_hari&date_range=${default_range}`;
 
     var barKehadiranPerBulanValue = null;
     var barKehadiranPerBulanPercentage = null;
+    
+    async function loadChartData(chartUrl, callback, elementId) {
+        const wrapper = document.getElementById(`chart-wrapper-${elementId}`);
+        if (!wrapper) {
+            console.error("Wrapper not found:", `chart-wrapper-${elementId}`);
+            return;
+        }
+
+        const spinner = wrapper.querySelector(".spinner-border");
+        const canvas = document.getElementById(elementId);
+
+        try {
+            const response = await fetch(chartUrl);
+            if (!response.ok) throw new Error("HTTP error " + response.status);
+
+            const data = await response.json();
+
+            // panggil chart function
+            callback(elementId, data);
+
+            // sukses: sembunyikan spinner, tampilkan canvas
+            if (spinner) spinner.style.display = "none";
+            if (canvas) canvas.style.display = "block";
+        } catch (error) {
+            console.error("Error load data chart:", chartUrl, error);
+
+            // ganti spinner jadi error message
+            if (spinner) {
+                spinner.outerHTML = `<div class="text-danger small">Failed to load chart</div>`;
+            }
+        }
+    }
+
 
     document.addEventListener("DOMContentLoaded", function() {
-        createDoughnutValueAbsensiHarian('keteranganAbsensiValue', absensiHarianByKetValue);
-        createDoughnutPercentageAbsensiHarian('keteranganAbsensiPercentage', absensiHarianByKetPercentage);
-        createBarChart('barAbsensi', pegawaiByJamMasuk);
-        createBarValueKehadiran('barKehadiranValue', kehadiranPerBulanValue);
-        createBarPercentageKehadiran('barKehadiranPercentage', kehadiranPerBulanPercentage);
-        createBarValueKehadiranPerDay('barKehadiranValuePerHari', kehadiranPerHariValue);
-        createBarPercentageKehadiranPerDay('barKehadiranPercentagePerHari', kehadiranPerHariPercentage);
+        loadChartData(absensiHarianByKetValueUrl, createDoughnutValueAbsensiHarian, 'keteranganAbsensiValue');
+        loadChartData(absensiHarianByKetPercentageUrl, createDoughnutPercentageAbsensiHarian, 'keteranganAbsensiPercentage');
+        loadChartData(pegawaiByJamMasukUrl, createBarChart, 'barAbsensi');
+        loadChartData(kehadiranPerBulanValueUrl, createBarValueKehadiran, 'barKehadiranValue');
+        loadChartData(kehadiranPerBulanPercentageUrl, createBarPercentageKehadiran, 'barKehadiranPercentage');
+        loadChartData(kehadiranPerHariValueUrl, createBarValueKehadiranPerDay, 'barKehadiranValuePerHari');
+        loadChartData(kehadiranPerHariPercentageUrl, createBarPercentageKehadiranPerDay, 'barKehadiranPercentagePerHari');
     });
 
     // Fungsi untuk membuat Doughnut Chart

@@ -108,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::get('/admin_sdm/dashboard', [AdminSdmController::class, 'dashboard'])->name('admin_sdm.dashboard');
+    Route::get('/admin_sdm/dashboard_chart', [AdminSdmController::class, 'dashboardChart'])->name('admin_sdm.dashboard_chart');
     Route::get('/admin_sdm/dashboard_gaji', [AdminSdmController::class, 'dashboardGaji'])->name('admin_sdm.dashboard_gaji');
 
     //Management User 
