@@ -136,6 +136,60 @@
         @endif
     @endforeach
     <div class="container-fluid">
+        @php
+            $actionUrl = '';
+            $lampiranActionUrl = '';
+            $userRole = Auth::check() ? Auth::user()->role->slug : '';
+            $tipeTaskSlug = $task->tipe_task ? $task->tipe_task->slug : '';
+
+            $isDisabled = true;
+            $isProjectFieldDisabled = true;
+            $showButton = false;
+
+            if ($userRole == 'manager' && $tipeTaskSlug == 'task-project') {
+                $isDisabled = false;
+                $isProjectFieldDisabled = false;
+                $showButton = true;
+                $actionUrl = route('manajer.update.detail.task', $task->id); 
+                $lampiranActionUrl = route('manajer.update.lampiran.task', $task->id);
+            } elseif ($userRole == 'admin-sdm' && ($tipeTaskSlug == 'task-tambahan' || $tipeTaskSlug == 'task-wajib')) {
+                $isDisabled = false;
+                $isProjectFieldDisabled = true; 
+                $showButton = true;
+                $actionUrl = route('admin_sdm.update.detail.task', $task->id); 
+                $lampiranActionUrl = route('admin_sdm.update.lampiran.task', $task->id);
+            } elseif ($userRole == 'karyawan' && $tipeTaskSlug == 'task-tambahan') {
+                $isDisabled = false;
+                $isProjectFieldDisabled = true;
+                $showButton = true;
+                $actionUrl = route('karyawan.update.detail.task', $task->id); 
+                $lampiranActionUrl = route('karyawan.update.lampiran.task', $task->id);
+            }
+        @endphp
+        <div class="mb-3">
+            @if ($userRole == 'manager')
+                <a href="/manajer/task" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($task->project_perusahaan != null)
+                    <a href="/manajer/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                @endif
+            @elseif ($userRole == 'karyawan')
+                <a href="/karyawan/task" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($task->project_perusahaan != null)
+                    <a href="/karyawan/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                @endif
+            @elseif ($userRole == 'admin-sdm')
+                <a href="/admin_sdm/task" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($task->project_perusahaan != null)
+                    <a href="/admin_sdm/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
+                @endif
+            @endif
+        </div>
         <div class="row row-sm">
             <div class="col-xl-4 col-lg-4">
                 <div class="card mb-4">
@@ -198,15 +252,14 @@
                                     </div>
                                 </div>
                                 <div class="container-project">
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                        <form action="{{ route('manajer.update.detail.task', $task->id) }}" method="post" enctype="multipart/form-data">
-                                    @endif
+                                    <form action="{{ $actionUrl }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         @method('put')
                                         <div class="form-group">
                                             <label for="tipe_task">Tipe Task</label>
                                             <select name="tipe_task" id="tipe_task" class="form-control" 
-                                                {{ $task->tipe_task == null ? '' : 'disabled' }} required>
+                                                {{ $task->tipe_task == null ? '' : 'disabled' }} required
+                                                {{ $isDisabled ? 'disabled' : '' }}>
                                                 @if ($task->tipe_task == null)
                                                     <option value="" selected disabled>Pilih Tipe Task</option>
                                                     @foreach ($tipeTask as $item)
@@ -226,99 +279,79 @@
                                         <div class="form-group">
                                             <label for="nama_project" class="form-label">Nama Project</label>
                                             @if ($task->project_perusahaan == null)
-                                                <select name="nama_project" id="nama_project" data-trigger class="form-control">
+                                                <select name="nama_project" id="nama_project" data-trigger class="form-control"
+                                                    {{ $isProjectFieldDisabled ? 'disabled' : '' }}>
                                                     <option value="" selected disabled>Pilih Project</option>
                                                     @foreach ($project as $item)
                                                         <option value="{{ $item->id }}">{{ $item->nama_project }} ({{ $item->perusahaan->nama_perusahaan }})</option>
                                                     @endforeach
                                                 </select>
                                             @else
-                                                <select name="nama_project" id="nama_project" data-trigger class="form-control">
+                                                <select name="nama_project" id="nama_project" data-trigger class="form-control"
+                                                    {{ $isProjectFieldDisabled ? 'disabled' : '' }}>
                                                     <option value="{{ $task->project_perusahaan->id }}" selected>{{ $task->project_perusahaan->nama_project }} ({{ $task->project_perusahaan->perusahaan->nama_perusahaan }})</option>
                                                     @foreach ($project as $item)
                                                         <option value="{{ $item->id }}">{{ $item->nama_project }} ({{ $item->perusahaan->nama_perusahaan }})</option>
                                                     @endforeach
                                                 </select>
                                             @endif
+                                            
+                                            @if ($isProjectFieldDisabled && $task->project_perusahaan != null)
+                                                <input type="hidden" name="nama_project" value="{{ $task->project_perusahaan->id }}">
+                                            @endif
                                         </div>
                                         <div class="form-group">
                                             <label for="nama_task" class="form-label">Nama Task</label>
                                             <input type="text" name="nama_task" id="nama_task" class="form-control"
-                                                value="{{ $task->nama_task }}">
+                                                value="{{ $task->nama_task }}"
+                                                {{ $isDisabled ? 'disabled' : '' }}>
                                         </div>
                                         <div class="form-group">
                                             <label for="tgl_task">Tanggal Mulai</label>
                                             <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
                                                 <input type="text" class="form-control" name="tgl_task"
                                                     value="{{ $task->tgl_task != null ? $task->tgl_task : '' }}"
-                                                    id="tgl_task" placeholder="Tanggal Mulai">
+                                                    id="tgl_task" placeholder="Tanggal Mulai"
+                                                    {{ $isDisabled ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="tgl_selesai">Tanggal Selesai</label>
                                             <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
                                                 <input type="text" class="form-control" name="tgl_selesai"
                                                     value="{{ $task->tgl_selesai != null ? $task->tgl_selesai : '' }}"
-                                                    id="tgl_selesai" placeholder="Tanggal Selesai">
+                                                    id="tgl_selesai" placeholder="Tanggal Selesai"
+                                                    {{ $isDisabled ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="deadline">Deadline</label>
                                             <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
+                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i></div>
                                                 <input type="text" class="form-control" name="deadline"
                                                     value="{{ $task->deadline != null ? $task->deadline : '' }}"
-                                                    id="deadline" placeholder="Deadline">
+                                                    id="deadline" placeholder="Deadline"
+                                                    {{ $isDisabled ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                         <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                        @if ($showButton)
                                             @if ($task != null)
-                                                <button type="button" class="btn btn-danger btn-batal-edit"
-                                                    hidden>Batal</button>
+                                                <button type="button" class="btn btn-danger btn-batal-edit" hidden>Batal</button>
                                                 <button type="button" class="btn btn-warning btn-edit-task">Edit</button>
                                             @endif
                                             <button type="submit" class="btn btn-primary btn-submit-task"
-                                                {{ $task != null ? 'hidden' : '' }}>{{ $task != null ? 'Update' : 'Simpan' }}
+                                                {{ $task != null ? 'hidden' : '' }}>
+                                                {{ $task != null ? 'Update' : 'Simpan' }}
                                             </button>
-                                        @endif                              
+                                        @endif                       
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    @php
-                        $userRole = auth()->user()->role->slug;
-                    @endphp
-                    @if ($userRole == 'manager')
-                        <a href="/manajer/task" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($task->project_perusahaan != null)
-                            <a href="/manajer/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
-                        @endif
-                    @elseif ($userRole == 'karyawan')
-                        <a href="/karyawan/task" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($task->project_perusahaan != null)
-                            <a href="/karyawan/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
-                        @endif
-                    @elseif ($userRole == 'admin-sdm')
-                        <a href="/admin_sdm/task" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($task->project_perusahaan != null)
-                            <a href="/admin_sdm/project/detail/{{ $task->project_perusahaan->id }}" class="btn btn-secondary">Kembali Ke Project</a>
-                        @endif
-                    @endif
                 </div>
             </div>
             <div class="col-xl-8 col-lg-4">
@@ -509,11 +542,12 @@
                                 @endif
                             </div>
                             <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">
-                                <form action="{{ route('manajer.update.lampiran.task', $task->id) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ $lampiranActionUrl }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('put')
                                     <div class="form-group">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                        @if (!$isDisabled)
+                                            <label for="upload" class="form-label">Upload Lampiran Baru</label>
                                             <input type="file" class="form-control" name="upload" id="upload">
                                         @endif
                                         @php
@@ -554,14 +588,17 @@
                                     </div> 
                                     <div class="form-group">
                                         <label for="keterangan">Keterangan</label>
-                                        <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5">{{ old('keterangan', $task->keterangan) }}</textarea>
-                                        <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda
-                                        (-)</span>
-                                    </div> 
-                                    @if (Auth::check() & Auth::user()->role->slug == 'manager')
+                                        <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5" 
+                                            {{ $isDisabled ? 'disabled' : '' }}>{{ old('keterangan', $task->keterangan) }}</textarea>
+                                        
+                                        @if (!$isDisabled)
+                                            <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda (-)</span>
+                                        @endif
+                                    </div>
+                                    @if (!$isDisabled)
                                         <button type="submit" class="btn btn-primary">
                                             Update
-                                        </button>                       
+                                        </button>
                                     @endif
                                 </form>
                             </div>
@@ -899,6 +936,20 @@
                     noChoicesText: "Tidak ada pilihan tersedia"
                 });
             });
+            document.querySelectorAll("#user2").forEach(function (element) {
+                ['#user', '#user2', '#nama_project'].forEach(function (selector) {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        new Choices(element, {
+                            removeItemButton: true,
+                            searchEnabled: true,
+                            noResultsText: "Tidak ada hasil yang cocok",
+                            noChoicesText: "Tidak ada pilihan tersedia"
+                        });
+                    }
+                });
+            });
+
             document.getElementById('upload').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 const imagePreview = document.getElementById('previewImage');

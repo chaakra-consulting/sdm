@@ -213,6 +213,7 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/task/store', [TaskController::class, 'store'])->name('admin_sdm.task.store');
     Route::get('/admin_sdm/task/detail/{id}', [TaskController::class, 'detail'])->name('admin_sdm.detail.task');
     Route::put('/admin_sdm/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('admin_sdm.update.detail.task');
+    Route::put('/admin-sdm/task/update/lampiran/{id}', [TaskController::class, 'updateLampiran'])->name('admin_sdm.update.lampiran.task');
     Route::delete('/admin_sdm/task/delete/{id}', [TaskController::class, 'destroy'])->name('admin_sdm.delete.task');
     Route::get('/admin_sdm/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('admin_sdm.project.tasks');
 
@@ -291,6 +292,7 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::post('/karyawan/task/store', [TaskController::class, 'store'])->name('karyawan.task.store');
     Route::get('/karyawan/task/detail/{id}', [TaskController::class, 'detail'])->name('karyawan.detail.task');
     Route::put('/karyawan/task/update/detail/{id}', [TaskController::class, 'updateDetailTask'])->name('karyawan.update.detail.task');
+    Route::put('/karyawan/task/update/lampiran/{id}', [TaskController::class, 'updateLampiran'])->name('karyawan.update.lampiran.task');
     Route::delete('/karyawan/task/delete/{id}', [TaskController::class, 'destroy'])->name('karyawan.delete.task');
     Route::get('/karyawan/project/{id}/tasks', [UsersProjectController::class, 'getTasks'])->name('karyawan.project.tasks');
 
