@@ -36,16 +36,40 @@
                         <div class="form-group row">
                             <div class="col-md-12" id="tipeTaskWrapper">
                                 <label for="tipe_task">Tipe Task</label>
-                                <select name="tipe_task" id="tipe_task" data-trigger class="form-control" required>
+                                <select name="tipe_task" id="tipe_task" class="form-control" required>
                                     <option selected disabled>Pilih Tipe Task</option>
                                     @foreach ($tipeTask as $item)
-                                        <option value="{{ $item->slug }}">{{ $item->nama_tipe }}</option>
+                                        @php
+                                            $userRole = Auth::user()->role->slug;
+                                            $taskSlug = $item->slug;
+                                            $showOption = false;
+
+                                            if ($userRole == 'manager' && $taskSlug == 'task-project') {
+                                                $showOption = true;
+                                            } elseif ($userRole == 'admin-sdm' && $taskSlug != 'task-project') {
+                                                $showOption = true;
+                                            } elseif ($userRole == 'karyawan' && $taskSlug == 'task-tambahan') {
+                                                $showOption = true;
+                                            }
+                                        @endphp
+                                        @if ($showOption)
+                                            <option value="{{ $item->slug }}"
+                                                @if (
+                                                    ($userRole == 'manager' && $taskSlug == 'task-project') || 
+                                                    ($userRole == 'karyawan' && $taskSlug == 'task-tambahan')
+                                                    ) 
+                                                    selected
+                                                @endif
+                                                >
+                                                {{ $item->nama_tipe }}
+                                            </option>                                        
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-6 d-none" id="projectWrapper">
                                 <label for="project_perusahaan_id">Project</label>
-                                <select name="project_perusahaan_id" id="project_perusahaan_id" data-trigger
+                                <select name="project_perusahaan_id" id="project_perusahaan_id"
                                     class="form-control" required>
                                     <option selected disabled>Pilih Project</option>
                                     @foreach ($project as $item)
@@ -291,6 +315,9 @@
     <script>
         $(document).ready(function() {
             const userRole = "{{ auth()->user()->role->slug }}";
+            let choicesTipeTask = null; 
+            let choicesProject = null;
+
             $("#upload").change(function() {
                 let file = this.files[0];
                 if (file) {
@@ -318,7 +345,8 @@
                     }
                 }
             });
-            $("#staticBackdrop").on('show.bs.modal', function() {
+
+            $("#staticBackdrop").on('shown.bs.modal', function() {
                 flatpickr("#format-tgl_task", {
                     dateFormat: "Y-m-d",
                     altInput: true,
@@ -330,29 +358,79 @@
                     },
                     appendTo: this.querySelector('.date-container')
                 });
-                $("#tipe_task").trigger('change');
-            });
-            $('#tipe_task').on('change', function() {
-                const selectedTipe = $(this).val();
 
-                if (selectedTipe === 'task-project') {
+                if (choicesTipeTask) choicesTipeTask.destroy();
+
+                const elementTipeTask = document.getElementById('tipe_task');
+                choicesTipeTask = new Choices(elementTipeTask, {
+                    searchEnabled: false,
+                    itemSelectText: '',
+                    shouldSort: false,
+                });
+
+                if (choicesProject) choicesProject.destroy();
+
+                const elementProject = document.getElementById('project_perusahaan_id');
+                choicesProject = new Choices(elementProject, {
+                    searchEnabled: true,
+                    itemSelectText: '', 
+                    shouldSort: false, 
+                    placeholder: true, 
+                    placeholderValue: 'Pilih Project',
+                });
+
+                elementTipeTask.addEventListener('change', function(event) {
+                    checkTipeTaskLogika(choicesTipeTask.getValue(true));
+                });
+
+                checkTipeTaskLogika(choicesTipeTask.getValue(true));
+            });
+
+            function checkTipeTaskLogika(selectedValue) {
+                console.log("Tipe task terpilih:", selectedValue);
+                
+                if (selectedValue == 'task-project') {
                     $('#projectWrapper').removeClass('d-none');
                     $('#project_perusahaan_id').val('').prop('required', true);
-
-                    $('#tipeTaskWrapper').removeClass('col-md-12').addClass('col-md-6');
+                    $('#tipeTaskWrapper').removeClass('col-md-12').addClass('col-md-6'); 
                 } else {
                     $('#projectWrapper').addClass('d-none');
                     $('#project_perusahaan_id').prop('required', false);
-
+                    if (choicesProject) {
+                        choicesProject.removeActiveItems();
+                    }
                     $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
                 }
+            }
+
+            $(document).on('click', '.tambahTask', function(e) {
+                e.preventDefault();
+                $(".modal-title").text('Tambah Task');
+                $("#nama_task").val('');
+                $("#keterangan").val('');
+                
+                $("#user").val('').trigger('change'); 
+
+                $("#upload").val('');
+                $("#previewImage2, #previewPDF").hide().attr("src", "");
+                $("#detail_upload").html("");
+                
+                if (userRole === "manager") { 
+                    $("#formDaftarTask").attr('action', '/manajer/task/store');
+                } else if (userRole === "karyawan") {
+                    $("#formDaftarTask").attr('action', '/karyawan/task/store');
+                } else if (userRole === "admin-sdm") {
+                    $("#formDaftarTask").attr('action', '/admin_sdm/task/store');
+                }
+                $("#formDaftarTask input[name='_method']").remove();
             });
+
             $(".delete").click(function(e) {
                 e.preventDefault();
-
                 let taskId = $(this).data("id");
                 let nama = $(this).data("nama_task");
                 let actionUrl = '';
+                
                 if (userRole == 'manager') {
                     actionUrl = '/manajer/task/delete/' + taskId;
                 } else if (userRole == 'karyawan') {
@@ -376,27 +454,19 @@
                             action: actionUrl,
                             method: "POST"
                         }).append(
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_token",
-                                value: "{{ csrf_token() }}"
-                            }),
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_method",
-                                value: "DELETE"
-                            })
+                            $("<input>", { type: "hidden", name: "_token", value: "{{ csrf_token() }}" }),
+                            $("<input>", { type: "hidden", name: "_method", value: "DELETE" })
                         );
                         $("body").append(form);
                         form.submit();
                     }
                 })
             });
+
             $(document).on('click', '.btnViewDokumenPdf', function(e) {
                 e.preventDefault();
                 $('#staticBackdropViewDokumen').modal('show');
-                $('#staticBackdropViewDokumen .modal-title').text('Lampiran : ' + $(this).data(
-                    'nama_task'));
+                $('#staticBackdropViewDokumen .modal-title').text('Lampiran : ' + $(this).data('nama_task'));
 
                 let dokumen = $(this).data('dokumen');
                 let fileExtension = dokumen ? dokumen.split('.').pop().toUpperCase() : "";
@@ -405,20 +475,15 @@
                 $("#detail_upload").html("");
 
                 if (!dokumen || dokumen == "null" || dokumen.trim() == "") {
-                    $("#detail_upload").html(
-                        '<strong class="text-danger">Tidak ada lampiran tersedia</strong>');
+                    $("#detail_upload").html('<strong class="text-danger">Tidak ada lampiran tersedia</strong>');
                 } else if (dokumen.match(/\.(jpg|jpeg|png)$/i)) {
                     $("#previewImage").attr("src", dokumen).show();
                     $("#viewDokumenPdf").hide();
-                    $("#detail_upload").html(
-                        `<strong>Preview Gambar:</strong> <a href="${dokumen}" target="_blank">Lihat Gambar</a>`
-                    );
+                    $("#detail_upload").html(`<strong>Preview Gambar:</strong> <a href="${dokumen}" target="_blank">Lihat Gambar</a>`);
                 } else if (dokumen.match(/\.pdf$/i)) {
                     $("#viewDokumenPdf").attr("src", dokumen).show();
                     $("#previewImage").hide();
-                    $("#detail_upload").html(
-                        `<strong>Preview PDF:</strong> <a href="${dokumen}" target="_blank">Lihat PDF</a>`
-                    );
+                    $("#detail_upload").html(`<strong>Preview PDF:</strong> <a href="${dokumen}" target="_blank">Lihat PDF</a>`);
                 } else {
                     $("#previewImage, #viewDokumenPdf").hide();
                     $("#detail_upload").html(`
@@ -428,33 +493,6 @@
                         </a>
                     `);
                 }
-            });
-            $(document).on('click', '.tambahTask', function(e) {
-                e.preventDefault();
-
-                $(".modal-title").text('Tambah Task');
-                $("#tipe_task").val('');
-                $("#nama_task").val('');
-                $("#keterangan").val('');
-                $("#user").val('Pilih Anggota Task').trigger('change');
-
-                $("#previewImage2, #previewPDF").hide().attr("src", "");
-                $("#detail_upload").html("");
-
-                $("#btnSubmit").text("Simpan").show();
-                $("#upload").prop("disabled", false);
-                if (userRole === "manager") {
-                    $("#formDaftarTask").attr('action', '/manajer/task/store');
-                } else if (userRole === "karyawan") {
-                    $("#formDaftarTask").attr('action', '/karyawan/task/store');
-                } else if (userRole === "admin-sdm") {
-                    $("#formDaftarTask").attr('action', '/admin_sdm/task/store');
-                }
-                $("#formDaftarTask input[name='_method']").remove();
-
-                $('#projectWrapper').addClass('d-none');
-                $('#project_perusahaan_id').val('').prop('required', false);
-                $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
             });
         });
     </script>

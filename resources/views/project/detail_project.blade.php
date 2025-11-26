@@ -137,6 +137,24 @@
         </div>
     </div>
     <div class="container-fluid">
+        <div class="mb-3">
+            @php
+                $userRole = auth()->user()->role->slug;
+            @endphp
+            @if ($userRole == 'manager')
+                <a href="/manajer/project" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+            @elseif ($userRole == 'karyawan')
+                <a href="/karyawan/project" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+            @elseif ($userRole == 'admin-sdm')
+                <a href="/admin_sdm/project" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+            @endif
+        </div>
         <div class="row row-sm">
             <div class="col-xl-4 col-lg-4">
                 <div class="card mb-4">
@@ -202,7 +220,7 @@
                                         <div class="form-group">
                                             <label for="perusahaan_id" class="form-label">Nama Instansi</label>
                                             <select name="perusahaan_id" data-trigger id="perusahaan_id"
-                                                class="form-control">
+                                                class="form-control" {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                                 <option selected disabled>Pilih Perusahaan</option>
                                                 @foreach ($perusahaan as $key => $row)
                                                     <option
@@ -217,11 +235,13 @@
                                             <label for="nama_project" class="form-label">Nama Project</label>
                                             <input type="text" name="nama_project" id="nama_project"
                                                 class="form-control"
-                                                value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
+                                                value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}"
+                                                {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                         </div>
                                         <div class="form-group">
                                             <label for="status" class="form-label">Status</label>
-                                            <select class="form-control" id="status" data-trigger name="status">
+                                            <select class="form-control" id="status" data-trigger name="status"
+                                                {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                                 <option value="">Pilih Status Project</option>
                                                 <option value="belum"
                                                     {{ $project->status == 'belum' ? 'selected' : '' }}>Belum
@@ -243,7 +263,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="waktu_mulai"
                                                     value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
-                                                    id="waktu_mulai" placeholder="Waktu Mulai">
+                                                    id="waktu_mulai" placeholder="Waktu Mulai"
+                                                    {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -253,7 +274,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="waktu_berakhir"
                                                     value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
-                                                    id="waktu_berakhir" placeholder="Waktu Berakhir">
+                                                    id="waktu_berakhir" placeholder="Waktu Berakhir"
+                                                    {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -263,7 +285,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="deadline"
                                                     value="{{ $project->deadline != null ? $project->deadline : '' }}"
-                                                    id="deadline" placeholder="deadline">
+                                                    id="deadline" placeholder="deadline"
+                                                    {{ $userRole == 'manager' ? '' : 'disabled' }}>
                                             </div>
                                         </div>
                                         @if (Auth::check() && Auth::user()->role->slug == 'manager')
@@ -282,24 +305,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    @php
-                        $userRole = auth()->user()->role->slug;
-                    @endphp
-                    @if ($userRole == 'manager')
-                        <a href="/manajer/project" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                    @elseif ($userRole == 'karyawan')
-                        <a href="/karyawan/project" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                    @elseif ($userRole == 'admin-sdm')
-                        <a href="/admin_sdm/project" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                    @endif
                 </div>
             </div>
             <div class="col-xl-8 col-lg-4">

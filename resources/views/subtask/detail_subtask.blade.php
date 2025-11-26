@@ -77,6 +77,36 @@
         </div>
     </div>
     <div class="container-fluid">
+        <div class="mb-3">
+            @php
+                $userRole = auth()->user()->role->slug;
+            @endphp
+            @if ($userRole == 'manager')
+                <a href="/manajer/subtask" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($subtask->task != null)
+                    <a href="/manajer/task/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
+                        Task</a>
+                @endif
+            @elseif ($userRole == 'karyawan')
+                <a href="/karyawan/subtask" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($subtask->task != null)
+                    <a href="/karyawan/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
+                        Task</a>
+                @endif
+            @elseif ($userRole == 'admin-sdm')
+                <a href="/admin_sdm/subtask" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+                @if ($subtask->task != null)
+                    <a href="/admin_sdm/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
+                        Task</a>
+                @endif
+            @endif
+        </div>
         <div class="row row-sm">
             <div class="col-xl-3 col-lg-4">
                 <div class="card mb-4">
@@ -124,7 +154,8 @@
                                             <label for="nama_subtask" class="form-label">Sub Task</label>
                                             <input type="text" class="form-control" id="nama_subtask" name="nama_subtask"
                                                 placeholder="Nama Sub Task"
-                                                value="{{ $subtask->nama_subtask ?? old('nama_subtask') }}">
+                                                value="{{ $subtask->nama_subtask ?? old('nama_subtask') }}"
+                                                {{ $userRole == 'manager' ? 'disabled' : '' }} >
                                         </div>
                                         <div class="form-group">
                                             <label for="tgl_sub_task" class="form-label">Tanggal Mulai</label>
@@ -134,7 +165,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="tgl_sub_task"
                                                     value="{{ $subtask->tgl_sub_task != null ? $subtask->tgl_sub_task : '' }}"
-                                                    id="tgl_sub_task" placeholder="Tanggal Mulai">
+                                                    id="tgl_sub_task" placeholder="Tanggal Mulai"
+                                                    {{ $userRole == 'manager' ? 'disabled' : '' }}>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -145,7 +177,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="tgl_selesai"
                                                     value="{{ $subtask->tgl_selesai != null ? $subtask->tgl_selesai : '' }}"
-                                                    id="tgl_sub_task" placeholder="Tanggal Selesai">
+                                                    id="tgl_sub_task" placeholder="Tanggal Selesai"
+                                                    {{ $userRole == 'manager' ? 'disabled' : '' }} >
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -156,7 +189,8 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="deadline"
                                                     value="{{ $subtask->deadline != null ? $subtask->deadline : '' }}"
-                                                    id="deadline" placeholder="Deadline">
+                                                    id="deadline" placeholder="Deadline"
+                                                    {{ $userRole == 'manager' ? 'disabled' : '' }} >
                                             </div>
                                         </div>
                                         <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
@@ -176,36 +210,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    @php
-                        $userRole = auth()->user()->role->slug;
-                    @endphp
-                    @if ($userRole == 'manager')
-                        <a href="/manajer/subtask" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($subtask->task != null)
-                            <a href="/manajer/task/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                                Task</a>
-                        @endif
-                    @elseif ($userRole == 'karyawan')
-                        <a href="/karyawan/subtask" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($subtask->task != null)
-                            <a href="/karyawan/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                                Task</a>
-                        @endif
-                    @elseif ($userRole == 'admin-sdm')
-                        <a href="/admin_sdm/subtask" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                        @if ($subtask->task != null)
-                            <a href="/admin_sdm/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                                Task</a>
-                        @endif
-                    @endif
                 </div>
             </div>
             <div class="col-xl-9 col-lg-4">
