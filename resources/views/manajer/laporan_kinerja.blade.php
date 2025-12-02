@@ -3,10 +3,13 @@
 @section('content')
     <div class="container-fluid">
         <div class="card custom-card">
-            <div class="card-header">
-                <div class="card-title">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title mb-0">
                     Laporan Kinerja
                 </div>
+                <a href="{{ route('manajer.laporan_kinerja.pending') }}" class="btn btn-warning text-white btn-sm shadow-sm">
+                    <i class="fas fa-clock me-1"></i> Pending Approvals
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

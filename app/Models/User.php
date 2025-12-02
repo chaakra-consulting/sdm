@@ -80,24 +80,34 @@ class User extends Authenticatable
     {
         return $this->hasOne(DatadiriUser::class, 'user_id', 'id');
     }
+
     public function pendidikan()
     {
         return $this->hasOne(PendidikanUser::class, 'user_id', 'id');
     }
+
     public function users_project()
     {
         return $this->hasMany(UsersProject::class, 'user_id', 'id');
     }
+
     public function socialMedias()
     {
         return $this->hasMany(SocialMedia::class, 'user_id', 'id');
     }
+
     public function users_task()
     {
         return $this->hasMany(UsersTask::class, 'user_id', 'id');
     }
+
     public function subtask()
     {
         return $this->hasMany(SubTask::class, 'user_id', 'id');
+    }
+
+    public function approveReports()
+    {
+        return $this->hasMany(DetailSubTask::class, 'approved_by', 'id');
     }
 }

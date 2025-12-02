@@ -172,7 +172,7 @@
                                                     data-bs-placement="top" title="Lihat Lampiran!"></i>
                                                 </button>
                                             @else
-                                                <span class="text-muted">Tidak ada lampiran</span> </br>
+                                                <span class="text-muted">Tidak ada lampiran</span></br>
                                             @endif
                                             <a 
                                             @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
@@ -246,7 +246,7 @@
                                                     data-bs-placement="top" title="Lihat Lampiran!"></i>
                                                 </button>
                                             @else
-                                                <span class="text-muted">Tidak ada lampiran</span> </br>
+                                                <span class="text-muted">Tidak ada lampiran</span></br>
                                             @endif
                                             <a href="{{ route('manajer.subtask.detail', $item->id) }}" class="btn btn-secondary btn-sm"
                                                 data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"

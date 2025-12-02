@@ -9,11 +9,12 @@ use App\Models\HariLibur;
 use App\Models\Perusahaan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\DetailSubTask;
 use App\Models\RevisiLaporan;
 use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\DB;
 use App\Events\SubtaskStatusChanged;
-use App\Models\DetailSubTask;
+use Illuminate\Support\Facades\Auth;
 use GrahamCampbell\ResultType\Success;
 
 class ManajerController extends Controller
@@ -25,7 +26,6 @@ class ManajerController extends Controller
         return view('manajer.index', compact('title'));
     }
 
-    // manajemen perusahaan : data perusahaan
     public function show()
     {
         $perusahaan = Perusahaan::all();
@@ -298,6 +298,7 @@ class ManajerController extends Controller
             'statuses'
         ));
     }
+
     public function detailLaporanKinerja($id, Request $request)
     {
         $title = 'Detail Laporan Kinerja';
@@ -322,18 +323,26 @@ class ManajerController extends Controller
         }
 
         $getDataLaporan = $getDataUser->subtask()
-            ->with([
-                'task.tipe_task',
-                'lampiran',
-                'detail_sub_task' => function ($query) {
-                    $query->where('is_active', 1);
-                }
-            ])
-            ->where('user_id', $id)
-            ->when($filterTanggal, function ($query) use ($filterTanggal) {
-                return $query->whereBetween('tgl_sub_task', $filterTanggal);
-            })
-            ->get();
+        ->with([
+            'task.tipe_task',
+            'lampiran',
+            'detail_sub_task' => function ($query) use ($filterTanggal) {
+                $query->where('is_active', 1)
+                    ->when($filterTanggal, function ($q) use ($filterTanggal) {
+                    return $q->whereBetween('tanggal', $filterTanggal); 
+                    });
+            }
+        ])
+        ->where('user_id', $id)
+        ->whereHas('detail_sub_task', function ($query) use ($filterTanggal) {
+            $query->where('is_active', 1)
+                ->when($filterTanggal, function($q) use ($filterTanggal) {
+                    return $q->whereBetween('tanggal', $filterTanggal);
+                });
+        })
+        ->get();
+
+        
         $totalDurasiMenit = 0;
         foreach($getDataLaporan as $subtask){
             foreach($subtask->detail_sub_task as $detail){
@@ -351,6 +360,137 @@ class ManajerController extends Controller
             'durasiMenit'
         ));
     }
+
+    public function approveDetailSubTask(Request $request, $id)
+    {
+        $request->validate([
+            'approval_notes' => 'nullable|string|max:500'
+        ]);
+
+        try {
+            $detailSubTask = DetailSubTask::findOrFail($id);
+            $user = Auth::user();
+
+            if ($user->role->slug !== 'manager') {
+                return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menyetujui laporan kinerja.');
+            }
+
+            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
+                        ->project_users()
+                        ->where('user_id', $user->id)
+                        ->exists();
+
+            if (!$hasAccess) {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui laporan kinerja ini.');
+            }
+
+            $detailSubTask->update([
+                'status' => 'approved',
+                'approved_by' => $user->id,
+                'approved_at' => now(),
+                'approval_notes' => $request->approval_notes,
+            ]);
+
+            $this->checkAndUpdateSubtaskStatus($detailSubTask->subtask_id);
+
+            return redirect()->back()->with('success', 'Laporan kinerja berhasil disetujui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menyetujui laporan kinerja: ' . $e->getMessage());
+        }
+    }
+
+    public function rejectDetailSubTask(Request $request, $id)
+    {
+        $request->validate([
+            'approval_notes' => 'required|string|max:500'
+        ]);
+
+        try {
+            $detailSubTask = DetailSubTask::findOrFail($id);
+            $user = Auth::user();
+
+            if ($user->role->slug !== 'manager') {
+                return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menolak laporan kinerja.');
+            }
+
+            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
+                        ->project_users()
+                        ->where('user_id', $user->id)
+                        ->exists();
+            
+            if (!$hasAccess) {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak laporan kinerja ini.');
+            }
+
+            $detailSubTask->update([
+                'status' => 'rejected',
+                'approved_by' => $user->id,
+                'approved_at' => now(),
+                'approval_notes' => $request->approval_notes,
+            ]);
+
+            return redirect()->back()->with('success', 'Laporan kinerja berhasil ditolak.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menolak laporan kinerja: ' . $e->getMessage());
+        }
+    }
+
+    public function reviseDetailSubTask(Request $request, $id)
+    {
+        $request->validate([
+            'approval_notes' => 'required|string|max:500',
+        ]);
+
+        try {
+            $detailSubTask = DetailSubTask::findOrFail($id);
+            $user = Auth::user();
+
+            if ($user->role->slug !== 'manager') {
+                return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk meminta revisi laporan kinerja.');
+            }
+
+            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
+                        ->project_users()
+                        ->where('user_id', $user->id)
+                        ->exists();
+            
+            if (!$hasAccess) {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk meminta revisi laporan kinerja ini.');
+            }
+
+            $detailSubTask->update([
+                'status' => 'revise',
+                'approved_by' => $user->id,
+                'approved_at' => now(),
+                'approval_notes' => $request->approval_notes,
+            ]);
+
+            return redirect()->back()->with('success', 'Permintaan revisi laporan kinerja berhasil dikirim.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal meminta revisi laporan kinerja: ' . $e->getMessage());
+        }
+    }
+
+    public function checkAndUpdateSubtaskStatus($subTaskId)
+    {
+        $subTask = SubTask::with('detail_sub_task')->find($subTaskId);
+
+        if (!$subTask) return;
+
+        $allApproved = $subTask->detail_sub_task->every(function ($detail) {
+            return $detail->status === 'approved';
+        });
+
+        if ($allApproved) {
+            $subTask->update([
+                'status' => 'approve',
+                'tgl_selesai' => now()
+            ]);
+
+            event(new SubtaskStatusChanged($subTask->task));
+        }
+    }
+
     public function approveLaporanKinerja(Request $request, $id)
     {
         $request->validate([
@@ -391,6 +531,7 @@ class ManajerController extends Controller
         }
        return redirect()->back()->with('error', 'Tidak ada Laporkan Kinerja untuk di approve');
     }
+
     public function approveSubtask($id)
     {
         $subtask = SubTask::where('id', $id)
@@ -413,6 +554,7 @@ class ManajerController extends Controller
         }
        return redirect()->back()->with('error', 'Subtask tidak dapat di approve');
     }
+
     public function reviseLaporanKinerja(Request $request, $id)
     {
         $request->validate([
@@ -448,6 +590,7 @@ class ManajerController extends Controller
         }
        return redirect()->back()->with('error', 'Gagal merevise');
     }
+
     public function reviseSubtask(Request $request, $id)
     {
         $request->validate(['pesan_revisi' => 'required|string']);
@@ -477,5 +620,20 @@ class ManajerController extends Controller
         event(new SubtaskStatusChanged($subtask->task));
 
         return redirect()->back()->with('success', 'Subtask berhasil di revisi');
+    }
+
+    public function pendingApprovals()
+    {
+        $title = 'Pending Approvals';
+        $getDataLaporan = DetailSubTask::with([
+            'user',
+            'subtask.task.project_perusahaan'
+        ])
+        ->where('status', 'pending')
+        ->where('is_active', 1)
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+        return view('manajer.laporan_kinerja.pending', compact('title', 'getDataLaporan'));
     }
 }

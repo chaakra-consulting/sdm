@@ -147,7 +147,6 @@
                             <form action="{{ route('admin_sdm.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}" method="POST" id="formKirim">
                         @endif
                             @csrf
-                            @method('PUT')
                             <input type="hidden" name="tanggal" id="tanggal_terpilih_kirim">
                             <button type="submit" class="btn btn-outline-warning">
                                 <i class="bi bi-send"></i> Kirim
@@ -159,7 +158,6 @@
                             <form action="{{ route('admin_sdm.laporan_kinerja.batal', ['id' => auth()->user()->id]) }}" method="POST" id="formBatal">
                         @endif
                             @csrf
-                            @method('PUT')
                             <input type="hidden" name="tanggal" id="tanggal_terpilih_batal">
                             <button type="submit" class="btn btn-outline-danger">
                                 <i class="bi bi-x-circle"></i> Batal

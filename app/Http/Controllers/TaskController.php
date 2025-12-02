@@ -289,15 +289,35 @@ class TaskController extends Controller
         $task->update($data);
         return redirect()->back()->with('success', 'Task berhasil di update');
     }
+    
     public function updateUserTask(Request $request)
     {
         $request->validate([
-            'user.*' => 'required',
-            'task_id' => 'required',
+            'user' => 'required|array',
+            'user.*' => 'required|exists:users,id',
+            'task_id' => 'required|exists:tb_tasks,id',
         ]);
+
         if (empty($request->user)) {
             return redirect()->back()->with('error', 'Tidak ada anggota yang dipilih.');
         }
+
+        $task = Task::with('tipe_task')->findOrFail($request->task_id);
+        $userRole = Auth::user()->role->slug;
+        $tipeTaskSlug = $task->tipe_task->slug;
+
+        if ($userRole == 'manager' && $tipeTaskSlug != 'task-project') {
+            return redirect()->back()->with('error', 'Manager hanya dapat menambah anggota pada Task Project.');
+        }
+
+        if ($userRole == 'admin-sdm' && $tipeTaskSlug == 'task-project') {
+            return redirect()->back()->with('error', 'Admin SDM tidak dapat menambah anggota pada Task Project.');
+        }
+
+        if ($userRole == 'karyawan' && $tipeTaskSlug != 'task-tambahan') {
+            return redirect()->back()->with('error', 'Karyawan hanya dapat menambah anggota pada Task Tambahan.');
+        }
+
         $tambahUser = 0;
         foreach ($request->user as $userId) {
             $existing = UsersTask::where('user_id', $userId)
@@ -311,9 +331,10 @@ class TaskController extends Controller
                 $tambahUser++;
             }
         }
+
         $message = $tambahUser > 0 
         ? "$tambahUser anggota berhasil ditambahkan."
-        : "Semua anggota sudah terdaftar di task ini.";
+        : "Semua anggota terpilih sudah terdaftar di task ini.";
 
         return redirect()->back()->with('success', $message);
     }
@@ -358,15 +379,30 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', 'Task berhasil dihapus.');
     }
+    
     public function destroyUserTask($id)
     {
-        $deleted = UsersTask::where('id', $id)
-            ->delete();
+        $usersTask = UsersTask::findOrFail($id);
+        
+        $task = Task::with('tipe_task')->findOrFail($usersTask->task_id);
+        
+        $userRole = Auth::user()->role->slug;
+        $tipeTaskSlug = $task->tipe_task->slug;
 
-        if ($deleted) {
-            return back()->with('success', 'Anggota berhasil dihapus dari Task.');
-        } else {
-            return back()->with('error', 'Gagal menghapus Anggota Task.');
+        if ($userRole == 'manager' && $tipeTaskSlug != 'task-project') {
+            return back()->with('error', 'Manager hanya dapat menghapus anggota pada Task Project.');
         }
+
+        if ($userRole == 'admin-sdm' && $tipeTaskSlug == 'task-project') {
+            return back()->with('error', 'Admin SDM tidak dapat menghapus anggota pada Task Project.');
+        }
+
+        if ($userRole == 'karyawan' && $tipeTaskSlug != 'task-tambahan') {
+            return back()->with('error', 'Karyawan hanya dapat menghapus anggota pada Task Tambahan.');
+        }
+
+        $usersTask->delete();
+
+        return back()->with('success', 'Anggota berhasil dihapus dari Task.');
     }
 }

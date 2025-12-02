@@ -9,7 +9,11 @@
                     <h6 class="modal-title" id="staticBackdropLabel">Tambah Anggota</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('manajer.update.anggota.task') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ 
+                    (Auth::user()->role->slug == 'manager') ? route('manajer.update.anggota.task') :
+                    ((Auth::user()->role->slug == 'admin-sdm') ? route('admin_sdm.update.anggota.task') : 
+                    route('karyawan.update.anggota.task'))
+                }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -146,24 +150,37 @@
             $isProjectFieldDisabled = true;
             $showButton = false;
 
+            $canManageMember = false;
+            $addMemberUrl = '';
+            $deleteMemberPrefix = '';
+
             if ($userRole == 'manager' && $tipeTaskSlug == 'task-project') {
                 $isDisabled = false;
                 $isProjectFieldDisabled = false;
                 $showButton = true;
                 $actionUrl = route('manajer.update.detail.task', $task->id); 
                 $lampiranActionUrl = route('manajer.update.lampiran.task', $task->id);
-            } elseif ($userRole == 'admin-sdm' && ($tipeTaskSlug == 'task-tambahan' || $tipeTaskSlug == 'task-wajib')) {
+                $canManageMember = true;
+                $addMemberUrl = route('manajer.update.anggota.task');
+                $deleteMemberPrefix = 'manajer';
+            } elseif ($userRole == 'admin-sdm' && ($tipeTaskSlug != 'task-project')) {
                 $isDisabled = false;
                 $isProjectFieldDisabled = true; 
                 $showButton = true;
                 $actionUrl = route('admin_sdm.update.detail.task', $task->id); 
                 $lampiranActionUrl = route('admin_sdm.update.lampiran.task', $task->id);
+                $canManageMember = true;
+                $addMemberUrl = route('admin_sdm.update.anggota.task');
+                $deleteMemberPrefix = 'admin_sdm';
             } elseif ($userRole == 'karyawan' && $tipeTaskSlug == 'task-tambahan') {
                 $isDisabled = false;
                 $isProjectFieldDisabled = true;
                 $showButton = true;
                 $actionUrl = route('karyawan.update.detail.task', $task->id); 
                 $lampiranActionUrl = route('karyawan.update.lampiran.task', $task->id);
+                $canManageMember = true;
+                $addMemberUrl = route('karyawan.update.anggota.task');
+                $deleteMemberPrefix = 'karyawan';
             }
         @endphp
         <div class="mb-3">
@@ -609,8 +626,8 @@
 												<div class="card custom-card border shadow-none">
 													<div class="card-body  user-lock text-center">
                                                         <div class="d-flex justify-content-end">
-                                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                                                <form action="{{ route('manajer.delete.anggota.task', $item->id) }}"
+                                                            @if ($canManageMember)
+                                                                <form action="{{ route($deleteMemberPrefix . '.delete.anggota.task', $item->id) }}"
                                                                     method="POST" class="d-inline">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -647,7 +664,7 @@
 												</div>
 											</div>
                                     @endforeach
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
+                                    @if ($canManageMember)
                                         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
                                             <a href="javascript:void(0);" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdropAnggota">
@@ -675,64 +692,92 @@
 @endsection
 @section('script')
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const choiceElements = ['#user', '#user2', '#nama_project', '#tipe_task'];
+
+            choiceElements.forEach(function(selector){
+                const element = document.querySelector(selector);
+                if (element) {
+                    new Choices(element, {
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        noResultsText: "Tidak ada hasil yang cocok",
+                        noChoicesText: "Tidak ada pilihan tersedia",
+                        shouldSort: false,
+                        itemSelectText: 'Tekan untuk memilih'
+                    });
+                }
+            });
+        });
         $(document).ready(function () {
-            const userRole = "{{ auth()->user()->role->slug }}";
-            let flatpickrInstance = flatpickr("#format-tanggal", {
+            const userRole = "{{ Auth::check() ? Auth::user()->role->slug : '' }}";
+            
+            const dateConfig = {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
-                locale: 'id',
+                locale: "id"
+            };
+
+            flatpickr("#tgl_task", dateConfig);
+            flatpickr("#tgl_selesai", dateConfig);
+            flatpickr("#deadline", dateConfig);
+
+            let flatpickrSubtaskStart = flatpickr("#format-tanggal", {
+                ...dateConfig,
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("tanggal").value = dateStr;
                 },
                 appendTo: document.getElementById("staticBackdrop")
             });
-            let flatpickrInstance1 = flatpickr("#format-deadline", {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d F Y",
-                locale: 'id',
+
+            let flatpickrSubtaskDeadline = flatpickr("#format-deadline", {
+                ...dateConfig,
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("deadline").value = dateStr;
                 },
                 appendTo: document.getElementById("staticBackdrop")
             });
-            $('.btn-edit-task').click(function() {
-                $('.btn-edit-task').hide();
-                $('.btn-batal-edit').prop('hidden', false);
-                $(".btn-submit-task").prop('hidden', false);
 
-                $('.btn-batal-edit').click(function() {
-                    $('.btn-edit-task').fadeIn(200);
-                    $('.btn-batal-edit').prop('hidden', true);
-                    $(".btn-submit-task").prop('hidden', true);
-                })
+            $('.btn-edit-task').click(function() {
+                $(this).hide();
+                $('.btn-batal-edit').attr('hidden', false);
+                $(".btn-submit-task").attr('hidden', false);
             });
+
+            $('.btn-batal-edit').click(function() {
+                $('.btn-edit-task').fadeIn(200);
+                $(this).attr('hidden', true);
+                $(".btn-submit-task").attr('hidden', true);
+            });
+
             $('#staticBackdrop').on('hidden.bs.modal', function () {
                 $('#formSubTask')[0].reset();
                 $('#preview-area').empty();
                 $('#detail_upload').html('Tidak ada file lampiran yang tersedia');
-                flatpickrInstance.clear();
-                flatpickrInstance1.clear();
+
+                flatpickrSubtaskStart.clear();
+                flatpickrSubtaskDeadline.clear();
+
                 $('#formSubTask input[name="_method"]').remove();
             });
+
             $(document).on('click', '.tambahSubTask', function(e) {
                 e.preventDefault();
 
-                $(".modal-title").text('Tambah Sub Task' + ' - ' + '{{ $task->nama_task }}');
+                $(".modal-title").text('Tambah Sub Task - {{ $task->nama_task }}');
                 $("#tanggal").val('');
-
-                $("#previewImage, #previewPDF").hide().attr("src", "");
-                $("#detail_upload").html("");
-
+                $("#deadline").val('');
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
 
+                let actionUrl = "";
                 if (userRole == 'karyawan') {
-                    $("#formSubTask").attr("action", "/karyawan/subtask/store");
+                    actionUrl = "{{ route('karyawan.subtask.store') }}";
                 } else if (userRole == 'admin-sdm') {
-                    $("#formSubTask").attr("action", "/admin_sdm/subtask/store");      
+                    actionUrl = "{{ route('admin_sdm.subtask.store') }}";     
                 }
+                $("#formSubTask").attr("action", actionUrl);
                 $("#formSubTask input[name='_method']").remove();
 
                 $('#projectWrapper').addClass('d-none');
@@ -740,7 +785,7 @@
                 $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
             });
             
-            $(".updateSubTask").click(function(e) {
+            $(document).on("click", ".updateSubTask", function(e) {
                 e.preventDefault();
 
                 let id = $(this).data("id");
@@ -754,236 +799,139 @@
                 
                 $(".modal-title").text("Update Sub Task");
 
+                let actionUrl = "";
                 if (userRole == 'karyawan') {
-                    $("#formSubTask").attr("action", "/karyawan/subtask/update/" + id);
+                    actionUrl = "/karyawan/subtask/update/" + id;
                 } else if (userRole == 'admin-sdm') {
-                    $("#formSubTask").attr("action", "/admin_sdm/subtask/update/" + id);
+                    actionUrl = "/admin_sdm/subtask/update/" + id;
                 }
+                $("#formSubTask").attr("action", actionUrl);
                 $("#formSubTask input[name='_method']").remove();
                 $("#formSubTask").append('<input type="hidden" name="_method" value="PUT">');
 
                 $("#nama_subtask").val(nama_subtask);
-                flatpickrInstance.setDate(tgl_sub_task, true, "Y-m-d");
-                flatpickrInstance1.setDate(deadline, true, "Y-m-d");
-                $('#upload').prop("disabled", true);
+                $("#tanggal").val(tgl_sub_task);
+                $("#deadline").val(deadline);
+
+                flatpickrSubtaskStart.setDate(tgl_sub_task, true);
+                flatpickrSubtaskDeadline.setDate(deadline, true);
+                
                 $("#task_id").val(task_id);
                 $("#user_id").val(user_id);
-
-                $("#upload").prop("disabled", false);
-                $("#btnSubmit").text("Update").show();
+                $('#upload').prop("disabled", false);
+                
                 $('#staticBackdrop').modal('show');
                 
                 $("#preview-area").html("");
-                $("#detail_upload").html("");
-
                 if (lampiran && lampiran.length > 0) {
+                    $("#detail_upload").html("<strong>Lampiran Saat Ini:</strong><br>");
                     lampiran.forEach(item => {
                         const file = item.lampiran;
                         const extension = file.split('.').pop().toLowerCase();
-
                         let previewHTML = '';
 
                         if (['jpg', 'jpeg', 'png'].includes(extension)) {
                             previewHTML = `
                                 <div class="col-md-4 mb-3 text-center">
                                     <img src="/uploads/${file}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2">${file}</p>
+                                    <p class="small mt-2 text-truncate">${file}</p>
                                 </div>
                             `;
                         } else if (extension === 'pdf') {
                             previewHTML = `
                                 <div class="col-md-6 mb-3 text-center">
                                     <iframe src="/uploads/${file}" class="rounded border" width="100%" height="150px"></iframe>
-                                    <p class="small mt-2">${file}</p>
+                                    <p class="small mt-2 text-truncate">${file}</p>
                                 </div>
                             `;
                         } else {
                             previewHTML = `
                                 <div class="col-md-4 mb-3 text-center">
-                                    <div class="alert alert-secondary p-2 mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <div class="alert alert-secondary p-2 mb-1 text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                         <i class="fa fa-file me-2"></i>${file}
                                     </div>
                                 </div>
                             `;
                         }
-
                         $("#preview-area").append(previewHTML);
+                    });
+                } else {
+                    $("detail_upload").html("Tidak ada file lampiran sebelumnya.");
+                }
+            });
+
+            $("#upload").change(function() {
+                const files = this.files;
+                const previewArea = $("#preview-area");
+                const detailUpload = $("#detail_upload");
+
+                previewArea.html('');
+                detailUpload.html('');
+
+                if (files.length > 0) {
+                    detailUpload.html(`<strong>${files.length} file baru dipilih:</strong><br>`);
+
+                    Array.from(files).forEach(file => {
+                        let fileUrl = URL.createObjectURL(file);
+                        let fileName = file.name;
+                        let ext = fileName.split('.').pop().toLowerCase();
+                        let previewItem = '';
+
+                        if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+                            previewItem = `
+                                <div class="col-md-4 mb-3 text-center">
+                                    <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
+                                    <p class="small mt-2 text-truncate">${fileName}</p>
+                                </div>
+                            `;
+                        } else if (ext == 'pdf') {
+                            previewItem = `
+                                <div>
+                                    <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
+                                    <p class="small mt-2 text-truncate">${fileName}</p>
+                                </div>
+                            `;
+                        } else {
+                            previewItem = `
+                                <div class="col-md-4 mb-3 text-center">
+                                    <div class="alert alert-secondary p-2 mb-1 text-truncate">
+                                        <i class="fa fa-file me-2"></i>${fileName}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        previewArea.append(previewItem);
                     });
                 }
             });
-            
-            $(".delete-sub-task").click(function(e) {
-                e.preventDefault();
 
+            $(document).on("click", ".delete-sub-task", function(e){
+                e.preventDefault();
                 let id = $(this).data("id");
                 let nama = $(this).data("nama_subtask");
-                let actionUrl = '';
-                if (userRole == 'karyawan') {
-                    actionUrl = '/karyawan/subtask/delete/' + id;
-                } else if (userRole == 'admin-sdm') {
-                    actionUrl = '/admin_sdm/subtask/delete/' + id;
-                }
+                let form = $(this).closest('form');
 
                 Swal.fire({
-                    title: "Konfirmasi Hapus Sub Task!",
+                    title: "Konfirmasi Hapus!",
                     text: "Apakah Kamu yakin ingin menghapus sub task '" + nama + "' ?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#cf0202",
-                    cancelButtonColor: "#3085d6",
+                    cancelButtonColor: "3085d6",
                     confirmButtonText: "Ya, Hapus!",
                     cancelButtonText: "Batal"
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = $("<form>", {
-                            action: actionUrl,
-                            method: "POST"
-                        }).append(
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_token",
-                                value: "{{ csrf_token() }}"
-                            }),
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_method",
-                                value: "DELETE"
-                            })
-                        );
-                        $("body").append(form);
+                    if (result.isConfirmed){
                         form.submit();
                     }
-                })
-            })
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $(document).on('click', '.lihatLampiranBtn', function () {
-                let fileUrl = $(this).data('file');
-                let extension = $(this).data('ext');
-
-                $('#previewImage2, #previewPDF2, #previewUnsupported').hide();
-                $('#previewImage2').attr('src', '');
-                $('#previewPDF2').attr('src', '');
-
-                if (['jpg', 'jpeg', 'png'].includes(extension)) {
-                    $('#previewImage2').attr('src', fileUrl).show();
-                } else if (extension === 'pdf') {
-                    $('#previewPDF2').attr('src', fileUrl).show();
-                } else {
-                    $('#previewUnsupported').show();
-                }
-            });
-        })
-    </script>
-    <script>
-        $("#upload").change(function () {
-            const files = this.files;
-            const previewArea = $("#preview-area");
-            const detailUpload = $("#detail_upload");
-    
-            previewArea.html('');
-            detailUpload.html('');
-    
-            if (files.length > 0) {
-                detailUpload.html(`<strong>${files.length} file dipilih:</strong><br>`);
-    
-                Array.from(files).forEach(file => {
-                    let fileUrl = URL.createObjectURL(file);
-                    let fileName = file.name;
-                    let ext = fileName.split('.').pop().toLowerCase();
-    
-                    detailUpload.append(`${fileName}<br>`);
-    
-                    let previewItem = '';
-    
-                    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-                        previewItem = `
-                            <div class="col-md-4 mb-3 text-center">
-                                <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                <p class="small mt-2">${fileName}</p>
-                            </div>
-                        `;
-                    } else if (ext === 'pdf') {
-                        previewItem = `
-                            <div class="col-md-6 mb-3 text-center">
-                                <iframe src="${fileUrl}" class="rounded border" width="100%" height="150px"></iframe>
-                                <p class="small mt-2">${fileName}</p>
-                            </div>
-                        `;
-                    } else {
-                        previewItem = `
-                            <div class="col-md-4 mb-3 text-center">
-                                <div class="alert alert-secondary p-2 mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <i class="fa fa-file me-2"></i>${fileName}
-                                </div>
-                            </div>
-                        `;
-                    }
-                    previewArea.append(previewItem);
-                });
-            }
-        });
-    </script>    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll("#user, #user2").forEach(function (element) {
-                new Choices(element, {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    noResultsText: "Tidak ada hasil yang cocok",
-                    noChoicesText: "Tidak ada pilihan tersedia"
-                });
-            });
-            document.querySelectorAll("#user2").forEach(function (element) {
-                ['#user', '#user2', '#nama_project'].forEach(function (selector) {
-                    const element = document.querySelector(selector);
-                    if (element) {
-                        new Choices(element, {
-                            removeItemButton: true,
-                            searchEnabled: true,
-                            noResultsText: "Tidak ada hasil yang cocok",
-                            noChoicesText: "Tidak ada pilihan tersedia"
-                        });
-                    }
                 });
             });
 
-            document.getElementById('upload').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                const imagePreview = document.getElementById('previewImage');
-                const pdfPreview = document.getElementById('previewPDF');
-                const detailUpload = document.getElementById('detail_upload');
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', function(e){
 
-                if (file) {
-                    const fileURL = URL.createObjectURL(file);
-                    const fileName = file.name;
-                    const fileExt = fileName.split('.').pop().toLowerCase();
-
-                    imagePreview.style.display = 'none';
-                    pdfPreview.style.display = 'none';
-
-                    if (['jpg', 'jpeg', 'png'].includes(fileExt)) {
-                        imagePreview.src = fileURL;
-                        imagePreview.style.display = 'block';
-                    } else if (fileExt === 'pdf') {
-                        pdfPreview.src = fileURL;
-                        pdfPreview.style.display = 'block';
-                    }
-
-                    detailUpload.textContent = fileName;
-                }
+                });
             });
-            const dateConfig = {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d M Y",
-                locale: "id"
-            };
-            flatpickr("#tgl_task", dateConfig);
-            flatpickr("#tgl_selesai", dateConfig);
-            flatpickr("#deadline", dateConfig);
         });
     </script>
 @endsection

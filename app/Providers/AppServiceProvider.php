@@ -9,6 +9,7 @@ use App\Models\ProjectPerusahaan;
 use App\Observers\ProjectObserver;
 use App\Listeners\UpdateTaskStatus;
 use App\Events\SubtaskStatusChanged;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\ProjectPerusahaanObserver;
@@ -32,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         // ProjectPerusahaan::observe(ProjectPerusahaanObserver::class); menambah project ke app drive
         ProjectPerusahaan::observe(ProjectObserver::class);
         Task::observe(TaskObserver::class);
+        Paginator::useBootstrap();
         Event::listen(
             SubtaskStatusChanged::class,
             UpdateTaskStatus::class
