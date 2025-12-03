@@ -7,15 +7,13 @@ use App\Models\User;
 use App\Models\SubTask;
 use App\Models\HariLibur;
 use App\Models\Perusahaan;
-use Illuminate\Support\Str;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\DetailSubTask;
 use App\Models\RevisiLaporan;
-use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\DB;
 use App\Events\SubtaskStatusChanged;
 use Illuminate\Support\Facades\Auth;
-use GrahamCampbell\ResultType\Success;
 
 class ManajerController extends Controller
 {
@@ -375,15 +373,6 @@ class ManajerController extends Controller
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menyetujui laporan kinerja.');
             }
 
-            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
-
-            if (!$hasAccess) {
-                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui laporan kinerja ini.');
-            }
-
             $detailSubTask->update([
                 'status' => 'approved',
                 'approved_by' => $user->id,
@@ -412,21 +401,32 @@ class ManajerController extends Controller
             if ($user->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menolak laporan kinerja.');
             }
-
-            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
             
-            if (!$hasAccess) {
-                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak laporan kinerja ini.');
-            }
-
             $detailSubTask->update([
                 'status' => 'rejected',
                 'approved_by' => $user->id,
                 'approved_at' => now(),
                 'approval_notes' => $request->approval_notes,
+            ]);
+            
+            $karyawan = $detailSubTask->user;
+            $projectName = $detailSubTask->subtask->task->project_perusahaan ? $detailSubTask->subtask->task->project_perusahaan->nama_project . ' - ' : '';
+            $taskName = $detailSubTask->subtask->task->nama_task;
+
+            Notification::create([
+                'type' => 'laporan_kinerja_rejected',
+                'notifiable_type' => User::class,
+                'notifiable_id' => $karyawan->id,
+                'data' => [
+                    'message' => 'Laporan kinerja Anda ditolak',
+                    'detail_subtask_id' => $detailSubTask->id,
+                    'tanggal' => $detailSubTask->tanggal,
+                    'subtask' => $detailSubTask->subtask->nama_subtask,
+                    'project_task' => $projectName . $taskName,
+                    'approved_by' => $user->name,
+                    'notes' => $request->approval_notes,
+                    'action_url' => route('karyawan.laporan_kinerja')
+                ]
             ]);
 
             return redirect()->back()->with('success', 'Laporan kinerja berhasil ditolak.');
@@ -448,21 +448,32 @@ class ManajerController extends Controller
             if ($user->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk meminta revisi laporan kinerja.');
             }
-
-            $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
             
-            if (!$hasAccess) {
-                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk meminta revisi laporan kinerja ini.');
-            }
-
             $detailSubTask->update([
                 'status' => 'revise',
                 'approved_by' => $user->id,
                 'approved_at' => now(),
                 'approval_notes' => $request->approval_notes,
+            ]);
+            
+            $karyawan = $detailSubTask->user;
+            $projectName = $detailSubTask->subtask->task->project_perusahaan ? $detailSubTask->subtask->task->project_perusahaan->nama_project . ' - ' : '';
+            $taskName = $detailSubTask->subtask->task->nama_task;
+
+            Notification::create([
+                'type' => 'laporan_kinerja_revised',
+                'notifiable_type' => User::class,
+                'notifiable_id' => $karyawan->id,
+                'data' => [
+                    'message' => 'Laporan kinerja Anda perlu direvisi',
+                    'detail_subtask_id' => $detailSubTask->id,
+                    'tanggal' => $detailSubTask->tanggal,
+                    'subtask' => $detailSubTask->subtask->nama_subtask,
+                    'project_task' => $projectName . $taskName,
+                    'approved_by' => $user->name,
+                    'notes' => $request->approval_notes,
+                    'action_url' => route('karyawan.laporan_kinerja')
+                ]
             ]);
 
             return redirect()->back()->with('success', 'Permintaan revisi laporan kinerja berhasil dikirim.');
@@ -629,7 +640,7 @@ class ManajerController extends Controller
             'user',
             'subtask.task.project_perusahaan'
         ])
-        ->where('status', 'pending')
+        ->where('status', 'submitted')
         ->where('is_active', 1)
         ->orderBy('created_at', 'desc')
         ->paginate(10);

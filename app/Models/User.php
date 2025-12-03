@@ -110,4 +110,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(DetailSubTask::class, 'approved_by', 'id');
     }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->unread();
+    }
 }

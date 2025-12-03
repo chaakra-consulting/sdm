@@ -33,6 +33,7 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
 use App\Http\Controllers\LaporanKinerjaController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -405,9 +406,9 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::post('/manajer/laporan_kinerja/revise/{id}', [ManajerController::class, 'reviseLaporanKinerja'])->name('manajer.revise.laporan_kinerja');
     Route::post('/manajer/laporan_kinerja/revise/subtask/{id}', [ManajerController::class, 'reviseSubtask'])->name('manajer.revise.subtask');
     Route::delete('/manajer/laporan_kinerja/delete/{id}', [ManajerController::class, 'destroyLaporanKinerja'])->name('manajer.laporan_kinerja.delete');
-    Route::put('/manajer/laporan_kinerja/approve/detail/{id}', [LaporanKinerjaController::class, 'approveDetailSubTask'])->name('manajer.approve.detail_subtask');
-    Route::put('/manajer/laporan_kinerja/reject/detail/{id}', [LaporanKinerjaController::class, 'rejectDetailSubTask'])->name('manajer.reject.detail_subtask');
-    Route::put('/manajer/laporan_kinerja/revise/detail/{id}', [LaporanKinerjaController::class, 'reviseDetailSubTask'])->name('manajer.revise.detail_subtask');
+    Route::put('/manajer/laporan_kinerja/approve/detail/{id}', [ManajerController::class, 'approveDetailSubTask'])->name('manajer.approve.detail_subtask');
+    Route::put('/manajer/laporan_kinerja/reject/detail/{id}', [ManajerController::class, 'rejectDetailSubTask'])->name('manajer.reject.detail_subtask');
+    Route::put('/manajer/laporan_kinerja/revise/detail/{id}', [ManajerController::class, 'reviseDetailSubTask'])->name('manajer.revise.detail_subtask');
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
@@ -452,4 +453,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-kehadiran-data-percentage-per-hari', [AdminSdmController::class, 'getDashboardKehadiranDataPercentagePerHari'])->name('admin_sdm.dashboard_kehadiran_percentage_per_hari');
 
     Route::get('/absensi_verifikasi/store/{id}', [AbsensiHarianController::class, 'storeVerifikasi'])->name('admin_sdm.absensi_verifikasi.store');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
 });
