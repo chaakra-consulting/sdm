@@ -241,6 +241,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::post('/admin_sdm/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('admin_sdm.laporan_kinerja.kirim');
     Route::post('/admin_sdm/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('admin_sdm.laporan_kinerja.batal');
     Route::delete('/admin_sdm/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('admin_sdm.laporan_kinerja.delete');
+    Route::post('/admin_sdm/laporan_kinerja/bulk_kirim/{id}', [LaporanKinerjaController::class, 'bulkKirim'])->name('admin_sdm.laporan_kinerja.bulk_kirim');
+    Route::post('/admin_sdm/laporan_kinerja/bulk_batal/{id}', [LaporanKinerjaController::class, 'bulkBatal'])->name('admin_sdm.laporan_kinerja.bulk_batal');
 });
 
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
@@ -325,6 +327,8 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::post('/karyawan/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('karyawan.laporan_kinerja.kirim');
     Route::post('/karyawan/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('karyawan.laporan_kinerja.batal');
     Route::delete('/karyawan/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('karyawan.laporan_kinerja.delete');
+    Route::post('/karyawan/laporan_kinerja/bulk_kirim/{id}', [LaporanKinerjaController::class, 'bulkKirim'])->name('karyawan.laporan_kinerja.bulk_kirim');
+    Route::post('/karyawan/laporan_kinerja/bulk_batal/{id}', [LaporanKinerjaController::class, 'bulkBatal'])->name('karyawan.laporan_kinerja.bulk_batal');
 });
 
 
@@ -399,16 +403,15 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     // manajer : laporan kinerja
     Route::get('/manajer/laporan_kinerja', [ManajerController::class, 'laporanKinerja'])->name('manajer.laporan_kinerja');
     Route::get('/manajer/laporan_kinerja/pending', [LaporanKinerjaController::class, 'pendingApprovals'])->name('manajer.laporan_kinerja.pending');
+    Route::put('/manajer/laporan_kinerja/bulk/approve/detail', [ManajerController::class, 'bulkApproveDetailSubTask'])->name('manajer.bulk.approve.detail');
+    Route::put('/manajer/laporan_kinerja/bulk/reject/detail', [ManajerController::class, 'bulkRejectDetailSubTask'])->name('manajer.bulk.reject.detail');
+    Route::put('/manajer/laporan_kinerja/bulk/revise/detail', [ManajerController::class, 'bulkReviseDetailSubTask'])->name('manajer.bulk.revise.detail');
     Route::get('/manajer/laporan_kinerja/{id}', [ManajerController::class, 'listLaporanKinerja'])->name('manajer.list.laporan_kinerja');
     Route::get('/manajer/laporan_kinerja/detail/{id}', [ManajerController::class, 'detailLaporanKinerja'])->name('manajer.detail.laporan_kinerja');
-    Route::post('/manajer/laporan_kinerja/approve/{id}', [ManajerController::class, 'approveLaporanKinerja'])->name('manajer.approve.laporan_kinerja');
-    Route::post('/manajer/laporan_kinerja/approve/subtask/{id}', [ManajerController::class, 'approveSubtask'])->name('manajer.approve.subtask');
-    Route::post('/manajer/laporan_kinerja/revise/{id}', [ManajerController::class, 'reviseLaporanKinerja'])->name('manajer.revise.laporan_kinerja');
-    Route::post('/manajer/laporan_kinerja/revise/subtask/{id}', [ManajerController::class, 'reviseSubtask'])->name('manajer.revise.subtask');
-    Route::delete('/manajer/laporan_kinerja/delete/{id}', [ManajerController::class, 'destroyLaporanKinerja'])->name('manajer.laporan_kinerja.delete');
     Route::put('/manajer/laporan_kinerja/approve/detail/{id}', [ManajerController::class, 'approveDetailSubTask'])->name('manajer.approve.detail_subtask');
     Route::put('/manajer/laporan_kinerja/reject/detail/{id}', [ManajerController::class, 'rejectDetailSubTask'])->name('manajer.reject.detail_subtask');
     Route::put('/manajer/laporan_kinerja/revise/detail/{id}', [ManajerController::class, 'reviseDetailSubTask'])->name('manajer.revise.detail_subtask');
+    Route::delete('/manajer/laporan_kinerja/delete/{id}', [ManajerController::class, 'destroyLaporanKinerja'])->name('manajer.laporan_kinerja.delete');
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');

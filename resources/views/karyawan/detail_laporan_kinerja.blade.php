@@ -136,19 +136,30 @@
                                     <td>{{ floor($item->durasi / 60) }} Jam, {{ $item->durasi % 60 }} Menit</td>
                                     <td class="text-wrap">{{ $item->keterangan ?? '-' }}</td>
                                     <td class="text-center">
-                                        @if($item->subtask->status === 'revise')
+                                        @if($item->status === 'revise')
                                             <span class="badge bg-warning"
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-custom-class="tooltip-secondary"
                                                 data-bs-placement="top" 
-                                                title="Pesan Revisi: {{ $item->subtask->revisi->pesan ?? '-' }}">
+                                                title="Pesan Revisi: {{ $item->approval_notes ?? '-' }}">
                                                 Revisi
                                                 <i class="fas fa-info-circle ms-1"></i>
                                             </span>
-                                        @elseif($item->subtask->status === 'approve')
+                                        @elseif($item->status === 'approved')
                                             <span class="badge bg-success">Approve</span>
+                                        @elseif($item->status === 'rejected')
+                                            <span class="badge bg-danger"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-custom-class="tooltip-secondary"
+                                                data-bs-placement="top"
+                                                title="Alasan Penolakan: {{ $item->approval_notes ?? '-' }}">
+                                                Rejected
+                                                <i class="fas fa-info-circle ms-1"></i>
+                                            </span>
+                                        @elseif($item->status === 'submitted')
+                                            <span class="badge bg-primary">Submitted</span>
                                         @else
-                                            <span class="badge bg-secondary">Belum Dicek</span>
+                                            <span class="badge bg-secondary">Draft</span>
                                         @endif
                                     </td>
                                     <td class="text-center">

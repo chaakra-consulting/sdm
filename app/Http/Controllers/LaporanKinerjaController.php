@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use function Symfony\Component\Clock\now;
 
 class LaporanKinerjaController extends Controller
 {
@@ -510,5 +511,67 @@ class LaporanKinerjaController extends Controller
         $detail = DetailSubTask::findOrFail($id);
         $detail->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus');
+    }
+
+    public function bulkKirim(Request $request, $id)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2000|max:2100'
+        ]);
+        
+        try {
+            $date = Carbon::create($request->year, $request->month, 1);
+            $startDate = Carbon::create($date->year, $date->month, 26)->subMonth();
+            $endDate = $startDate->copy()->addMonth()->day(25);
+
+            $affectedRows = DetailSubTask::where('user_id', $id)
+                ->whereBetween('tanggal', [$startDate, $endDate])
+                ->where('status', 'draft')
+                ->update([
+                    'status' => 'submitted',
+                    'submitted_at' => now(),
+                    'is_active' => 1,
+                ]);
+
+            if ($affectedRows > 0) {
+                return redirect()->back()->with('success', 'Berhasil mengirim ' . $affectedRows . ' laporan kinerja untuk periode ' . 
+                    $startDate->translatedFormat('F Y') . ' - ' . $endDate->translatedFormat('F Y'));
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengirim laporan kinerja: ' . $e->getMessage());
+        }
+    }
+
+    public function bulkBatal(Request $request, $id)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2000|max:2100'
+        ]);
+
+        try {
+            $date = Carbon::create($request->year, $request->month, 1);
+            $startDate = Carbon::create($date->year, $date->month, 26)->subMonth();
+            $endDate = $startDate->copy()->addMonth()->day(25);
+
+            $affectedRows = DetailSubTask::where('user_id', $id)
+                ->whereBetween('tanggal', [$startDate, $endDate])
+                ->where('status', 'submitted')
+                ->update([
+                    'status' => 'draft',
+                    'submitted_at' => null,
+                    'is_active' => 0,
+                ]);
+
+            if ($affectedRows > 0) {
+                return redirect()->back()->with('success', 'Berhasil membatalkan pengiriman ' . $affectedRows . ' laporan kinerja untuk periode ' . 
+                    $startDate->translatedFormat('F Y') . ' - ' . $endDate->translatedFormat('F Y'));
+            }
+
+            return redirect()->back()->with('error', 'Tidak ada laporan kinerja yang dapat dibatalkan pada periode ini');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal membatalkan laporan kinerja: ' . $e->getMessage());
+        }
     }
 }
