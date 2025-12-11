@@ -1,6 +1,7 @@
 <?php
 
-use Mockery\Matcher\Subset;
+use App\Models\Task;
+use App\Models\SubTask;
 use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
@@ -30,13 +31,12 @@ use App\Http\Controllers\DownloadPDFController;
 use App\Http\Controllers\GajiBulananController;
 use App\Http\Controllers\KepegawaianController;
 use App\Http\Controllers\SocialMediaController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
 use App\Http\Controllers\LaporanKinerjaController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 //Auth Register & Login 
@@ -461,4 +461,36 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
+    Route::get('/fix-data-status', function () {
+        $subTasks = SubTask::with('detail_sub_task')->get();
+        $updatedCount = 0;
+
+        foreach ($subTasks as $sub) {
+            $totalDetail = $sub->detail_sub_task->count();
+            $approvedCount = $sub->detail_sub_task->where('status', 'approved')->count();
+
+            if ($totalDetail > 0 && $totalDetail === $approvedCount) {
+                if ($sub->status !== 'approve') {
+                    $sub->update(['status' => 'approve', 'tgl_selesai' => now()]);
+                    $updatedCount++;
+                }
+            } elseif ($sub->status === 'approve') {
+                $sub->update(['status' => null, 'tgl_selesai' => null]);
+            }
+        }
+
+        $tasks = Task::all();
+        foreach ($tasks as $task) {
+            $totalSub = $task->sub_task()->count();
+            $approvedSub = $task->sub_task()->where('status', 'approve')->count();
+
+            if ($totalSub > 0 && $totalSub === $approvedSub) {
+                $task->update(['status' => 'selesai', 'tgl_selesai' => now()]);
+            } elseif ($task->status === 'selesai') {
+                $task->update(['status' => 'proses', 'tgl_selesai' => null]);
+            }
+        }
+
+        return "Selesai! $updatedCount SubTask berhasil diperbarui statusnya. Silakan cek halaman task kembali.";
+    });
 });

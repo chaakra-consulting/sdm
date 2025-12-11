@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\DetailSubTask;
+use App\Observers\DetailSubTaskObserver;
 use Carbon\Carbon;
 use App\Models\Task;
 use App\Observers\TaskObserver;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         // ProjectPerusahaan::observe(ProjectPerusahaanObserver::class); menambah project ke app drive
         ProjectPerusahaan::observe(ProjectObserver::class);
         Task::observe(TaskObserver::class);
+        DetailSubTask::observe(DetailSubTaskObserver::class);
         Paginator::useBootstrap();
         Event::listen(
             SubtaskStatusChanged::class,
