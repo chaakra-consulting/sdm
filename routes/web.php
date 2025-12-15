@@ -34,6 +34,7 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UsersProjectController;
 use App\Http\Controllers\AbsensiHarianController;
+use App\Http\Controllers\API\BukukasProjectSyncController;
 use App\Http\Controllers\LaporanKinerjaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
@@ -461,6 +462,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
+    
     Route::get('/fix-data-status', function () {
         $subTasks = SubTask::with('detail_sub_task')->get();
         $updatedCount = 0;

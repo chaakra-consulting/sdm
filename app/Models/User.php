@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\DatadiriUser;
 use App\Models\UsersProject;
 use App\Models\PendidikanUser;
+use App\Models\Notification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -113,7 +114,7 @@ class User extends Authenticatable
 
     public function notifications()
     {
-        return $this->morphMany(Notification::class, 'notifiable');
+        return $this->morphMany(Notification::class, 'notifiable')->orderBy('created_at', 'desc');
     }
 
     public function unreadNotifications()

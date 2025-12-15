@@ -11,6 +11,7 @@ class ProjectPerusahaan extends Model
     protected $guarded = ['id'];
     protected $fillable = [
         'perusahaan_id',
+        'ref_bukukas_id',
         'nama_project',
         'status',
         'waktu_mulai',

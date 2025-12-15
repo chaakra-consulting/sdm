@@ -1861,30 +1861,13 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js"></script>
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-            tanggal_indo();
-
-            function tanggal_indo() {
-                const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                const bulan = [
-                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                ];
-
-                $('.tanggal_indo').each(function() {
-                    const tanggalAsli = $(this).text().trim();
-                    const [tahun, bulanIndex, tanggal] = tanggalAsli.split('-');
-
-                    const tanggalObj = new Date(tahun, bulanIndex - 1, tanggal);
-                    const hariIni = hari[tanggalObj.getDay()];
-                    const bulanNama = bulan[tanggalObj.getMonth()];
-
-                    const tanggalIndonesia = `${hariIni}, ${tanggal} ${bulanNama} ${tahun}`;
-                    $(this).text(tanggalIndonesia);
-                })
-            }
-
-            if ($('#msg-success').data('msg_success') != null) {
+            if ($('#msg-success').data('msg_success')) {
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
@@ -1894,17 +1877,38 @@
                 });
             }
 
-            if ($('#msg-error').data('msg_error') != null) {
+            if ($('#msg-error').data('msg_error')) {
                 Swal.fire({
                     position: "top-end",
                     icon: "error",
-                    title: $('#msg-error').data('msg_error'),
+                    tittle: $("#msg-success").data('msg_success'),
                     showConfirmButton: true,
-                });
+                })
             }
+        
+            function tanggal_indo() {
+                const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const bulan = [
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+                
+                $('.tanggal_indo').each(function() {
+                    const tanggalAsli = $(this).text().trim();
+                    const [tahun, bulanIndex, tanggal] = tanggalAsli.split('-');
+                    
+                    const tanggalObj = new Date(tahun, bulanIndex - 1, tanggal);
+                    const hariIni = hari[tanggalObj.getDay()];
+                    const bulanNama = bulan[tanggalObj.getMonth()];
+                    
+                    const tanggalIndonesia = `${hariIni}, ${tanggal} ${bulanNama} ${tahun}`;
+                    $(this).text(tanggalIndonesia);
+                })
+            }
+            
+            tanggal_indo();
         })
-    </script>
-    <script>
+
         function loadNotificationCount() {
             $.get('{{ route("notifications.unreadCount") }}')
                 .done(function(response) {
@@ -1922,9 +1926,6 @@
                         pulse.hide();
                         headerCount.text('0 Baru');
                     }
-                })
-                .fail(function() {
-                    console.error("Gagal memuat jumlah notifikasi");
                 });
         }
 
@@ -1938,29 +1939,30 @@
                         html += '<ul class="list-unstyled mb-0">';
                         
                         response.data.forEach(notif => {
-                            // Tentukan icon dan warna berdasarkan tipe notifikasi (opsional)
                             let iconClass = 'la-bell'; 
                             let bgClass = 'bg-primary-transparent';
                             let textClass = 'text-primary';
 
-                            // Contoh logika sederhana untuk icon (sesuaikan dengan data Anda)
                             if(notif.type == 'alert') { iconClass = 'la-exclamation-triangle'; bgClass = 'bg-danger-transparent'; textClass = 'text-danger'; }
                             if(notif.type == 'success') { iconClass = 'la-check-circle'; bgClass = 'bg-success-transparent'; textClass = 'text-success'; }
 
-                            // Format Waktu (Contoh: "2 jam yang lalu")
-                            // Asumsi backend mengirim field 'created_at_human' atau sejenisnya, atau gunakan JS moment/date
-                            let timeString = notif.created_at_human || 'Baru saja'; 
+                            let timeString = notif.created_at_human || 'Baru saja';
+                            let isReadClass = notif.read_at ? '' : 'bg-light'; 
 
                             html += `
-                            <li class="dropdown-item px-3 border-bottom">
+                            <li class="dropdown-item px-3 border-bottom mark-as-read cursor-pointer ${isReadClass}"
+                                data-id="${notif.id}"
+                                data-url="${notif.action_url}"
+                                style="cursor: pointer;">
                                 <div class="d-flex align-items-center">
                                     <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 ${bgClass}">
                                         <i class="las ${iconClass} fs-20 ${textClass}"></i>
                                     </span>
                                     <div class="ms-2 w-100">
-                                        <a href="javascript:void(0);">
+                                        <div class="d-flex justify-content-between">
                                             <h5 class="notification-label text-dark mb-1 fs-13 text-wrap">${notif.title ?? 'Notifikasi'}</h5>
-                                        </a>
+                                            ${!notif.read_at ? '<span class="badge bg-danger-transparent text-danger fs-10">Baru</span>' : ''}
+                                        </div>
                                         <div class="notification-subtext text-muted fs-11 text-wrap">${notif.message ?? ''}</div>
                                         <div class="notification-subtext text-muted fs-10 mt-1">
                                             <i class="far fa-clock me-1"></i> ${timeString}
@@ -1972,7 +1974,6 @@
                         });
                         html += '</ul>';
                     } else {
-                        // Tampilan jika Kosong
                         html = `
                         <div class="text-center p-4">
                             <i class="las la-bell-slash fs-40 text-muted mb-2"></i>
@@ -1988,16 +1989,44 @@
         }
 
         $(document).ready(function() {
-            // Load data pertama kali
             loadNotificationCount();
-            
-            // Load list saat dropdown dibuka (agar data selalu fresh dan hemat resource)
+
             $('.notifications-dropdown .dropdown-toggle').on('show.bs.dropdown', function () {
                 loadRecentNotifications();
             });
 
-            // Refresh jumlah notifikasi setiap 60 detik (Interval jangan terlalu cepat)
-            setInterval(loadNotificationCount, 60000); 
+            setInterval(loadNotificationCount, 60000);
+
+            $(document).on('click', '.mark-as-read', function(e) {
+                e.preventDefault();
+
+                let id = $(this).data('id');
+                let url = $(this).data('url');
+                let element = $(this);
+
+                $.post(`{{ url('/notifications') }}/${id}/read`)
+                    .done(function(response){
+                        loadNotificationCount();
+                        element.removeClass('bg-light').find('.badge').remove();
+
+                        if (url && url !== '#' && url !== '') {
+                            window.location.href = url;
+                        }
+                    })
+                    .fail(function() {
+                        console.error('Gagal menandai notifikasi');
+                        if (url & url !== '#' && url !== '') window.location.href = url;
+                    });
+            });
+
+            $('#markAllRead').click(function() {
+                $.post(`{{ route("notifications.markAllAsRead") }}`)
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    });
+            });
         });
     </script>
     @yield('script')
