@@ -39,7 +39,7 @@ class ProjectController extends Controller
             'nama_perusahaan' => 'required',
             'nama_project' => 'required',
             'waktu_mulai' => 'required',
-            'deadline' => 'required',
+            'deadline' => 'nullable|date',
             'user.*' => 'required',
         ]);
 
@@ -140,7 +140,7 @@ class ProjectController extends Controller
             'nama_project' => 'required',
             'waktu_mulai' => 'required',
             'waktu_berakhir' => 'nullable',
-            'deadline' => 'required',
+            'deadline' => 'nullable|date',
             'status' => 'nullable',
         ]);
 
@@ -226,7 +226,7 @@ class ProjectController extends Controller
     }
     public function storeFromExternal(Request $request)
     {
-        \Log::info('Data diterima dari CI3:', $request->all());
+        // \Log::info('Data diterima dari CI3:', $request->all());
         $request->validate([
             'nama_perusahaan' => 'required|string',
             'nama_project' => 'required|string',

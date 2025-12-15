@@ -184,13 +184,17 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:void(0);" class="btn btn-primary btn-sm btnViewDokumenPdf"
-                                                data-nama_task="{{ $item->nama_task }}"
-                                                data-dokumen="{{ asset('uploads/' . $item->upload) }}"
-                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
-                                                data-bs-placement="top" title="Lihat Lampiran!">
-                                                <i class="ti ti-file-search"></i>
-                                            </a>
+                                            @if (!empty($item->upload))
+                                                <a href="javascript:void(0);" class="btn btn-primary btn-sm btnViewDokumenPdf"
+                                                    data-nama_task="{{ $item->nama_task }}"
+                                                    data-dokumen="{{ asset('uploads/' . $item->upload) }}"
+                                                    data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
+                                                    data-bs-placement="top" title="Lihat Lampiran!">
+                                                    <i class="ti ti-file-search"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-muted">Tidak ada lampiran</span><br>
+                                            @endif
                                             <a href="{{ route('manajer.detail.task', $item->id) }}"
                                                 class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
                                                 data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
@@ -248,13 +252,17 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:void(0);" class="btn btn-primary btn-sm btnViewDokumenPdf"
-                                                data-nama_task="{{ $item->task->nama_task }}"
-                                                data-dokumen="{{ asset('uploads/' . $item->task->upload) }}"
-                                                data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
-                                                data-bs-placement="top" title="Lihat Lampiran!">
-                                                <i class="ti ti-file-search"></i>
-                                            </a>
+                                            @if (!empty($item->task->upload))
+                                                <a href="javascript:void(0);" class="btn btn-primary btn-sm btnViewDokumenPdf"
+                                                    data-nama_task="{{ $item->task->nama_task }}"
+                                                    data-dokumen="{{ asset('uploads/' . $item->task->upload) }}"
+                                                    data-bs-toggle="tooltip" data-bs-custom-class="tooltip-primary"
+                                                    data-bs-placement="top" title="Lihat Lampiran!">
+                                                    <i class="ti ti-file-search"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-muted">Tidak ada lampiran</span><br>
+                                            @endif
                                             <a 
                                             @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
                                                 href="{{ route('karyawan.detail.task', $item->task->id) }}"

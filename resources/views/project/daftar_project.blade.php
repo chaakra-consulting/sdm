@@ -39,7 +39,7 @@
                                     <label for="format-deadline">Deadline</label>
                                     <div class="input-group">
                                         <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline" required>
+                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline">
                                         <input type="hidden" name="deadline" id="deadline">
                                     </div>
                                 </div>

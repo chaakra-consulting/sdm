@@ -16,6 +16,15 @@ class DetailSubTask extends Model
         'durasi',
         'status',
         'is_active',
+        'approved_by',
+        'approved_at',
+        'approval_notes',
+        'submitted_at',
+    ];
+
+    protected $casts = [
+        'approved_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     public function subtask()
@@ -25,5 +34,10 @@ class DetailSubTask extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'id');
     }
 }
