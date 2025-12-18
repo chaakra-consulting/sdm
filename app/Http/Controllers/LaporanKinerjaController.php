@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\SubTask;
 use App\Models\HariLibur;
 use App\Models\DetailSubTask;
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -183,7 +183,6 @@ class LaporanKinerjaController extends Controller
             ->with([
                 'subtask.task.tipe_task',
                 'subtask.lampiran',
-                'subtask.revisi',
             ])
             ->get();
         $datesData = $detailSubtasks->groupBy(function ($item) {

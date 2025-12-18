@@ -423,7 +423,7 @@
                                                     <th>Sub Task</th>
                                                     <th>Deadline</th>
                                                     <th>Status</th>
-                                                    <th>Aksi</th>
+                                                    <th>e</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

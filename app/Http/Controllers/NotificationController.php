@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Request;
 
 class NotificationController extends Controller
 {
-    private function fixActionUrl($actionUrl)
-    {
-        
-    }   
-
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -27,7 +22,7 @@ class NotificationController extends Controller
                     'message' => $notif->data['message'] ?? 'Notifikasi baru',
                     'action_url' => $notif->data['action_url'] ?? '#',
                     'created_at_human' => $notif->created_at->diffForHumans(),
-                    'type' => $notif->type === 'laporan_kinerja_rejected' ? 'alert' : 'success',
+                    'type' => $notif->type, 
                     'read_at' => $notif->read_at
                 ];
             });
@@ -45,25 +40,23 @@ class NotificationController extends Controller
 
     public function markAsRead($id)
     {
-        $notification = Auth::user()
-                            ->notifications()
-                            ->findOrFail($id);
+        $notification = Auth::user()->notifications()->where('id', $id)->firstOrFail();
                             
-        $notification->markAsRead();
+        $notification->update(['read_at' => now()]);
         
         return response()->json(['success' => true]);
     }
 
     public function markAllAsRead()
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        Auth::user()->notifications()->whereNull('read_at')->update(['read_at' => now()]);
 
         return response()->json(['success' => true]);
     }
 
     public function getUnreadCount()
     {
-        $count = Auth::user()->unreadNotifications->count();
+        $count = Auth::user()->notifications()->whereNull('read_at')->count();
         return response()->json(['count' => $count]);
     }
-}
+} 

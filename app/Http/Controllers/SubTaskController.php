@@ -18,14 +18,12 @@ class SubTaskController extends Controller
         $userSubtasks = SubTask::where('user_id', Auth::id())
             ->with([
                 'detail_sub_task', 
-                'revisi', 
                 'task.tipe_task', 
                 'task.project_perusahaan.perusahaan', 
                 'lampiran'])
             ->get();
         $subtasks = SubTask::with([
             'detail_sub_task', 
-            'revisi', 
             'task.tipe_task', 
             'task.project_perusahaan.perusahaan', 
             'lampiran'])

@@ -43,8 +43,19 @@
                                         @if (!$notification->read_at)
                                             <br><span class="badge bg-primary mt-1">Baru</span>
                                         @endif
-                                        @if (isset($notification->data['action_url']))
-                                            <br><a href="{{ $notification->data['action_url'] }}" class="btn btn-sm btn-outline-primary mt-2">
+                                        @php
+                                            $urlTujuan = $notification->data['action_url'] ?? '#';
+                                            
+                                            if (isset($notification->data['tanggal']) && strpos($urlTujuan, 'tanggal=') === false) {
+                                                $separator = strpos($urlTujuan, '?') !== false ? '&' : '?';
+                                                $urlTujuan .= $separator . 'tanggal=' . $notification->data['tanggal'];
+                                            }
+                                        @endphp
+                                        @if ($urlTujuan !== '#')
+                                            <br>
+                                            <a href="{{ $urlTujuan }}" 
+                                                class="btn btn-sm btn-outline-primary mt-2"
+                                                data-id="{{ $notification->id }}">
                                                 Lihat Detail
                                             </a>
                                         @endif
@@ -77,16 +88,29 @@
                 }); 
             });
 
-            $('.list-group-item').click(function() {
+            $('.btn-read-and-go').click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
                 const notificationId = $(this).data('id');
-                if (notificationId && !$(this).hasClass('read')) {
-                    $.post(`{{ url('/notifications') }}/${notificationId}/read`)
-                        .done(function(response) {
-                            if (response.success) {
-                                $(this).removeClass('bg-light').find('.badge').remove();
-                            }
-                        }.bind(this));
-                }
+                const targetUrl = $(this).attr('href');
+
+                $post(`{{ url('/notifications') }}/${{ notificationId }}/read`)
+                    .always(function() {
+                        window.location.href = targetUrl;
+                    });
+            });
+
+            $('.list-group-item').click(function(e) {
+                if ($(e.target).hasClass('btn-read-and-go')) return;
+
+                const id = $(this).find('.btn-read-and-go').data('id');
+                if(id && $(this).find('.badge').length > 0) {
+                     $.post(`{{ url('/notifications') }}/${id}/read`)
+                        .done((res) => {
+                            $(this).removeClass('bg-light').find('.badge').remove();
+                        });
+                 }
             });
         });
     </script>
