@@ -597,32 +597,58 @@
 @endsection
 
 @section('script')
+    <style>
+        .flatpickr-calendar.open {
+            z-index: 9999999 !important;
+            position: absolute !important;
+        }
+    </style>
     <script>
         $(document).ready(function() {
-            let flatpickrInstance = flatpickr("#format-waktu_mulai", {
+            const rawProjectStart = "{{ $project->waktu_mulai ? \Carbon\Carbon::parse($project->waktu_mulai)->format('Y-m-d') : '' }}";
+            const rawProjectEnd = "{{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('Y-m-d') : '' }}";
+            const projectStart = rawProjectStart === '' ? null : rawProjectStart;
+            const projectEnd = rawProjectEnd === '' ? null : rawProjectEnd;
+
+            console.log("Batas Project:", projectStart, "s/d", projectEnd);
+
+            let fpStartDate = flatpickr("#format-waktu_mulai", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
+                disableMobile: true,
+                appendTo: document.body,
+                minDate: projectStart,
+                maxDate: projectEnd,
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("tgl_task").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                    if (dateStr) {
+                        fpDeadline.set('minDate', dateStr);
+                    } else {
+                        fpDeadline.set('minDate', projectStart)
+                    }
+                }
             });
-            let flatpickrInstance1 = flatpickr("#format-deadline_task", {
+            let fpDeadline = flatpickr("#format-deadline_task", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
+                disableMobile: true,
+                appendTo: document.body,
+                minDate: projectStart,
+                maxDate: projectEnd,
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("deadline_task").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                }
             });
+
             $(".update-project").click(function() {
                 $(".container-peringatan").slideUp(200);
                 $(".container-project").prop('hidden', false).slideDown(200);
             })
+
             $('.btn-edit-project').click(function() {
                 $('.btn-edit-project').hide();
                 $('.btn-batal-edit').prop('hidden', false);
@@ -634,22 +660,31 @@
                     $(".btn-submit-project").prop('hidden', true);
                 })
             })
+
             $(".tambahTask").click(function() {
                 $(".modal-title").text("Buat Task");
                 $("#formTask").attr("action", "/manajer/task/store");
                 $("#formTask input[name='_method']").remove();
                 $("#formTask").append('<input type="hidden" name="_method" value="POST">');
 
-                $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
+                $("#nama_task, #keterangan, #tgl_task, #task_id, #deadline_task").val('');
+                $("#format-waktu_mulai, #format-deadline_task").val('');
+
+                fpStartDate.clear();
+                fpDeadline.clear();
+                fpDeadline.set('minDate', projectStart);
+                
                 $("#user_id").val('{{ auth()->user()->id }}');
                 $("#tipe_task").val('task-project');
 
+                $("#upload").val('');
                 $("#previewImage, #previewPDF").hide().attr("src", "");
                 $("#detail_upload").html("");
 
                 $("#btnSubmit").text("Simpan").show();
                 $("#upload").prop("disabled", false);
             });
+
             $("#upload").change(function() {
                 let file = this.files[0];
                 if (file) {
@@ -677,6 +712,7 @@
                     }
                 }
             });
+            
             $(".updateTask").click(function(e) {
                 e.preventDefault();
 
@@ -698,12 +734,14 @@
 
                 $("#nama_task").val(nama);
                 $("#keterangan").val(keterangan);
-                flatpickrInstance.setDate(tgl, true);
-                flatpickrInstance1.setDate(deadline_task, true);
-                // $("#format-waktu_mulai").val(tgl);
+                
+                if(tgl) fpStartDate.setDate(tgl, true);
+                if(deadline_task) fpDeadline.setDate(deadline_task, true);
+
                 $("#task_id").val(id);
                 $("#project_perusahaan_id").val(project);
                 $("#user_id").val(user);
+
                 $(".form-group:has(#user)").hide();
 
                 $("#previewImage, #previewPDF").hide().attr("src", "");
@@ -734,14 +772,20 @@
                 $("#upload").prop("disabled", false);
                 $("#btnSubmit").text("Update").show();
             });
+
             $("#staticBackdrop").on("hidden.bs.modal", function() {
                 $(".form-group:has(#user)").show();
-                flatpickrInstance.clear();
-                flatpickrInstance1.clear();
+                fpStartDate.clear();
+                fpDeadline.clear();
+
+                fpStartDate.set('minDate', projectStart);
+                fpStartDate.set('maxDate', projectEnd)
+                fpDeadline.set('minDate', projectStart);
+                fpDeadline.set('maxDate', projectEnd)
             });
+            
             $(".delete-task").click(function(e) {
                 e.preventDefault();
-
                 let taskId = $(this).data("id");
                 let nama = $(this).data("nama_task");
 
@@ -948,12 +992,14 @@
                     noChoicesText: "Tidak ada pilihan tersedia"
                 });
             });
+
             const dateConfig = {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
             };
+            
             flatpickr("#waktu_mulai", dateConfig);
             flatpickr("#waktu_berakhir", dateConfig);
             flatpickr("#deadline", dateConfig);

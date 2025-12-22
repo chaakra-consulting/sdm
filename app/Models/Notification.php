@@ -32,7 +32,7 @@ class Notification extends Model
         return $query->whereNull('read_at');
     }
 
-    public function scopeForUser($query, $UserId)
+    public function scopeForUser($query, $userId)
     {
         return $query->where('notifiable_type', User::class)
                     ->where('notifiable_id', $userId);

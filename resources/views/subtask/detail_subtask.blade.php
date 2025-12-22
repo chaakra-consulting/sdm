@@ -1,28 +1,5 @@
 @extends('layouts.main')
 @section('content')
-    <div class="modal fade" id="revisiModal" tabindex="-1" aria-labelledby="revisiModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="revisiModalLabel">Revisi Subtask</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('manajer.revise.subtask', $subtaskManager->id) }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="pesan_revisi">Pesan Revisi</label>
-                            <textarea class="form-control" name="pesan_revisi" id="pesan_revisi" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-warning">Kirim Revisi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -234,14 +211,6 @@
                         <div class="tab-content border border-top-0 p-4 br-dark">
                             <div class="tab-pane border-0 p-0 active" id="home">
                                 <div class="d-flex align-items-start flex-wrap gap-2">
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                        <div class="d-flex gap-2">
-                                            <form action="{{ route('manajer.approve.subtask', $subtaskManager->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="btn btn-outline-primary mb-1">Approve</button>
-                                            </form>
-                                            <button class="btn btn-outline-warning mb-1" data-bs-toggle="modal" data-bs-target="#revisiModal">Revise</button>                                        </div>
-                                    @endif
                                     @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
                                         <button type="button" class="btn btn-outline-primary btn-sm tambahLaporanKinerja mb-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                             <i class="bi bi-plus"></i> Update Pekerjaan

@@ -346,19 +346,47 @@
     </script>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            const activeSlide = document.querySelector('.slide-item.active-slide');
+            const urlParams = new URLSearchParams(window.location.search);
+            const dateFromUrl = urlParams.get('tanggal');
+
             const todayDate = new Date().toISOString().slice(0, 10);
 
-            if (!activeSlide) {
-                let targetSlide = document.querySelector(`.slide-item[data-date="${todayDate}"]`);
-                if (!targetSlide) targetSlide = document.querySelector('.slide-item');
-                if (targetSlide) {
-                    targetSlide.classList.add('active-slide', 'bg-primary', 'text-white');
+            let targetSlide = null;
+            if (dateFromUrl) {
+                targetSlide = document.querySelector(`.slide-item[data-date="${dateFromUrl}"]`);
+            }
+
+            if (!targetSlide) {
+                targetSlide = document.querySelector('.slide-item.active-slide');
+            }
+
+            if (!targetSlide) {
+                targetSlide = document.querySelector(`.slide-item[data-date="${todayDate}"]`);
+            }
+
+            if (!targetSlide) {
+                targetSlide = document.querySelector('.slide-item');
+            }
+
+            if (targetSlide) {
+                document.querySelectorAll('.slide-item').forEach(s => {
+                    s.classList.remove('active-slide', 'bg-primary', 'text-white');
+                    s.classList.add('bg-white');
+                });
+
+                targetSlide.classList.remove('bg-white');
+                targetSlide.classList.add('active-slide', 'bg-primary', 'text-white');
+
+                targetSlide.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+
+                setTimeout(() => {
                     targetSlide.click();
+                }, 300);
+
+                if (dateFromUrl) {
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.pushState({path: newUrl}, '', newUrl);
                 }
-            } else {
-                activeSlide.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                setTimeout(() => { activeSlide.click(); }, 300);
             }
 
             new Swiper('.swiper-container', { slidesPerView: 'auto', spaceBetween: 10, grabCursor: true, freeMode: true });

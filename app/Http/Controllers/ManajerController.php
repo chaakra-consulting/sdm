@@ -4,21 +4,17 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\SubTask;
 use App\Models\HariLibur;
 use App\Models\Perusahaan;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\DetailSubTask;
-use App\Models\RevisiLaporan;
 use Illuminate\Support\Facades\DB;
-use App\Events\SubtaskStatusChanged;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ManajerController extends Controller
 {
-
     private function hariKerja($start, $end)
     {
         $cacheKey = "hari_kerja_{$start}_{$end}";
@@ -548,21 +544,27 @@ class ManajerController extends Controller
 
     private function kirimNotifikasi($detail, $msg, $notes, $type = 'laporan_kinerja_rejected') {
         $karyawan = $detail->user;
-        $projectName = $detail->subtask->task->project_perusahaan ? $detail->subtask->task->project_perusahaan->nama_project . ' - ' : '';
+
+        $namaProject = '-';
+
+        if ($detail->subtask && $detail->subtask->task && $detail->subtask->task->project_perusahaan) {
+            $namaProject = $detail->subtask->task->project_perusahaan->nama_project;
+        }
 
         Notification::create([
             'type' => $type, 
             'notifiable_type' => User::class,
             'notifiable_id' => $karyawan->id,
             'data' => [
-                'message' => 'Laporan Kinerja Anda ' . $msg,
+                'message'           => 'Laporan Kinerja Anda ' . $msg,
                 'detail_subtask_id' => $detail->id,
-                'tanggal' => $detail->tanggal,
-                'subtask' => $detail->subtask->nama_subtask,
-                'project_task' => $projectName . $detail->subtask->task->nama_task,
-                'approved_by' => Auth::user()->name,
-                'notes' => $notes,
-                'action_url' => route('karyawan.laporan_kinerja')
+                'tanggal'           => $detail->tanggal,
+                'subtask'           => $detail->subtask->nama_subtask,
+                'project'           => $namaProject,
+                'task_induk'        => $detail->subtask->task->nama_task,
+                'approved_by'       => Auth::user()->name,
+                'notes'             => $notes,
+                'action_url'        => route('karyawan.laporan_kinerja', ['tanggal' => $detail->tanggal])
             ] 
         ]);
     }
