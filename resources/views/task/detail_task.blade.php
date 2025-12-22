@@ -691,10 +691,24 @@
     </div>
 @endsection
 @section('script')
+    <style>
+        .flatpickr-calendar.open {
+            z-index: 9999999 !important;
+            position: absolute !important;
+        }
+        .input-group > .flatpickr-wrapper {
+            flex: 1 1 auto !important;
+            width: 1% !important;
+            display; block !important;
+        }
+        .input-group > ..flatpickr-wrapper > input.form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const choiceElements = ['#user', '#user2', '#nama_project', '#tipe_task'];
-
             choiceElements.forEach(function(selector){
                 const element = document.querySelector(selector);
                 if (element) {
@@ -709,36 +723,72 @@
                 }
             });
         });
+
         $(document).ready(function () {
             const userRole = "{{ Auth::check() ? Auth::user()->role->slug : '' }}";
             
+            const rawTaskStart      = "{{ $task->tgl_task ? \Carbon\Carbon::parse($task->tgl_task)->format('Y-m-d') : '' }}";
+            const rawTaskEnd        = "{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}";
+            
+            const minDateTask       = rawTaskStart === '' ? null : rawTaskStart;
+            const maxDateTask       = rawTaskEnd === '' ? null : rawTaskEnd;
+            
+            const minDateProject    = "{{ $task->project_perusahaan ? \Carbon\Carbon::parse($task->project_perusahaan->waktu_mulai)->format('Y-m-d') : '' }}";
+            const maxDateProject    = "{{ $task->project_perusahaan ? \Carbon\Carbon::parse($task->project_perusahaan->deadline)->format('Y-m-d') : '' }}";
+
+            console.log("Limit Task:", minDateTask, "s/d", maxDateTask);
+
             const dateConfig = {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
-                locale: "id"
+                locale: "id",
+                disableMobile: true,
+                static: false,
             };
+            
+            flatpickr("#tgl_task", {
+                ...dateConfig,
+                minDate: minDateProject, 
+                maxDate: maxDateProject
+            });
 
-            flatpickr("#tgl_task", dateConfig);
-            flatpickr("#tgl_selesai", dateConfig);
-            flatpickr("#deadline", dateConfig);
+            flatpickr("#tgl_selesai", {
+                ...dateConfig,
+                minDate: minDateProject, 
+            });
 
+            flatpickr("#deadline", {
+                ...dateConfig,
+                minDate: minDateProject,
+                maxDate: maxDateProject
+            });
+            
             let flatpickrSubtaskStart = flatpickr("#format-tanggal", {
                 ...dateConfig,
+                minDate: minDateTask,
+                maxDate: maxDateTask,
+                appendTo: document.getElementById("staticBackdrop"),
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("tanggal").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                    if (dateStr) {
+                        flatpickrSubtaskDeadline.set('minDate', dateStr);
+                    } else {
+                        flatpickrSubtaskDeadline.set('minDate', minDateTask);
+                    }
+                }
             });
 
             let flatpickrSubtaskDeadline = flatpickr("#format-deadline", {
                 ...dateConfig,
+                minDate: minDateTask,
+                maxDate: maxDateTask,
+                appendTo: document.getElementById("staticBackdrop"),
                 onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("deadline").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                }
             });
-
+            
             $('.btn-edit-task').click(function() {
                 $(this).hide();
                 $('.btn-batal-edit').attr('hidden', false);
@@ -750,7 +800,7 @@
                 $(this).attr('hidden', true);
                 $(".btn-submit-task").attr('hidden', true);
             });
-
+            
             $('#staticBackdrop').on('hidden.bs.modal', function () {
                 $('#formSubTask')[0].reset();
                 $('#preview-area').empty();
@@ -758,13 +808,18 @@
 
                 flatpickrSubtaskStart.clear();
                 flatpickrSubtaskDeadline.clear();
+                
+                flatpickrSubtaskStart.set('minDate', minDateTask);
+                flatpickrSubtaskStart.set('maxDate', maxDateTask);
+                flatpickrSubtaskDeadline.set('minDate', minDateTask);
+                flatpickrSubtaskDeadline.set('maxDate', maxDateTask);
 
                 $('#formSubTask input[name="_method"]').remove();
+                $('#upload').prop("disabled", false);
             });
-
+            
             $(document).on('click', '.tambahSubTask', function(e) {
                 e.preventDefault();
-
                 $(".modal-title").text('Tambah Sub Task - {{ $task->nama_task }}');
                 $("#tanggal").val('');
                 $("#deadline").val('');
@@ -772,39 +827,27 @@
                 $("#upload").prop("disabled", false);
 
                 let actionUrl = "";
-                if (userRole == 'karyawan') {
-                    actionUrl = "{{ route('karyawan.subtask.store') }}";
-                } else if (userRole == 'admin-sdm') {
-                    actionUrl = "{{ route('admin_sdm.subtask.store') }}";     
-                }
+                if (userRole == 'karyawan') actionUrl = "{{ route('karyawan.subtask.store') }}";
+                else if (userRole == 'admin-sdm') actionUrl = "{{ route('admin_sdm.subtask.store') }}";
+                
                 $("#formSubTask").attr("action", actionUrl);
                 $("#formSubTask input[name='_method']").remove();
-
-                $('#projectWrapper').addClass('d-none');
-                $('#project_perusahaan_id').val('').prop('required', false);
-                $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
             });
             
             $(document).on("click", ".updateSubTask", function(e) {
                 e.preventDefault();
-
                 let id = $(this).data("id");
-                let task_id = $(this).data("task_id");
-                let user_id = $(this).data("user_id");
                 let nama_subtask = $(this).data("nama_subtask");
                 let tgl_sub_task = $(this).data("tgl_sub_task");
-                let tgl_selesai = $(this).data("tgl_selesai");
                 let deadline = $(this).data("deadline");
                 let lampiran = $(this).data('lampiran');
                 
                 $(".modal-title").text("Update Sub Task");
 
                 let actionUrl = "";
-                if (userRole == 'karyawan') {
-                    actionUrl = "/karyawan/subtask/update/" + id;
-                } else if (userRole == 'admin-sdm') {
-                    actionUrl = "/admin_sdm/subtask/update/" + id;
-                }
+                if (userRole == 'karyawan') actionUrl = "/karyawan/subtask/update/" + id;
+                else if (userRole == 'admin-sdm') actionUrl = "/admin_sdm/subtask/update/" + id;
+
                 $("#formSubTask").attr("action", actionUrl);
                 $("#formSubTask input[name='_method']").remove();
                 $("#formSubTask").append('<input type="hidden" name="_method" value="PUT">');
@@ -812,14 +855,13 @@
                 $("#nama_subtask").val(nama_subtask);
                 $("#tanggal").val(tgl_sub_task);
                 $("#deadline").val(deadline);
-
-                flatpickrSubtaskStart.setDate(tgl_sub_task, true);
-                flatpickrSubtaskDeadline.setDate(deadline, true);
                 
-                $("#task_id").val(task_id);
-                $("#user_id").val(user_id);
+                if (tgl_sub_task) flatpickrSubtaskStart.setDate(tgl_sub_task, true);
+                if (deadline) flatpickrSubtaskDeadline.setDate(deadline, true);
+                
+                $("#task_id").val($(this).data("task_id"));
+                $("#user_id").val($(this).data("user_id"));
                 $('#upload').prop("disabled", false);
-                
                 $('#staticBackdrop').modal('show');
                 
                 $("#preview-area").html("");
@@ -829,88 +871,49 @@
                         const file = item.lampiran;
                         const extension = file.split('.').pop().toLowerCase();
                         let previewHTML = '';
-
                         if (['jpg', 'jpeg', 'png'].includes(extension)) {
-                            previewHTML = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <img src="/uploads/${file}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2 text-truncate">${file}</p>
-                                </div>
-                            `;
+                            previewHTML = `<div class="col-md-4 mb-3 text-center"><img src="/uploads/${file}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;"><p class="small mt-2 text-truncate">${file}</p></div>`;
                         } else if (extension === 'pdf') {
-                            previewHTML = `
-                                <div class="col-md-6 mb-3 text-center">
-                                    <iframe src="/uploads/${file}" class="rounded border" width="100%" height="150px"></iframe>
-                                    <p class="small mt-2 text-truncate">${file}</p>
-                                </div>
-                            `;
+                            previewHTML = `<div class="col-md-6 mb-3 text-center"><iframe src="/uploads/${file}" class="rounded border" width="100%" height="150px"></iframe><p class="small mt-2 text-truncate">${file}</p></div>`;
                         } else {
-                            previewHTML = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <div class="alert alert-secondary p-2 mb-1 text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        <i class="fa fa-file me-2"></i>${file}
-                                    </div>
-                                </div>
-                            `;
+                            previewHTML = `<div class="col-md-4 mb-3 text-center"><div class="alert alert-secondary p-2 mb-1 text-truncate"><i class="fa fa-file me-2"></i>${file}</div></div>`;
                         }
                         $("#preview-area").append(previewHTML);
                     });
                 } else {
-                    $("detail_upload").html("Tidak ada file lampiran sebelumnya.");
+                    $("#detail_upload").html("Tidak ada file lampiran sebelumnya.");
                 }
             });
-
+            
             $("#upload").change(function() {
                 const files = this.files;
                 const previewArea = $("#preview-area");
                 const detailUpload = $("#detail_upload");
-
                 previewArea.html('');
                 detailUpload.html('');
-
                 if (files.length > 0) {
                     detailUpload.html(`<strong>${files.length} file baru dipilih:</strong><br>`);
-
                     Array.from(files).forEach(file => {
                         let fileUrl = URL.createObjectURL(file);
                         let fileName = file.name;
                         let ext = fileName.split('.').pop().toLowerCase();
                         let previewItem = '';
-
                         if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-                            previewItem = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2 text-truncate">${fileName}</p>
-                                </div>
-                            `;
+                            previewItem = `<div class="col-md-4 mb-3 text-center"><img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;"><p class="small mt-2 text-truncate">${fileName}</p></div>`;
                         } else if (ext == 'pdf') {
-                            previewItem = `
-                                <div>
-                                    <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                    <p class="small mt-2 text-truncate">${fileName}</p>
-                                </div>
-                            `;
+                            previewItem = `<div><iframe src="${fileUrl}" class="rounded border shadow-sm" width="100%" height="150px"></iframe><p class="small mt-2 text-truncate">${fileName}</p></div>`;
                         } else {
-                            previewItem = `
-                                <div class="col-md-4 mb-3 text-center">
-                                    <div class="alert alert-secondary p-2 mb-1 text-truncate">
-                                        <i class="fa fa-file me-2"></i>${fileName}
-                                    </div>
-                                </div>
-                            `;
+                            previewItem = `<div class="col-md-4 mb-3 text-center"><div class="alert alert-secondary p-2 mb-1 text-truncate"><i class="fa fa-file me-2"></i>${fileName}</div></div>`;
                         }
                         previewArea.append(previewItem);
                     });
                 }
             });
-
+            
             $(document).on("click", ".delete-sub-task", function(e){
                 e.preventDefault();
-                let id = $(this).data("id");
                 let nama = $(this).data("nama_subtask");
                 let form = $(this).closest('form');
-
                 Swal.fire({
                     title: "Konfirmasi Hapus!",
                     text: "Apakah Kamu yakin ingin menghapus sub task '" + nama + "' ?",
@@ -924,12 +927,6 @@
                     if (result.isConfirmed){
                         form.submit();
                     }
-                });
-            });
-
-            document.querySelectorAll('input[type="file"]').forEach(input => {
-                input.addEventListener('change', function(e){
-
                 });
             });
         });

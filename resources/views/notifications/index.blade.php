@@ -95,7 +95,7 @@
                 const notificationId = $(this).data('id');
                 const targetUrl = $(this).attr('href');
 
-                $post(`{{ url('/notifications') }}/${{ notificationId }}/read`)
+                $.post(`{{ url('/notifications') }}/${notificationId}/read`)
                     .always(function() {
                         window.location.href = targetUrl;
                     });

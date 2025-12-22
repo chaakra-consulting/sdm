@@ -69,28 +69,37 @@
                             </div>
                             <div class="col-md-6 d-none" id="projectWrapper">
                                 <label for="project_perusahaan_id">Project</label>
-                                <select name="project_perusahaan_id" id="project_perusahaan_id"
-                                    class="form-control" required>
+                                <select name="project_perusahaan_id" id="project_perusahaan_id" class="form-control" required>
                                     <option selected disabled>Pilih Project</option>
                                     @foreach ($project as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_project }}
-                                            ({{ $item->perusahaan->nama_perusahaan }})</option>
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->nama_project }} ({{ $item->perusahaan->nama_perusahaan }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group col-md-12">
+                            <label for="nama_task">Nama Task</label>
+                            <input type="text" name="nama_task" id="nama_task" class="form-control" required>
+                        </div>
                         <div class="row">
-                            <div class="form-group col-md-8">
-                                <label for="nama_task">Nama Task</label>
-                                <input type="text" name="nama_task" id="nama_task" class="form-control" required>
-                            </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="format-tgl_task">Tanggal Mulai</label>
                                 <div class="input-group date-container">
                                     <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
                                     <input type="text" class="form-control" name="format-tgl_task" id="format-tgl_task"
-                                        placeholder="Tanggal Mulai" required>
+                                        placeholder="Mulai" required>
                                     <input type="hidden" name="tgl_task" id="tgl_task" required>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="format-deadline_task">Deadline</label>
+                                <div class="input-group date-container">
+                                    <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
+                                    <input type="text" class="form-control" name="format-deadline_task"
+                                        id="format-deadline_task" placeholder="Deadline">
+                                    <input type="hidden" name="deadline_task" id="deadline_task">
                                 </div>
                             </div>
                         </div>
@@ -320,198 +329,325 @@
     </div>
 @endsection
 @section('script')
+    <style>
+        .flatpickr-calendar.open {
+            z-index: 9999999 !important;
+            position: absolute !important;
+        }
+    </style>
+    
     <script>
         $(document).ready(function() {
-            const userRole = "{{ auth()->user()->role->slug }}";
-            let choicesTipeTask = null; 
-            let choicesProject = null;
-
-            $("#upload").change(function() {
-                let file = this.files[0];
-                if (file) {
-                    let fileUrl = URL.createObjectURL(file);
-                    let fileExtension = file.name.split('.').pop().toUpperCase();
-
-                    $("#previewImage2, #previewPDF").hide().attr("src", "");
-                    $("#detail_upload").html("");
-
-                    if (file.name.match(/\.(jpg|jpeg|png)$/i)) {
-                        $("#previewImage2").attr("src", fileUrl).show();
-                        $("#previewPDF").hide();
-                        $("#detail_upload").html(
-                            `<strong>Preview Gambar:</strong> <a href="${fileUrl}" target="_blank">Lihat Gambar</a>`
-                        );
-                    } else if (file.name.match(/\.pdf$/i)) {
-                        $("#previewPDF").attr("src", fileUrl).show();
-                        $("#previewImage2").hide();
-                        $("#detail_upload").html(
-                            `<strong>Preview PDF:</strong> <a href="${fileUrl}" target="_blank">Lihat PDF</a>`
-                        );
-                    } else {
-                        $("#previewImage2, #previewPDF").hide();
-                        $("#detail_upload").html(`<strong>File Terpilih:</strong> ${fileExtension}`);
-                    }
+            setTimeout(function() {
+                const userRole = "{{ auth()->user()->role->slug }}";
+                const projectsData = {!! json_encode($project) !!}; 
+                
+                let choicesTipeTask = null; 
+                let choicesProject = null;
+                let currentProjectStart = null;
+                let currentProjectEnd = null;
+                
+                function cleanDate(dateString) {
+                    if (!dateString) return null;
+                    return dateString.split('T')[0];
                 }
-            });
-
-            $("#staticBackdrop").on('shown.bs.modal', function() {
-                flatpickr("#format-tgl_task", {
+                
+                let fpStartDate = flatpickr("#format-tgl_task", {
                     dateFormat: "Y-m-d",
                     altInput: true,
                     altFormat: "d F Y",
-                    static: true,
                     locale: 'id',
+                    disableMobile: true,
+                    static: false, 
+                    appendTo: document.body,
                     onChange: function(selectedDates, dateStr, instance) {
                         $('#tgl_task').val(dateStr);
-                    },
-                    appendTo: this.querySelector('.date-container')
-                });
-
-                if (choicesTipeTask) choicesTipeTask.destroy();
-
-                const elementTipeTask = document.getElementById('tipe_task');
-                choicesTipeTask = new Choices(elementTipeTask, {
-                    searchEnabled: false,
-                    itemSelectText: '',
-                    shouldSort: false,
-                });
-
-                if (choicesProject) choicesProject.destroy();
-
-                const elementProject = document.getElementById('project_perusahaan_id');
-                choicesProject = new Choices(elementProject, {
-                    searchEnabled: true,
-                    itemSelectText: '', 
-                    shouldSort: false, 
-                    placeholder: true, 
-                    placeholderValue: 'Pilih Project',
-                });
-
-                elementTipeTask.addEventListener('change', function(event) {
-                    checkTipeTaskLogika(choicesTipeTask.getValue(true));
-                });
-
-                checkTipeTaskLogika(choicesTipeTask.getValue(true));
-            });
-
-            function checkTipeTaskLogika(selectedValue) {
-                console.log("Tipe task terpilih:", selectedValue);
-                
-                if (selectedValue == 'task-project') {
-                    $('#projectWrapper').removeClass('d-none');
-                    $('#project_perusahaan_id').val('').prop('required', true);
-                    $('#tipeTaskWrapper').removeClass('col-md-12').addClass('col-md-6'); 
-                } else {
-                    $('#projectWrapper').addClass('d-none');
-                    $('#project_perusahaan_id').prop('required', false);
-                    if (choicesProject) {
-                        choicesProject.removeActiveItems();
+                        if (dateStr) {
+                            fpDeadline.set('minDate', dateStr);
+                        } else {
+                            fpDeadline.set('minDate', currentProjectStart);
+                        }
                     }
-                    $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
-                }
-            }
+                });
 
-            $(document).on('click', '.tambahTask', function(e) {
-                e.preventDefault();
-                $(".modal-title").text('Tambah Task');
-                $("#nama_task").val('');
-                $("#keterangan").val('');
-                
-                $("#user").val('').trigger('change'); 
-
-                $("#upload").val('');
-                $("#previewImage2, #previewPDF").hide().attr("src", "");
-                $("#detail_upload").html("");
-                
-                if (userRole === "manager") { 
-                    $("#formDaftarTask").attr('action', '/manajer/task/store');
-                } else if (userRole === "karyawan") {
-                    $("#formDaftarTask").attr('action', '/karyawan/task/store');
-                } else if (userRole === "admin-sdm") {
-                    $("#formDaftarTask").attr('action', '/admin_sdm/task/store');
-                }
-                $("#formDaftarTask input[name='_method']").remove();
-            });
-
-            $(".delete").click(function(e) {
-                e.preventDefault();
-                let taskId = $(this).data("id");
-                let nama = $(this).data("nama_task");
-                let actionUrl = '';
-                
-                if (userRole == 'manager') {
-                    actionUrl = '/manajer/task/delete/' + taskId;
-                } else if (userRole == 'karyawan') {
-                    actionUrl = '/karyawan/task/delete/' + taskId;
-                } else if (userRole == 'admin-sdm') {
-                    actionUrl = '/admin_sdm/task/delete/' + taskId;
-                }
-
-                Swal.fire({
-                    title: "Konfirmasi Hapus Task!",
-                    text: "Apakah Kamu yakin ingin menghapus task '" + nama + "' ?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#cf0202",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Ya, Hapus!",
-                    cancelButtonText: "Batal"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = $("<form>", {
-                            action: actionUrl,
-                            method: "POST"
-                        }).append(
-                            $("<input>", { type: "hidden", name: "_token", value: "{{ csrf_token() }}" }),
-                            $("<input>", { type: "hidden", name: "_method", value: "DELETE" })
-                        );
-                        $("body").append(form);
-                        form.submit();
+                let fpDeadline = flatpickr("#format-deadline_task", {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d F Y",
+                    locale: 'id',
+                    disableMobile: true,
+                    static: false,
+                    appendTo: document.body,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        $('#deadline_task').val(dateStr);
                     }
-                })
-            });
+                });
+                
+                function updateDateLimitsFromProject(projectId) {
+                    const selectedProject = projectsData.find(p => p.id == projectId);
+                    
+                    if (selectedProject) {
+                        let start = cleanDate(selectedProject.waktu_mulai);
+                        let end = cleanDate(selectedProject.deadline);
 
-            $(document).on('click', '.btnViewDokumenPdf', function(e) {
-                e.preventDefault();
-                $('#staticBackdropViewDokumen').modal('show');
-                $('#staticBackdropViewDokumen .modal-title').text('Lampiran : ' + $(this).data('nama_task'));
+                        currentProjectStart = start;
+                        currentProjectEnd = end;
+                        
+                        $('#tgl_task').val('');
+                        $('#format-tgl_task').val('');
+                        $('#deadline_task').val('');
+                        $('#format-deadline_task').val('');
+                        fpStartDate.clear();
+                        fpDeadline.clear();
+                        
+                        if (start) fpStartDate.set('minDate', start);
+                        else fpStartDate.set('minDate', null);
+                        if (end) fpStartDate.set('maxDate', end);
+                        else fpStartDate.set('maxDate', null);
 
-                let dokumen = $(this).data('dokumen');
-                let fileExtension = dokumen ? dokumen.split('.').pop().toUpperCase() : "";
+                        if (start) fpDeadline.set('minDate', start);
+                        else fpDeadline.set('minDate', null);
 
-                $("#previewImage, #viewDokumenPdf").hide().attr("src", "");
-                $("#detail_upload").html("");
-
-                if (!dokumen || dokumen == "null" || dokumen.trim() == "") {
-                    $("#detail_upload").html('<strong class="text-danger">Tidak ada lampiran tersedia</strong>');
-                } else if (dokumen.match(/\.(jpg|jpeg|png)$/i)) {
-                    $("#previewImage").attr("src", dokumen).show();
-                    $("#viewDokumenPdf").hide();
-                    $("#detail_upload").html(`<strong>Preview Gambar:</strong> <a href="${dokumen}" target="_blank">Lihat Gambar</a>`);
-                } else if (dokumen.match(/\.pdf$/i)) {
-                    $("#viewDokumenPdf").attr("src", dokumen).show();
-                    $("#previewImage").hide();
-                    $("#detail_upload").html(`<strong>Preview PDF:</strong> <a href="${dokumen}" target="_blank">Lihat PDF</a>`);
-                } else {
-                    $("#previewImage, #viewDokumenPdf").hide();
-                    $("#detail_upload").html(`
-                        <strong>File Terpilih:</strong> ${fileExtension} <br>
-                        <a href="${dokumen}" download class="btn btn-sm btn-success mt-2">
-                            <i class="bi bi-download"></i> Unduh File
-                        </a>
-                    `);
+                        if (end) fpDeadline.set('maxDate', end);
+                        else fpDeadline.set('maxDate', null);
+                    } else {
+                        currentProjectStart = null;
+                        currentProjectEnd = null;
+                        fpStartDate.set('minDate', null); fpStartDate.set('maxDate',null);
+                        fpDeadline.set('minDate', null); fpDeadline.set('maxDate', null);
+                    }
                 }
-            });
+
+                function checkTipeTaskLogika(selectedValue) {
+                    if (selectedValue == 'task-project') {
+                        $('#projectWrapper').removeClass('d-none');
+                        $('#project_perusahaan_id').prop('required', true);
+                        $('#tipeTaskWrapper').removeClass('col-md-12').addClass('col-md-6');
+                    } else {
+                        $('#projectWrapper').addClass('d-none');
+                        $('#project_perusahaan_id').prop('required', false);
+                        
+                        if (choicesProject) choicesProject.removeActiveItems();
+                        
+                        currentProjectStart = null;
+                        fpStartDate.set('minDate', null); fpStartDate.set('maxDate', null);
+                        fpDeadline.set('minDate', null); fpDeadline.set('maxDate', null);
+
+                        $('#tipeTaskWrapper').removeClass('col-md-6').addClass('col-md-12');
+                    }
+                }
+                
+                try {
+                    const elementTipeTask = document.getElementById('tipe_task');
+                    if (elementTipeTask) {
+                        if (elementTipeTask.choices) { elementTipeTask.choices.destroy(); }
+
+                        choicesTipeTask = new Choices(elementTipeTask, {
+                            searchEnabled: false,
+                            itemSelectText: '',
+                            shouldSort: false,
+                        });
+                        elementTipeTask.addEventListener('change', function(event) {
+                            checkTipeTaskLogika($('#tipe_task').val());
+                        });
+                        checkTipeTaskLogika($('#tipe_task').val());
+                    }
+
+                    const elementProject = document.getElementById('project_perusahaan_id');
+                    if (elementProject) {
+                        if (elementProject.choices) { elementProject.choices.destroy(); }
+
+                        choicesProject = new Choices(elementProject, {
+                            searchEnabled: true,
+                            itemSelectText: '',
+                            shouldSort: false,
+                            placeholder: true,
+                            placeholderValue: 'Pilih Project',
+                        });
+                        elementProject.addEventListener('change', function(event) {
+                            let pid = $('#project_perusahaan_id').val();
+                            if(pid) updateDateLimitsFromProject(pid);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Choices JS Error:", error);
+                }
+                
+                $(document).on('click', '.tambahTask', function(e) {
+                    e.preventDefault();
+                    $(".modal-title").text('Tambah Task');
+                    
+                    $("#nama_task").val('');
+                    $("#keterangan").val('');
+                    $("#tgl_task").val('');
+                    $("#deadline_task").val('');
+                    $("#user").val('').trigger('change'); 
+                    $("#upload").val('');
+                    $("#previewImage2, #previewPDF").hide().attr("src", "");
+                    $("#detail_upload").html("");
+
+                    fpStartDate.clear();
+                    fpDeadline.clear();
+                    fpStartDate.set('minDate', null); fpStartDate.set('maxDate', null);
+                    fpDeadline.set('minDate', null); fpDeadline.set('maxDate', null);
+
+                    if(choicesProject) choicesProject.removeActiveItems();
+
+                    if (choicesTipeTask) {
+                        if (userRole === 'manager') {
+                            choicesTipeTask.setChoiceByValue('task-project');
+                            checkTipeTaskLogika('task-project');
+                        } else {
+                            choicesTipeTask.removeActiveItems();
+                            checkTipeTaskLogika('');
+                        }
+                    }
+                    
+                    let actionUrl = '';
+                    if (userRole == "manager") actionUrl = '/manajer/task/store';
+                    else if (userRole == "karyawan") actionUrl = '/karyawan/task/store';
+                    else if (userRole == "admin-sdm") actionUrl = '/admin_sdm/task/store';
+                    
+                    $("#formDaftarTask").attr('action', actionUrl);
+                    $("#formDaftarTask input[name='_method']").remove();
+                    $("#formDaftarTask").append('<input type="hidden" name="_method" value="POST">');
+                });
+
+                $(".updateTask").click(function(e) {
+                    e.preventDefault();
+                    let id = $(this).data("id");
+                    let nama = $(this).data("nama_task");
+                    let tgl = $(this).data("tgl_task");
+                    let deadline_task = $(this).data("deadline_task");
+                    let keterangan = $(this).data("keterangan");
+                    let project = $(this).data("project");
+                    let user = $(this).data("user");
+
+                    $(".modal-title").text("Update Task");
+
+                    let updateUrl = '';
+                    if (userRole == 'manager') updateUrl = "/manajer/task/update/" + id;
+                    else if (userRole == 'karyawan') updateUrl = "/karyawan/task/update/" + id;
+                    else if (userRole == 'admin-sdm') updateUrl = "/admin_sdm/task/update/" + id;
+
+                    $("#formDaftarTask").attr("action", updateUrl);
+                    $("#formDaftarTask input[name='_method']").remove();
+                    $("#formDaftarTask").append('<input type="hidden" name="_method" value="PUT">');
+
+                    $("#nama_task").val(nama);
+                    $("#keterangan").val(keterangan);
+                    $("#task_id").val(id);
+                    $("#user_id").val(user);
+
+                    if (project) {
+                        if (choicesTipeTask) choicesTipeTask.setChoiceByValue('task-project');
+                        checkTipeTaskLogika('task-project');
+                        
+                        if (choicesProject) {
+                            choicesProject.setChoiceByValue(project.toString());
+                            updateDateLimitsFromProject(project);
+                        }
+                    } 
+
+                    if (tgl) fpStartDate.setDate(tgl, true);
+                    if (deadline_task) fpDeadline.setDate(deadline_task, true);
+
+                    $("#upload").prop("disabled", false);
+                });
+                
+                $("#upload").change(function() {
+                    let file = this.files[0];
+                    if (file) {
+                        let fileUrl = URL.createObjectURL(file);
+                        let fileExtension = file.name.split('.').pop().toUpperCase();
+                        $("#previewImage2, #previewPDF").hide().attr("src", "");
+                        $("#detail_upload").html("");
+                        if (file.name.match(/\.(jpg|jpeg|png)$/i)) {
+                            $("#previewImage2").attr("src", fileUrl).show();
+                            $("#previewPDF").hide();
+                            $("#detail_upload").html(`<strong>Preview Gambar:</strong> <a href="${fileUrl}" target="_blank">Lihat Gambar</a>`);
+                        } else if (file.name.match(/\.pdf$/i)) {
+                            $("#previewPDF").attr("src", fileUrl).show();
+                            $("#previewImage2").hide();
+                            $("#detail_upload").html(`<strong>Preview PDF:</strong> <a href="${fileUrl}" target="_blank">Lihat PDF</a>`);
+                        } else {
+                            $("#previewImage2, #previewPDF").hide();
+                            $("#detail_upload").html(`<strong>File Terpilih:</strong> ${fileExtension}`);
+                        }
+                    }
+                });
+
+                $(".delete").click(function(e) {
+                    e.preventDefault();
+                    let taskId = $(this).data("id");
+                    let nama = $(this).data("nama_task");
+                    let actionUrl = '';
+                    if (userRole == 'manager') actionUrl = '/manajer/task/delete/' + taskId;
+                    else if (userRole == 'karyawan') actionUrl = '/karyawan/task/delete/' + taskId;
+                    else if (userRole == 'admin-sdm') actionUrl = '/admin_sdm/task/delete/' + taskId;
+
+                    Swal.fire({
+                        title: "Konfirmasi Hapus Task!",
+                        text: "Apakah Kamu yakin ingin menghapus task '" + nama + "' ?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#cf0202",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Ya, Hapus!",
+                        cancelButtonText: "Batal"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let form = $("<form>", { action: actionUrl, method: "POST" })
+                                .append($("<input>", { type: "hidden", name: "_token", value: "{{ csrf_token() }}" }))
+                                .append($("<input>", { type: "hidden", name: "_method", value: "DELETE" }));
+                            $("body").append(form);
+                            form.submit();
+                        }
+                    })
+                });
+
+                $(document).on('click', '.btnViewDokumenPdf', function(e) {
+                    e.preventDefault();
+                    $('#staticBackdropViewDokumen').modal('show');
+                    $('#staticBackdropViewDokumen .modal-title').text('Lampiran : ' + $(this).data('nama_task'));
+                    let dokumen = $(this).data('dokumen');
+                    let fileExtension = dokumen ? dokumen.split('.').pop().toUpperCase() : "";
+                    $("#previewImage, #viewDokumenPdf").hide().attr("src", "");
+                    $("#detail_upload").html("");
+                    if (!dokumen || dokumen == "null" || dokumen.trim() == "") {
+                        $("#detail_upload").html('<strong class="text-danger">Tidak ada lampiran tersedia</strong>');
+                    } else if (dokumen.match(/\.(jpg|jpeg|png)$/i)) {
+                        $("#previewImage").attr("src", dokumen).show();
+                        $("#viewDokumenPdf").hide();
+                        $("#detail_upload").html(`<strong>Preview Gambar:</strong> <a href="${dokumen}" target="_blank">Lihat Gambar</a>`);
+                    } else if (dokumen.match(/\.pdf$/i)) {
+                        $("#viewDokumenPdf").attr("src", dokumen).show();
+                        $("#previewImage").hide();
+                        $("#detail_upload").html(`<strong>Preview PDF:</strong> <a href="${dokumen}" target="_blank">Lihat PDF</a>`);
+                    } else {
+                        $("#previewImage, #viewDokumenPdf").hide();
+                        $("#detail_upload").html(`
+                            <strong>File Terpilih:</strong> ${fileExtension} <br>
+                            <a href="${dokumen}" download class="btn btn-sm btn-success mt-2"><i class="bi bi-download"></i> Unduh File</a>
+                        `);
+                    }
+                });
+
+            }, 500);
         });
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            new Choices('#user', {
-                removeItemButton: true,
-                searchEnabled: true,
-                noResultsText: "Tidak ada hasil yang cocok",
-                noChoicesText: "Tidak ada pilihan tersedia"
-            });
+            if(document.getElementById('user')) {
+                try {
+                    new Choices('#user', {
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        noResultsText: "Tidak ada hasil yang cocok",
+                        noChoicesText: "Tidak ada pilihan tersedia"
+                    });
+                } catch(e) { console.log('User select init error', e); }
+            }
         });
     </script>
 @endsection

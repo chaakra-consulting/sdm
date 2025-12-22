@@ -63,7 +63,10 @@
                             <select name="task_id" id="task_id" data-trigger class="form-control" required>
                                 <option selected disabled>Pilih Task</option>
                                 @foreach ($tasks as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama_task }} 
+                                    <option value="{{ $item->id }}"
+                                        data-start="{{ $item->tgl_task }}"
+                                        data-end="{{ $item->deadline }}">
+                                        {{ $item->nama_task }} 
                                         ({{ $item->tipe_task->nama_tipe . ' - ' ?? '' }}
                                         {{ $item->project_perusahaan?->nama_project . ' - ' ?? '' }}
                                         {{ $item->project_perusahaan?->perusahaan?->nama_perusahaan ?? '' }})
@@ -265,50 +268,126 @@
 @endsection
 @section('script')
     <style>
+        .flatpickr-calendar.open {
+            z-index: 9999999 !important;
+            position: absolute !important;
+        }
         .badge { cursor: pointer; }
         .fa-info-circle { font-size: 0.8em; }
+        .input-group > .flatpickr-wrapper {
+            flex: 1 1 auto !important;
+            width: 1% !important;
+            display: block !important;
+        }
+        .input-group > .flatpickr-wrapper > input.form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
     </style>
     <script>
         $(document).ready(function(){
             const userRole = "{{ auth()->user()->role->slug }}";
-            let flatpickrInstance = flatpickr("#format-tanggal", {
+
+            const tasksInfo = {!! json_encode($tasks->mapWithKeys(function($item){
+                return [$item->id => [
+                    'start' => $item->tgl_task ? \Carbon\Carbon::parse($item->tgl_task)->format('Y-m-d') : null,
+                    'end' => $item->deadline ? \Carbon\Carbon::parse($item->deadline)->format('Y-m-d') : null
+                ]];
+            })) !!};
+
+            const dateConfig = {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
+                disableMobile: true,
+                static: false
+            };
+            
+            let fpSubTaskStart = flatpickr("#format-tanggal", {
+                ...dateConfig,
+                appendTo: document.getElementById("staticBackdrop"),
                 onChange: function(selectedDates, dateStr, instance) {
-                    document.getElementById("tanggal").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                    $("#tanggal").val(dateStr);
+                    if (dateStr) {
+                        fpSubTaskDeadline.set('minDate', dateStr);
+                    } else {
+                        let taskId = $('#task_id').val();
+                        let info = tasksInfo[taskId];
+                        let minTask = info ? info.start : null;
+                        fpSubTaskDeadline.set('minDate', minTask || null);
+                    }
+                }
             });
-            let flatpickrInstance1 = flatpickr("#format-deadline", {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d F Y",
-                locale: 'id',
+            
+            let fpSubTaskDeadline = flatpickr("#format-deadline", {
+                ...dateConfig,
+                appendTo: document.getElementById("staticBackdrop"),
                 onChange: function(selectedDates, dateStr, instance) {
-                    document.getElementById("deadline").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                    $('#deadline').val(dateStr);
+                }
             });
+            
+            $("#task_id").change(function() {
+                let taskId = $(this).val();
+                let info = tasksInfo[taskId];
+                
+                let minDate = info ? info.start : null;
+                let maxDate = info ? info.end : null;
+
+                console.log("Task Dipilih (Min/Max):", minDate, "/", maxDate);
+
+                $('#format-tanggal').val('');
+                $('#tanggal').val('');
+                $('#format-deadline').val('');
+                $('#deadline').val('');
+                
+                fpSubTaskStart.clear(); 
+                fpSubTaskDeadline.clear();
+                
+                fpSubTaskStart.set('minDate', minDate);
+                fpSubTaskStart.set('maxDate', maxDate);
+                fpSubTaskDeadline.set('minDate', minDate);
+                fpSubTaskDeadline.set('maxDate', maxDate);
+            });
+            
             $(document).on('click', '.tambahSubtask', function(e) {
                 e.preventDefault();
-    
                 $(".modal-title").text('Tambah Sub Task');
+                
+                try {
+                    let selectEl = document.getElementById('task_id');
+                    if(selectEl && selectEl.choices) {
+                        selectEl.choices.removeActiveItems(); 
+                    } else {
+                        $("#task_id").val('');
+                    }
+                } catch(err) {
+                    $("#task_id").val('');
+                }
+
+                $("#nama_subtask").val('');
                 $("#tanggal").val('');
-    
-                $("#previewImage, #previewPDF").hide().attr("src", "");
+                $("#deadline").val('');
+                
+                $("#preview-area").empty();
                 $("#detail_upload").html("");
+                $("#upload").val('');
+                $("#upload").prop("disabled", false);
     
                 $("#btnSubmit").text("Simpan").show();
-                $("#upload").prop("disabled", false);
+
+                let actionUrl = '';
                 if (userRole === 'karyawan') {
-                    $("#formSubtask").attr("action", "/karyawan/subtask/store");
+                    actionUrl = "/karyawan/subtask/store";
                 } else if (userRole === 'admin-sdm') {
-                    $("#formSubtask").attr("action", "/admin_sdm/subtask/store");
+                    actionUrl = "/admin_sdm/subtask/store";
                 }
+
+                $("#formSubtask").attr("action", actionUrl);
                 $("#formSubtask input[name='_method']").remove();
             });
+
             $("#upload").change(function () {
                 const files = this.files;
                 const previewArea = $("#preview-area");
@@ -324,9 +403,6 @@
                         let fileUrl = URL.createObjectURL(file);
                         let fileName = file.name;
                         let ext = fileName.split('.').pop().toLowerCase();
-        
-                        detailUpload.append(`${fileName}<br>`);
-        
                         let previewItem = '';
         
                         if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
@@ -356,6 +432,7 @@
                     });
                 }
             });
+
             $(".delete").click(function(e) {
                 e.preventDefault();
 
@@ -399,13 +476,32 @@
                     }
                 });
             });
-
         });
-    </script>
-    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const choiceElements = ['#user', '#user2', '#nama_project', '#tipe_task', '#task_id'];
+
+            choiceElements.forEach(function(selector){
+                const element = document.querySelector(selector);
+                if (element) {
+                    if(element.choices) {
+                        element.choices.destroy();
+                    }
+                    new Choices(element, {
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        noResultsText: "Tidak ada hasil yang cocok",
+                        noChoicesText: "Tidak ada pilihan tersedia",
+                        shouldSort: false,
+                        itemSelectText: 'Tekan untuk memilih'
+                    });
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             })
         })
