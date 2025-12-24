@@ -13,6 +13,7 @@ use App\Models\ProjectPerusahaan;
 use App\Models\UsersTask;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use function Symfony\Component\Clock\now;
 
 class ProjectController extends Controller
 {
@@ -116,6 +117,18 @@ class ProjectController extends Controller
                 'start' => $project->deadline,
                 'color' => 'red'
             ];
+        }
+        if ($progress == 100 && $project->status != 'selesai') {
+            $project->update([
+                'status' => 'selesai',
+                'waktu_berakhir' => now()
+            ]);
+            $project = $project->fresh();
+        } elseif ($progress < 100 && $project->status == 'selesai') {
+            $project->update([
+                'status' => 'proses',
+                'waktu_berakhir' => null
+            ]);
         }
         return view('project.detail_project', compact(
             'project',

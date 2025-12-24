@@ -1,520 +1,472 @@
 @extends('layouts.main')
+
 @section('content')
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    @php
+        $userRole = Auth::check() ? Auth::user()->role->slug : '';
+        $uId = auth()->id();
+        
+        // 1. Konfigurasi Hak Akses & URL
+        $config = [
+            'can_update_pekerjaan' => in_array($userRole, ['karyawan', 'admin-sdm']),
+            'back_url' => '#',
+            'task_url' => '#'
+        ];
+
+        if ($userRole == 'manager') {
+            $config['back_url'] = '/manajer/subtask';
+            if ($subtask->task) $config['task_url'] = '/manajer/task/' . $subtask->task->id;
+        } elseif ($userRole == 'karyawan') {
+            $config['back_url'] = '/karyawan/subtask';
+            if ($subtask->task) $config['task_url'] = '/karyawan/task/detail/' . $subtask->task->id;
+        } elseif ($userRole == 'admin-sdm') {
+            $config['back_url'] = '/admin_sdm/subtask';
+            if ($subtask->task) $config['task_url'] = '/admin_sdm/task/detail/' . $subtask->task->id;
+        }
+
+        // Status Badge Logic
+        $statusBadge = '<span class="badge bg-secondary-transparent rounded-pill">Belum Dicek</span>';
+        if($subtask->status === 'revise') {
+            $statusBadge = '<span class="badge bg-warning-transparent rounded-pill" data-bs-toggle="tooltip" title="Pesan Revisi: '.($subtask->revisi->pesan ?? '-').'">Revisi <i class="fas fa-info-circle ms-1"></i></span>';
+        } elseif($subtask->status === 'approve') {
+            $statusBadge = '<span class="badge bg-success-transparent rounded-pill">Approved</span>';
+        }
+
+        // Logic Laporan Kinerja Kosong
+        if($subtask->detail_sub_task->isEmpty()){
+             $statusBadge = '<span class="badge bg-info-transparent rounded-pill">Belum ada laporan</span>';
+        }
+    @endphp
+
+    <div class="container-fluid">
+
+        <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+            <div class="my-auto">
+                <h1 class="page-title fs-21 mb-1">Detail Subtask</h1>
+                <nav>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">{{ ucfirst($userRole) }}</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Subtask</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-4 col-lg-5">
+                <div class="card custom-card overflow-hidden">
+                    {{-- HEADER CARD DENGAN TOMBOL --}}
+                    <div class="card-header border-bottom border-block-end-dashed justify-content-between align-items-center">
+                        <div class="card-title">Informasi Subtask</div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <a href="{{ $config['back_url'] }}" class="btn btn-light btn-sm btn-wave" data-bs-toggle="tooltip" title="Kembali">
+                                <i class="ri-arrow-left-line align-middle"></i>
+                            </a>
+                            @if ($subtask->task)
+                                <a href="{{ $config['task_url'] }}" class="btn btn-primary-light btn-sm btn-wave" data-bs-toggle="tooltip" title="Lihat Task Induk">
+                                    <i class="ri-file-list-line align-middle"></i>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="card-body pt-4">
+                        <div class="text-center mb-3">
+                            {!! $statusBadge !!}
+                        </div>
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger mb-3">
+                                <ul class="mb-0">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
+                            </div>
+                        @endif
+
+                        {{-- FORM UPDATE --}}
+                        <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.subtask.update.detail', $subtask->id) }}" method="post" enctype="multipart/form-data">
+                            @csrf @method('put')
+
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Nama Subtask</label>
+                                {{-- Tambahkan ID agar bisa ditarget JS --}}
+                                <input type="text" name="nama_subtask" id="nama_subtask_info" class="form-control fw-bold" value="{{ $subtask->nama_subtask }}" disabled>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label fs-13 text-muted">Mulai</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-line text-muted"></i></span>
+                                        {{-- Tambahkan ID & name yang benar --}}
+                                        <input type="text" name="tgl_sub_task" id="tgl_sub_task_info" class="form-control border-start-0 ps-0" 
+                                               value="{{ \Carbon\Carbon::parse($subtask->tgl_sub_task)->translatedFormat('Y-m-d') }}" 
+                                               disabled>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fs-13 text-muted">Deadline</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-event-line text-muted"></i></span>
+                                        {{-- Tambahkan ID & name yang benar --}}
+                                        <input type="text" name="deadline" id="deadline_sub_info" class="form-control border-start-0 ps-0" 
+                                               value="{{ \Carbon\Carbon::parse($subtask->deadline)->translatedFormat('Y-m-d') }}" 
+                                               disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Tanggal Selesai (Aktual)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="ri-checkbox-circle-line text-success"></i></span>
+                                    {{-- Tambahkan ID & name yang benar --}}
+                                    <input type="text" name="tgl_selesai" id="tgl_selesai_info" class="form-control border-start-0 ps-0" 
+                                           value="{{ $subtask->tgl_selesai ? \Carbon\Carbon::parse($subtask->tgl_selesai)->translatedFormat('Y-m-d') : '' }}" 
+                                           placeholder="Belum Selesai"
+                                           disabled>
+                                </div>
+                            </div>
+
+                            {{-- Hidden Fields Wajib (Task ID & User ID) --}}
+                            <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
+                            <input type="hidden" name="user_id" value="{{ $subtask->user_id }}">
+
+                            {{-- Bagian Tombol (Hanya Muncul Jika Berhak Edit) --}}
+                            @if ($config['can_update_pekerjaan'])
+                                <div class="d-grid gap-2 mt-4">
+                                    {{-- Tombol Edit --}}
+                                    <button type="button" class="btn btn-warning-light btn-wave btn-edit-subtask">
+                                        <i class="ri-pencil-line me-1"></i> Edit Info Subtask
+                                    </button>
+                                    
+                                    {{-- Tombol Batal (Hidden Awal) --}}
+                                    <button type="button" class="btn btn-danger-light btn-wave btn-batal-edit" hidden>
+                                        <i class="ri-close-line me-1"></i> Batal Edit
+                                    </button>
+
+                                    {{-- Tombol Simpan (Hidden Awal) --}}
+                                    <button type="submit" class="btn btn-primary btn-wave btn-submit-subtask" hidden>
+                                        <i class="ri-save-line me-1"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8 col-lg-7">
+                <div class="card custom-card">
+                    <div class="card-body p-0">
+                        <nav class="nav nav-tabs nav-justified tab-style-1 d-flex" role="tablist">
+                            <a class="nav-link active py-3" data-bs-toggle="tab" href="#laporan" role="tab">
+                                <i class="ri-file-list-3-line me-1 align-middle fs-16"></i> Laporan Kinerja
+                            </a>
+                            <a class="nav-link py-3" data-bs-toggle="tab" href="#lampiran" role="tab">
+                                <i class="ri-attachment-2 me-1 align-middle fs-16"></i> Lampiran
+                            </a>
+                        </nav>
+
+                        <div class="tab-content p-4">
+                            
+                            {{-- TAB 1: LAPORAN KINERJA --}}
+                            <div class="tab-pane active" id="laporan" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-semibold mb-0">Riwayat Laporan</h6>
+                                    <div class="btn-list">
+                                        @if ($config['can_update_pekerjaan'])
+                                            <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.subtask.detail.kirim', ['id' => $subtask->id]) }}" 
+                                                  method="POST" class="d-inline" id="formKirim">
+                                                @csrf @method('PUT')
+                                                <button type="submit" class="btn btn-outline-success btn-sm btn-wave" data-bs-toggle="tooltip" title="Kirim Laporan">
+                                                    <i class="bi bi-send me-1"></i> Kirim
+                                                </button>
+                                            </form>
+                                            
+                                            <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.subtask.detail.batal', ['id' => $subtask->id]) }}" 
+                                                  method="POST" class="d-inline" id="formBatal">
+                                                @csrf @method('PUT')
+                                                <button type="submit" class="btn btn-outline-danger btn-sm btn-wave" data-bs-toggle="tooltip" title="Batalkan Pengiriman">
+                                                    <i class="bi bi-x-circle me-1"></i> Batal
+                                                </button>
+                                            </form>
+                                            
+                                            <button class="btn btn-primary btn-sm btn-wave tambahLaporanKinerja" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                <i class="bi bi-plus-lg me-1"></i> Update Progress
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table id="datatable-basic" class="table table-hover text-nowrap w-100">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Tanggal</th>
+                                                <th>Anggota</th>
+                                                <th>Durasi</th>
+                                                <th>Keterangan</th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($subtask->detail_sub_task as $item)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                                                    <td>{{ $item->user->name }}</td>
+                                                    <td>
+                                                        {{ $item->durasi ? floor($item->durasi / 60) . ' Jam ' . ($item->durasi % 60) . ' Menit' : '-' }}
+                                                    </td>
+                                                    <td><span class="text-wrap">{{ $item->keterangan ?? '-' }}</span></td>
+                                                    <td class="text-center">
+                                                        @if ($item->is_active == 0 && $config['can_update_pekerjaan'])
+                                                            <div class="d-flex justify-content-center gap-2">
+                                                                <button class="btn btn-sm btn-icon btn-warning updateLaporanKinerja"
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-tanggal="{{ $item->tanggal }}"
+                                                                    data-keterangan="{{ $item->keterangan }}"
+                                                                    data-durasi="{{ $item->durasi }}"
+                                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                                                                    title="Edit">
+                                                                    <i class="ri-pencil-line"></i>
+                                                                </button>
+                                                                
+                                                                <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.laporan_kinerja.delete', $item->id) }}" method="POST" class="d-inline">
+                                                                    @csrf @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-icon btn-danger delete-laporan" title="Hapus">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @elseif($item->is_active == 1)
+                                                            <span class="badge bg-success-transparent">Terkirim</span>
+                                                        @else
+                                                             <span class="badge bg-light text-muted">Locked</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr><td colspan="6" class="text-center text-muted py-4">Belum ada laporan kinerja.</td></tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {{-- TAB 2: LAMPIRAN --}}
+                            <div class="tab-pane" id="lampiran" role="tabpanel">
+                                <div class="row g-3">
+                                    @forelse($subtask->lampiran as $index => $lampiran)
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="card shadow-sm border h-100 lampiran-item position-relative">
+                                                @if ($config['can_update_pekerjaan'])
+                                                    <button class="btn btn-sm btn-icon btn-danger position-absolute top-0 end-0 m-2 delete-lampiran" 
+                                                            data-id="{{ $lampiran->id }}" style="z-index: 10;">
+                                                        <i class="ri-close-line"></i>
+                                                    </button>
+                                                @endif
+                                                
+                                                <div class="card-body text-center p-3 cursor-pointer" data-bs-toggle="modal" data-bs-target="#lampiranModal" data-index="{{ $index }}">
+                                                    @php $ext = strtolower(pathinfo($lampiran->lampiran, PATHINFO_EXTENSION)); @endphp
+                                                    
+                                                    @if(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
+                                                        <img src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="img-fluid rounded" style="height: 100px; object-fit: cover;">
+                                                    @elseif($ext == 'pdf')
+                                                        <i class="bi bi-file-earmark-pdf text-danger display-4"></i>
+                                                    @else
+                                                        <i class="bi bi-file-earmark-text text-primary display-4"></i>
+                                                    @endif
+                                                    <div class="mt-2 text-truncate small text-muted">{{ $lampiran->lampiran }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center py-5">
+                                            <div class="avatar avatar-xxl bg-light rounded-circle mb-3 border border-dashed">
+                                                <i class="ri-attachment-line fs-30 text-muted"></i>
+                                            </div>
+                                            <p class="text-muted">Belum ada lampiran.</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= MODALS ================= --}}
+
+    {{-- 1. Modal Tambah/Edit Laporan Kinerja --}}
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="staticBackdropLabel"></h6>
+                    <h6 class="modal-title fw-bold" id="staticBackdropLabel">Update Pekerjaan</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="" method="POST" id="formLaporanKinerja" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="format-tanggal">Tanggal</label>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tanggal</label>
                             <div class="input-group">
-                                <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                <input type="text" class="form-control" name="format-tanggal" id="format-tanggal" placeholder="Tanggal Mulai" required>
+                                <span class="input-group-text bg-light"><i class="ri-calendar-line"></i></span>
+                                <input type="text" class="form-control" name="format-tanggal" id="format-tanggal" placeholder="Pilih Tanggal" required>
                                 <input type="hidden" name="tanggal" id="tanggal">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="durasi_jam" class="form-label">Durasi</label>
-                            <div class="row">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Durasi Pengerjaan</label>
+                            <div class="row g-2">
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="number" min="0" name="durasi_jam" class="form-control"
-                                            placeholder="Jam" value="" required>
+                                        <input type="number" min="0" name="durasi_jam" id="durasi_jam" class="form-control" placeholder="0" required>
                                         <span class="input-group-text">Jam</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="number" min="0" max="59" name="durasi_menit"
-                                            class="form-control" placeholder="Menit" value="" required>
+                                        <input type="number" min="0" max="59" name="durasi_menit" id="durasi_menit" class="form-control" placeholder="0" required>
                                         <span class="input-group-text">Menit</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5"></textarea>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Keterangan Aktivitas</label>
+                            <textarea class="form-control" name="keterangan" id="keterangan" rows="4" placeholder="Deskripsikan pekerjaan Anda..." required></textarea>
                         </div>
-                        <input type="hidden" name="sub_task_id" id="sub_task_id" value="{{ $subtask->id }}">
-                        <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
+                        <input type="hidden" name="sub_task_id" value="{{ $subtask->id }}">
+                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="btnSubmit">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="container-fluid">
-        <div class="mb-3">
-            @php
-                $userRole = auth()->user()->role->slug;
-            @endphp
-            @if ($userRole == 'manager')
-                <a href="/manajer/subtask" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
-                @if ($subtask->task != null)
-                    <a href="/manajer/task/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                        Task</a>
-                @endif
-            @elseif ($userRole == 'karyawan')
-                <a href="/karyawan/subtask" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
-                @if ($subtask->task != null)
-                    <a href="/karyawan/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                        Task</a>
-                @endif
-            @elseif ($userRole == 'admin-sdm')
-                <a href="/admin_sdm/subtask" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
-                @if ($subtask->task != null)
-                    <a href="/admin_sdm/task/detail/{{ $subtask->task->id }}" class="btn btn-secondary">Kembali Ke
-                        Task</a>
-                @endif
-            @endif
-        </div>
-        <div class="row row-sm">
-            <div class="col-xl-3 col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="ps-0">
-                            <div class="main-profile-overview">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="main-profile-name" style="text-transform: capitalize;">
-                                            {{ $subtask->nama_subtask ?? '-' }}
-                                        </h5>
-                                        @if($subtask->detail_sub_task->isEmpty())
-                                            <span class="badge bg-info fs-6 px-2 py-1 rounded-pill">Belum ada laporan kinerja</span>
-                                        @elseif($subtask->status === 'revise')
-                                            <span class="badge bg-warning fs-6 px-2 py-1 rounded-pill"
-                                                data-bs-toggle="tooltip" 
-                                                data-bs-custom-class="tooltip-secondary"
-                                                data-bs-placement="top" 
-                                                title="Pesan Revisi: {{ $subtask->revisi->pesan ?? '-' }}">
-                                                Revisi
-                                                <i class="fas fa-info-circle ms-1"></i>
-                                            </span>
-                                        @elseif($subtask->status === 'approve')
-                                            <span class="badge bg-success fs-6 px-2 py-1 rounded-pill">Approve</span>
-                                        @else
-                                            <span class="badge bg-secondary fs-6 px-2 py-1 rounded-pill">Belum Dicek</span>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                                <div class="container-project">
-                                    <form action="{{ route('karyawan.subtask.update.detail', $subtask->id) }}"
-                                        method="post" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('put')
-                                        <div class="form-group">
-                                            <label for="nama_subtask" class="form-label">Sub Task</label>
-                                            <input type="text" class="form-control" id="nama_subtask" name="nama_subtask"
-                                                placeholder="Nama Sub Task"
-                                                value="{{ $subtask->nama_subtask ?? old('nama_subtask') }}"
-                                                {{ $userRole == 'manager' ? 'disabled' : '' }} >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="tgl_sub_task" class="form-label">Tanggal Mulai</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted" name="tgl_sub_task"><i
-                                                        class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="tgl_sub_task"
-                                                    value="{{ $subtask->tgl_sub_task != null ? $subtask->tgl_sub_task : '' }}"
-                                                    id="tgl_sub_task" placeholder="Tanggal Mulai"
-                                                    {{ $userRole == 'manager' ? 'disabled' : '' }}>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="tgl_selesai" class="form-label">Tanggal Selesai</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted" name="tgl_selesai"><i
-                                                        class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="tgl_selesai"
-                                                    value="{{ $subtask->tgl_selesai != null ? $subtask->tgl_selesai : '' }}"
-                                                    id="tgl_sub_task" placeholder="Tanggal Selesai"
-                                                    {{ $userRole == 'manager' ? 'disabled' : '' }} >
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="deadline" class="form-label">Deadline</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted" name="deadline"><i
-                                                        class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="deadline"
-                                                    value="{{ $subtask->deadline != null ? $subtask->deadline : '' }}"
-                                                    id="deadline" placeholder="Deadline"
-                                                    {{ $userRole == 'manager' ? 'disabled' : '' }} >
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
-                                        <input type="hidden" name="user_id" value="{{ $subtask->user_id }}">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                            @if ($subtask != null)
-                                                <button type="button" class="btn btn-danger btn-sm btn-batal-edit"
-                                                    hidden>Batal</button>
-                                                <button type="button" class="btn btn-warning btn-sm btn-edit-task">Edit</button>
-                                            @endif
-                                            <button type="submit" class="btn btn-primary btn-sm btn-submit-task"
-                                                {{ $subtask != null ? 'hidden' : '' }}>{{ $subtask != null ? 'Update' : 'Simpan' }}
-                                            </button>
-                                        @endif
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-9 col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="tabs-menu ">
-                            <ul class="nav nav-tabs profile navtab-custom panel-tabs">
-                                <li class="">
-                                    <a href="#home" data-bs-toggle="tab" class="active" aria-expanded="true">
-                                        <i class="bi bi-calendar-check"></i>
-                                        <span class="hidden-xs">DETAIL</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#lampiran" data-bs-toggle="tab" aria-expanded="false">
-                                        <i class="bi bi-paperclip"></i>
-                                        <span class="hidden-xs">LAMPIRAN</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="tab-content border border-top-0 p-4 br-dark">
-                            <div class="tab-pane border-0 p-0 active" id="home">
-                                <div class="d-flex align-items-start flex-wrap gap-2">
-                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
-                                        <button type="button" class="btn btn-outline-primary btn-sm tambahLaporanKinerja mb-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                            <i class="bi bi-plus"></i> Update Pekerjaan
-                                        </button>
-                                        <form 
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                            action="{{ route('karyawan.subtask.detail.kirim', ['id' => $subtask->id]) }}"
-                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                                action="{{ route('admin_sdm.subtask.detail.kirim', ['id' => $subtask->id]) }}"                                           
-                                        @endif
-                                        method="POST" id="formKirim">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-outline-warning btn-sm">
-                                                <i class="bi bi-send"></i> Kirim
-                                            </button>
-                                        </form>
-                                        <form 
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                            action="{{ route('karyawan.subtask.detail.batal', ['id' => $subtask->id]) }}" 
-                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                                action="{{ route('admin_sdm.subtask.detail.batal', ['id' => $subtask->id]) }}"                                        
-                                        @endif
-                                        method="POST" id="formBatal">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="hidden" name="tanggal" id="tanggal_terpilih_batal">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                                <i class="bi bi-x-circle"></i> Batal
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                                <div class="table-responsive">
-                                    <table id="datatable-basic" class="table table-bordered w-100">
-                                        @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Tanggal</th>
-                                                    <th>Anggota</th>
-                                                    <th>Durasi</th>
-                                                    <th>Keterangan</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($subtask->detail_sub_task as $item)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') ?? '-' }}</td>
-                                                    <td>{{ $item->user->name }}</td>
-                                                    <td>
-                                                        {{ $item->durasi ? floor($item->durasi / 60) . ' Jam' : '-' }},
-                                                        {{ $item->durasi ? $item->durasi % 60 . ' Menit' : '-' }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $item->keterangan ?? '-' }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @if ($item->is_active == 0)
-                                                            <a href="javascript:void(0);" class="btn btn-warning btn-sm updateLaporanKinerja"
-                                                                data-bs-toggle="modal"
-                                                                data-id="{{ $item->id }}"
-                                                                data-tanggal="{{ $item->tanggal }}"
-                                                                data-keterangan="{{ $item->keterangan }}"
-                                                                data-durasi="{{ $item->durasi }}"
-                                                                data-bs-target="#staticBackdrop">
-                                                                <i data-bs-toggle="tooltip"
-                                                                    data-bs-custom-class="tooltip-warning"
-                                                                    data-bs-placement="top" title="Edit Update Pekerjaan!"
-                                                                    class="bi bi-pencil-square"></i>
-                                                            </a>
-                                                            <form 
-                                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                                                action="{{ route('karyawan.laporan_kinerja.delete', $item->id) }}" 
-                                                                @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                                                    action="{{ route('admin_sdm.laporan_kinerja.delete', $item->id) }}"
-                                                            @endif
-                                                            method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm delete"
-                                                                    data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
-                                                                    data-bs-placement="top" title="Hapus Sub Task!">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        @else
-                                                            <span class="badge bg-success">Sudah Dikirim</span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        @endif
-                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Tanggal</th>
-                                                    <th>Anggota</th>
-                                                    <th>Durasi</th>
-                                                    <th>Keterangan</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($subtaskManager->detail_sub_task as $item)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') ?? '-' }}</td>
-                                                    <td>{{ $item->user->name }}</td>
-                                                    <td>
-                                                        {{ $item->durasi ? floor($item->durasi / 60) . ' Jam' : '-' }},
-                                                        {{ $item->durasi ? $item->durasi % 60 . ' Menit' : '-' }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $item->keterangan ?? '-' }}
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        @endif
-                                    </table>
-                                </div>      
-                            </div>
-                            <div class="tab-pane border-0 p-0" id="lampiran" role="tabpanel">
-                                <form 
-                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                    action="{{ route('karyawan.subtask.update.detail.lampiran', $subtask->id) }}" 
-                                    @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                        action="{{ route('admin_sdm.subtask.update.detail.lampiran', $subtask->id) }}"                                
-                                @endif
-                                method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('put')
-                                    <div class="form-group">
-                                        <input type="file" class="form-control" name="upload[]" id="upload" multiple>
-                                        <div id="preview-area" class="row mt-3"></div>
-                                        <p class="text-center" id="detail_upload"></p>
-                                    </div>
-                                    <div class="row mt-4">
-                                        @foreach($subtask->lampiran as $lampiran)
-                                        <div class="col-md-3 mb-3 lampiran-item">
-                                            <div class="card shadow-sm position-relative">
-                                                @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
-                                                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-lampiran" 
-                                                            data-id="{{ $lampiran->id }}" 
-                                                            style="z-index: 2">
-                                                        <i class="bi bi-x"></i>
-                                                    </button>
-                                                @endif
-                                                <div class="card-body text-center" data-bs-toggle="modal" data-bs-target="#lampiranModal" data-index="{{ $loop->index }}">
-                                                    @if(in_array(pathinfo($lampiran->lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
-                                                        <img src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="img-fluid rounded" style="height: 100px; object-fit: cover">
-                                                    @else
-                                                        <div class="file-icon">
-                                                            <i class="bi bi-file-earmark-richtext display-4 text-muted"></i>
-                                                        </div>
-                                                    @endif
-                                                    <p class="small text-muted mt-2 mb-0 text-truncate">{{ $lampiran->lampiran }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                    @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::user()->role->slug == 'admin-sdm')
-                                        <button type="submit" class="btn btn-primary btn-sm btn-submit-task">
-                                            Update
-                                        </button>
-                                    @endif
-                                </form>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="lampiranModal" tabindex="-1" aria-labelledby="lampiranModalLabel" aria-hidden="true">
+
+    {{-- 2. Modal Preview Lampiran (Carousel) --}}
+    <div class="modal fade" id="lampiranModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="lampiranModalLabel">Lampiran {{ ucwords($subtask->nama_subtask) }}</h5>
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold">Preview Lampiran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div id="carouselLampiran" class="carousel slide">
+                <div class="modal-body p-0 bg-light">
+                    <div id="carouselLampiran" class="carousel slide" data-bs-interval="false">
                         <div class="carousel-inner">
                             @foreach($subtask->lampiran as $index => $lampiran)
-                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                @if(in_array(pathinfo($lampiran->lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
-                                    <img src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="d-block w-100" alt="Lampiran {{ $index + 1 }}">
-                                @elseif(pathinfo($lampiran->lampiran, PATHINFO_EXTENSION) === 'pdf')
-                                    <div class="ratio ratio-16x9">
-                                        <iframe src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="w-100"></iframe>
-                                    </div>
-                                @else
-                                    <div class="text-center py-5">
-                                        <i class="bi bi-file-earmark-richtext display-1 text-muted"></i>
-                                        <p class="mt-3">File tidak dapat ditampilkan</p>
-                                        <a href="{{ asset('uploads/' . $lampiran->lampiran) }}" class="btn btn-primary" download>
-                                            <i class="bi bi-download me-2"></i>Unduh File
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
+                                @php $ext = strtolower(pathinfo($lampiran->lampiran, PATHINFO_EXTENSION)); @endphp
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }} p-4 text-center">
+                                    @if(in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
+                                        <img src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="img-fluid rounded shadow-sm" style="max-height: 500px;">
+                                    @elseif($ext == 'pdf')
+                                        <iframe src="{{ asset('uploads/' . $lampiran->lampiran) }}" class="w-100 rounded shadow-sm" style="height: 500px;"></iframe>
+                                    @else
+                                        <div class="py-5 bg-white rounded">
+                                            <i class="ri-file-download-line display-1 text-primary"></i>
+                                            <p class="mt-3">File tidak dapat dipreview.</p>
+                                            <a href="{{ asset('uploads/' . $lampiran->lampiran) }}" class="btn btn-primary btn-wave"><i class="ri-download-line me-1"></i> Download File</a>
+                                        </div>
+                                    @endif
+                                    <div class="mt-3 text-muted small bg-white d-inline-block px-3 py-1 rounded shadow-sm">{{ $lampiran->lampiran }}</div>
+                                </div>
                             @endforeach
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselLampiran" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselLampiran" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                    <div class="carousel-indicators position-static mt-3">
-                        @foreach($subtask->lampiran as $index => $lampiran)
-                        <button type="button" data-bs-target="#carouselLampiran" data-bs-slide-to="{{ $index }}" 
-                                class="{{ $index === 0 ? 'active' : '' }}" aria-current="{{ $index === 0 ? 'true' : 'false' }}"
-                                aria-label="Slide {{ $index + 1 }}"></button>
-                        @endforeach
+                        @if($subtask->lampiran->count() > 1)
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselLampiran" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselLampiran" data-bs-slide="next">
+                                <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
+
 @section('script')
     <style>
-        .lampiran-item {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .lampiran-item:hover {
-            transform: translateY(-5px);
-        }
-        .carousel-indicators [data-bs-target] {
-            background-color: #666;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin: 0 5px;
-        }
-        .carousel-indicators .active {
-            background-color: #0d6efd;
-        }
-        .file-icon {
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .flatpickr-calendar.open { z-index: 1060 !important; }
+        .lampiran-item { cursor: pointer; transition: transform 0.2s; }
+        .lampiran-item:hover { transform: translateY(-5px); border-color: #0d6efd !important; }
     </style>
+    
     <script>
         $(document).ready(function() {
             const userRole = "{{ auth()->user()->role->slug }}";
-            let flatpickrInstance = flatpickr("#format-tanggal", {
+            
+            // 1. CONFIG FLATPICKR UNTUK INFO SUBTASK (KOLOM KIRI)
+            // Ini wajib di-init agar saat disabled dibuka, kalender muncul
+            const dateConfigInfo = {
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: "d F Y",
+                locale: 'id',
+            };
+            
+            flatpickr("#tgl_sub_task_info", dateConfigInfo);
+            flatpickr("#deadline_sub_info", dateConfigInfo);
+            flatpickr("#tgl_selesai_info", dateConfigInfo);
+            
+            $('.btn-edit-subtask').click(function(e) {
+                e.preventDefault();
+                $(this).attr('hidden', true); 
+                $('.btn-batal-edit, .btn-submit-subtask').removeAttr('hidden'); 
+                
+                $('#nama_subtask_info, #tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', false);
+            });
+
+            $('.btn-batal-edit').click(function(e) {
+                e.preventDefault();
+
+                // Munculkan kembali tombol Edit
+                $('.btn-edit-subtask').removeAttr('hidden');
+                
+                // Sembunyikan tombol Batal & Simpan
+                $(this).attr('hidden', true);
+                $('.btn-submit-subtask').attr('hidden', true);
+
+                // Kunci kembali inputnya
+                $('#nama_subtask_info, #tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', true);
+            });
+
+
+            // 3. MODAL LAPORAN KINERJA LOGIC
+            let flatpickrModal = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
-                onChange: function(selectedDates, dateStr, instance) {
-                    document.getElementById("tanggal").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
+                onChange: (selectedDates, dateStr) => $("#tanggal").val(dateStr)
             });
-            $('.btn-edit-task').click(function() {
-                $('.btn-edit-task').hide();
-                $('.btn-batal-edit').prop('hidden', false);
-                $(".btn-submit-task").prop('hidden', false);
 
-                $('.btn-batal-edit').click(function() {
-                    $('.btn-edit-task').fadeIn(200);
-                    $('.btn-batal-edit').prop('hidden', true);
-                    $(".btn-submit-task").prop('hidden', true);
-                })
-            });
             $('#staticBackdrop').on('hidden.bs.modal', function () {
                 $('#formLaporanKinerja')[0].reset();
-                flatpickrInstance.clear();
-                flatpickrInstance1.clear();
-                $('#formSubTask input[name="_method"]').remove();
+                flatpickrModal.clear();
+                $('#formLaporanKinerja input[name="_method"]').remove();
             });
+
             $(document).on('click', '.tambahLaporanKinerja', function() {
-                $(".modal-title").text('Update Pekerjaan');
-                $("#nama_subtask").val('');
-                $("#durasi_jam").val('');
-                $("#durasi_menit").val('');
-                $("#tanggal").val('');
-                $("#keterangan").val('');
-
-                $("#btnSubmit").text("Simpan").show();
-                if (userRole === 'karyawan'){
-                    $("#formLaporanKinerja").attr("action", "/karyawan/laporan_kinerja/store");
-                } else if (userRole === 'admin-sdm') {
-                    $("#formLaporanKinerja").attr("action", "/admin_sdm/laporan_kinerja/store");
-                }
+                $("#staticBackdropLabel").text('Tambah Laporan Kinerja');
+                $("#btnSubmit").text("Simpan");
+                
+                let actionUrl = (userRole === 'karyawan') ? "/karyawan/laporan_kinerja/store" : "/admin_sdm/laporan_kinerja/store";
+                $("#formLaporanKinerja").attr("action", actionUrl);
                 $("#formLaporanKinerja input[name='_method']").remove();
-
-                $("input[name='durasi_jam']").val("");
-                $("input[name='durasi_menit']").val("");
             });
             
             $(document).on('click', '.updateLaporanKinerja', function() {
@@ -525,172 +477,80 @@
 
                 let jam = Math.floor(durasi / 60);
                 let menit = durasi % 60;
-                let actionUrl = '';
-                if (userRole === 'karyawan'){
-                    actionUrl = `/karyawan/laporan_kinerja/update/${id}`;
-                } else if (userRole === 'admin-sdm') {
-                    actionUrl = `/admin_sdm/laporan_kinerja/update/${id}`;
-                }
+                
+                let actionUrl = (userRole === 'karyawan') 
+                    ? `/karyawan/laporan_kinerja/update/${id}` 
+                    : `/admin_sdm/laporan_kinerja/update/${id}`;
 
-                $(".modal-title").text('Edit Update Pekerjaan');
+                $("#staticBackdropLabel").text('Edit Laporan Kinerja');
                 
                 $("#durasi_jam").val(jam);
                 $("#durasi_menit").val(menit);
-                flatpickrInstance.setDate(tanggal, true, "Y-m-d");
                 $("#keterangan").val(keterangan);
-
-                $("input[name='durasi_jam']").val(jam);
-                $("input[name='durasi_menit']").val(menit);
-                $("#keterangan").val(keterangan);
-
+                
+                // Set tanggal ke flatpickr modal
+                flatpickrModal.setDate(tanggal, true);
+                $("#tanggal").val(tanggal); // Pastikan hidden input terisi
+                
                 $("#formLaporanKinerja").attr("action", actionUrl);
-
+                
                 if ($("#formLaporanKinerja input[name='_method']").length === 0) {
                     $("#formLaporanKinerja").append(`<input type="hidden" name="_method" value="PUT">`);
                 } else {
                     $("#formLaporanKinerja input[name='_method']").val('PUT');
                 }
 
-                $("#btnSubmit").text("Update");
-            });
-        });
-    </script>
-    <script>
-        $("#upload").change(function() {
-            const files = this.files;
-            const previewArea = $("#preview-area");
-            const detailUpload = $("#detail_upload");
-
-            previewArea.html('');
-            detailUpload.html('');
-
-            if (files.length > 0) {
-                detailUpload.html(`<strong>${files.length} file dipilih:</strong><br>`);
-
-                Array.from(files).forEach(file => {
-                    let fileUrl = URL.createObjectURL(file);
-                    let fileName = file.name;
-                    let ext = fileName.split('.').pop().toLowerCase();
-
-                    detailUpload.append(`${fileName}<br>`);
-
-                    let previewItem = '';
-
-                    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-                        previewItem = `
-                            <div class="col-md-4 mb-3 text-center">
-                                <img src="${fileUrl}" class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
-                                <p class="small mt-2">${fileName}</p>
-                            </div>
-                        `;
-                    } else if (ext === 'pdf') {
-                        previewItem = `
-                            <div class="col-md-6 mb-3 text-center">
-                                <iframe src="${fileUrl}" class="rounded border" width="100%" height="150px"></iframe>
-                                <p class="small mt-2">${fileName}</p>
-                            </div>
-                        `;
-                    } else {
-                        previewItem = `
-                            <div class="col-md-4 mb-3 text-center">
-                                <div class="alert alert-secondary p-2 mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <i class="fa fa-file me-2"></i>${fileName}
-                                </div>
-                            </div>
-                        `;
-                    }
-                    previewArea.append(previewItem);
-                });
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateConfig = {
-                dateFormat: 'Y-m-d',
-                altInput: true,
-                altFormat: "d M Y",
-                locale: 'id',
-            };
-            flatpickr("#tgl_sub_task", dateConfig);
-            flatpickr("#tgl_selesai", dateConfig);
-            flatpickr("#deadline", dateConfig);
-
-            const lampiranItems = document.querySelectorAll('.lampiran-item');
-            
-            lampiranItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    const carousel = new bootstrap.Carousel(document.getElementById('carouselLampiran'));
-                    carousel.to(index);
-                });
+                $("#btnSubmit").text("Update Perubahan");
             });
 
-            const carouselLampiran = document.getElementById('carouselLampiran');
-            carouselLampiran.addEventListener('slid.bs.carousel', function(event) {
-                const indicators = document.querySelectorAll('.carousel-indicators button');
-                indicators.forEach((indicator, i) => {
-                    if (i === event.to) {
-                        indicator.classList.add('active');
-                    } else {
-                        indicator.classList.remove('active');
-                    }
-                });
-            });
 
-            const lampiranModal = document.getElementById('lampiranModal');
-            lampiranModal.addEventListener('hidden.bs.modal', function() {
-                const carousel = bootstrap.Carousel.getInstance(carouselLampiran);
-                carousel.to(0);
-            });
-        })
-    </script>
-    <script>
-        document.querySelectorAll('.delete-lampiran').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault()
-                e.stopPropagation()
+            // 4. DELETE CONFIRMATION
+            $(document).on("click", ".delete-laporan, .delete-lampiran", function(e){
+                e.preventDefault();
+                e.stopPropagation(); 
                 
-                const lampiranId = this.dataset.id
-                const card = this.closest('.col-md-3')
-                const userRole = '{{ auth()->user()->role->slug }}'
-                let actionUrl = '';
-                if (userRole === 'karyawan'){
-                    actionUrl = `/karyawan/subtask/detail/lampiran/${lampiranId}`
-                } else if (userRole === 'admin-sdm') {
-                    actionUrl = `/admin_sdm/subtask/detail/lampiran/${lampiranId}`
+                let form = $(this).closest('form');
+                
+                // Khusus delete lampiran via tombol X di card
+                if($(this).hasClass('delete-lampiran')) {
+                    let id = $(this).data('id');
+                    let url = (userRole === 'karyawan') 
+                        ? `/karyawan/subtask/detail/lampiran/${id}` 
+                        : `/admin_sdm/subtask/detail/lampiran/${id}`;
+                    
+                    // Buat form dinamis karena tombol delete ada di luar form utama
+                    form = $(`<form action="${url}" method="POST">@csrf @method('DELETE')</form>`);
+                    $('body').append(form);
                 }
+
+                let type = $(this).hasClass('delete-laporan') ? 'Laporan Kinerja' : 'Lampiran';
+
                 Swal.fire({
-                    title: "Konfirmasi Hapus Lampiran!",
-                    text: "Apakah Kamu yakin ingin menghapus lampiran ini ?",
+                    title: `Hapus ${type}?`,
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#cf0202",
-                    cancelButtonColor: "#3085d6",
+                    confirmButtonColor: "#d33",
                     confirmButtonText: "Ya, Hapus!",
                     cancelButtonText: "Batal"
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = $("<form>", {
-                            action: actionUrl,
-                            method: "POST"
-                        }).append(
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_token",
-                                value: "{{ csrf_token() }}"
-                            }),
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_method",
-                                value: "DELETE"
-                            })
-                        );
-                        $("body").append(form);
-                        form.submit();
-                    }
-                })
-            })
-        })
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+
+
+            // 5. CAROUSEL PREVIEW LAMPIRAN
+            const carousel = document.getElementById('carouselLampiran');
+            const myModalEl = document.getElementById('lampiranModal');
+
+            if (myModalEl) {
+                myModalEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const index = button.getAttribute('data-index');
+                    const bsCarousel = new bootstrap.Carousel(carousel);
+                    bsCarousel.to(index);
+                });
+            }
+        });
     </script>
 @endsection
