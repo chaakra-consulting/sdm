@@ -5,7 +5,6 @@
         $userRole = Auth::check() ? Auth::user()->role->slug : '';
         $uId = auth()->id();
         
-        // 1. Konfigurasi Hak Akses & URL
         $config = [
             'can_update_pekerjaan' => in_array($userRole, ['karyawan', 'admin-sdm']),
             'back_url' => '#',
@@ -22,40 +21,23 @@
             $config['back_url'] = '/admin_sdm/subtask';
             if ($subtask->task) $config['task_url'] = '/admin_sdm/task/detail/' . $subtask->task->id;
         }
-
-        // Status Badge Logic
+        
         $statusBadge = '<span class="badge bg-secondary-transparent rounded-pill">Belum Dicek</span>';
         if($subtask->status === 'revise') {
             $statusBadge = '<span class="badge bg-warning-transparent rounded-pill" data-bs-toggle="tooltip" title="Pesan Revisi: '.($subtask->revisi->pesan ?? '-').'">Revisi <i class="fas fa-info-circle ms-1"></i></span>';
         } elseif($subtask->status === 'approve') {
             $statusBadge = '<span class="badge bg-success-transparent rounded-pill">Approved</span>';
         }
-
-        // Logic Laporan Kinerja Kosong
+        
         if($subtask->detail_sub_task->isEmpty()){
              $statusBadge = '<span class="badge bg-info-transparent rounded-pill">Belum ada laporan</span>';
         }
     @endphp
 
     <div class="container-fluid">
-
-        <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
-            <div class="my-auto">
-                <h1 class="page-title fs-21 mb-1">Detail Subtask</h1>
-                <nav>
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">{{ ucfirst($userRole) }}</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">Subtask</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Detail</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-
         <div class="row">
             <div class="col-xl-4 col-lg-5">
                 <div class="card custom-card overflow-hidden">
-                    {{-- HEADER CARD DENGAN TOMBOL --}}
                     <div class="card-header border-bottom border-block-end-dashed justify-content-between align-items-center">
                         <div class="card-title">Informasi Subtask</div>
                         <div class="d-flex gap-2 align-items-center">
@@ -81,13 +63,11 @@
                             </div>
                         @endif
 
-                        {{-- FORM UPDATE --}}
                         <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.subtask.update.detail', $subtask->id) }}" method="post" enctype="multipart/form-data">
                             @csrf @method('put')
 
                             <div class="mb-3">
                                 <label class="form-label fs-13 text-muted">Nama Subtask</label>
-                                {{-- Tambahkan ID agar bisa ditarget JS --}}
                                 <input type="text" name="nama_subtask" id="nama_subtask_info" class="form-control fw-bold" value="{{ $subtask->nama_subtask }}" disabled>
                             </div>
 
@@ -96,7 +76,6 @@
                                     <label class="form-label fs-13 text-muted">Mulai</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-line text-muted"></i></span>
-                                        {{-- Tambahkan ID & name yang benar --}}
                                         <input type="text" name="tgl_sub_task" id="tgl_sub_task_info" class="form-control border-start-0 ps-0" 
                                                value="{{ \Carbon\Carbon::parse($subtask->tgl_sub_task)->translatedFormat('Y-m-d') }}" 
                                                disabled>
@@ -106,7 +85,6 @@
                                     <label class="form-label fs-13 text-muted">Deadline</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-event-line text-muted"></i></span>
-                                        {{-- Tambahkan ID & name yang benar --}}
                                         <input type="text" name="deadline" id="deadline_sub_info" class="form-control border-start-0 ps-0" 
                                                value="{{ \Carbon\Carbon::parse($subtask->deadline)->translatedFormat('Y-m-d') }}" 
                                                disabled>
