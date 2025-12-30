@@ -151,7 +151,7 @@
                                         <td class="fw-semibold text-primary">Durasi Pengerjaan</td>
                                         <td class="text-center text-muted">
                                             @php $targetDays = $startDate->diffInDays($deadlineDate); @endphp
-                                            {{ $targetDays }} Hari
+                                            {{ round($targetDays) }} Hari
                                         </td>
                                         <td class="text-center fw-bold">
                                             @if($endDate)
@@ -165,7 +165,6 @@
                                         <td class="text-center">
                                             @if($targetDays > 0)
                                                 @php
-                                                    // Hindari pembagian dengan nol jika actualDays 0
                                                     $actualDays = $endDate ? $startDate->diffInDays($endDate) : $startDate->diffInDays(now());
                                                     $percentageUsed = ($actualDays / $targetDays) * 100;
                                                     $efficiency = 100 - $percentageUsed;
