@@ -143,25 +143,37 @@ class SubTaskController extends Controller
 
     public function updateDetail(Request $request, $id)
     {
-        $subtask = SubTask::find($id);
+        $subtask = SubTask::findOrFail($id);
+        
         $request->validate([
-            'task_id' => 'required|exists:tb_tasks,id',
-            'user_id' => 'required|exists:users,id',
             'nama_subtask' => 'required|string',
             'tgl_sub_task' => 'required|date',
             'tgl_selesai' => 'nullable|date',
             'deadline' => 'nullable|date',
+            'upload' => 'nullable',
+            'upload.*' => 'file|mimes:pdf,xls,xlsx,doc,docx,jpg,jpeg,png,gif|max:5120',
         ]);
 
-        $subtask->task_id = $request->task_id;
-        $subtask->user_id = $request->user_id;
-        $subtask->nama_subtask = $request->nama_subtask;
-        $subtask->deadline = $request->deadline;
-        $subtask->tgl_sub_task = $request->tgl_sub_task;
-        $subtask->tgl_selesai = $request->tgl_selesai;
-        $subtask->save();
+        $subtask->update([
+            'nama_subtask' => $request->nama_subtask,
+            'tgl_sub_task' => $request->tgl_sub_task,
+            'deadline' => $request->deadline,
+            'tgl_selesai' => $request->tgl_selesai,
+        ]);
 
-        return redirect()->back()->with('success', 'Sub Task berhasil di update');
+        if ($request->hasFile('upload')) {
+            foreach ($request->file('upload') as $file) {
+                $fileName = uniqid() . '_lampiran_' . Auth::user()->name . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads'), $fileName);
+
+                LampiranSubTask::create([
+                    'sub_task_id' => $subtask->id,
+                    'lampiran' => $fileName,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Informasi Sub Task dan Lampiran berhasil diperbarui');
     }
 
     public function updateDetailLampiran(Request $request, $id)
@@ -218,17 +230,16 @@ class SubTaskController extends Controller
         $Subtask->delete();
         return redirect()->back()->with('success', 'Subtask berhasil dihapus.');
     }
-
+    
     public function destroyLampiran($id)
     {
         $lampiran = LampiranSubTask::findOrFail($id);
-        if($lampiran->sub_task->user_id != Auth::user()->id) {
-            abort(403);
-        }
+        
         $filePath = public_path('uploads/' . $lampiran->lampiran);
         if(file_exists($filePath)) {
             unlink($filePath);
         }
+
         $lampiran->delete();
         
         return redirect()->back()->with('success', 'Lampiran berhasil dihapus.');

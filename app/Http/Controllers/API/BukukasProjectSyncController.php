@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use App\Models\Perusahaan;
 use App\Models\ProjectPerusahaan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -22,39 +23,43 @@ class BukukasProjectSyncController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
+        
+        $localPerusahaan = Perusahaan::where('bukukas_id', $request->perusahaan_id)->first();
 
-        $existingProject = ProjectPerusahaan::where('ref_bukukas_id', $request->bukukas_id)->first();
-
-        if ($existingProject) {
+        if (!$localPerusahaan) {
             return response()->json([
-                'status' => 'success', 
-                'message' => 'Data sudah tersinkronisasi sebelumnya',
-                'data' => $existingProject
-            ], 200);
+                'status' => 'error',
+                'message' => 'Data Instansi/Perusahaan belum disinkronisasi di SDM. Silakan lakukan Transfer Data Instansi terlebih dahulu.'
+            ], 404);
         }
 
         try {
-            $project = ProjectPerusahaan::create([
-                'perusahaan_id'     => $request->perusahaan_id,
-                'ref_bukukas_id'    => $request->bukukas_id,
-                'nama_project'      => $request->nama_project,
-                'waktu_mulai'       => $request->waktu_mulai,
-                'deadline'          => $request->deadline,
-                'waktu_berakhir'    => null,
-                'status'            => 'belum',
-                'progres'           => 0
-            ]);
+            $project = ProjectPerusahaan::updateOrCreate(
+                [
+                    'ref_bukukas_id' => $request->bukukas_id
+                ],
+                [
+                    'perusahaan_id'  => $localPerusahaan->id,
+                    'nama_project'   => $request->nama_project,
+                    'waktu_mulai'    => $request->waktu_mulai,
+                    'deadline'       => $request->deadline,
+                    // 'status'         => 'belum', 
+                    // 'progres'        => 0
+                ]
+            );
+
+            $statusMsg = $project->wasRecentlyCreated ? 'Data Project berhasil masuk SDM' : 'Data Project berhasil diperbarui';
 
             return response()->json([
                 'status'    => 'success',
-                'message'   => 'Data berhasil masuk SDM',
+                'message'   => $statusMsg,
                 'data'      => $project
-            ], 201);
+            ], $project->wasRecentlyCreated ? 201 : 200);
             
         } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'error',
-                'message'   => $e->getMessage()
+                'message'   => 'Gagal menyimpan project: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -113,7 +113,7 @@ class ManajerController extends Controller
 
         return redirect()->back()->with('success', 'Instansi berhasil di hapus');
     }
-
+    
     public function dataTransfer()
     {
         $getDataPerusahaan = DB::connection('db_bukukas')->table('master_customers')
@@ -124,48 +124,58 @@ class ManajerController extends Controller
                 'email', 
                 'contact', 
                 'gender_contact'
-                )
+            )
             ->get();
 
         $insert = 0;
         $update = 0;
-        foreach ($getDataPerusahaan as $perusahaan) {
-            $exists = DB::connection('mysql')->table('tb_m_perusahaans')->where('nama_perusahaan', $perusahaan->name)->first();
 
-            if ($exists) {
+        foreach ($getDataPerusahaan as $perusahaan) {
+            $existingData = Perusahaan::where('bukukas_id', $perusahaan->id)->first();
+
+            $dataToSave = [
+                'bukukas_id'      => $perusahaan->id,
+                'nama_perusahaan' => $perusahaan->name,
+                'alamat'          => $perusahaan->address,
+                'nama_pimpinan'   => $perusahaan->email,
+                'kontak'          => $perusahaan->contact,
+                'gender'          => $perusahaan->gender_contact
+            ];
+
+            if ($existingData) {
+                // 3. Jika ketemu (Link sudah terjalin), Cek apakah ada perubahan data?
                 if (
-                    $exists->nama_perusahaan !== $perusahaan->name ||
-                    $exists->alamat !== $perusahaan->address ||
-                    $exists->nama_pimpinan !== $perusahaan->email ||
-                    $exists->kontak !== $perusahaan->contact ||
-                    $exists->gender !== $perusahaan->gender_contact
+                    $existingData->nama_perusahaan !== $perusahaan->name ||
+                    $existingData->alamat !== $perusahaan->address ||
+                    $existingData->nama_pimpinan !== $perusahaan->email ||
+                    $existingData->kontak !== $perusahaan->contact ||
+                    $existingData->gender !== $perusahaan->gender_contact
                 ) {
-                    DB::connection('mysql')->table('tb_m_perusahaans')->where('nama_perusahaan', $perusahaan->name)->update([
-                            'nama_perusahaan' => $perusahaan->name,
-                            'alamat' => $perusahaan->address,
-                            'nama_pimpinan' => $perusahaan->email,
-                            'kontak' => $perusahaan->contact,
-                            'gender' => $perusahaan->gender_contact,
-                        ]);
+                    $existingData->update($dataToSave);
                     $update++;
                 }
             } else {
-                Perusahaan::create([
-                    'nama_perusahaan' => $perusahaan->name,
-                    'alamat' => $perusahaan->address,
-                    'nama_pimpinan' => $perusahaan->email,
-                    'kontak' => $perusahaan->contact,
-                    'gender' => $perusahaan->gender_contact
-                ]);
+                // 4. Jika TIDAK ketemu by bukukas_id, 
+                // Opsional: Cek by Nama dulu untuk menghindari duplikasi data lama yang belum punya bukukas_id
+                $checkByName = Perusahaan::where('nama_perusahaan', $perusahaan->name)->first();
 
-                $insert++;
+                if ($checkByName) {
+                    // Jika ketemu by Nama, kita update datanya dan KITA PASANG bukukas_id nya (Linking)
+                    $checkByName->update($dataToSave);
+                    $update++; // Hitung sebagai update/linking
+                } else {
+                    // Benar-benar data baru, Buat Baru
+                    Perusahaan::create($dataToSave);
+                    $insert++;
+                }
             }
         }
+
         if ($insert == 0 && $update == 0) {
-            return redirect()->back()->with('success', 'Tidak ada data yang di transfer');
+            return redirect()->back()->with('success', 'Data sudah sinkron, tidak ada perubahan.');
         }
 
-        return redirect()->back()->with('success', 'Data Instansi berhasil di transfer');
+        return redirect()->back()->with('success', "Berhasil! {$insert} data baru ditambahkan, {$update} data disinkronisasi.");
     }
     
     public function laporanKinerja()

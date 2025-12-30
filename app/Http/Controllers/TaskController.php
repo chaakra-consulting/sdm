@@ -403,6 +403,6 @@ class TaskController extends Controller
 
         $usersTask->delete();
 
-        return back()->with('success', 'Anggota berhasil dihapus dari Task.');
+        return redirect()->back()->with('success', 'Anggota berhasil dihapus dari Task.');
     }
 }
