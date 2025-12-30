@@ -89,7 +89,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="fw-semibold text-primary">Durasi Project</td>
-                                                <td class="text-center text-muted">{{ $startDate->diffInDays($deadlineDate) }} Hari</td>
+                                                <td class="text-center text-muted">{{ round($startDate->diffInDays($deadlineDate)) }} Hari</td>
                                                 <td class="text-center fw-bold">
                                                     @if($endDate) 
                                                         {{ round($startDate->diffInDays($endDate)) }} Hari
