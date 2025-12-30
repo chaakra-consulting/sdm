@@ -5,7 +5,7 @@
         $userRole = Auth::check() ? Auth::user()->role->slug : '';
         $tipeTaskSlug = $task->tipe_task ? $task->tipe_task->slug : '';
         $uId = auth()->id();
-
+        
         $config = [
             'can_edit' => false, 
             'can_manage_member' => false,
@@ -16,7 +16,7 @@
             'add_member_url' => '',
             'back_url' => '#'
         ];
-
+        
         if ($userRole == 'manager' && $tipeTaskSlug == 'task-project') {
             $config = [
                 'can_edit' => true, 
@@ -55,7 +55,7 @@
              elseif ($userRole == 'karyawan') $config['back_url'] = '/karyawan/task';
              elseif ($userRole == 'admin-sdm') $config['back_url'] = '/admin_sdm/task';
         }
-
+        
         $startDate = \Carbon\Carbon::parse($task->tgl_task);
         $deadlineDate = \Carbon\Carbon::parse($task->deadline);
         $endDate = $task->tgl_selesai ? \Carbon\Carbon::parse($task->tgl_selesai) : null;
@@ -68,8 +68,8 @@
         } else {
             $statusBadge = '<span class="badge bg-info-transparent rounded-pill"><i class="ri-loader-4-line me-1"></i> Proses</span>';
         }
-
-        $inputState = $config['can_edit'] ? '' : 'disabled';
+        
+        $inputState = 'disabled';
     @endphp
 
     <div class="container-fluid">
@@ -98,7 +98,6 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h6 class="fw-semibold mb-0 text-muted text-uppercase fs-12">Total Progress Pengerjaan</h6>
@@ -124,13 +123,8 @@
                                         <td class="fw-semibold">Waktu Mulai</td>
                                         <td class="text-center text-muted">{{ $startDate->translatedFormat('d F Y') }}</td>
                                         <td class="text-center fw-bold text-success">{{ $startDate->translatedFormat('d F Y') }}</td>
-                                        <td class="text-center">
-                                            <span class="badge bg-success-transparent rounded-pill">
-                                                <i class="ri-check-line"></i> Sesuai Jadwal
-                                            </span>
-                                        </td>
+                                        <td class="text-center"><span class="badge bg-success-transparent rounded-pill"><i class="ri-check-line"></i> Sesuai Jadwal</span></td>
                                     </tr>
-                                    
                                     <tr>
                                         <td class="fw-semibold">Waktu Selesai</td>
                                         <td class="text-center text-muted">{{ $deadlineDate->translatedFormat('d F Y') }}</td>
@@ -144,72 +138,45 @@
                                         <td class="text-center">
                                             @if($endDate)
                                                 @php $diff = $deadlineDate->diffInDays($endDate, false); @endphp
-                                                @if($diff > 0) 
-                                                    <span class="badge bg-danger-transparent rounded-pill"><i class="ri-arrow-up-line"></i> Terlambat {{ $diff }} Hari</span>
-                                                @elseif($diff < 0) 
-                                                    <span class="badge bg-success-transparent rounded-pill"><i class="ri-flash-line"></i> Lebih Cepat {{ abs($diff) }} Hari</span>
-                                                @else 
-                                                    <span class="badge bg-info-transparent rounded-pill">Tepat Waktu</span> 
-                                                @endif
+                                                @if($diff > 0) <span class="badge bg-danger-transparent rounded-pill"><i class="ri-arrow-up-line"></i> Terlambat {{ $diff }} Hari</span>
+                                                @elseif($diff < 0) <span class="badge bg-success-transparent rounded-pill"><i class="ri-flash-line"></i> Lebih Cepat {{ abs($diff) }} Hari</span>
+                                                @else <span class="badge bg-info-transparent rounded-pill">Tepat Waktu</span> @endif
                                             @else
-                                                @if(\Carbon\Carbon::now()->gt($deadlineDate))
-                                                    <span class="badge bg-danger-transparent rounded-pill">Overdue</span>
-                                                @else
-                                                    <span class="badge bg-light text-dark border">On Track</span>
-                                                @endif
+                                                @if(\Carbon\Carbon::now()->gt($deadlineDate)) <span class="badge bg-danger-transparent rounded-pill">Overdue</span>
+                                                @else <span class="badge bg-light text-dark border">On Track</span> @endif
                                             @endif
                                         </td>
                                     </tr>
-                                    
                                     <tr>
                                         <td class="fw-semibold text-primary">Durasi Pengerjaan</td>
                                         <td class="text-center text-muted">
                                             @php $targetDays = $startDate->diffInDays($deadlineDate); @endphp
                                             {{ $targetDays }} Hari
                                         </td>
-                                        
                                         <td class="text-center fw-bold">
                                             @if($endDate)
-                                                @php $actualDays = $startDate->diffInDays($endDate); @endphp
-                                                {{ $actualDays }} Hari
+                                                {{ round($startDate->diffInDays($endDate)) }} Hari
                                             @else
-                                                @php $actualDays = $startDate->diffInDays(\Carbon\Carbon::now()); @endphp
                                                 <span class="text-muted fw-normal fst-italic">
-                                                    Berjalan {{ $actualDays }} Hari
-                                                </span>
+                                                    Berjalan {{ round($startDate->diffInDays(now())) }} Hari
+                                                </span> 
                                             @endif
                                         </td>
-                                        
                                         <td class="text-center">
                                             @if($targetDays > 0)
                                                 @php
+                                                    // Hindari pembagian dengan nol jika actualDays 0
+                                                    $actualDays = $endDate ? $startDate->diffInDays($endDate) : $startDate->diffInDays(now());
                                                     $percentageUsed = ($actualDays / $targetDays) * 100;
                                                     $efficiency = 100 - $percentageUsed;
                                                 @endphp
 
                                                 @if($endDate)
-                                                    @if($efficiency > 0)
-                                                        <span class="badge bg-success-transparent rounded-pill" data-bs-toggle="tooltip" title="Lebih cepat {{ round($efficiency) }}% dari estimasi">
-                                                            <i class="ri-speed-up-line me-1"></i> {{ round($efficiency) }}% Lebih Cepat
-                                                        </span>
-                                                    @elseif($efficiency < 0)
-                                                        <span class="badge bg-danger-transparent rounded-pill" data-bs-toggle="tooltip" title="Melambat {{ abs(round($efficiency)) }}% dari estimasi">
-                                                            <i class="ri-slow-down-line me-1"></i> {{ abs(round($efficiency)) }}% Lebih Lambat
-                                                        </span>
-                                                    @else
-                                                        <span class="badge bg-info-transparent rounded-pill">100% Sesuai Target</span>
-                                                    @endif
+                                                    @if($efficiency > 0) <span class="badge bg-success-transparent rounded-pill"><i class="ri-speed-up-line me-1"></i> {{ round($efficiency) }}% Lebih Cepat</span>
+                                                    @elseif($efficiency < 0) <span class="badge bg-danger-transparent rounded-pill"><i class="ri-slow-down-line me-1"></i> {{ abs(round($efficiency)) }}% Lebih Lambat</span>
+                                                    @else <span class="badge bg-info-transparent rounded-pill">100% Sesuai Target</span> @endif
                                                 @else
-                                                    <div class="d-flex align-items-center justify-content-center">
-                                                        <div class="progress progress-xs w-50 me-2 bg-light">
-                                                            <div class="progress-bar {{ $percentageUsed > 100 ? 'bg-danger' : 'bg-primary' }}" 
-                                                                 role="progressbar" 
-                                                                 style="width: {{ min($percentageUsed, 100) }}%"></div>
-                                                        </div>
-                                                        <span class="fs-11 {{ $percentageUsed > 100 ? 'text-danger' : 'text-muted' }}">
-                                                            {{ round($percentageUsed) }}% Waktu Terpakai
-                                                        </span>
-                                                    </div>
+                                                    <span class="fs-11 {{ $percentageUsed > 100 ? 'text-danger' : 'text-muted' }}">{{ round($percentageUsed) }}% Waktu Terpakai</span>
                                                 @endif
                                             @else
                                                 <span class="text-muted">-</span>
@@ -229,36 +196,29 @@
                 <div class="card custom-card overflow-hidden">
                     <div class="card-header border-bottom border-block-end-dashed">
                         <div class="card-title">Informasi Task</div>
-                        <div class="ms-auto">
-                            {!! $statusBadge !!}
-                        </div>
+                        <div class="ms-auto">{!! $statusBadge !!}</div>
                     </div>
                     <div class="card-body pt-4">
                         @if ($errors->any())
                             <div class="alert alert-danger alert-dismissible fade show mb-3">
-                                <ul class="mb-0 ps-3 fs-12">
-                                    @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-                                </ul>
+                                <ul class="mb-0 ps-3 fs-12">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         @endif
 
                         <form action="{{ $config['action_url'] }}" method="post" enctype="multipart/form-data">
                             @csrf @method('put')
-                            
                             <input type="hidden" name="user_id" value="{{ $uId }}">
                             <input type="hidden" name="tipe_task" value="{{ $task->tipe_task->slug ?? '' }}"> 
                             <input type="hidden" name="nama_project" value="{{ $task->project_perusahaan_id }}">
 
                             <div class="mb-3">
-                                <p class="fs-12 mb-1 text-muted fw-semibold text-uppercase">Project</p>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm bg-primary-transparent me-2 rounded">
-                                        <i class="ri-building-line text-primary fs-14"></i>
-                                    </div>
-                                    <select class="form-control border-0 bg-transparent fw-semibold p-0 ps-1" disabled style="pointer-events: none; appearance: none;">
-                                        <option selected>{{ $task->project_perusahaan->nama_project ?? '-' }}</option>
-                                    </select>
+                                <label class="form-label fs-13 text-muted">Project</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary-transparent border-end-0"><i class="ri-building-line text-primary"></i></span>
+                                    <input type="text" class="form-control border-start-0 fw-bold bg-transparent" 
+                                           value="{{ $task->project_perusahaan->nama_project ?? '-' }}" 
+                                           readonly style="pointer-events: none;">
                                 </div>
                             </div>
 
@@ -288,10 +248,7 @@
                                 <label class="form-label fs-13 text-muted">Tanggal Selesai (Aktual)</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="ri-checkbox-circle-line text-success"></i></span>
-                                    <input type="text" class="form-control border-start-0 ps-0" name="tgl_selesai" id="tgl_selesai" 
-                                           value="{{ $task->tgl_selesai }}" 
-                                           placeholder="Belum Selesai"
-                                           {{ $inputState }}>
+                                    <input type="text" class="form-control border-start-0 ps-0" name="tgl_selesai" id="tgl_selesai" value="{{ $task->tgl_selesai }}" placeholder="Belum Selesai" {{ $inputState }}>
                                 </div>
                             </div>
 
@@ -301,12 +258,10 @@
                                         <button type="button" class="btn btn-warning-light btn-wave btn-edit-task">
                                             <i class="ri-pencil-line me-1"></i> Edit Data
                                         </button>
-                                        
                                         <button type="button" class="btn btn-danger-light btn-wave btn-batal-edit" hidden>
                                             <i class="ri-close-line me-1"></i> Batal Edit
                                         </button>
                                     @endif
-                                    
                                     <button type="submit" class="btn btn-primary btn-wave btn-submit-task" hidden>
                                         <i class="ri-save-line me-1"></i> Simpan Perubahan
                                     </button>
@@ -316,19 +271,14 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-xl-8 col-lg-7">
                 <div class="card custom-card">
                     <div class="card-body p-0">
                         <nav class="nav nav-tabs nav-justified tab-style-1 d-flex" role="tablist">
-                            <a class="nav-link active py-3" data-bs-toggle="tab" href="#home" role="tab">
-                                <i class="ri-list-check-2 me-1 align-middle fs-16"></i> Sub Task
-                            </a>
-                            <a class="nav-link py-3" data-bs-toggle="tab" href="#lampiran" role="tab">
-                                <i class="ri-attachment-2 me-1 align-middle fs-16"></i> Lampiran
-                            </a>
-                            <a class="nav-link py-3" data-bs-toggle="tab" href="#anggota" role="tab">
-                                <i class="ri-group-line me-1 align-middle fs-16"></i> Anggota Tim
-                            </a>
+                            <a class="nav-link active py-3" data-bs-toggle="tab" href="#home" role="tab"><i class="ri-list-check-2 me-1 align-middle fs-16"></i> Sub Task</a>
+                            <a class="nav-link py-3" data-bs-toggle="tab" href="#lampiran" role="tab"><i class="ri-attachment-2 me-1 align-middle fs-16"></i> Lampiran</a>
+                            <a class="nav-link py-3" data-bs-toggle="tab" href="#anggota" role="tab"><i class="ri-group-line me-1 align-middle fs-16"></i> Anggota Tim</a>
                         </nav>
                         
                         <div class="tab-content p-4">
@@ -340,7 +290,6 @@
                                         </button>
                                     </div>
                                 @endif
-
                                 <div class="table-responsive">
                                     <table class="table table-hover text-nowrap" id="subtaskTable">
                                         <thead class="bg-light">
@@ -353,36 +302,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php 
-                                                $listSubTask = ($userRole == 'manager') ? $subTask : $subTaskUser; 
-                                            @endphp
+                                            @php $listSubTask = ($userRole == 'manager') ? $subTask : $subTaskUser; @endphp
                                             @forelse ($listSubTask as $index => $item)
                                                 <tr>
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td>
-                                                        <span class="fw-semibold text-dark">{{ $item->nama_subtask }}</span>
-                                                    </td>
-                                                    <td class="text-muted">
-                                                        {{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') }}
-                                                    </td>
+                                                    <td><span class="fw-semibold text-dark">{{ $item->nama_subtask }}</span></td>
+                                                    <td class="text-muted">{{ \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') }}</td>
                                                     <td class="text-center">
-                                                        @if($item->detail_sub_task->isEmpty())
-                                                            <span class="badge bg-secondary-transparent">Draft</span>
-                                                        @elseif($item->status === 'revise')
-                                                            <span class="badge bg-warning-transparent" data-bs-toggle="tooltip" title="Revisi: {{ $item->revisi->pesan ?? '' }}">Revisi</span>
-                                                        @elseif($item->status === 'approve')
-                                                            <span class="badge bg-success">Approve</span>
-                                                        @else
-                                                            <span class="badge bg-info-transparent">Review</span>
-                                                        @endif
+                                                        @if($item->detail_sub_task->isEmpty()) <span class="badge bg-secondary-transparent">Draft</span>
+                                                        @elseif($item->status === 'revise') <span class="badge bg-warning-transparent" title="Revisi: {{ $item->revisi->pesan ?? '' }}">Revisi</span>
+                                                        @elseif($item->status === 'approve') <span class="badge bg-success">Approve</span>
+                                                        @else <span class="badge bg-info-transparent">Review</span> @endif
                                                     </td>
                                                     <td class="text-center">
                                                         <div class="d-flex justify-content-center gap-2">
-                                                            <a href="{{ ($userRole == 'manager') ? route('manajer.subtask.detail', $item->id) : (($userRole == 'admin-sdm') ? route('admin_sdm.subtask.detail', $item->id) : route('karyawan.subtask.detail', $item->id)) }}" 
-                                                               class="btn btn-sm btn-icon btn-dark" data-bs-toggle="tooltip" title="Detail">
-                                                                <i class="ri-file-list-line"></i>
-                                                            </a>
-
+                                                            <a href="{{ ($userRole == 'manager') ? route('manajer.subtask.detail', $item->id) : (($userRole == 'admin-sdm') ? route('admin_sdm.subtask.detail', $item->id) : route('karyawan.subtask.detail', $item->id)) }}" class="btn btn-sm btn-icon btn-dark" data-bs-toggle="tooltip" title="Detail"><i class="ri-file-list-line"></i></a>
                                                             @if($userRole != 'manager')
                                                                 <button class="btn btn-sm btn-icon btn-warning updateSubTask" 
                                                                     data-id="{{ $item->id }}"
@@ -392,35 +326,23 @@
                                                                     data-tgl_sub_task="{{ $item->tgl_sub_task }}"
                                                                     data-tgl_selesai="{{ $item->tgl_selesai }}"
                                                                     data-deadline="{{ $item->deadline }}"
-                                                                    data-lampiran='@JSON($item->lampiran)'
+                                                                    data-lampiran="{{ json_encode($item->lampiran) }}"
                                                                     data-bs-toggle="tooltip" title="Edit">
                                                                     <i class="ri-pencil-line"></i>
                                                                 </button>
                                                                 <form action="{{ ($userRole == 'admin-sdm') ? route('admin_sdm.subtask.delete', $item->id) : route('karyawan.subtask.delete', $item->id) }}" method="POST" class="d-inline">
                                                                     @csrf @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-icon btn-danger delete-sub-task" data-nama_subtask="{{ $item->nama_subtask }}" data-bs-toggle="tooltip" title="Hapus">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </button>
+                                                                    <button type="submit" class="btn btn-sm btn-icon btn-danger delete-sub-task" data-nama_subtask="{{ $item->nama_subtask }}" data-bs-toggle="tooltip" title="Hapus"><i class="ri-delete-bin-line"></i></button>
                                                                 </form>
                                                             @endif
-                                                            
                                                             @if ($item->lampiran->count())
-                                                                <button class="btn btn-sm btn-icon btn-primary view-lampiran-subtask" 
-                                                                        data-files='@json($item->lampiran->pluck("lampiran"))'
-                                                                        data-title="{{ $item->nama_subtask }}"
-                                                                        data-bs-toggle="tooltip" title="Lihat Lampiran">
-                                                                    <i class="ri-attachment-2"></i>
-                                                                </button>
+                                                                <button class="btn btn-sm btn-icon btn-primary view-lampiran-subtask" data-files='@json($item->lampiran->pluck("lampiran"))' data-title="{{ $item->nama_subtask }}" data-bs-toggle="tooltip" title="Lihat Lampiran"><i class="ri-attachment-2"></i></button>
                                                             @endif
                                                         </div>
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <tr>
-                                                    <td colspan="5" class="text-center py-5 text-muted">
-                                                        <i class="ri-inbox-line fs-24 d-block mb-2"></i> Belum ada sub task.
-                                                    </td>
-                                                </tr>
+                                                <tr><td colspan="5" class="text-center py-5 text-muted"><i class="ri-inbox-line fs-24 d-block mb-2"></i> Belum ada sub task.</td></tr>
                                             @endforelse
                                         </tbody>
                                     </table>
@@ -678,30 +600,65 @@
                 disableMobile: true
             };
             
-            const minDateProject = "{{ $task->project_perusahaan ? \Carbon\Carbon::parse($task->project_perusahaan->waktu_mulai)->format('Y-m-d') : '' }}";
-            const maxDateProject = "{{ $task->project_perusahaan ? \Carbon\Carbon::parse($task->project_perusahaan->deadline)->format('Y-m-d') : '' }}";
+            const minDateProject = "{{ $task->project_perusahaan && $task->project_perusahaan->waktu_mulai ? \Carbon\Carbon::parse($task->project_perusahaan->waktu_mulai)->format('Y-m-d') : '' }}";
+            const maxDateProject = "{{ $task->project_perusahaan && $task->project_perusahaan->deadline ? \Carbon\Carbon::parse($task->project_perusahaan->deadline)->format('Y-m-d') : '' }}";
 
-            flatpickr("#tgl_task", { ...dateConfig, minDate: minDateProject, maxDate: maxDateProject });
-            flatpickr("#deadline", { ...dateConfig, minDate: minDateProject, maxDate: maxDateProject });
-            flatpickr("#tgl_selesai", { ...dateConfig, minDate: "{{ $startDate->format('Y-m-d') }}" }); 
-                           
+            let configMain = { ...dateConfig };
+            if(minDateProject) configMain.minDate = minDateProject;
+            if(maxDateProject) configMain.maxDate = maxDateProject;
+            
+            const fpMulai = flatpickr("#tgl_task", configMain);
+            const fpDeadline = flatpickr("#deadline", configMain);
+            const fpBerakhir = flatpickr("#tgl_selesai", { ...dateConfig, minDate: "{{ $startDate->format('Y-m-d') }}" }); 
+            
+            $('.btn-edit-task').click(function(e) {
+                e.preventDefault();
+                
+                $(this).attr('hidden', true);
+                $('.btn-batal-edit, .btn-submit-task').removeAttr('hidden');
+                
+                $('#nama_task').prop('disabled', false);
+                
+                $('#tgl_task, #deadline, #tgl_selesai').prop('disabled', false);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = false;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = false;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = false;
+            });
+
+            $('.btn-batal-edit').click(function(e) {
+                e.preventDefault();
+                
+                $('.btn-edit-task').removeAttr('hidden');
+                $(this).attr('hidden', true);
+                $('.btn-submit-task').attr('hidden', true);
+                
+                $('#nama_task').prop('disabled', true);
+                
+                $('#tgl_task, #deadline, #tgl_selesai').prop('disabled', true);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = true;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = true;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = true;
+            });
+            
             const minDateTask = "{{ $task->tgl_task ? \Carbon\Carbon::parse($task->tgl_task)->format('Y-m-d') : '' }}";
             const maxDateTask = "{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}";
 
+            let configSub = { ...dateConfig };
+            if(minDateTask) configSub.minDate = minDateTask;
+            if(maxDateTask) configSub.maxDate = maxDateTask;
+            
             let fpSubTaskStart = flatpickr("#format-tanggal", {
-                ...dateConfig,
-                minDate: minDateTask,
-                maxDate: maxDateTask,
+                ...configSub,
                 onChange: (selectedDates, dateStr) => {
                     $("#tanggal").val(dateStr);
-                    if(dateStr) fpSubTaskDeadline.set('minDate', dateStr);
+                    if(dateStr && fpSubTaskDeadline) fpSubTaskDeadline.set('minDate', dateStr);
                 }
             });
 
             let fpSubTaskDeadline = flatpickr("#format-deadline", {
-                ...dateConfig,
-                minDate: minDateTask,
-                maxDate: maxDateTask,
+                ...configSub,
                 onChange: (selectedDates, dateStr) => $("#deadline_sub").val(dateStr)
             });
             
@@ -709,26 +666,16 @@
                 $('#formSubTask')[0].reset();
                 $('#preview-area').empty();
                 $('#detail_upload').text('');
-                fpSubTaskStart.clear(); fpSubTaskStart.set('minDate', minDateTask);
-                fpSubTaskDeadline.clear(); fpSubTaskDeadline.set('minDate', minDateTask);
+                
+                fpSubTaskStart.clear(); 
+                if(minDateTask) fpSubTaskStart.set('minDate', minDateTask);
+                
+                fpSubTaskDeadline.clear(); 
+                if(minDateTask) fpSubTaskDeadline.set('minDate', minDateTask);
+                
                 $('#formSubTask input[name="_method"]').remove();
             });
             
-            $('.btn-edit-task').click(function() {
-                $(this).attr('hidden', true);
-                $('.btn-batal-edit, .btn-submit-task').removeAttr('hidden');
-                
-                $('#nama_task, #tgl_task, #deadline, #tgl_selesai').prop('disabled', false);
-            });
-
-            $('.btn-batal-edit').click(function() {
-                $('.btn-edit-task').removeAttr('hidden');
-                $(this).attr('hidden', true);
-                $('.btn-submit-task').attr('hidden', true);
-                
-                $('#nama_task, #tgl_task, #deadline, #tgl_selesai').prop('disabled', true);
-            });
-
             $(document).on('click', '.tambahSubTask', function(e) {
                 e.preventDefault();
                 $("#subtaskModalTitle").text('Tambah Sub Task Baru');

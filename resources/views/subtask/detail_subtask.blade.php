@@ -23,15 +23,16 @@
         }
         
         $statusBadge = '<span class="badge bg-secondary-transparent rounded-pill">Belum Dicek</span>';
-        if($subtask->status === 'revise') {
-            $statusBadge = '<span class="badge bg-warning-transparent rounded-pill" data-bs-toggle="tooltip" title="Pesan Revisi: '.($subtask->revisi->pesan ?? '-').'">Revisi <i class="fas fa-info-circle ms-1"></i></span>';
-        } elseif($subtask->status === 'approve') {
-            $statusBadge = '<span class="badge bg-success-transparent rounded-pill">Approved</span>';
-        }
         
-        if($subtask->detail_sub_task->isEmpty()){
+        if($subtask->status === 'approve') {
+            $statusBadge = '<span class="badge bg-success-transparent rounded-pill"><i class="ri-checkbox-circle-line me-1"></i> Approved</span>';
+        } elseif($subtask->status === 'revise') {
+            $statusBadge = '<span class="badge bg-warning-transparent rounded-pill" data-bs-toggle="tooltip" title="Pesan Revisi: '.($subtask->revisi->pesan ?? '-').'"><i class="ri-alert-line me-1"></i> Revisi</span>';
+        } elseif($subtask->detail_sub_task->isEmpty()){
              $statusBadge = '<span class="badge bg-info-transparent rounded-pill">Belum ada laporan</span>';
         }
+        
+        $inputState = 'disabled';
     @endphp
 
     <div class="container-fluid">
@@ -59,7 +60,7 @@
 
                         @if ($errors->any())
                             <div class="alert alert-danger mb-3">
-                                <ul class="mb-0">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
+                                <ul class="mb-0 ps-3">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
                             </div>
                         @endif
 
@@ -96,32 +97,32 @@
                                 <label class="form-label fs-13 text-muted">Tanggal Selesai (Aktual)</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="ri-checkbox-circle-line text-success"></i></span>
-                                    {{-- Tambahkan ID & name yang benar --}}
                                     <input type="text" name="tgl_selesai" id="tgl_selesai_info" class="form-control border-start-0 ps-0" 
                                            value="{{ $subtask->tgl_selesai ? \Carbon\Carbon::parse($subtask->tgl_selesai)->translatedFormat('Y-m-d') : '' }}" 
                                            placeholder="Belum Selesai"
                                            disabled>
                                 </div>
                             </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Tambah Lampiran</label>
+                                <input type="file" class="form-control" name="upload[]" id="upload_info" multiple disabled>
+                                <div class="form-text fs-11">Upload file bukti pengerjaan di sini.</div>
+                            </div>
 
-                            {{-- Hidden Fields Wajib (Task ID & User ID) --}}
                             <input type="hidden" name="task_id" value="{{ $subtask->task_id }}">
                             <input type="hidden" name="user_id" value="{{ $subtask->user_id }}">
 
-                            {{-- Bagian Tombol (Hanya Muncul Jika Berhak Edit) --}}
                             @if ($config['can_update_pekerjaan'])
                                 <div class="d-grid gap-2 mt-4">
-                                    {{-- Tombol Edit --}}
                                     <button type="button" class="btn btn-warning-light btn-wave btn-edit-subtask">
-                                        <i class="ri-pencil-line me-1"></i> Edit Info Subtask
+                                        <i class="ri-pencil-line me-1"></i> Edit Info & Upload
                                     </button>
                                     
-                                    {{-- Tombol Batal (Hidden Awal) --}}
                                     <button type="button" class="btn btn-danger-light btn-wave btn-batal-edit" hidden>
                                         <i class="ri-close-line me-1"></i> Batal Edit
                                     </button>
 
-                                    {{-- Tombol Simpan (Hidden Awal) --}}
                                     <button type="submit" class="btn btn-primary btn-wave btn-submit-subtask" hidden>
                                         <i class="ri-save-line me-1"></i> Simpan Perubahan
                                     </button>
@@ -131,7 +132,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="col-xl-8 col-lg-7">
                 <div class="card custom-card">
                     <div class="card-body p-0">
@@ -140,13 +141,11 @@
                                 <i class="ri-file-list-3-line me-1 align-middle fs-16"></i> Laporan Kinerja
                             </a>
                             <a class="nav-link py-3" data-bs-toggle="tab" href="#lampiran" role="tab">
-                                <i class="ri-attachment-2 me-1 align-middle fs-16"></i> Lampiran
+                                <i class="ri-attachment-2 me-1 align-middle fs-16"></i> Lampiran ({{ $subtask->lampiran->count() }})
                             </a>
                         </nav>
 
                         <div class="tab-content p-4">
-                            
-                            {{-- TAB 1: LAPORAN KINERJA --}}
                             <div class="tab-pane active" id="laporan" role="tabpanel">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-semibold mb-0">Riwayat Laporan</h6>
@@ -155,7 +154,7 @@
                                             <form action="{{ route(($userRole == 'karyawan' ? 'karyawan' : 'admin_sdm') . '.subtask.detail.kirim', ['id' => $subtask->id]) }}" 
                                                   method="POST" class="d-inline" id="formKirim">
                                                 @csrf @method('PUT')
-                                                <button type="submit" class="btn btn-outline-success btn-sm btn-wave" data-bs-toggle="tooltip" title="Kirim Laporan">
+                                                <button type="submit" class="btn btn-outline-success btn-sm btn-wave" data-bs-toggle="tooltip" title="Kirim Laporan (Selesai)">
                                                     <i class="bi bi-send me-1"></i> Kirim
                                                 </button>
                                             </form>
@@ -231,16 +230,19 @@
                                     </table>
                                 </div>
                             </div>
-
-                            {{-- TAB 2: LAMPIRAN --}}
+                            
                             <div class="tab-pane" id="lampiran" role="tabpanel">
                                 <div class="row g-3">
                                     @forelse($subtask->lampiran as $index => $lampiran)
                                         <div class="col-md-4 col-sm-6">
                                             <div class="card shadow-sm border h-100 lampiran-item position-relative">
                                                 @if ($config['can_update_pekerjaan'])
-                                                    <button class="btn btn-sm btn-icon btn-danger position-absolute top-0 end-0 m-2 delete-lampiran" 
-                                                            data-id="{{ $lampiran->id }}" style="z-index: 10;">
+                                                    @php
+                                                        $routePrefix = ($userRole == 'karyawan') ? 'karyawan' : (($userRole == 'admin-sdm') ? 'admin_sdm' : 'manajer');
+                                                        $routeDelete = route($routePrefix . '.subtask.detail.lampiran', $lampiran->id);
+                                                    @endphp
+                                                    <button class="btn btn-sm btn-icon btn-danger position-absolute top-0 end-0 m-2 delete-lampiran-btn" 
+                                                            data-url="{{ $routeDelete }}" style="z-index: 10;">
                                                         <i class="ri-close-line"></i>
                                                     </button>
                                                 @endif
@@ -269,17 +271,13 @@
                                     @endforelse
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- ================= MODALS ================= --}}
-
-    {{-- 1. Modal Tambah/Edit Laporan Kinerja --}}
+    
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -287,7 +285,7 @@
                     <h6 class="modal-title fw-bold" id="staticBackdropLabel">Update Pekerjaan</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="" method="POST" id="formLaporanKinerja" enctype="multipart/form-data">
+                <form action="" method="POST" id="formLaporanKinerja">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -319,6 +317,7 @@
                             <label class="form-label fw-semibold">Keterangan Aktivitas</label>
                             <textarea class="form-control" name="keterangan" id="keterangan" rows="4" placeholder="Deskripsikan pekerjaan Anda..." required></textarea>
                         </div>
+                        
                         <input type="hidden" name="sub_task_id" value="{{ $subtask->id }}">
                         <input type="hidden" name="user_id" value="{{ auth()->id() }}">
                     </div>
@@ -330,8 +329,7 @@
             </div>
         </div>
     </div>
-
-    {{-- 2. Modal Preview Lampiran (Carousel) --}}
+    
     <div class="modal fade" id="lampiranModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -373,7 +371,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('script')
@@ -386,44 +383,45 @@
     <script>
         $(document).ready(function() {
             const userRole = "{{ auth()->user()->role->slug }}";
-            
-            // 1. CONFIG FLATPICKR UNTUK INFO SUBTASK (KOLOM KIRI)
-            // Ini wajib di-init agar saat disabled dibuka, kalender muncul
             const dateConfigInfo = {
                 dateFormat: 'Y-m-d',
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
             };
-            
-            flatpickr("#tgl_sub_task_info", dateConfigInfo);
-            flatpickr("#deadline_sub_info", dateConfigInfo);
-            flatpickr("#tgl_selesai_info", dateConfigInfo);
+            const fpMulai = flatpickr("#tgl_sub_task_info", dateConfigInfo);
+            const fpDeadline = flatpickr("#deadline_sub_info", dateConfigInfo);
+            const fpSelesai = flatpickr("#tgl_selesai_info", dateConfigInfo);
             
             $('.btn-edit-subtask').click(function(e) {
                 e.preventDefault();
                 $(this).attr('hidden', true); 
                 $('.btn-batal-edit, .btn-submit-subtask').removeAttr('hidden'); 
                 
-                $('#nama_subtask_info, #tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', false);
+                $('#nama_subtask_info').prop('disabled', false);
+                $('#tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', false);
+                $('#upload_info').prop('disabled', false); // Enable upload file
+                
+                if(fpMulai.altInput) fpMulai.altInput.disabled = false;
+                if(fpDeadline.altInput) fpDeadline.altInput.disabled = false;
+                if(fpSelesai.altInput) fpSelesai.altInput.disabled = false;
             });
 
             $('.btn-batal-edit').click(function(e) {
                 e.preventDefault();
-
-                // Munculkan kembali tombol Edit
                 $('.btn-edit-subtask').removeAttr('hidden');
-                
-                // Sembunyikan tombol Batal & Simpan
                 $(this).attr('hidden', true);
                 $('.btn-submit-subtask').attr('hidden', true);
 
-                // Kunci kembali inputnya
-                $('#nama_subtask_info, #tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', true);
+                $('#nama_subtask_info').prop('disabled', true);
+                $('#tgl_sub_task_info, #deadline_sub_info, #tgl_selesai_info').prop('disabled', true);
+                $('#upload_info').prop('disabled', true);
+                
+                if(fpMulai.altInput) fpMulai.altInput.disabled = true;
+                if(fpDeadline.altInput) fpDeadline.altInput.disabled = true;
+                if(fpSelesai.altInput) fpSelesai.altInput.disabled = true;
             });
 
-
-            // 3. MODAL LAPORAN KINERJA LOGIC
             let flatpickrModal = flatpickr("#format-tanggal", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -466,9 +464,8 @@
                 $("#durasi_menit").val(menit);
                 $("#keterangan").val(keterangan);
                 
-                // Set tanggal ke flatpickr modal
                 flatpickrModal.setDate(tanggal, true);
-                $("#tanggal").val(tanggal); // Pastikan hidden input terisi
+                $("#tanggal").val(tanggal); 
                 
                 $("#formLaporanKinerja").attr("action", actionUrl);
                 
@@ -481,24 +478,17 @@
                 $("#btnSubmit").text("Update Perubahan");
             });
 
-
-            // 4. DELETE CONFIRMATION
-            $(document).on("click", ".delete-laporan, .delete-lampiran", function(e){
+            $(document).on("click", ".delete-laporan, .delete-lampiran-btn", function(e){
                 e.preventDefault();
                 e.stopPropagation(); 
                 
-                let form = $(this).closest('form');
-                
-                // Khusus delete lampiran via tombol X di card
-                if($(this).hasClass('delete-lampiran')) {
-                    let id = $(this).data('id');
-                    let url = (userRole === 'karyawan') 
-                        ? `/karyawan/subtask/detail/lampiran/${id}` 
-                        : `/admin_sdm/subtask/detail/lampiran/${id}`;
-                    
-                    // Buat form dinamis karena tombol delete ada di luar form utama
+                let form;
+                if($(this).hasClass('delete-lampiran-btn')) {
+                    let url = $(this).data('url');
                     form = $(`<form action="${url}" method="POST">@csrf @method('DELETE')</form>`);
                     $('body').append(form);
+                } else {
+                    form = $(this).closest('form');
                 }
 
                 let type = $(this).hasClass('delete-laporan') ? 'Laporan Kinerja' : 'Lampiran';
@@ -516,8 +506,6 @@
                 });
             });
 
-
-            // 5. CAROUSEL PREVIEW LAMPIRAN
             const carousel = document.getElementById('carouselLampiran');
             const myModalEl = document.getElementById('lampiranModal');
 

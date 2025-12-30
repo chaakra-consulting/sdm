@@ -4,8 +4,7 @@
     @php
         $userRole = Auth::check() ? Auth::user()->role->slug : '';
         $uId = auth()->id();
-
-        // 1. Konfigurasi Hak Akses
+        
         $config = [
             'is_manager' => $userRole == 'manager',
             'back_url' => '#',
@@ -13,32 +12,23 @@
             'action_add_member' => route('manajer.update.anggota.project'),
             'action_create_task' => '/manajer/task/store'
         ];
-
-        // Set Back URL
+        
         if ($userRole == 'manager') $config['back_url'] = '/manajer/project';
         elseif ($userRole == 'karyawan') $config['back_url'] = '/karyawan/project';
         elseif ($userRole == 'admin-sdm') $config['back_url'] = '/admin_sdm/project';
-
-        // Helper Dates
         $startDate = \Carbon\Carbon::parse($project->waktu_mulai);
         $deadlineDate = \Carbon\Carbon::parse($project->deadline);
         $endDate = $project->waktu_berakhir ? \Carbon\Carbon::parse($project->waktu_berakhir) : null;
-
-        // [PERBAIKAN] Input State SELALU disabled di awal load, siapapun rolenya.
-        // Nanti dibuka pakai tombol "Edit Data" (khusus Manager).
         $inputState = 'disabled';
-        
-        // Progress Color Logic
-        $progressColor = '#00ff00'; // Green
-        if($progress < 30) $progressColor = '#ff0000'; // Red
-        elseif($progress < 70) $progressColor = '#ffd700'; // Yellow
+        $progressColor = '#00ff00';
+        if($progress < 30) $progressColor = '#ff0000';
+        elseif($progress < 70) $progressColor = '#ffd700';
     @endphp
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card custom-card border-top-card border-top-primary rounded-0 rounded-bottom">
-                    {{-- HEADER CARD DENGAN TOMBOL KEMBALI DI KANAN --}}
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title">
                             <i class="ri-bar-chart-grouped-line me-2 text-primary"></i> Analisa Performa Project
@@ -101,8 +91,13 @@
                                                 <td class="fw-semibold text-primary">Durasi Project</td>
                                                 <td class="text-center text-muted">{{ $startDate->diffInDays($deadlineDate) }} Hari</td>
                                                 <td class="text-center fw-bold">
-                                                    @if($endDate) {{ $startDate->diffInDays($endDate) }} Hari
-                                                    @else <span class="text-muted fw-normal fst-italic">Berjalan {{ $startDate->diffInDays(now()) }} Hari</span> @endif
+                                                    @if($endDate) 
+                                                        {{ round($startDate->diffInDays($endDate)) }} Hari
+                                                    @else 
+                                                        <span class="text-muted fw-normal fst-italic">
+                                                            Berjalan {{ round($startDate->diffInDays(now())) }} Hari
+                                                        </span> 
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     @if($endDate && $startDate->diffInDays($deadlineDate) > 0)
@@ -232,13 +227,10 @@
                         </nav>
 
                         <div class="tab-content p-4">
-                            
-                            {{-- TAB 1: TIMELINE (CALENDAR) --}}
                             <div class="tab-pane active" id="timeline" role="tabpanel">
                                 <div id='calendar2'></div>
                             </div>
-
-                            {{-- TAB 2: DAFTAR TASK --}}
+                            
                             <div class="tab-pane" id="tasks" role="tabpanel">
                                 @if ($config['is_manager'])
                                     <div class="mb-3">
@@ -261,9 +253,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php 
-                                                // Jika manager lihat semua, jika karyawan lihat userTasks
-                                                $taskList = $config['is_manager'] ? $tasks : $userTasks->map(fn($ut) => $ut->task); 
+                                            @php
+                                                $taskList = $config['is_manager'] ? $tasks : $userstasks->map(fn($ut) => $ut->task); 
                                             @endphp
 
                                             @forelse ($taskList as $item)
@@ -330,8 +321,7 @@
                                     </table>
                                 </div>
                             </div>
-
-                            {{-- TAB 3: ANGGOTA --}}
+                            
                             <div class="tab-pane" id="anggota" role="tabpanel">
                                 @if ($config['is_manager'])
                                     <div class="d-flex justify-content-end mb-3">
@@ -383,10 +373,7 @@
             </div>
         </div>
     </div>
-
-    {{-- ================= MODALS ================= --}}
-
-    {{-- 1. Modal Task (Create/Edit) --}}
+    
     <div class="modal fade" id="modalTask" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -427,7 +414,9 @@
                             <label class="form-label fw-semibold">Anggota Task</label>
                             <select name="user[]" id="user_modal" multiple class="form-control">
                                 @foreach ($user as $item)
-                                    <option value="{{ $item->user_id }}">{{ $item->user->name }}</option>
+                                    @if($item->user)
+                                        <option value="{{ $item->user_id }}">{{ $item->user->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -454,8 +443,7 @@
             </div>
         </div>
     </div>
-
-    {{-- 2. Modal Tambah Anggota Project --}}
+    
     <div class="modal fade" id="staticBackdropAnggota" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -485,7 +473,6 @@
         </div>
     </div>
 
-    {{-- 3. Modal Event Calendar --}}
     <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -503,14 +490,11 @@
 @endsection
 
 @section('script')
-    {{-- Style Flatpickr --}}
     <style>
         .flatpickr-calendar.open { z-index: 1060 !important; }
     </style>
-
-    {{-- APEX CHART --}}
+    
     <script>
-        // ... (Kode ApexChart Anda sudah benar, biarkan saja) ...
         var options = {
             series: [{{ $progress }}],
             chart: { type: 'radialBar', height: 300, offsetY: -10, sparkline: { enabled: true } },
@@ -522,10 +506,8 @@
         var chart = new ApexCharts(document.querySelector("#progres-bar"), options);
         chart.render();
     </script>
-
-    {{-- FULL CALENDAR --}}
+    
     <script>
-         // ... (Kode FullCalendar Anda sudah benar, biarkan saja) ...
         document.addEventListener('DOMContentLoaded', function() {
             let calendarEl = document.getElementById('calendar2');
             if (calendarEl) {
@@ -536,8 +518,8 @@
                     dateClick: function(info) {
                         let selectedDate = info.dateStr;
                         let filteredEvents = calendar.getEvents().filter(event => event.startStr.startsWith(selectedDate));
-                        let title = filteredEvents.length > 0 ? "Events pada " + selectedDate : "Tidak ada event pada " + selectedDate;
-                        let body = filteredEvents.length > 0 ? filteredEvents.map(e => `<li><i class='ri-checkbox-blank-circle-fill text-primary me-2 fs-10'></i>${e.title}</li>`).join('') : '<li class="text-muted">Tidak ada event.</li>';
+                        let title = filteredEvents.length > 0 ? "Events on " + selectedDate : "No events on " + selectedDate;
+                        let body = filteredEvents.length > 0 ? filteredEvents.map(e => `<li><i class='ri-checkbox-blank-circle-fill text-primary me-2 fs-10'></i>${e.title}</li>`).join('') : '<li class="text-muted">No events.</li>';
                         $('#eventTitle').text(title);
                         $('#eventBody').html(body);
                         new bootstrap.Modal(document.getElementById('infoModal')).show();
@@ -550,99 +532,72 @@
             }
         });
     </script>
-
-    {{-- MAIN SCRIPT (FIXED) --}}
+    
     <script>
+        let userTaskChoices = null; 
+        let fpTaskStart = null;
+        let fpTaskDeadline = null;
+
         $(document).ready(function() {
-            // Choices JS
+            const selectUserTaskEl = document.getElementById('user_modal');
+            const modalTaskEl = document.getElementById('modalTask');
             const choicesInstances = {};
-            ['#perusahaan_id', '#status', '#user_modal', '#user2'].forEach(id => {
+            const generalSelects = ['#perusahaan_id', '#status', '#user2'];
+
+            generalSelects.forEach(id => {
                 const el = document.querySelector(id);
                 if(el) {
-                    choicesInstances[id] = new Choices(el, { removeItemButton: true, searchEnabled: true });
+                    const isDisabled = el.hasAttribute('disabled');
+                    if(isDisabled) el.removeAttribute('disabled');
+
+                    choicesInstances[id] = new Choices(el, { 
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        itemSelectText: '',
+                    });
+
+                    if(isDisabled) choicesInstances[id].disable();
                 }
             });
-
-            // --- FLATPICKR CONFIGURATION ---
-            const dateConfig = { dateFormat: "Y-m-d", altInput: true, altFormat: "d F Y", locale: 'id', disableMobile: true };
-            const projectStart = "{{ $project->waktu_mulai }}";
-            const projectEnd = "{{ $project->deadline }}";
-
-            // Inisialisasi Flatpickr untuk Form Info Project (Kolom Kiri)
-            // Simpan instance ke variabel agar mudah diakses jika perlu (opsional)
-            const fpMulai = flatpickr("#waktu_mulai", dateConfig);
-            const fpDeadline = flatpickr("#deadline", dateConfig);
-            const fpBerakhir = flatpickr("#waktu_berakhir", dateConfig);
-
-            // Inisialisasi Flatpickr untuk Modal Task (Create/Edit)
-            let fpTaskStart = flatpickr("#format-waktu_mulai", {
-                ...dateConfig,
-                minDate: projectStart, maxDate: projectEnd,
-                onChange: (selectedDates, dateStr) => {
-                    $("#tgl_task_modal").val(dateStr);
-                    if(dateStr) fpTaskDeadline.set('minDate', dateStr);
-                }
-            });
-
-            let fpTaskDeadline = flatpickr("#format-deadline_task", {
-                ...dateConfig,
-                minDate: projectStart, maxDate: projectEnd,
-                onChange: (selectedDates, dateStr) => $("#deadline_task_modal").val(dateStr)
-            });
-
-
-            // --- UI INTERACTION: EDIT PROJECT INFO (FIXED) ---
-            $('.btn-edit-project').click(function(e) {
-                e.preventDefault(); // Mencegah refresh halaman
-                
-                $(this).hide();
-                $('.btn-batal-edit, .btn-submit-project').removeAttr('hidden');
-                
-                // [FIX] Enable Standard Inputs
-                // Pastikan ID selector sesuai dengan HTML: #nama_project, #waktu_mulai, #deadline, #waktu_berakhir
-                $('#nama_project, #waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', false);
-                
-                // Enable Choices JS Fields
-                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].enable();
-                if(choicesInstances['#status']) choicesInstances['#status'].enable();
-            });
-
-            $('.btn-batal-edit').click(function(e) {
-                e.preventDefault();
-
-                $('.btn-edit-project').show();
-                $(this).attr('hidden', true);
-                $('.btn-submit-project').attr('hidden', true);
-                
-                // Disable Inputs
-                $('#nama_project, #waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', true);
-                
-                // Disable Choices JS Fields
-                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].disable();
-                if(choicesInstances['#status']) choicesInstances['#status'].disable();
-            });
-
-
-            // --- LOGIC MODAL TASK & DELETE (SAMA SEPERTI SEBELUMNYA) ---
             
-            // Create Task
+            if(modalTaskEl) {
+                modalTaskEl.addEventListener('shown.bs.modal', function () {
+                    if (selectUserTaskEl && !userTaskChoices) {
+                        userTaskChoices = new Choices(selectUserTaskEl, {
+                            removeItemButton: true,
+                            searchEnabled: true,
+                            shouldSort: false,
+                            itemSelectText: '',
+                            placeholder: true,
+                            placeholderValue: 'Pilih anggota task...'
+                        });
+                    }
+                });
+
+                modalTaskEl.addEventListener('hidden.bs.modal', function () {
+                    if (userTaskChoices) {
+                        userTaskChoices.destroy();
+                        userTaskChoices = null; 
+                    }
+                });
+            }
+            
             $(".tambahTask").click(function() {
                 $(".modal-title").text("Buat Task Baru");
                 $("#formTask").attr("action", "{{ $config['action_create_task'] }}");
                 $("#formTask input[name='_method']").remove();
-                
                 $("#formTask")[0].reset();
                 $("#tgl_task_modal, #deadline_task_modal, #task_id_modal").val('');
-                fpTaskStart.clear(); fpTaskDeadline.clear();
+                
+                if(selectUserTaskEl) {
+                    Array.from(selectUserTaskEl.options).forEach(option => option.selected = false);
+                }
                 
                 $("#previewImage, #previewPDF").hide();
                 $("#detail_upload").text("");
-                
-                $(".choices").show();
             });
 
-            // Edit Task
-            $(".updateTask").click(function(e) {
+            $(document).on('click', '.updateTask', function(e) {
                 e.preventDefault();
                 let id = $(this).data("id");
                 
@@ -651,43 +606,97 @@
                 $("#formTask input[name='_method']").remove();
                 $("#formTask").append('<input type="hidden" name="_method" value="PUT">');
 
-                // Fill Data
                 $("#nama_task_modal").val($(this).data("nama_task"));
                 $("#keterangan_modal").val($(this).data("keterangan"));
                 
                 let tgl = $(this).data("tgl_task");
                 let ddl = $(this).data("deadline_task");
+                if(fpTaskStart && tgl) { fpTaskStart.setDate(tgl, true); $("#tgl_task_modal").val(tgl); }
+                if(fpTaskDeadline && ddl) { fpTaskDeadline.setDate(ddl, true); $("#deadline_task_modal").val(ddl); }
 
-                if(tgl) { fpTaskStart.setDate(tgl, true); $("#tgl_task_modal").val(tgl); }
-                if(ddl) { fpTaskDeadline.setDate(ddl, true); $("#deadline_task_modal").val(ddl); }
-
-                // Upload Preview
+                let users = $(this).data("users");
+                
+                if(selectUserTaskEl && users) {
+                    let userStringIds = users.map(String);
+                    Array.from(selectUserTaskEl.options).forEach(option => {
+                        option.selected = userStringIds.includes(option.value);
+                    });
+                }
+                
                 let upload = $(this).data("upload");
                 $("#previewImage, #previewPDF").hide();
                 if (upload) {
                     let fileUrl = "/uploads/" + upload;
                     let ext = upload.split('.').pop().toLowerCase();
-                    if (['jpg','jpeg','png'].includes(ext)) {
-                        $("#previewImage").attr("src", fileUrl).show();
-                    } else if (ext === 'pdf') {
-                        $("#previewPDF").attr("src", fileUrl).show();
-                    }
+                    if (['jpg','jpeg','png'].includes(ext)) $("#previewImage").attr("src", fileUrl).show();
+                    else if (ext === 'pdf') $("#previewPDF").attr("src", fileUrl).show();
                     $("#detail_upload").html(`<a href="${fileUrl}" target="_blank" class="text-primary">Lihat File Lama</a>`);
                 } else {
                     $("#detail_upload").text("Tidak ada lampiran sebelumnya.");
                 }
             });
+            
+            const dateConfig = { dateFormat: "Y-m-d", altInput: true, altFormat: "d F Y", locale: 'id', disableMobile: true };
+            const projectStart = "{{ $project->waktu_mulai }}";
+            const projectEnd = "{{ $project->deadline }}";
+            const fpMulai = flatpickr("#waktu_mulai", dateConfig);
+            const fpDeadline = flatpickr("#deadline", dateConfig);
+            const fpBerakhir = flatpickr("#waktu_berakhir", dateConfig);
 
-            // Delete Confirmations
-            $(".delete-task, .delete-anggota-project").click(function(e) {
+            fpTaskStart = flatpickr("#format-waktu_mulai", {
+                ...dateConfig,
+                minDate: projectStart, maxDate: projectEnd,
+                onChange: (selectedDates, dateStr) => {
+                    $("#tgl_task_modal").val(dateStr);
+                    if(dateStr && fpTaskDeadline) fpTaskDeadline.set('minDate', dateStr);
+                }
+            });
+
+            fpTaskDeadline = flatpickr("#format-deadline_task", {
+                ...dateConfig,
+                minDate: projectStart, maxDate: projectEnd,
+                onChange: (selectedDates, dateStr) => $("#deadline_task_modal").val(dateStr)
+            });
+            
+            $('.btn-edit-project').click(function(e) {
+                e.preventDefault(); 
+                $(this).hide();
+                $('.btn-batal-edit, .btn-submit-project').removeAttr('hidden');
+                
+                $('#nama_project').prop('disabled', false);
+                $('#waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', false);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = false;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = false;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = false;
+                
+                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].enable();
+                if(choicesInstances['#status']) choicesInstances['#status'].enable();
+            });
+
+            $('.btn-batal-edit').click(function(e) {
+                e.preventDefault();
+                $('.btn-edit-project').show();
+                $(this).attr('hidden', true);
+                $('.btn-submit-project').attr('hidden', true);
+                
+                $('#nama_project').prop('disabled', true);
+                $('#waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', true);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = true;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = true;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = true;
+                
+                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].disable();
+                if(choicesInstances['#status']) choicesInstances['#status'].disable();
+            });
+            
+            $(document).on('click', ".delete-task, .delete-anggota-project", function(e) {
                 e.preventDefault();
                 let form = $(this).closest('form');
-                let name = $(this).data("nama_task") || $(this).data("nama");
-                let type = $(this).hasClass('delete-task') ? 'Task' : 'Anggota';
-
                 Swal.fire({
-                    title: `Hapus ${type}?`,
-                    text: `Yakin ingin menghapus ${name}?`,
+                    title: `Hapus Data?`,
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#d33",
@@ -697,8 +706,7 @@
                     if (result.isConfirmed) form.submit();
                 });
             });
-
-            // Bootstrap Tooltips
+            
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)

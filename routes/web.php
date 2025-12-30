@@ -229,8 +229,8 @@ Route::middleware(['auth', 'role:admin-sdm'])->group(function () {
     Route::put('/admin_sdm/subtask/detail/batal/{id}', [SubTaskController::class, 'batal'])->name('admin_sdm.subtask.detail.batal');
     Route::put('/admin_sdm/subtask/detail/update/{id}', [SubTaskController::class, 'updateDetail'])->name('admin_sdm.subtask.update.detail');
     Route::put('/admin_sdm/subtask/detail/update/lampiran/{id}', [SubTaskController::class, 'updateDetailLampiran'])->name('admin_sdm.subtask.update.detail.lampiran');
-    Route::delete('/admin_sdm/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('lampiran-subtask.delete');
     Route::put('/admin_sdm/subtask/update/{id}', [SubTaskController::class, 'update'])->name('admin_sdm.subtask.update');
+    Route::delete('/admin_sdm/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('admin_sdm.subtask.detail.lampiran');
     Route::delete('/admin_sdm/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('admin_sdm.subtask.delete');
 
     // admin SDM : laporan Kinerja
@@ -315,7 +315,7 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::put('/karyawan/subtask/detail/batal/{id}', [SubTaskController::class, 'batal'])->name('karyawan.subtask.detail.batal');
     Route::put('/karyawan/subtask/detail/update/{id}', [SubTaskController::class, 'updateDetail'])->name('karyawan.subtask.update.detail');
     Route::put('/karyawan/subtask/detail/update/lampiran/{id}', [SubTaskController::class, 'updateDetailLampiran'])->name('karyawan.subtask.update.detail.lampiran');
-    Route::delete('/karyawan/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('lampiran-subtask.delete');
+    Route::delete('/karyawan/subtask/detail/lampiran/{id}', [SubTaskController::class, 'destroyLampiran'])->name('karyawan.subtask.detail.lampiran');
     Route::put('/karyawan/subtask/update/{id}', [SubTaskController::class, 'update'])->name('karyawan.subtask.update');
     Route::delete('/karyawan/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('karyawan.subtask.delete');
 
@@ -389,7 +389,7 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
     Route::put('/manajer/task/update/lampiran/{id}', [TaskController::class, 'updateLampiran'])->name('manajer.update.lampiran.task');
     Route::post('/manajer/task/update/anggota', [TaskController::class, 'updateUserTask'])->name('manajer.update.anggota.task');
     Route::delete('/manajer/task/delete/{id}', [TaskController::class, 'destroy'])->name('manajer.delete.task');
-    Route::delete('/manajer/task/delete/anggota/{id}', action: [TaskController::class, 'destroyUserTask'])->name('manajer.delete.anggota.task');
+    Route::delete('/manajer/task/delete/anggota/{id}', [TaskController::class, 'destroyUserTask'])->name('manajer.delete.anggota.task');
 
     // manajer : tipe task
     Route::get('/manajer/tipe_task', [TipeTaskController::class, 'index'])->name('manajer.tipe_task');
