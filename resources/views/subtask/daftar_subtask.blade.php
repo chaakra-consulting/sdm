@@ -114,10 +114,12 @@
     </div>
     <div class="container-fluid">
         <div class="mb-2">
-            <button type="button" class="btn btn-primary tambahSubtask" data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop">
-                Tambah Sub Task
-            </button>
+            @if (Auth::check() && Auth::user()->role->slug == ('karyawan') || Auth::user()->role->slug == ('admin-sdm'))
+                <button type="button" class="btn btn-primary tambahSubtask" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">
+                    Tambah Sub Task
+                </button>
+            @endif
         </div>
         <div class="card custom-card">
             <div class="card-header">
