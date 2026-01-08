@@ -127,7 +127,7 @@
                     <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                            class="side-menu__item {{ request()->routeIs('karyawan*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -158,34 +158,47 @@
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
-                    
+
                     <!-- Start::slide -->
-                    @if(Auth::user()->dataDiri)
+                    @if (Auth::user()->dataDiri)
+                        <li class="slide has-sub">
+                            <a href="javascript:void(0);"
+                                class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M11 6l9 0" />
+                                    <path d="M11 12l9 0" />
+                                    <path d="M11 18l9 0" />
+                                </svg>
+                                <span class="side-menu__label">Management Absensi</span>
+                                <i class="fe fe-chevron-right side-menu__angle"></i>
+                            </a>
+                            <ul class="slide-menu child1">
+                                <li class="slide">
+                                    <a href="{{ route('karyawan.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
+                                        class="side-menu__item {{ request()->routeIs('karyawan.absensi_harian.show') ? 'active' : '' }}">
+                                        Data Absensi Harian
+                                    </a>
+                                </li>
+                            </ul>
+                        </li> <!-- End::slide -->
+                    @endif
+
+                    <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg  xmlns="http://www.w3.org/2000/svg"  class="side-menu__icon"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-list-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
-                            <span class="side-menu__label">Management Absensi</span>
-                            <i class="fe fe-chevron-right side-menu__angle"></i>
-                        </a>
-                        <ul class="slide-menu child1">
-                            <li class="slide">
-                                <a href="{{ route('karyawan.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
-                                    class="side-menu__item {{ request()->routeIs('karyawan.absensi_harian.show') ? 'active' : '' }}">
-                                    Data Absensi Harian
-                                </a>
-                            </li>
-                        </ul>
-                    </li> <!-- End::slide -->  
-                    @endif    
-                    
-                    <!-- Start::slide -->
-                    <li class="slide has-sub">
-                        <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
-                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                                <path
+                                    d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z" />
                             </svg>
                             <span class="side-menu__label">Management Gaji</span>
                             <i class="fe fe-chevron-right side-menu__angle"></i>
@@ -193,12 +206,13 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/karyawan/gaji_bulanan/diri"
-                                    class="side-menu__item {{ request()->routeIs('/karyawan/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi Gaji
+                                    class="side-menu__item {{ request()->routeIs('/karyawan/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi
+                                    Gaji
                                     Bulanan</a>
                             </li>
                         </ul>
                     </li>
-                    <!-- End::slide -->       
+                    <!-- End::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
@@ -233,8 +247,11 @@
                     <li class="slide">
                         <a href="{{ route('karyawan.laporan_kinerja') }}"
                             class="side-menu__item {{ request()->routeIs(['karyawan.laporan_kinerja', 'karyawan.list.laporan_kinerja']) ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
-                                <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
+                                <path
+                                    d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z">
+                                </path>
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
@@ -263,12 +280,12 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/admin_sdm/dashboard"
-                                class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                                    class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
                                     Absensi</a>
                             </li>
                             <li class="slide">
                                 <a href="/admin_sdm/dashboard_gaji"
-                                class="side-menu__item {{ request()->routeIs('/admin_sdm/dashboard_gaji') ? 'active' : '' }}">
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/dashboard_gaji') ? 'active' : '' }}">
                                     Gaji</a>
                             </li>
                         </ul>
@@ -315,32 +332,45 @@
                     <!-- End::slide -->
 
                     <!-- Start::slide -->
-                    @if(Auth::user()->dataDiri)
-                    <li class="slide has-sub">
-                        <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg  xmlns="http://www.w3.org/2000/svg"  class="side-menu__icon"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-list-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
-                            <span class="side-menu__label">Management Absensi</span>
-                            <i class="fe fe-chevron-right side-menu__angle"></i>
-                        </a>
-                        <ul class="slide-menu child1">
-                            <li class="slide">
-                                <a href="{{ route('admin_sdm.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
-                                    class="side-menu__item {{ request()->routeIs('admin_sdm.absensi_harian.show') ? 'active' : '' }}">
-                                    Data Absensi Harian
-                                </a>
-                            </li>
-                        </ul>
-                    </li> <!-- End::slide -->
-                    @endif   
+                    @if (Auth::user()->dataDiri)
+                        <li class="slide has-sub">
+                            <a href="javascript:void(0);"
+                                class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                    <path d="M11 6l9 0" />
+                                    <path d="M11 12l9 0" />
+                                    <path d="M11 18l9 0" />
+                                </svg>
+                                <span class="side-menu__label">Management Absensi</span>
+                                <i class="fe fe-chevron-right side-menu__angle"></i>
+                            </a>
+                            <ul class="slide-menu child1">
+                                <li class="slide">
+                                    <a href="{{ route('admin_sdm.absensi_harian.show', ['id' => Auth::user()->dataDiri->id]) }}"
+                                        class="side-menu__item {{ request()->routeIs('admin_sdm.absensi_harian.show') ? 'active' : '' }}">
+                                        Data Absensi Harian
+                                    </a>
+                                </li>
+                            </ul>
+                        </li> <!-- End::slide -->
+                    @endif
 
                     <!-- Start::slide -->
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
-                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                                <path
+                                    d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z" />
                             </svg>
                             <span class="side-menu__label">Management Gaji</span>
                             <i class="fe fe-chevron-right side-menu__angle"></i>
@@ -348,7 +378,8 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/admin_sdm/gaji_bulanan/diri"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi Gaji
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan/diri') ? 'active' : '' }}">Realisasi
+                                    Gaji
                                     Bulanan</a>
                             </li>
                         </ul>
@@ -382,9 +413,11 @@
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
-                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                                <path
+                                    d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z" />
                             </svg>
                             <span class="side-menu__label">Management Gaji</span>
                             <i class="fe fe-chevron-right side-menu__angle"></i>
@@ -392,11 +425,13 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/admin_sdm/gaji"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji') ? 'active' : '' }}">Data Gaji</a>
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji') ? 'active' : '' }}">Data
+                                    Gaji</a>
                             </li>
                             <li class="slide">
                                 <a href="/admin_sdm/gaji_bulanan"
-                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan') ? 'active' : '' }}">Realisasi Gaji Bulanan</a>
+                                    class="side-menu__item {{ request()->routeIs('/admin_sdm/gaji_bulanan') ? 'active' : '' }}">Realisasi
+                                    Gaji Bulanan</a>
                             </li>
                         </ul>
                     </li> <!-- End::slide -->
@@ -440,13 +475,13 @@
                                 <a href="javascript:void(0);">Management Project</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('admin_sdm.project') }}" 
+                                <a href="{{ route('admin_sdm.project') }}"
                                     class="side-menu__item {{ request()->routeIs(['admin_sdm.project', 'admin_sdm.detail.project']) ? 'active' : '' }}">
                                     List Project</a>
-                                <a href="{{ route('admin_sdm.task') }}" 
+                                <a href="{{ route('admin_sdm.task') }}"
                                     class="side-menu__item {{ request()->routeIs(['admin_sdm.task', 'admin_sdm.detail.task']) ? 'active' : '' }}">
                                     List Task</a>
-                                <a href="{{ route('admin_sdm.subtask') }}" 
+                                <a href="{{ route('admin_sdm.subtask') }}"
                                     class="side-menu__item {{ request()->routeIs(['admin_sdm.subtask', 'admin_sdm.subtask.detail']) ? 'active' : '' }}">
                                     List Sub Task</a>
                             </li>
@@ -455,8 +490,11 @@
                     <li class="slide">
                         <a href="{{ route('admin_sdm.laporan_kinerja') }}"
                             class="side-menu__item {{ request()->routeIs(['admin_sdm.laporan_kinerja', 'admin_sdm.list.laporan_kinerja']) ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
-                                <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
+                                <path
+                                    d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z">
+                                </path>
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
@@ -600,13 +638,13 @@
                                 <a href="javascript:void(0);">Management Project</a>
                             </li>
                             <li class="slide">
-                                <a href="{{ route('manajer.project') }}" 
+                                <a href="{{ route('manajer.project') }}"
                                     class="side-menu__item {{ request()->routeIs(['manajer.project', 'manajer.detail.project']) ? 'active' : '' }}">
                                     List Project</a>
-                                <a href="{{ route('manajer.task') }}" 
+                                <a href="{{ route('manajer.task') }}"
                                     class="side-menu__item {{ request()->routeIs(['manajer.task', 'manajer.detail.task']) ? 'active' : '' }}">
                                     List Task</a>
-                                <a href="{{ route('manajer.subtask') }}" 
+                                <a href="{{ route('manajer.subtask') }}"
                                     class="side-menu__item {{ request()->routeIs(['manajer.subtask', 'manajer.subtask.detail']) ? 'active' : '' }}">
                                     List Sub Task</a>
                             </li>
@@ -615,8 +653,11 @@
                     <li class="slide">
                         <a href="{{ route('manajer.laporan_kinerja') }}"
                             class="side-menu__item {{ request()->routeIs(['manajer.laporan_kinerja', 'manajer.list.laporan_kinerja']) ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
-                                <path d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" style="fill: currentColor;" class="side-menu__icon">
+                                <path
+                                    d="m20 8-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z">
+                                </path>
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
@@ -672,12 +713,12 @@
                         <ul class="slide-menu child1">
                             <li class="slide">
                                 <a href="/direktur/dashboard"
-                                class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
+                                    class="side-menu__item {{ request()->routeIs('home') ? 'active' : '' }}">
                                     Absensi</a>
                             </li>
                             <li class="slide">
                                 <a href="/direktur/dashboard_gaji"
-                                class="side-menu__item {{ request()->routeIs('/direktur/dashboard_gaji') ? 'active' : '' }}">
+                                    class="side-menu__item {{ request()->routeIs('/direktur/dashboard_gaji') ? 'active' : '' }}">
                                     Gaji</a>
                             </li>
                         </ul>
@@ -711,9 +752,11 @@
                     <li class="slide has-sub">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ request()->routeIs('users*') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="currentColor"
                                 class="icon icon-tabler icons-tabler-filled icon-tabler-folders side-menu__icon">
-                                <path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z"/>
+                                <path
+                                    d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-2 9h-2v-4h2v4zM5 7a1.001 1.001 0 0 1 0-2h13v2H5z" />
                             </svg>
                             <span class="side-menu__label">Management Gaji</span>
                             <i class="fe fe-chevron-right side-menu__angle"></i>
@@ -726,7 +769,8 @@
                             </li>
                             <li class="slide">
                                 <a href="/direktur/gaji_bulanan"
-                                    class="side-menu__item {{ request()->routeIs('/direktur/gaji_bulanan') ? 'active' : '' }}">Realisasi Gaji
+                                    class="side-menu__item {{ request()->routeIs('/direktur/gaji_bulanan') ? 'active' : '' }}">Realisasi
+                                    Gaji
                                     Bulanan</a>
                             </li>
                         </ul>

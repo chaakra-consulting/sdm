@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
 @section('content')
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="laporanKinerjaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="laporanKinerjaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="staticBackdropLabel"></h6>
+                    <h6 class="modal-title" id="laporanKinerjaModalLabel"></h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="" method="POST" id="formLaporanKinerja" enctype="multipart/form-data">
@@ -15,31 +15,22 @@
                         <div class="form-group">
                             <label for="sub_task_id">Sub Task</label>
                             <select name="sub_task_id" id="sub_task_id" class="form-control" required>
-                                <option value="" selected disabled>Pilih Sub Task</option>
-                                @foreach ($subtasks as $item)
-                                    <option value="{{ $item->id }}" {{ old('id') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->nama_subtask ?? '' }}
-                                        ({{ $item->task->nama_task . ' -' ?? '' }}
-                                        {{ $item->task->tipe_task->nama_tipe ?? '' }})
-                                        ({{ $item->task?->project_perusahaan?->nama_project . ' -' ?? '' }}
-                                        {{ $item->task?->project_perusahaan?->perusahaan?->nama_perusahaan ?? '' }})
-                                    </option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-6">
                                     <div class="input-group">
-                                        <input type="number" min="0" name="durasi_jam" class="form-control"
-                                            placeholder="Jam" value="" required>
+                                        <input type="number" min="0" name="durasi_jam" id="durasi_jam"
+                                            class="form-control" placeholder="Jam" value="" required>
                                         <span class="input-group-text">Jam</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group">
                                         <input type="number" min="0" max="59" name="durasi_menit"
-                                            class="form-control" placeholder="Menit" value="" required>
+                                            id="durasi_menit" class="form-control" placeholder="Menit" value=""
+                                            required>
                                         <span class="input-group-text">Menit</span>
                                     </div>
                                 </div>
@@ -147,8 +138,9 @@
                 <div class="row g-3 mb-4 align-items-center">
                     <div class="col-12 col-xl-6">
                         <div class="d-flex gap-2 flex-wrap">
-                            <button type="button" class="btn btn-primary btn-sm tambahLaporanKinerja" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdrop">
+                            <button type="button" id="tambahLaporanKinerja"
+                                class="btn btn-primary btn-sm tambahLaporanKinerja" {{-- data-bs-toggle="modal"
+                                data-bs-target="#laporanKinerjaModal" --}}>
                                 <i class="bi bi-plus-lg me-1"></i> Update Pekerjaan
                             </button>
 
@@ -156,7 +148,7 @@
                                 $roleSlug = Auth::user()->role->slug;
                                 $prefix = $roleSlug == 'karyawan' ? 'karyawan' : 'admin_sdm';
                             @endphp
-                            
+
                             <form action="{{ route($prefix . '.laporan_kinerja.kirim', ['id' => auth()->user()->id]) }}"
                                 method="POST" id="formKirim">
                                 @csrf
@@ -232,30 +224,59 @@
     </div>
 @endsection
 
+
+
 @section('script')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
     <style>
-        .swiper-container { width: 100%; padding: 10px 0; }
-        .swiper-slide { width: auto !important; }
-        .swiper-wrapper { scroll-behavior: smooth; }
+        .swiper-container {
+            width: 100%;
+            padding: 10px 0;
+        }
+
+        .swiper-slide {
+            width: auto !important;
+        }
+
+        .swiper-wrapper {
+            scroll-behavior: smooth;
+        }
+
         .slide-item {
             cursor: pointer;
             border: 1px solid #e9edf4;
             transition: all 0.3s ease;
             box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
         }
-        .slide-item:hover { transform: translateY(-2px); border-color: #0d6efd; }
+
+        .slide-item:hover {
+            transform: translateY(-2px);
+            border-color: #0d6efd;
+        }
+
         .slide-item.active-slide {
             background-color: #0d6efd !important;
             color: white;
             border-color: #0d6efd;
             box-shadow: 0 .5rem 1rem rgba(13, 110, 253, .15);
         }
-        .slide-item.active-slide, .slide-item.active-slide * { color: white !important; }
-        
-        .swal2-container { z-index: 2000 !important; }
+
+        .slide-item.active-slide,
+        .slide-item.active-slide * {
+            color: white !important;
+        }
+
+        .swal2-container {
+            z-index: 2000 !important;
+        }
     </style>
 
     <script>
+        var selectedDateChoice = '';
         const userRole = "{{ Auth::user()->role->slug }}";
         const routePrefix = userRole === 'karyawan' ? '/karyawan' : '/admin_sdm';
 
@@ -265,10 +286,12 @@
                     s.classList.remove('active-slide', 'bg-primary', 'text-white');
                     s.classList.add('bg-white');
                 });
+
                 this.classList.remove('bg-white');
                 this.classList.add('active-slide', 'bg-primary', 'text-white');
 
                 const selectedDate = this.dataset.date;
+                selectedDateChoice = selectedDate
                 document.getElementById('selected-date').innerText = `Tanggal dipilih: ${new Date(selectedDate).toLocaleDateString('id-ID', {
                     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
                 })}`;
@@ -282,7 +305,9 @@
                 $.ajax({
                     url: actionUrl,
                     method: 'GET',
-                    data: { tanggal: selectedDate },
+                    data: {
+                        tanggal: selectedDate
+                    },
                     beforeSend: function() {
                         $('#datatable-basic tbody').html(
                             `<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>`
@@ -294,8 +319,11 @@
 
                         if (response.data.length > 0) {
                             response.data.forEach((detail, index) => {
-                                const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                                const deleteUrl = `${routePrefix}/laporan_kinerja/delete/${detail.id}`;
+                                const csrf = document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute(
+                                    'content');
+                                const deleteUrl =
+                                    `${routePrefix}/laporan_kinerja/delete/${detail.id}`;
 
                                 const row = `
                                 <tr>
@@ -312,33 +340,37 @@
                                     <td class="text-wrap" style="max-width: 300px;">${detail.keterangan ?? '-'}</td>
                                     <td class="text-center">
                                         ${detail.is_active == 0 ? `
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-warning btn-sm updateSubTask" 
-                                                data-id="${detail.id}" 
-                                                data-subtask_id="${detail.sub_task_id}"
-                                                data-durasi="${detail.durasi}"
-                                                data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                            <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
-                                                <input type="hidden" name="_token" value="${csrf}">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        ` : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
+                                                                                                                                                                                                                                                                                                                                                                <div class="btn-group btn-group-sm">
+                                                                                                                                                                                                                                                                                                                                                                    <button class="btn btn-warning btn-sm updateSubTask" 
+                                                                                                                                                                                                                                                                                                                                                                        data-id="${detail.id}" 
+                                                                                                                                                                                                                                                                                                                                                                        data-subtask_id="${detail.sub_task_id}"
+                                                                                                                                                                                                                                                                                                                                                                        data-durasi="${detail.durasi}"
+                                                                                                                                                                                                                                                                                                                                                                        data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
+                                                                                                                                                                                                                                                                                                                                                                        <i class="bi bi-pencil-square"></i>
+                                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                                    <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
+                                                                                                                                                                                                                                                                                                                                                                        <input type="hidden" name="_token" value="${csrf}">
+                                                                                                                                                                                                                                                                                                                                                                        <input type="hidden" name="_method" value="DELETE">
+                                                                                                                                                                                                                                                                                                                                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-trash"></i>
+                                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                                    </form>
+                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                ` : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
                                     </td>
                                 </tr>`;
                                 tableBody.append(row);
                             });
                         } else {
-                            tableBody.append('<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data pekerjaan pada tanggal ini</td></tr>');
+                            tableBody.append(
+                                '<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data pekerjaan pada tanggal ini</td></tr>'
+                            );
                         }
                     },
                     error: function(xhr) {
-                        $('#datatable-basic tbody').html(`<tr><td colspan="7" class="text-center text-danger">Gagal memuat data.</td></tr>`);
+                        $('#datatable-basic tbody').html(
+                            `<tr><td colspan="7" class="text-center text-danger">Gagal memuat data.</td></tr>`
+                        );
                     }
                 });
             });
@@ -377,52 +409,104 @@
                 targetSlide.classList.remove('bg-white');
                 targetSlide.classList.add('active-slide', 'bg-primary', 'text-white');
 
-                targetSlide.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                targetSlide.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
 
                 setTimeout(() => {
                     targetSlide.click();
                 }, 300);
 
                 if (dateFromUrl) {
-                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.pushState({path: newUrl}, '', newUrl);
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location
+                        .pathname;
+                    window.history.pushState({
+                        path: newUrl
+                    }, '', newUrl);
                 }
             }
 
-            new Swiper('.swiper-container', { slidesPerView: 'auto', spaceBetween: 10, grabCursor: true, freeMode: true });
+            new Swiper('.swiper-container', {
+                slidesPerView: 'auto',
+                spaceBetween: 10,
+                grabCursor: true,
+                freeMode: true
+            });
         });
     </script>
     <script>
         $(document).ready(function() {
-            const subTaskSelect = new Choices('#sub_task_id', {
-                searchEnabled: true, removeItemButton: true, shouldSort: false,
-                placeholder: true, placeholderValue: 'Pilih Sub Task', duplicateItemsAllowed: false,
-                allowHTML: true, resetScrollPosition: false
+
+            //Limit durasi jam
+            $('#durasi_jam').on('input', function() {
+                var val = parseInt($(this).val());
+                if (val > 8) {
+                    $(this).val(8);
+                }
             });
-            
-            $('#staticBackdrop').on('hidden.bs.modal', function() {
+
+            //Limit durasi menit
+            $('#durasi_menit').on('input', function() {
+                var val = parseInt($(this).val());
+                var jam = parseInt($('#durasi_jam').val());
+                if (jam > 7) {
+                    $(this).val(00);
+                }
+                if (val > 59) {
+                    $(this).val(59);
+                }
+            });
+
+
+            $('#laporanKinerjaModal').on('hidden.bs.modal', function() {
                 $('#formLaporanKinerja')[0].reset();
-                subTaskSelect.removeActiveItems();
-                subTaskSelect.setChoiceByValue('');
+                $('#sub_task_id').empty();
                 $('input[name="_method"]').remove();
                 $('input[name="durasi_jam"], input[name="durasi_menit"]').val('');
                 $('#keterangan').val('');
                 $('#formLaporanKinerja').attr('action', `${routePrefix}/laporan_kinerja/store`);
             });
 
-            $(document).on('click', '.tambahLaporanKinerja', function() {
+            $('#tambahLaporanKinerja').click(function() {
+
+                console.log(selectedDateChoice);
+
+
+                $('#sub_task_id').empty(); // make sure delete all choices before showing the modal
                 $(".modal-title").text('Update Pekerjaan Baru');
                 $("#btnSimpanModal").text("Simpan");
                 $('#formLaporanKinerja').attr('action', `${routePrefix}/laporan_kinerja/store`);
                 $("#formLaporanKinerja input[name='_method']").remove();
-                
-                let activeSlide = document.querySelector('.slide-item.active-slide');
-                if (activeSlide) {
-                    $('#tanggal_terpilih').val(activeSlide.getAttribute('data-date'));
-                } else {
-                    $('#tanggal_terpilih').val(new Date().toISOString().slice(0, 10));
-                }
+
+                var url = "{{ route('karyawan.laporan_kinerja.subtask.date', ':date') }}"
+                $('#sub_task_id').select2({
+                    theme: 'bootstrap-5',
+                    dataType: 'json',
+                    multiple: false,
+                    placeholder: 'Pilih Sub Task',
+                    dropdownParent: $('#laporanKinerjaModal'),
+                    ajax: {
+                        url: url.replace(':date', selectedDateChoice),
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data.data, function(item) {
+                                    return {
+                                        text: item.nama_subtask,
+                                        id: item.id
+                                    }
+                                })
+                            };
+                        },
+                    }
+                })
+
+                $('#laporanKinerjaModal').modal('show');
+
             });
+
+
 
             $(document).on('click', '.updateSubTask', function() {
                 const subtaskId = $(this).data('id');
@@ -432,17 +516,18 @@
                 const jam = Math.floor(durasi / 60);
                 const menit = durasi % 60;
 
-                const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+                const modal = new bootstrap.Modal(document.getElementById('laporanKinerjaModal'));
                 modal.show();
-                
+
                 $(".modal-title").text('Edit Pekerjaan');
-                subTaskSelect.setChoiceByValue(subTaskOptionId);
+                // subTaskSelect.setChoiceByValue(subTaskOptionId);
                 $("input[name='durasi_jam']").val(jam);
                 $("input[name='durasi_menit']").val(menit);
                 $("#keterangan").val(keterangan);
                 $("#btnSimpanModal").text("Update");
 
-                $("#formLaporanKinerja").attr("action", `${routePrefix}/laporan_kinerja/update/${subtaskId}`);
+                $("#formLaporanKinerja").attr("action",
+                    `${routePrefix}/laporan_kinerja/update/${subtaskId}`);
                 if ($("#formLaporanKinerja input[name='_method']").length === 0) {
                     $("#formLaporanKinerja").append(`<input type="hidden" name="_method" value="PUT">`);
                 } else {
@@ -451,6 +536,8 @@
             });
         })
     </script>
+
+    {{-- Dialog script --}}
     <script>
         $(document).ready(function() {
             function confirmSweetAlert(title, text, icon, confirmText, confirmColor, formToSubmit) {
@@ -506,7 +593,7 @@
                     $('#formBulkKirim')
                 );
             });
-            
+
             $('.btn-confirm-bulk-batal').on('click', function(e) {
                 e.preventDefault();
                 confirmSweetAlert(
@@ -518,7 +605,7 @@
                     $('#formBulkBatal')
                 );
             });
-            
+
             $(document).on('submit', '.form-delete-item', function(e) {
                 e.preventDefault();
                 let form = this;
@@ -537,8 +624,8 @@
                     }
                 });
             });
-            
-            @if(session('success'))
+
+            @if (session('success'))
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
@@ -549,7 +636,7 @@
                 });
             @endif
 
-            @if(session('error'))
+            @if (session('error'))
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal!',

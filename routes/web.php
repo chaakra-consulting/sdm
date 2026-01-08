@@ -320,16 +320,21 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::delete('/karyawan/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('karyawan.subtask.delete');
 
     // karyawan : laporan kinerja
-    Route::get('/karyawan/laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('karyawan.laporan_kinerja');
-    Route::post('/karyawan/laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('karyawan.laporan_kinerja.store');
-    Route::put('/karyawan/laporan_kinerja/update/{id}', [LaporanKinerjaController::class, 'update'])->name('karyawan.laporan_kinerja.update');
-    Route::get('/karyawan/laporan_kinerja/getDataByDate', [LaporanKinerjaController::class, 'getDataByDate'])->name('karyawan.laporan_kinerja.getDataByDate');
-    Route::get('/karyawan/laporan_kinerja/detail/{id}/{month?}/{year?}', [LaporanKinerjaController::class, 'detail'])->name('karyawan.laporan_kinerja.detail');
-    Route::post('/karyawan/laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('karyawan.laporan_kinerja.kirim');
-    Route::post('/karyawan/laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('karyawan.laporan_kinerja.batal');
-    Route::delete('/karyawan/laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('karyawan.laporan_kinerja.delete');
-    Route::post('/karyawan/laporan_kinerja/bulk_kirim/{id}', [LaporanKinerjaController::class, 'bulkKirim'])->name('karyawan.laporan_kinerja.bulk_kirim');
-    Route::post('/karyawan/laporan_kinerja/bulk_batal/{id}', [LaporanKinerjaController::class, 'bulkBatal'])->name('karyawan.laporan_kinerja.bulk_batal');
+    Route::group(['prefix' => 'karyawan', 'as' => 'karyawan.'], function () {
+        Route::get('laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('laporan_kinerja');
+        Route::post('laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('laporan_kinerja.store');
+        Route::put('laporan_kinerja/update/{id}', [LaporanKinerjaController::class, 'update'])->name('laporan_kinerja.update');
+        Route::get('laporan_kinerja/getDataByDate', [LaporanKinerjaController::class, 'getDataByDate'])->name('laporan_kinerja.getDataByDate');
+        Route::get('laporan_kinerja/detail/{id}/{month?}/{year?}', [LaporanKinerjaController::class, 'detail'])->name('laporan_kinerja.detail');
+        Route::post('laporan_kinerja/kirim/{id}', [LaporanKinerjaController::class, 'kirim'])->name('laporan_kinerja.kirim');
+        Route::post('laporan_kinerja/batal/{id}', [LaporanKinerjaController::class, 'batal'])->name('laporan_kinerja.batal');
+        Route::delete('laporan_kinerja/delete/{id}', [LaporanKinerjaController::class, 'destroy'])->name('laporan_kinerja.delete');
+        Route::post('laporan_kinerja/bulk_kirim/{id}', [LaporanKinerjaController::class, 'bulkKirim'])->name('laporan_kinerja.bulk_kirim');
+        Route::post('laporan_kinerja/bulk_batal/{id}', [LaporanKinerjaController::class, 'bulkBatal'])->name('laporan_kinerja.bulk_batal');
+
+        //karyawan get sub task within date 
+        Route::get('laporan-kinerja/subtask/{date}', [LaporanKinerjaController::class, 'getSubTaskWithinDate'])->name('laporan_kinerja.subtask.date');
+    });
 });
 
 
@@ -462,7 +467,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
-    
+
     Route::get('/fix-data-status', function () {
         $subTasks = SubTask::with('detail_sub_task')->get();
         $updatedCount = 0;
