@@ -35,15 +35,15 @@ class ProjectPerusahaan extends Model
     {
         $total = $this->tasks()->count();
         if($total == 0) return 0;
-        
+
         $completed = $this->tasks()
             ->where('status', 'selesai')
             ->count();
-            
+
         return round(($completed / $total) * 100, 2);
     }
 
-    public function perusahaan() 
+    public function perusahaan()
     {
         return $this->belongsTo(Perusahaan::class,'perusahaan_id','id');
     }
@@ -52,6 +52,17 @@ class ProjectPerusahaan extends Model
     {
         return $this->hasMany(UsersProject::class, 'project_perusahaan_id');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'tb_users_projects',
+            'project_perusahaan_id',
+            'user_id'
+        );
+    }
+
 
     public function tasks()
     {
