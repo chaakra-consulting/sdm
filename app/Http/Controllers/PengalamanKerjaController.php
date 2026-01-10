@@ -59,7 +59,7 @@ class PengalamanKerjaController extends Controller
         }
 
         $data = [
-            'user_id' => Auth::id(),
+            'user_id' => $request->user_id ? $request->user_id :Auth::id(),
             'nama_perusahaan' => $request->nama_perusahaan,
             'tgl_mulai' => $request->tgl_mulai,
             'tgl_selesai' => $request->tgl_selesai,
@@ -126,8 +126,6 @@ class PengalamanKerjaController extends Controller
             $surat_referensi = $pengalaman_kerja->upload_surat_referensi;
         }
 
-
-
         $data = [
             'nama_perusahaan' => $request->nama_perusahaan,
             'tgl_mulai' => $request->tgl_mulai,
@@ -140,7 +138,7 @@ class PengalamanKerjaController extends Controller
 
         $pengalaman_kerja->update($data);
 
-        return back()->with('success', 'Pengalaman kerja berhasil di ubah');
+        return back()->with('success', 'Pengalaman kerja berhasil diubah');
     }
 
     /**

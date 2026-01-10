@@ -38,7 +38,7 @@ class SocialMediaController extends Controller
     {
         //
         $data = [
-            'user_id' => Auth::id(),
+            'user_id' => $request->user_id ? $request->user_id : Auth::id(),
             'nama_social_media' => $request->nama_social_media,
             'link' => $request->link
         ];

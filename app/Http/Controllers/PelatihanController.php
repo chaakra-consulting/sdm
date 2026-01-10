@@ -55,7 +55,7 @@ class PelatihanController extends Controller
         }
 
         $data = [
-            'user_id' => $this->getUSer()->id,
+            'user_id' =>  $request->user_id ? $request->user_id :$this->getUSer()->id,
             'nama_pelatihan' => $request->nama_pelatihan,
             'tujuan_pelatihan' => $request->tujuan_pelatihan,
             'tahun_pelatihan' => $request->tahun_pelatihan,
