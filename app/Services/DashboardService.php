@@ -37,6 +37,7 @@ class DashboardService
         ->get();
 
         $countHariKerjaPegawai = 0;
+        $getHari = Absensi::get();
 
         foreach ($kepegawaians as $kepegawaian) {
             $tglMasuk = Carbon::parse($kepegawaian->tgl_masuk);
@@ -45,14 +46,16 @@ class DashboardService
             $startDatePegawai = $startDate->lt($tglMasuk) ? $tglMasuk : $startDate;
             $endDatePegawai = (!$tglBerakhir || $endDate->lt($tglBerakhir)) ? $endDate : $tglBerakhir;
         
+            $hariLiburs = HariLibur::whereBetween('tanggal', [$startDatePegawai, $endDatePegawai])->pluck('tanggal')->toArray();
+
             for ($date = $startDatePegawai->copy(); $date->lte($endDatePegawai); $date->addDay()) {
-                $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
-                $isLibur = Absensi::where('hari', $hari)->value('is_libur');
-                $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+                $hari = strtolower($date->translatedFormat('l'));
+                $isLibur = $getHari->where('hari', $hari)->value('is_libur');
+                $isHariLibur = in_array($date->format('Y-m-d'), $hariLiburs);
         
                 if (!$isLibur && !$isHariLibur) $countHariKerjaPegawai++;
             }
-        } 
+        }
      
         $absensiHarians = AbsensiHarian::when($userId, function ($query) use ($userId) {
             return $query->where('user_id', $userId);
@@ -136,10 +139,13 @@ class DashboardService
         $keteranganAbsensis = KeteranganAbsensi::orderBy('id','asc')->get();
     
         $countHariKerja = 0;
+        $getHari = Absensi::get();
+        $hariLiburs = HariLibur::whereBetween('tanggal', [$startDate, $endDate])->pluck('tanggal')->toArray();
+
         for ($date = clone $startDate; $date->lte($endDate); $date->addDay()) {
-            $hari = $date->translatedFormat('l') ?? '-';          
-            $isLibur = Absensi::where('hari',$hari)->value('is_libur');
-            $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+            $hari = strtolower($date->translatedFormat('l')) ?? '-';
+            $isLibur = $getHari->where('hari', $hari)->value('is_libur');
+            $isHariLibur = in_array($date->format('Y-m-d'), $hariLiburs);
         
             if (!$isLibur && !$isHariLibur) $countHariKerja++;
         } 
@@ -197,6 +203,7 @@ class DashboardService
         });
 
         $countHariKerjaPegawai = 0;
+        $getHari = Absensi::get();
 
         foreach ($kepegawaians as $kepegawaian) {
             $tglMasuk = Carbon::parse($kepegawaian->tgl_masuk);
@@ -205,10 +212,12 @@ class DashboardService
             $startDatePegawai = $startDate->lt($tglMasuk) ? $tglMasuk : $startDate;
             $endDatePegawai = (!$tglBerakhir || $endDate->lt($tglBerakhir)) ? $endDate : $tglBerakhir;
         
+            $hariLiburs = HariLibur::whereBetween('tanggal', [$startDatePegawai, $endDatePegawai])->pluck('tanggal')->toArray();
+
             for ($date = $startDatePegawai->copy(); $date->lte($endDatePegawai); $date->addDay()) {
-                $hari = $date->translatedFormat('l'); // Format hari (contoh: "Monday")
-                $isLibur = Absensi::where('hari', $hari)->value('is_libur');
-                $isHariLibur = HariLibur::where('tanggal',$date->format('Y-m-d'))->first();
+                $hari = strtolower($date->translatedFormat('l')) ?? '-';
+                $isLibur = $getHari->where('hari', $hari)->value('is_libur');
+                $isHariLibur = in_array($date->format('Y-m-d'), $hariLiburs);
         
                 if (!$isLibur && !$isHariLibur) $countHariKerjaPegawai++;
             }

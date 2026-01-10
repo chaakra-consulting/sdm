@@ -21,8 +21,13 @@
 </style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between mb-2">
-        <a href="/report/excel-kepegawaian" class="btn btn-success btn-download-karyawan"><i class="fas fa-file-excel"></i> Download Excel</a>
-    </div>
+        <div>
+            <a href="/admin_sdm/datadiri/sdm" class="btn btn-primary me-2">+ Tambah Data</a>
+            <a href="/report/excel-kepegawaian" class="btn btn-success btn-download-karyawan">
+                <i class="fas fa-file-excel"></i> Download Excel
+            </a>
+        </div>
+    </div>    
     <div class="card custom-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div class="card-title">
