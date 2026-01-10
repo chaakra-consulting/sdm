@@ -39,7 +39,7 @@
                                     <label for="format-deadline">Deadline</label>
                                     <div class="input-group">
                                         <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline" required>
+                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline">
                                         <input type="hidden" name="deadline" id="deadline">
                                     </div>
                                 </div>
@@ -91,91 +91,70 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                @foreach ($project as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_project }}</td>
-                                        <td>{{ $item->perusahaan->nama_perusahaan ?? '-' }}</td>
-                                        <td>{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
-                                        <td class="text-center">
-                                            @if($item->deadline && \Carbon\Carbon::parse($item->deadline)->isPast() && $item->status != 'selesai')
-                                                <span class="badge bg-danger">Telat</span>
-                                            @else
-                                                @if($item->status == 'selesai')
-                                                    <span class="badge bg-success">
-                                                @elseif($item->status == 'proses')
-                                                    <span class="badge bg-info">
-                                                @elseif($item->status == 'belum')
-                                                    <span class="badge bg-warning">
-                                                @else
-                                                    <span class="badge bg-secondary">
-                                                @endif
-                                                {{ ucwords($item?->status) ?? '-' }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{{ route('manajer.detail.project', $item->id) }}"
-                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                                data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!"><i class='bx bx-detail'></i>
-                                            </a>
-                                            <form action="{{ route('manajer.delete.project', $item->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
+                            @php
+                                $projectData = (Auth::check() && Auth::user()->role->slug == 'manager') ? $project : $userProject;
+                            @endphp
+
+                            @foreach ($projectData as $item)
+                                @php
+                                    $proj = (Auth::user()->role->slug == 'manager') ? $item : $item->project_perusahaan;
+                                    
+                                    $badgeColor = 'secondary';
+                                    $statusText = ucwords($proj->status ?? 'Belum');
+
+                                    if ($proj->status == 'selesai') {
+                                        $badgeColor = 'success';
+                                    } elseif ($proj->deadline && \Carbon\Carbon::parse($proj->deadline)->endOfDay()->isPast() && $proj->status != 'selesai') {
+                                        $badgeColor = 'danger';
+                                        $statusText = 'Telat';
+                                    } elseif ($proj->status == 'proses') {
+                                        $badgeColor = 'info';
+                                    } elseif ($proj->status == 'belum') {
+                                        $badgeColor = 'warning';
+                                    }
+                                @endphp
+
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $proj->nama_project }}</td>
+                                    <td>{{ $proj->perusahaan->nama_perusahaan ?? '-' }}</td>
+                                    <td>{{ $proj->deadline ? \Carbon\Carbon::parse($proj->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-{{ $badgeColor }}">
+                                            {{ $statusText }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        @php
+                                            $detailRoute = '#';
+                                            if(Auth::user()->role->slug == 'manager') $detailRoute = route('manajer.detail.project', $proj->id);
+                                            elseif(Auth::user()->role->slug == 'karyawan') $detailRoute = route('karyawan.detail.project', $proj->id);
+                                            elseif(Auth::user()->role->slug == 'admin-sdm') $detailRoute = route('admin_sdm.detail.project', $proj->id);
+                                        @endphp
+
+                                        <a href="{{ $detailRoute }}"
+                                            class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                            data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
+                                            title="Detail Project!">
+                                            <i class='bx bx-detail'></i>
+                                        </a>
+
+                                        @if (Auth::user()->role->slug == 'manager')
+                                            <form action="{{ route('manajer.delete.project', $proj->id) }}" method="POST" class="d-inline">
+                                                @csrf @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm delete"
-                                                    data-id="{{ $item->id }}"
-                                                    data-nama_project="{{ $item->nama_project }}" data-bs-toggle="tooltip"
+                                                    data-id="{{ $proj->id }}"
+                                                    data-nama_project="{{ $proj->nama_project }}" 
+                                                    data-bs-toggle="tooltip"
                                                     data-bs-custom-class="tooltip-danger" data-bs-placement="top"
                                                     title="Hapus Project!">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan' || Auth::check() && Auth::user()->role->slug == 'admin-sdm')
-                                @foreach ($userProject as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->project_perusahaan->nama_project }}</td>
-                                        <td>{{ $item->project_perusahaan->perusahaan->nama_perusahaan ?? '-' }}</td>
-                                        <td>{{ $item->project_perusahaan->deadline ? \Carbon\Carbon::parse($item->project_perusahaan->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
-                                        <td class="text-center">
-                                            @if($item->project_perusahaan->deadline && \Carbon\Carbon::parse($item->project_perusahaan->deadline)->isPast() && $item->project_perusahaan->status != 'selesai')
-                                                <span class="badge bg-danger">Telat</span>
-                                            @else
-                                            @if($item->project_perusahaan->status == 'selesai')
-                                                    <span class="badge bg-success">
-                                                @elseif($item->project_perusahaan->status == 'proses')
-                                                    <span class="badge bg-info">
-                                                @elseif($item->project_perusahaan->status == 'belum')
-                                                    <span class="badge bg-warning">
-                                                @else
-                                                    <span class="badge bg-secondary">
-                                                @endif
-                                                {{ ucwords($item->project_perusahaan->status) ?? '-' }}
-                                                </span>
-                                            @endif
-                                        </td>                                
-                                        <td class="text-center">
-                                            @if (Auth::check() && Auth::user()->role->slug == 'karyawan')
-                                                <a href="{{ route('karyawan.detail.project', $item->project_perusahaan_id) }}"
-                                            @elseif (Auth::check() && Auth::user()->role->slug == 'admin-sdm')                                           
-                                                <a href="{{ route('admin_sdm.detail.project', $item->project_perusahaan_id) }}"
-                                            @endif
-                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                                data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                                title="Detail Project!">
-                                                <i class='bx bx-detail'></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach    
-                            @endif
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

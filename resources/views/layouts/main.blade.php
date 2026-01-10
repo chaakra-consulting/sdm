@@ -53,9 +53,6 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <!-- FlatPickr CSS -->
     <link rel="stylesheet" href="{{ asset('/Tema/dist/assets/libs/flatpickr/flatpickr.min.css') }}">
 
@@ -852,146 +849,42 @@
                     <!-- End::header-element -->
 
                     <!-- Start::header-element -->
-                    {{-- <div class="header-element notifications-dropdown main-header-notification">
-                        <!-- Start::header-link|dropdown-toggle -->
+                    <div class="header-element notifications-dropdown main-header-notification">
                         <a href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
                             data-bs-auto-close="outside" id="messageDropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" height="24px"
-                                viewBox="0 0 24 24" width="24px" fill="currentColor">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
                                 <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path
-                                    d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
+                                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
                             </svg>
-                            <span class="pulse-success"></span>
+                            
+                            <span class="pulse-danger" id="notificationPulse" style="display: none;"></span>
+                            <span class="badge bg-secondary rounded-pill header-icon-badge" id="notificationBadge" style="display: none;">0</span>
                         </a>
-                        <!-- End::header-link|dropdown-toggle -->
-                        <!-- Start::main-header-dropdown -->
-                        <div class="main-header-dropdown dropdown-menu dropdown-menu-end main-header-message"
-                            data-popper-placement="none">
+                        <div class="main-header-dropdown dropdown-menu dropdown-menu-end" data-popper-placement="none">
                             <div class="menu-header-content bg-primary text-fixed-white">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <h6 class="mb-0 fs-15 fw-semibold text-fixed-white">Notifications</h6>
-                                    <span class="badge rounded-pill bg-warning pt-1 text-fixed-black">Mark All
-                                        Read</span>
+                                    <h6 class="mb-0 fs-15 fw-semibold text-fixed-white">Notifikasi</h6>
+                                    <span class="badge rounded-pill bg-warning pt-1 text-fixed-black" id="unreadHeaderCount">0 Baru</span>
                                 </div>
-                                <p class="dropdown-title-text subtext mb-0 text-fixed-white op-6 pb-0 fs-12 ">You have 4
-                                    unread Notifications</p>
+                                <p class="dropdown-title-text subtext mb-0 text-fixed-white op-6 pb-0 fs-12">
+                                    Pemberitahuan terbaru Anda
+                                </p>
                             </div>
-                            <div>
-                                <hr class="dropdown-divider">
+                            
+                            <div class="main-header-notification-scroll" id="notificationList" style="max-height: 300px; overflow-y: auto;">
+                                <div class="text-center p-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                             </div>
-                            <ul class="list-unstyled mb-0" id="header-notification-scroll">
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-pink">
-                                            <i class="la la-file-alt fs-20"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">New files available</h5>
-                                            </a>
-                                            <div class="notification-subtext">10 hour ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-purple">
-                                            <i class="la la-gem fs-20"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">Updates Available</h5>
-                                            </a>
-                                            <div class="notification-subtext">2 days ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-success">
-                                            <i class="la la-shopping-basket fs-20"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">New Order Received</h5>
-                                            </a>
-                                            <div class="notification-subtext">1 hour ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-warning">
-                                            <i class="la la-envelope-open fs-20 text-fixed-white"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">New review received</h5>
-                                            </a>
-                                            <div class="notification-subtext">1 day ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-danger">
-                                            <i class="la la-user-check fs-20"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">22 verified registrations
-                                                </h5>
-                                            </a>
-                                            <div class="notification-subtext">2 hour ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown-item px-3">
-                                    <div class="d-flex">
-                                        <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 bg-primary">
-                                            <i class="la la-check-circle fs-20"></i>
-                                        </span>
-                                        <div class="ms-3">
-                                            <a href="mail.html">
-                                                <h5 class="notification-label text-dark mb-1">Project has been approved
-                                                </h5>
-                                            </a>
-                                            <div class="notification-subtext">4 hour ago</div>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <a href="mail.html"><i
-                                                    class="las la-angle-right text-end text-muted icon"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="text-center dropdown-footer">
-                                <a href="mail.html" class="text-primary fs-13">VIEW ALL</a>
+
+                            <div class="p-2 border-top d-grid">
+                                <a href="{{ route('notifications.index') }}" class="btn btn-primary-light btn-sm">Lihat Semua Notifikasi</a>
                             </div>
                         </div>
-                        <!-- End::main-header-dropdown -->
-                    </div> --}}
+                    </div>
                     <!-- End::header-element -->
 
                     {{-- <!-- Start::header-element -->
@@ -1965,50 +1858,146 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js"></script>
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-            tanggal_indo();
+            loadNotificationCount();
 
-            function tanggal_indo() {
-                const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                const bulan = [
-                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                ];
+            $('.notifications-dropdown').on('show.bs.dropdown', function () {
+                loadRecentNotifications();
+            });
 
-                $('.tanggal_indo').each(function() {
-                    const tanggalAsli = $(this).text().trim();
-                    const [tahun, bulanIndex, tanggal] = tanggalAsli.split('-');
+            setInterval(loadNotificationCount, 60000);
 
-                    const tanggalObj = new Date(tahun, bulanIndex - 1, tanggal);
-                    const hariIni = hari[tanggalObj.getDay()];
-                    const bulanNama = bulan[tanggalObj.getMonth()];
+            $(document).on('click', '.mark-as-read', function(e) {
+                e.preventDefault();
+                let id = $(this).data('id');
+                let url = $(this).data('url');
+                let element = $(this);
+                
+                $.post(`{{ url('/notifications') }}/${id}/read`)
+                    .done(function(response){
+                        loadNotificationCount();
+                        
+                        element.removeClass('bg-light').find('.badge').remove();
+                        
+                        if (url && url !== '#' && url !== '') {
+                            window.location.href = url;
+                        }
+                    })
+                    .fail(function() {
+                        console.error('Gagal menandai notifikasi');
+                        if (url && url !== '#' && url !== '') {
+                            window.location.href = url;
+                        }
+                    });
+            });
+            
+            $('#markAllRead').click(function() {
+                $.post(`{{ route("notifications.markAllAsRead") }}`)
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    });
+            });
+        });
 
-                    const tanggalIndonesia = `${hariIni}, ${tanggal} ${bulanNama} ${tahun}`;
-                    $(this).text(tanggalIndonesia);
+        function loadNotificationCount() {
+            $.get('{{ route("notifications.unreadCount") }}')
+                .done(function(response) {
+                    const count = response.count;
+                    const badge = $('#notificationBadge');
+                    const pulse = $('#notificationPulse');
+                    const headerCount = $('#unreadHeaderCount');
+
+                    if (count > 0) {
+                        badge.text(count > 99 ? '99+' : count).show();
+                        pulse.show();
+                        headerCount.text(count + ' Baru');
+                    } else {
+                        badge.hide();
+                        pulse.hide();
+                        headerCount.text('0 Baru');
+                    }
+                });
+        }
+
+        function loadRecentNotifications() {
+            $('#notificationList').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div></div>');
+
+            $.get('{{ route("notifications.index") }}', { limit: 5 })
+                .done(function(response) {
+                    let html = '';
+                    const list = $('#notificationList');
+
+                    if (response.data && response.data.length > 0) {
+                        html += '<ul class="list-unstyled mb-0">';
+                        
+                        response.data.forEach(notif => {
+                            let iconClass = 'bi-bell'; 
+                            let bgClass = 'bg-primary-transparent';
+                            let textClass = 'text-primary';
+
+                            if(notif.type == 'laporan_kinerja_rejected' || notif.type == 'alert') { 
+                                iconClass = 'bi-exclamation-triangle'; 
+                                bgClass = 'bg-danger-transparent'; 
+                                textClass = 'text-danger'; 
+                            } else if(notif.type == 'laporan_kinerja_revised') {
+                                iconClass = 'bi-pencil';
+                                bgClass = 'bg-warning-transparent'; 
+                                textClass = 'text-warning'; 
+                            } else { 
+                                iconClass = 'bi-check-circle'; 
+                                bgClass = 'bg-success-transparent'; 
+                                textClass = 'text-success'; 
+                            }
+
+                            let timeString = notif.created_at_human || 'Baru saja';
+                            let isReadClass = notif.read_at ? '' : 'bg-light'; 
+
+                            html += `
+                            <li class="dropdown-item px-3 border-bottom mark-as-read ${isReadClass}"
+                                data-id="${notif.id}"
+                                data-url="${notif.action_url}"
+                                style="cursor: pointer;">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-md me-2 avatar-rounded flex-shrink-0 ${bgClass}">
+                                        <i class="bi ${iconClass} fs-20 ${textClass}"></i>
+                                    </span>
+                                    <div class="ms-2 w-100">
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="mb-1 fs-13 text-wrap fw-semibold">${notif.title}</h6>
+                                            ${!notif.read_at ? '<span class="badge bg-danger-transparent text-danger fs-10">Baru</span>' : ''}
+                                        </div>
+                                        <div class="text-muted fs-11 text-wrap">${notif.message}</div>
+                                        <div class="text-muted fs-10 mt-1">
+                                            <i class="bi bi-clock me-1"></i> ${timeString}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            `;
+                        });
+                        html += '</ul>';
+                    } else {
+                        html = `
+                        <div class="text-center p-4">
+                            <i class="bi bi-bell-slash fs-40 text-muted mb-2"></i>
+                            <p class="text-muted fs-12 mb-0">Tidak ada notifikasi baru</p>
+                        </div>
+                        `;
+                    }
+                    list.html(html);
                 })
-            }
-
-            if ($('#msg-success').data('msg_success') != null) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: $("#msg-success").data('msg_success'),
-                    showConfirmButton: false,
-                    timer: 1500
+                .fail(function() {
+                    $('#notificationList').html('<div class="text-center p-3 text-danger fs-12">Gagal memuat notifikasi.</div>');
                 });
-            }
-
-            if ($('#msg-error').data('msg_error') != null) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: $('#msg-error').data('msg_error'),
-                    showConfirmButton: true,
-                });
-            }
-        })
+        }
     </script>
-
     @yield('script')
 
 </body>

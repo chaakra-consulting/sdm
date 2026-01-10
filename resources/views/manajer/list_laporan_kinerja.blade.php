@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="container-fluid">
+        <div class="mb-3">
+            <a href="/manajer/laporan_kinerja" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
         <div class="row">
             <div class="col-lg-4 col-md-4">
                 <div class="card bg-primary-gradient">
@@ -195,11 +200,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="mb-3">
-            <a href="/manajer/laporan_kinerja" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Kembali
-            </a>
         </div>
     </div>
 @endsection

@@ -1,949 +1,716 @@
 @extends('layouts.main')
 
 @section('content')
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    @php
+        $userRole = Auth::check() ? Auth::user()->role->slug : '';
+        $uId = auth()->id();
+        
+        $config = [
+            'is_manager' => $userRole == 'manager',
+            'back_url' => '#',
+            'action_update_project' => route('manajer.update.project', $project->id),
+            'action_add_member' => route('manajer.update.anggota.project'),
+            'action_create_task' => '/manajer/task/store'
+        ];
+        
+        if ($userRole == 'manager') $config['back_url'] = '/manajer/project';
+        elseif ($userRole == 'karyawan') $config['back_url'] = '/karyawan/project';
+        elseif ($userRole == 'admin-sdm') $config['back_url'] = '/admin_sdm/project';
+        $startDate = \Carbon\Carbon::parse($project->waktu_mulai);
+        $deadlineDate = \Carbon\Carbon::parse($project->deadline);
+        $endDate = $project->waktu_berakhir ? \Carbon\Carbon::parse($project->waktu_berakhir) : null;
+        $inputState = 'disabled';
+        $progressColor = '#00ff00';
+        if($progress < 30) $progressColor = '#ff0000';
+        elseif($progress < 70) $progressColor = '#ffd700';
+    @endphp
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card custom-card border-top-card border-top-primary rounded-0 rounded-bottom">
+                    <div class="card-header justify-content-between align-items-center">
+                        <div class="card-title">
+                            <i class="ri-bar-chart-grouped-line me-2 text-primary"></i> Analisa Performa Project
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ $config['back_url'] }}" class="btn btn-light btn-sm btn-wave" data-bs-toggle="tooltip" title="Kembali ke Daftar Project">
+                                <i class="ri-arrow-left-line me-1 align-middle"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-xl-3 col-lg-4 text-center border-end">
+                                <div id="progres-bar"></div>
+                                <h6 class="fw-bold mt-2">Total Progress</h6>
+                                <p class="text-muted fs-12 mb-0">Berdasarkan penyelesaian Task</p>
+                            </div>
+
+                            <div class="col-xl-9 col-lg-8">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-nowrap mb-0 align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center text-uppercase fs-12 fw-bold">Indikator</th>
+                                                <th class="text-center text-uppercase fs-12 fw-bold">Target</th>
+                                                <th class="text-center text-uppercase fs-12 fw-bold">Aktual</th>
+                                                <th class="text-center text-uppercase fs-12 fw-bold">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-semibold">Waktu Mulai</td>
+                                                <td class="text-center text-muted">{{ $startDate->translatedFormat('d F Y') }}</td>
+                                                <td class="text-center fw-bold text-success">{{ $startDate->translatedFormat('d F Y') }}</td>
+                                                <td class="text-center"><span class="badge bg-success-transparent rounded-pill"><i class="ri-check-line"></i> OK</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">Waktu Selesai</td>
+                                                <td class="text-center text-muted">{{ $deadlineDate->translatedFormat('d F Y') }}</td>
+                                                <td class="text-center">
+                                                    @if($endDate)
+                                                        <span class="fw-bold text-dark">{{ $endDate->translatedFormat('d F Y') }}</span>
+                                                    @else
+                                                        <span class="text-muted fst-italic">-</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($endDate)
+                                                        @php $diff = $deadlineDate->diffInDays($endDate, false); @endphp
+                                                        @if($diff > 0) <span class="badge bg-danger-transparent rounded-pill">Telat {{ $diff }} Hari</span>
+                                                        @elseif($diff < 0) <span class="badge bg-success-transparent rounded-pill">Cepat {{ abs($diff) }} Hari</span>
+                                                        @else <span class="badge bg-info-transparent rounded-pill">Tepat Waktu</span> @endif
+                                                    @else
+                                                        @if(\Carbon\Carbon::now()->gt($deadlineDate)) <span class="badge bg-danger-transparent rounded-pill">Overdue</span>
+                                                        @else <span class="badge bg-light text-dark border">On Track</span> @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold text-primary">Durasi Project</td>
+                                                <td class="text-center text-muted">{{ round($startDate->diffInDays($deadlineDate)) }} Hari</td>
+                                                <td class="text-center fw-bold">
+                                                    @if($endDate) 
+                                                        {{ round($startDate->diffInDays($endDate)) }} Hari
+                                                    @else 
+                                                        <span class="text-muted fw-normal fst-italic">
+                                                            Berjalan {{ round($startDate->diffInDays(now())) }} Hari
+                                                        </span> 
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($endDate && $startDate->diffInDays($deadlineDate) > 0)
+                                                        @php
+                                                            $percentageUsed = ($startDate->diffInDays($endDate) / $startDate->diffInDays($deadlineDate)) * 100;
+                                                            $efficiency = 100 - $percentageUsed;
+                                                        @endphp
+                                                        @if($efficiency >= 0) <span class="text-success fw-bold">+{{ round($efficiency) }}% Efisien</span>
+                                                        @else <span class="text-danger fw-bold">{{ round($efficiency) }}% Inefisien</span> @endif
+                                                    @else
+                                                        <span class="text-muted">-</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            
+            <div class="col-xl-4 col-lg-5">
+                <div class="card custom-card overflow-hidden">
+                    <div class="card-header border-bottom border-block-end-dashed">
+                        <div class="card-title">Informasi Project</div>
+                    </div>
+                    <div class="card-body pt-4">
+                        @if ($errors->any())
+                            <div class="alert alert-danger mb-3">
+                                <ul class="mb-0">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ $config['action_update_project'] }}" method="post">
+                            @csrf @method('put')
+                            
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Nama Instansi</label>
+                                <select name="perusahaan_id" class="form-control" id="perusahaan_id" {{ $inputState }}>
+                                    @foreach ($perusahaan as $row)
+                                        <option value="{{ $row->id }}" {{ $project->perusahaan_id == $row->id ? 'selected' : '' }}>
+                                            {{ $row->nama_perusahaan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Nama Project</label>
+                                <input type="text" name="nama_project" id="nama_project" class="form-control fw-bold" 
+                                       value="{{ $project->nama_project }}" {{ $inputState }}>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Status</label>
+                                <select class="form-control" name="status" id="status" {{ $inputState }}>
+                                    <option value="belum" {{ $project->status == 'belum' ? 'selected' : '' }}>Belum</option>
+                                    <option value="proses" {{ $project->status == 'proses' ? 'selected' : '' }}>Proses</option>
+                                    <option value="selesai" {{ $project->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label fs-13 text-muted">Mulai</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-line text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" name="waktu_mulai" id="waktu_mulai" 
+                                               value="{{ $project->waktu_mulai }}" {{ $inputState }}>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fs-13 text-muted">Deadline</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="ri-calendar-event-line text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" name="deadline" id="deadline" 
+                                               value="{{ $project->deadline }}" {{ $inputState }}>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fs-13 text-muted">Tanggal Selesai (Aktual)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="ri-checkbox-circle-line text-success"></i></span>
+                                    <input type="text" class="form-control border-start-0 ps-0" name="waktu_berakhir" id="waktu_berakhir" 
+                                           value="{{ $project->waktu_berakhir }}" placeholder="Belum Selesai" {{ $inputState }}>
+                                </div>
+                            </div>
+
+                            @if ($config['is_manager'])
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="button" class="btn btn-warning-light btn-wave btn-edit-project">
+                                        <i class="ri-pencil-line me-1"></i> Edit Data
+                                    </button>
+                                    <button type="button" class="btn btn-danger-light btn-wave btn-batal-edit" hidden>
+                                        <i class="ri-close-line me-1"></i> Batal Edit
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-wave btn-submit-project" hidden>
+                                        <i class="ri-save-line me-1"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8 col-lg-7">
+                <div class="card custom-card">
+                    <div class="card-body p-0">
+                        <nav class="nav nav-tabs nav-justified tab-style-1 d-flex" role="tablist">
+                            <a class="nav-link active py-3" data-bs-toggle="tab" href="#timeline" role="tab">
+                                <i class="ri-calendar-check-line me-1 align-middle fs-16"></i> Timeline
+                            </a>
+                            <a class="nav-link py-3" data-bs-toggle="tab" href="#tasks" role="tab">
+                                <i class="ri-list-check-2 me-1 align-middle fs-16"></i> Daftar Task
+                            </a>
+                            <a class="nav-link py-3" data-bs-toggle="tab" href="#anggota" role="tab">
+                                <i class="ri-group-line me-1 align-middle fs-16"></i> Anggota
+                            </a>
+                        </nav>
+
+                        <div class="tab-content p-4">
+                            <div class="tab-pane active" id="timeline" role="tabpanel">
+                                <div id='calendar2'></div>
+                            </div>
+                            
+                            <div class="tab-pane" id="tasks" role="tabpanel">
+                                @if ($config['is_manager'])
+                                    <div class="mb-3">
+                                        <button class="btn btn-outline-primary btn-wave w-100 btn-dashed tambahTask" 
+                                                data-bs-toggle="modal" data-bs-target="#modalTask">
+                                            <i class="ri-add-circle-line me-1"></i> Buat Task Baru
+                                        </button>
+                                    </div>
+                                @endif
+
+                                <div class="table-responsive">
+                                    <table id="datatable-basic" class="table table-hover text-nowrap w-100">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Task</th>
+                                                <th>Deadline</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $taskList = $config['is_manager'] ? $tasks : $userstasks->map(fn($ut) => $ut->task); 
+                                            @endphp
+
+                                            @forelse ($taskList as $item)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td><span class="fw-semibold text-dark">{{ $item->nama_task }}</span></td>
+                                                    <td class="text-muted">
+                                                        {{ $item->deadline ? Carbon\Carbon::parse($item->deadline)->translatedFormat('d M Y') : '-' }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if ($item->status == 'selesai')
+                                                            <span class="badge bg-success-transparent">Selesai</span>
+                                                        @elseif ($item->deadline && \Carbon\Carbon::parse($item->deadline)->isPast())
+                                                            <span class="badge bg-danger-transparent">Overdue</span>
+                                                        @elseif ($item->status == 'proses')
+                                                            <span class="badge bg-info-transparent">Proses</span>
+                                                        @else
+                                                            <span class="badge bg-secondary-transparent">Belum</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="d-flex justify-content-center gap-2">
+                                                            @php
+                                                                $detailRoute = '#';
+                                                                if($userRole == 'manager') $detailRoute = route('manajer.detail.task', $item->id);
+                                                                elseif($userRole == 'karyawan') $detailRoute = route('karyawan.detail.task', $item->id);
+                                                                elseif($userRole == 'admin-sdm') $detailRoute = route('admin_sdm.detail.task', $item->id);
+                                                            @endphp
+                                                            <a href="{{ $detailRoute }}" class="btn btn-sm btn-icon btn-dark" data-bs-toggle="tooltip" title="Detail Task">
+                                                                <i class="ri-file-list-line"></i>
+                                                            </a>
+                                                            
+                                                            @if ($config['is_manager'])
+                                                                <button class="btn btn-sm btn-icon btn-warning updateTask" 
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-nama_task="{{ $item->nama_task }}"
+                                                                    data-tgl_task="{{ $item->tgl_task }}"
+                                                                    data-deadline_task="{{ $item->deadline }}"
+                                                                    data-keterangan="{{ $item->keterangan }}"
+                                                                    data-project="{{ $item->project_perusahaan_id }}"
+                                                                    data-user="{{ Auth::user()->id }}"
+                                                                    data-users="{{ json_encode($item->users_task->pluck('id')->toArray()) }}"
+                                                                    data-upload="{{ $item->upload }}" 
+                                                                    data-bs-toggle="modal" data-bs-target="#modalTask"
+                                                                    title="Edit">
+                                                                    <i class="ri-pencil-line"></i>
+                                                                </button>
+
+                                                                <form action="{{ route('manajer.delete.task', $item->id) }}" method="POST" class="d-inline">
+                                                                    @csrf @method('DELETE')
+                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger delete-task" 
+                                                                        data-id="{{ $item->id }}" data-nama_task="{{ $item->nama_task }}" title="Hapus">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada task.</td></tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane" id="anggota" role="tabpanel">
+                                @if ($config['is_manager'])
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <button class="btn btn-primary btn-sm btn-wave" data-bs-toggle="modal" data-bs-target="#staticBackdropAnggota">
+                                            <i class="ri-user-add-line me-1"></i> Tambah Anggota
+                                        </button>
+                                    </div>
+                                @endif
+
+                                <div class="row g-3">
+                                    @forelse ($user as $item)
+                                        <div class="col-xxl-6 col-md-6">
+                                            <div class="card custom-card border shadow-none mb-0 h-100">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="me-3">
+                                                            <span class="avatar avatar-lg rounded-circle">
+                                                                <img src="{{ $item->user->dataDiri ? asset('uploads/' . $item->user->dataDiri->foto_user) : asset('/images/default-images.svg') }}" alt="img">
+                                                            </span>
+                                                        </div>
+                                                        <div class="flex-fill">
+                                                            <h6 class="mb-1 fw-bold">{{ $item->user->name }}</h6>
+                                                            <p class="mb-1 fs-12 text-muted text-uppercase">{{ $item->user->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? 'Anggota' }}</p>
+                                                        </div>
+                                                        @if ($config['is_manager'])
+                                                            <div class="ms-2">
+                                                                <form action="{{ route('manajer.delete.anggota.project', $item->id) }}" method="POST">
+                                                                    @csrf @method('DELETE')
+                                                                    <button type="button" class="btn btn-icon btn-sm btn-outline-danger rounded-pill delete-anggota-project" 
+                                                                        data-id="{{ $item->id }}" data-nama="{{ $item->user->name }}" title="Hapus">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center py-4 text-muted">Belum ada anggota.</div>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="modalTask" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="staticBackdropLabel"></h6>
+                    <h6 class="modal-title fw-bold">Buat Task</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="" method="POST" id="formTask" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <div class="row align-items-center">
-                                <label class="col-sm-2" for="nama_task">Nama Task</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" name="nama_task" id="nama_task" required>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Task</label>
+                            <input type="text" class="form-control" name="nama_task" id="nama_task_modal" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tanggal Mulai</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="ri-calendar-line"></i></span>
+                                    <input type="text" class="form-control" id="format-waktu_mulai" placeholder="Pilih Tanggal" required>
+                                    <input type="hidden" name="tgl_task" id="tgl_task_modal">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Deadline</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="ri-calendar-event-fill"></i></span>
+                                    <input type="text" class="form-control" id="format-deadline_task" placeholder="Pilih Deadline" required>
+                                    <input type="hidden" name="deadline_task" id="deadline_task_modal">
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <div class="row align-items-center">
-                                    <label class="col-sm-4" for="format-waktu_mulai">Tanggal Mulai</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                            <input type="text" class="form-control" name="format-waktu_mulai"
-                                                id="format-waktu_mulai" placeholder="Tanggal Mulai" required>
-                                            <input type="hidden" name="tgl_task" id="tgl_task">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <div class="row align-items-center">
-                                    <label class="col-sm-2" for="format-deadline_task">Deadline</label>
-                                    <div class="col-sm-10">
-                                        <div class="input-group">
-                                            <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                            <input type="text" class="form-control" name="format-deadline_task"
-                                                id="format-deadline_task" placeholder="Deadline" required>
-                                            <input type="hidden" name="deadline_task" id="deadline_task">
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Keterangan</label>
+                            <textarea class="form-control" name="keterangan" id="keterangan_modal" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Anggota Task</label>
+                            <select name="user[]" id="user_modal" multiple class="form-control">
+                                @foreach ($user as $item)
+                                    @if($item->user)
+                                        <option value="{{ $item->user_id }}">{{ $item->user->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Lampiran</label>
+                            <input type="file" class="form-control" name="upload" id="upload">
+                            <div id="preview-area" class="mt-2 text-center">
+                                <img id="previewImage" src="" class="img-fluid rounded" style="max-height: 200px; display:none;">
+                                <iframe id="previewPDF" src="" width="100%" height="300px" style="display:none;" class="rounded border"></iframe>
+                                <p id="detail_upload" class="text-muted small mt-2"></p>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-sm-2" for="keterangan">Keterangan</label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" name="keterangan" id="keterangan" cols="30" rows="5" required></textarea>
-                                    <span class="text-xs text-danger">Jika tidak ada keterangan, maka harap isi dengan tanda
-                                        (-)</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-sm-2" for="user">Anggota Task</label>
-                                <div class="col-sm-10">
-                                    <select name="user[]" id="user" multiple class="form-control">
-                                        @foreach ($user as $item)
-                                            <option value="{{ $item->user_id }}">{{ $item->user->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="row">
-                                <label class="col-sm-2" for="upload">Lampiran</label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" name="upload" id="upload">
-                                    <img id="previewImage" src="" alt=""
-                                        class="img-fluid mt-2 d-block mx-auto" style="max-width: 300px; display: none;">
-                                    <iframe id="previewPDF" src="" width="100%" height="400px"
-                                        style="display: none;"></iframe>
-                                    <p class="text-center" id="detail_upload"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id"
-                                value="{{ $project->id }}">
-                            <input type="hidden" name="tipe_task" id="tipe_task" value="task-project">
-                            <input type="hidden" name="user_id" id="user_id">
-                            <input type="hidden" name="task_id" id="task_id">
-                        </div>
+
+                        <input type="hidden" name="project_perusahaan_id" value="{{ $project->id }}">
+                        <input type="hidden" name="tipe_task" value="task-project">
+                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                        <input type="hidden" name="task_id" id="task_id_modal">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary" id="btnSubmit"></button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="btnSubmitTask">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="staticBackdropAnggota" data-bs-backdrop="static" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    
+    <div class="modal fade" id="staticBackdropAnggota" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="staticBackdropLabel">Tambah Anggota</h6>
+                    <h6 class="modal-title fw-bold">Tambah Anggota Project</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('manajer.update.anggota.project') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form action="{{ $config['action_add_member'] }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-sm-2" for="user">Anggota Project</label>
-                                <div class="col-sm-10">
-                                    <select name="user[]" id="user2" multiple class="form-control">
-                                        @foreach ($users as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih Anggota</label>
+                            <select name="user[]" id="user2" multiple class="form-control">
+                                @foreach ($users as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <input type="hidden" name="project_perusahaan_id" id="project_perusahaan_id"
-                                value="{{ $project->id }}">
-                        </div>
+                        <input type="hidden" name="project_perusahaan_id" value="{{ $project->id }}">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary" id="btnSubmit">Tambah</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="container-fluid">
-        <div class="row row-sm">
-            <div class="col-xl-4 col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="ps-0">
-                            <div class="main-profile-overview">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="main-profile-name" style="text-transform: capitalize;">
-                                            {{ $project->nama_project }}</h5>
-                                        @if ($project->status == 'selesai')
-                                            @if ($project->tgl_selesai && \Carbon\Carbon::parse($project->tgl_selesai)->gt(\Carbon\Carbon::parse($project->deadline)))
-                                                <span class="badge bg-warning fs-6 px-2 py-1">Selesai (Telat)</span>
-                                            @else
-                                                <span class="badge bg-success fs-6 px-2 py-1">Selesai</span>
-                                            @endif
-                                        @else
-                                            @if ($project->deadline && \Carbon\Carbon::parse($project->deadline)->isPast())
-                                                <span class="badge bg-danger fs-6 px-2 py-1">Telat</span>
-                                            @else
-                                                @if ($project->status == 'proses')
-                                                    <span class="badge bg-info fs-6 px-2 py-1">Proses</span>
-                                                @elseif ($project->status == 'belum')
-                                                    <span class="badge bg-secondary fs-6 px-2 py-1">Belum</span>
-                                                @endif
-                                            @endif
-                                        @endif
-                                    </div>
-                                </div>
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                                <div class="modal fade" id="infoModal" tabindex="-1"
-                                    aria-labelledby="exampleModalScrollable2" data-bs-keyboard="false"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h6 class="modal-title" id="eventTitle"></h6>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <ul id="eventBody"></ul>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Kembali</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="container-project" {{ $project->waktu_mulai != null ? '' : 'hidden' }}>
-                                    <form action="{{ route('manajer.update.project', $project->id) }}" method="post">
-                                        @csrf
-                                        @method('put')
-                                        <div class="form-group">
-                                            <label for="perusahaan_id" class="form-label">Nama Instansi</label>
-                                            <select name="perusahaan_id" data-trigger id="perusahaan_id"
-                                                class="form-control">
-                                                <option selected disabled>Pilih Perusahaan</option>
-                                                @foreach ($perusahaan as $key => $row)
-                                                    <option
-                                                        {{ old('perusahaan_id', $project == null ? '' : $project->perusahaan_id) == $row->id ? 'selected' : '' }}
-                                                        value="{{ $row->id }}">
-                                                        {{ $row->nama_perusahaan }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="nama_project" class="form-label">Nama Project</label>
-                                            <input type="text" name="nama_project" id="nama_project"
-                                                class="form-control"
-                                                value="{{ old('nama_project', $project == null ? '' : $project->nama_project) }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="status" class="form-label">Status</label>
-                                            <select class="form-control" id="status" data-trigger name="status">
-                                                <option value="">Pilih Status Project</option>
-                                                <option value="belum"
-                                                    {{ $project->status == 'belum' ? 'selected' : '' }}>Belum
-                                                </option>
-                                                <option value="proses"
-                                                    {{ $project->status == 'proses' ? 'selected' : '' }}>
-                                                    Proses
-                                                </option>
-                                                <option value="selesai"
-                                                    {{ $project->status == 'selesai' ? 'selected' : '' }}>
-                                                    Selesai
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="waktu_mulai">Tanggal Mulai</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="waktu_mulai"
-                                                    value="{{ $project->waktu_mulai != null ? $project->waktu_mulai : '' }}"
-                                                    id="waktu_mulai" placeholder="Waktu Mulai">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="waktu_berakhir">Tanggal Berakhir</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="waktu_berakhir"
-                                                    value="{{ $project->waktu_berakhir != null ? $project->waktu_berakhir : '' }}"
-                                                    id="waktu_berakhir" placeholder="Waktu Berakhir">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="deadline">Deadline</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text text-muted"><i class="ri-calendar-line"></i>
-                                                </div>
-                                                <input type="text" class="form-control" name="deadline"
-                                                    value="{{ $project->deadline != null ? $project->deadline : '' }}"
-                                                    id="deadline" placeholder="deadline">
-                                            </div>
-                                        </div>
-                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                            @if ($project != null)
-                                                <button type="button" class="btn btn-danger btn-batal-edit"
-                                                    hidden>Batal</button>
-                                                <button type="button"
-                                                    class="btn btn-warning btn-edit-project">Edit</button>
-                                            @endif
-                                            <button type="submit" class="btn btn-primary btn-submit-project"
-                                                {{ $project != null ? 'hidden' : '' }}>{{ $project != null ? 'Update' : 'Simpan' }}
-                                            </button>
-                                        @endif
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold" id="eventTitle"></h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    @php
-                        $userRole = auth()->user()->role->slug;
-                    @endphp
-                    @if ($userRole == 'manager')
-                        <a href="/manajer/project" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                    @elseif ($userRole == 'karyawan')
-                        <a href="/karyawan/project" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                        </a>
-                    @endif
-                </div>
-            </div>
-            <div class="col-xl-8 col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="tabs-menu ">
-                            <ul class="nav nav-tabs profile navtab-custom panel-tabs">
-                                <li class="">
-                                    <a href="#home" data-bs-toggle="tab" class="active" aria-expanded="true">
-                                        <i class="bi bi-calendar-check"></i>
-                                        <span class="hidden-xs">TIMELINE</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#task" data-bs-toggle="tab" aria-expanded="false">
-                                        <span class="visible-xs"><i class="ri-edit-line"></i></span>
-                                        <span class="hidden-xs">TASK</span> </a>
-                                </li>
-                                <li class="">
-                                    <a href="#anggota" data-bs-toggle="tab" aria-expanded="false">
-                                        <span class="visible-xs"><i class="las la-user-circle fs-16 me-1"></i></span>
-                                        <span class="visible-xs"></span>
-                                        <span class="hidden-xs">ANGGOTA</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="tab-content border border-top-0 p-4 br-dark">
-                            <div class="tab-pane border-0 p-0 active" id="home">
-                                <div class="row">
-                                    <div class="col-md-6" id="progres-bar"></div>                     
-                                    <div class="col-md-6">
-                                        <dl class="row mb-0">
-                                            <dt class="col-md-4 p-0">Nama Entitas</dt>
-                                            <dd class="col-md-8 p-0">: {{ $project->nama_project }}</dd>
-                                            <dt class="col-md-4 p-0">Capaian Target</dt>
-                                            <dd class="col-md-8 p-0">: {{ Carbon\Carbon::parse($project->deadline)->translatedFormat('l, d F Y') }}</dd>
-                                            <dt class="col-md-4 p-0">Target Task</dt>
-                                            <dd class="col-md-8 p-0">:
-                                                {{ $tasks->count() ? $tasks->count() : 'Belum Ada ' }} Task</dd>
-                                            <div class="form-group p-0 ">
-                                                <label for="nama_project" class="form-label"><strong>Realisasi -
-                                                        {{ $project->nama_project }}</strong></label>
-                                                {{-- <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" placeholder=""
-                                                        aria-label="Example text with button addon"
-                                                        aria-describedby="button-addon1">
-                                                    <button class="btn btn-success" type="button"
-                                                        id="button-addon1">Verifikasi</button>
-                                                </div> --}}
-                                            </div>
-                                        </dl>
-                                    </div>
-                                </div>
-                                <div id='calendar2'></div>
-                            </div>
-                            <div class="tab-pane border-0 p-0" id="task">
-                                <div class="main-content-body main-content-body-mail">
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                        <div class="main-mail-header p-0">
-                                            <div>
-                                                <button type="button" class="btn btn-outline-primary tambahTask"
-                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                    <i class="ri-file-line"></i> Buat Task
-                                                </button>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    <div class="table-responsive">
-                                        <table id="datatable-basic" class="table table-bordered text-nowrap w-100">
-                                            @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                                <thead>
-                                                    <tr>
-                                                        <th>No</th>
-                                                        <th>Task</th>
-                                                        <th>Deadline</th>
-                                                        <th class="text-center">Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                @foreach ($tasks as $task)
-                                                <tbody>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td width="45%">
-                                                        <strong>{{ $task->nama_task }}</strong>
-                                                    </td>
-                                                    <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->translatedFormat('l, d F Y') : '-' }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @if ($task->status == 'selesai')
-                                                            @if ($task->tgl_selesai && \Carbon\Carbon::parse($task->tgl_selesai)->gt(\Carbon\Carbon::parse($task->deadline)))
-                                                                <span class="badge bg-warning">Selesai (Telat)</span>
-                                                            @else
-                                                                <span class="badge bg-success">Selesai</span>
-                                                            @endif
-                                                        @else
-                                                            @if ($task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast())
-                                                                <span class="badge bg-danger">Telat</span>
-                                                            @else
-                                                                @if ($task->status == 'proses')
-                                                                    <span class="badge bg-info">Proses</span>
-                                                                @elseif ($task->status == 'belum')
-                                                                    <span class="badge bg-secondary">Belum</span>
-                                                                @endif
-                                                            @endif
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <a href="javascript:void(0);"
-                                                            class="btn btn-warning btn-sm updateTask"
-                                                            data-id="{{ $task->id }}"
-                                                            data-nama_task="{{ $task->nama_task }}"
-                                                            data-tgl_task="{{ $task->tgl_task }}"
-                                                            data-deadline_task="{{ $task->deadline }}"
-                                                            data-keterangan="{{ $task->keterangan }}"
-                                                            data-project="{{ $task->project_perusahaan_id }}"
-                                                            data-user="{{ Auth::user()->id }}"
-                                                            data-users="{{ json_encode($task->users_task->pluck('id')->toArray()) }}"
-                                                            data-upload="{{ $task->upload }}" data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop">
-                                                            <i data-bs-toggle="tooltip"
-                                                                data-bs-custom-class="tooltip-secondary"
-                                                                data-bs-placement="top" title="Update Task!"
-                                                                class="bi bi-pencil-square"></i>
-                                                        </a>
-                                                        <a href="{{ route('manajer.detail.task', $task->id) }}"
-                                                            class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                                            data-bs-custom-class="tooltip-secondary"
-                                                            data-bs-placement="top" title="Detail Task!"><i
-                                                                class='bx bx-detail'></i>
-                                                        </a>
-                                                        <form action="{{ route('manajer.delete.task', $task->id) }}"
-                                                            method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="btn btn-danger btn-sm delete-task"
-                                                                data-id="{{ $task->id }}"
-                                                                data-nama_task="{{ $task->nama_task }}"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-custom-class="tooltip-danger"
-                                                                data-bs-placement="top" title="Hapus Task!">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tbody>
-                                                @endforeach
-                                                @elseif (Auth::check() && (Auth::user()->role->slug = 'karyawan'))
-                                                <thead>
-                                                    <tr>
-                                                        <th>No</th>
-                                                        <th>Task</th>
-                                                        <th>Deadline</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                @foreach ($userstasks as $item)
-                                                <tbody>
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $item->task->nama_task }}</td>
-                                                        <td>
-                                                            {{ $item->task?->deadline ? Carbon\Carbon::parse($item->task?->deadline)->translatedFormat('l, d F Y') : '-' }}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            @if ($item->task?->status == 'selesai')
-                                                                @if ($item->task?->tgl_selesai && \Carbon\Carbon::parse($item->task?->tgl_selesai)->gt(\Carbon\Carbon::parse($item->task?->deadline)))
-                                                                    <span class="badge bg-warning">Selesai (Telat)</span>
-                                                                @else
-                                                                    <span class="badge bg-success">Selesai</span>
-                                                                @endif
-                                                            @else
-                                                                @if ($item->task?->deadline && \Carbon\Carbon::parse($item->task?->deadline)->isPast())
-                                                                    <span class="badge bg-danger">Telat</span>
-                                                                @else
-                                                                    @if ($item->task?->status == 'proses')
-                                                                        <span class="badge bg-info">Proses</span>
-                                                                    @elseif ($item->task?->status == 'belum')
-                                                                        <span class="badge bg-secondary">Belum</span>
-                                                                    @endif
-                                                                @endif
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <a href="{{ route('karyawan.detail.task', $item->task?->id) }}"
-                                                                class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                                                data-bs-custom-class="tooltip-secondary"
-                                                                data-bs-placement="top" title="Detail Task!">
-                                                                <i class='bx bx-detail'></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                                    
-                                                @endforeach
-                                                @endif
-                                        </table>
-                                    </div>
-                                    <div class="mg-lg-b-30"></div>
-                                </div>
-                            </div>
-                            <div class="tab-pane border-0 p-0" id="anggota" role="tabpanel">
-                                <div class="row">
-                                    @foreach ($user as $item)
-                                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
-                                            <div class="card custom-card border shadow-none">
-                                                <div class="card-body  user-lock text-center">
-                                                    <div class="d-flex justify-content-end">
-                                                        @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                                            <form
-                                                                action="{{ route('manajer.delete.anggota.project', $item->id) }}"
-                                                                method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-sm btn-icon btn-outline-danger rounded-circle border-0"
-                                                                    data-id="{{ $item->id }}"
-                                                                    data-nama="{{ $item->user->name }}"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-custom-class="tooltip-danger"
-                                                                    data-bs-placement="top"
-                                                                    title="Hapus Anggota Project!">
-                                                                    <i class="bi bi-x-circle"></i>
-                                                                </button>
-                                                            </form>
-                                                        @endif
-                                                    </div>
-                                                    <div class="">
-                                                        <div class="d-flex justify-content-center">
-                                                            <img alt="avatar" class="rounded-circle"
-                                                                src="{{ $item->user->dataDiri ? asset('uploads/' . $item->user->dataDiri->foto_user) : asset('/images/default-images.svg') }}">
-                                                        </div>
-                                                        <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">
-                                                            {{ $item->user->name }}</h5>
-                                                        <span
-                                                            class="text-muted">{{ $item->user->dataDiri->kepegawaian->subJabatan->nama_sub_jabatan ?? '' }}</span>
-                                                        <div class="d-flex justify-content-center">
-                                                            @foreach ($item->user->socialMedias as $item)
-                                                                <a href="{{ $item->link }}" target="_blank"
-                                                                    class="btn btn-icon btn-outline-primary rounded-circle border mt-3"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-custom-class="tooltip-primary"
-                                                                    data-bs-placement="bottom"
-                                                                    title="{{ $item->nama_social_media }}">
-                                                                    <i
-                                                                        class="bx bxl-{{ $item->nama_social_media }} fs-16 align-middle"></i>
-                                                                </a>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                    @if (Auth::check() && Auth::user()->role->slug == 'manager')
-                                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
-                                            <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdropAnggota">
-                                                <div
-                                                    class="card custom-card border shadow-none bg-info-gradient btn btn-info">
-                                                    <div class="card-body user-lock text-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="bi bi-plus-circle-fill mt-3" width="80"
-                                                            height="80" fill="white" viewBox="0 0 80 80">
-                                                            <path
-                                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
-                                                                transform="scale(5) translate(0,0)" />
-                                                        </svg>
-                                                        <h5 class="fs-16 mb-0 mt-3 text-white fw-semibold">Tambah</h5>
-                                                        <p class="text-white">Anggota</p>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-body">
+                    <ul id="eventBody" class="list-unstyled mb-0"></ul>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('script')
+    <style>
+        .flatpickr-calendar.open { z-index: 1060 !important; }
+    </style>
+    
     <script>
-        $(document).ready(function() {
-            let flatpickrInstance = flatpickr("#format-waktu_mulai", {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d F Y",
-                locale: 'id',
-                onChange: function(selectedDates, dateStr, instance) {
-                    document.getElementById("tgl_task").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
-            });
-            let flatpickrInstance1 = flatpickr("#format-deadline_task", {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d F Y",
-                locale: 'id',
-                onChange: function(selectedDates, dateStr, instance) {
-                    document.getElementById("deadline_task").value = dateStr;
-                },
-                appendTo: document.getElementById("staticBackdrop")
-            });
-            $(".update-project").click(function() {
-                $(".container-peringatan").slideUp(200);
-                $(".container-project").prop('hidden', false).slideDown(200);
-            })
-            $('.btn-edit-project').click(function() {
-                $('.btn-edit-project').hide();
-                $('.btn-batal-edit').prop('hidden', false);
-                $(".btn-submit-project").prop('hidden', false);
-
-                $('.btn-batal-edit').click(function() {
-                    $('.btn-edit-project').fadeIn(200);
-                    $('.btn-batal-edit').prop('hidden', true);
-                    $(".btn-submit-project").prop('hidden', true);
-                })
-            })
-            $(".tambahTask").click(function() {
-                $(".modal-title").text("Buat Task");
-                $("#formTask").attr("action", "/manajer/task/store");
-                $("#formTask input[name='_method']").remove();
-                $("#formTask").append('<input type="hidden" name="_method" value="POST">');
-
-                $("#nama_task, #keterangan, #tgl_task, #task_id").val('');
-                $("#user_id").val('{{ auth()->user()->id }}');
-                $("#tipe_task").val('task-project');
-
-                $("#previewImage, #previewPDF").hide().attr("src", "");
-                $("#detail_upload").html("");
-
-                $("#btnSubmit").text("Simpan").show();
-                $("#upload").prop("disabled", false);
-            });
-            $("#upload").change(function() {
-                let file = this.files[0];
-                if (file) {
-                    let fileUrl = URL.createObjectURL(file);
-                    let fileExtension = file.name.split('.').pop().toUpperCase();
-
-                    $("#previewImage, #previewPDF").hide().attr("src", "");
-                    $("#detail_upload").html("");
-
-                    if (file.name.match(/\.(jpg|jpeg|png)$/i)) {
-                        $("#previewImage").attr("src", fileUrl).show();
-                        $("#previewPDF").hide();
-                        $("#detail_upload").html(
-                            `<strong>Preview Gambar:</strong> <a href="${fileUrl}" target="_blank">Lihat Gambar</a>`
-                        );
-                    } else if (file.name.match(/\.pdf$/i)) {
-                        $("#previewPDF").attr("src", fileUrl).show();
-                        $("#previewImage").hide();
-                        $("#detail_upload").html(
-                            `<strong>Preview PDF:</strong> <a href="${fileUrl}" target="_blank">Lihat PDF</a>`
-                        );
-                    } else {
-                        $("#previewImage, #previewPDF").hide();
-                        $("#detail_upload").html(`<strong>File Terpilih:</strong> ${fileExtension}`);
+        var options = {
+            series: [{{ $progress }}],
+            chart: { type: 'radialBar', height: 300, offsetY: -10, sparkline: { enabled: true } },
+            plotOptions: { radialBar: { startAngle: -90, endAngle: 90, track: { background: "#e7e7e7", strokeWidth: '97%', margin: 5 }, dataLabels: { name: { show: false }, value: { offsetY: -2, fontSize: '22px', fontWeight: 'bold' } } } },
+            colors: ['{{ $progressColor }}'],
+            fill: { type: 'gradient', gradient: { shade: 'light', shadeIntensity: 0.4, inverseColors: false, opacityFrom: 1, opacityTo: 1, stops: [0, 50, 53, 91] } },
+            labels: ['Progress'],
+        };
+        var chart = new ApexCharts(document.querySelector("#progres-bar"), options);
+        chart.render();
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let calendarEl = document.getElementById('calendar2');
+            if (calendarEl) {
+                let calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                    events: @json($events),
+                    dateClick: function(info) {
+                        let selectedDate = info.dateStr;
+                        let filteredEvents = calendar.getEvents().filter(event => event.startStr.startsWith(selectedDate));
+                        let title = filteredEvents.length > 0 ? "Events on " + selectedDate : "No events on " + selectedDate;
+                        let body = filteredEvents.length > 0 ? filteredEvents.map(e => `<li><i class='ri-checkbox-blank-circle-fill text-primary me-2 fs-10'></i>${e.title}</li>`).join('') : '<li class="text-muted">No events.</li>';
+                        $('#eventTitle').text(title);
+                        $('#eventBody').html(body);
+                        new bootstrap.Modal(document.getElementById('infoModal')).show();
                     }
+                });
+                $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    if(e.target.href.includes("#timeline")) calendar.render();
+                });
+                calendar.render();
+            }
+        });
+    </script>
+    
+    <script>
+        let userTaskChoices = null; 
+        let fpTaskStart = null;
+        let fpTaskDeadline = null;
+
+        $(document).ready(function() {
+            const selectUserTaskEl = document.getElementById('user_modal');
+            const modalTaskEl = document.getElementById('modalTask');
+            const choicesInstances = {};
+            const generalSelects = ['#perusahaan_id', '#status', '#user2'];
+
+            generalSelects.forEach(id => {
+                const el = document.querySelector(id);
+                if(el) {
+                    const isDisabled = el.hasAttribute('disabled');
+                    if(isDisabled) el.removeAttribute('disabled');
+
+                    choicesInstances[id] = new Choices(el, { 
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        itemSelectText: '',
+                    });
+
+                    if(isDisabled) choicesInstances[id].disable();
                 }
             });
-            $(".updateTask").click(function(e) {
+            
+            if(modalTaskEl) {
+                modalTaskEl.addEventListener('shown.bs.modal', function () {
+                    if (selectUserTaskEl && !userTaskChoices) {
+                        userTaskChoices = new Choices(selectUserTaskEl, {
+                            removeItemButton: true,
+                            searchEnabled: true,
+                            shouldSort: false,
+                            itemSelectText: '',
+                            placeholder: true,
+                            placeholderValue: 'Pilih anggota task...'
+                        });
+                    }
+                });
+
+                modalTaskEl.addEventListener('hidden.bs.modal', function () {
+                    if (userTaskChoices) {
+                        userTaskChoices.destroy();
+                        userTaskChoices = null; 
+                    }
+                });
+            }
+            
+            $(".tambahTask").click(function() {
+                $(".modal-title").text("Buat Task Baru");
+                $("#formTask").attr("action", "{{ $config['action_create_task'] }}");
+                $("#formTask input[name='_method']").remove();
+                $("#formTask")[0].reset();
+                $("#tgl_task_modal, #deadline_task_modal, #task_id_modal").val('');
+                
+                if(selectUserTaskEl) {
+                    Array.from(selectUserTaskEl.options).forEach(option => option.selected = false);
+                }
+                
+                $("#previewImage, #previewPDF").hide();
+                $("#detail_upload").text("");
+            });
+
+            $(document).on('click', '.updateTask', function(e) {
                 e.preventDefault();
-
                 let id = $(this).data("id");
-                let nama = $(this).data("nama_task");
-                let tgl = $(this).data("tgl_task");
-                let deadline_task = $(this).data("deadline_task");
-                let keterangan = $(this).data("keterangan");
-                let project = $(this).data("project");
-                let user = $(this).data("user");
-                let upload = $(this).data("upload");
-                console.log(tgl);
-
+                
                 $(".modal-title").text("Update Task");
-
                 $("#formTask").attr("action", "/manajer/task/update/" + id);
                 $("#formTask input[name='_method']").remove();
                 $("#formTask").append('<input type="hidden" name="_method" value="PUT">');
 
-                $("#nama_task").val(nama);
-                $("#keterangan").val(keterangan);
-                flatpickrInstance.setDate(tgl, true);
-                flatpickrInstance1.setDate(deadline_task, true);
-                // $("#format-waktu_mulai").val(tgl);
-                $("#task_id").val(id);
-                $("#project_perusahaan_id").val(project);
-                $("#user_id").val(user);
-                $(".form-group:has(#user)").hide();
+                $("#nama_task_modal").val($(this).data("nama_task"));
+                $("#keterangan_modal").val($(this).data("keterangan"));
+                
+                let tgl = $(this).data("tgl_task");
+                let ddl = $(this).data("deadline_task");
+                if(fpTaskStart && tgl) { fpTaskStart.setDate(tgl, true); $("#tgl_task_modal").val(tgl); }
+                if(fpTaskDeadline && ddl) { fpTaskDeadline.setDate(ddl, true); $("#deadline_task_modal").val(ddl); }
 
-                $("#previewImage, #previewPDF").hide().attr("src", "");
-                $("#detail_upload").html("");
-
+                let users = $(this).data("users");
+                
+                if(selectUserTaskEl && users) {
+                    let userStringIds = users.map(String);
+                    Array.from(selectUserTaskEl.options).forEach(option => {
+                        option.selected = userStringIds.includes(option.value);
+                    });
+                }
+                
+                let upload = $(this).data("upload");
+                $("#previewImage, #previewPDF").hide();
                 if (upload) {
                     let fileUrl = "/uploads/" + upload;
-                    let fileExtension = upload.split('.').pop().toUpperCase();
-
-                    if (upload.match(/\.(jpg|jpeg|png)$/i)) {
-                        $("#previewImage").attr("src", fileUrl).show();
-                        $("#detail_upload").html(
-                            `<strong>Preview Gambar:</strong> <a href="${fileUrl}" target="_blank">Lihat Gambar</a>`
-                        );
-                    } else if (upload.match(/\.pdf$/i)) {
-                        $("#previewPDF").attr("src", fileUrl).show();
-                        $("#detail_upload").html(
-                            `<strong>Preview PDF:</strong> <a href="${fileUrl}" target="_blank">Lihat PDF</a>`
-                        );
-                    } else {
-                        $("#detail_upload").html(`<a href="${fileUrl}" target="_blank"><strong>Download File</strong> 
-                            <span class="text-warning">(File Berupa ${fileExtension})</span></a>`);
-                    }
+                    let ext = upload.split('.').pop().toLowerCase();
+                    if (['jpg','jpeg','png'].includes(ext)) $("#previewImage").attr("src", fileUrl).show();
+                    else if (ext === 'pdf') $("#previewPDF").attr("src", fileUrl).show();
+                    $("#detail_upload").html(`<a href="${fileUrl}" target="_blank" class="text-primary">Lihat File Lama</a>`);
                 } else {
-                    $("#detail_upload").text("Tidak ada file diunggah");
+                    $("#detail_upload").text("Tidak ada lampiran sebelumnya.");
                 }
+            });
+            
+            const dateConfig = { dateFormat: "Y-m-d", altInput: true, altFormat: "d F Y", locale: 'id', disableMobile: true };
+            const projectStart = "{{ $project->waktu_mulai }}";
+            const projectEnd = "{{ $project->deadline }}";
+            const fpMulai = flatpickr("#waktu_mulai", dateConfig);
+            const fpDeadline = flatpickr("#deadline", dateConfig);
+            const fpBerakhir = flatpickr("#waktu_berakhir", dateConfig);
 
-                $("#upload").prop("disabled", false);
-                $("#btnSubmit").text("Update").show();
+            fpTaskStart = flatpickr("#format-waktu_mulai", {
+                ...dateConfig,
+                minDate: projectStart, maxDate: projectEnd,
+                onChange: (selectedDates, dateStr) => {
+                    $("#tgl_task_modal").val(dateStr);
+                    if(dateStr && fpTaskDeadline) fpTaskDeadline.set('minDate', dateStr);
+                }
             });
-            $("#staticBackdrop").on("hidden.bs.modal", function() {
-                $(".form-group:has(#user)").show();
-                flatpickrInstance.clear();
-                flatpickrInstance1.clear();
+
+            fpTaskDeadline = flatpickr("#format-deadline_task", {
+                ...dateConfig,
+                minDate: projectStart, maxDate: projectEnd,
+                onChange: (selectedDates, dateStr) => $("#deadline_task_modal").val(dateStr)
             });
-            $(".delete-task").click(function(e) {
+            
+            $('.btn-edit-project').click(function(e) {
+                e.preventDefault(); 
+                $(this).hide();
+                $('.btn-batal-edit, .btn-submit-project').removeAttr('hidden');
+                
+                $('#nama_project').prop('disabled', false);
+                $('#waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', false);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = false;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = false;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = false;
+                
+                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].enable();
+                if(choicesInstances['#status']) choicesInstances['#status'].enable();
+            });
+
+            $('.btn-batal-edit').click(function(e) {
                 e.preventDefault();
-
-                let taskId = $(this).data("id");
-                let nama = $(this).data("nama_task");
-
+                $('.btn-edit-project').show();
+                $(this).attr('hidden', true);
+                $('.btn-submit-project').attr('hidden', true);
+                
+                $('#nama_project').prop('disabled', true);
+                $('#waktu_mulai, #deadline, #waktu_berakhir').prop('disabled', true);
+                
+                if(fpMulai && fpMulai.altInput) fpMulai.altInput.disabled = true;
+                if(fpDeadline && fpDeadline.altInput) fpDeadline.altInput.disabled = true;
+                if(fpBerakhir && fpBerakhir.altInput) fpBerakhir.altInput.disabled = true;
+                
+                if(choicesInstances['#perusahaan_id']) choicesInstances['#perusahaan_id'].disable();
+                if(choicesInstances['#status']) choicesInstances['#status'].disable();
+            });
+            
+            $(document).on('click', ".delete-task, .delete-anggota-project", function(e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
                 Swal.fire({
-                    title: "Konfirmasi Hapus Task!",
-                    text: "Apakah Kamu yakin ingin menghapus task '" + nama + "' ?",
+                    title: `Hapus Data?`,
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#cf0202",
-                    cancelButtonColor: "#3085d6",
+                    confirmButtonColor: "#d33",
                     confirmButtonText: "Ya, Hapus!",
                     cancelButtonText: "Batal"
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = $("<form>", {
-                            action: "/manajer/task/delete/" + taskId,
-                            method: "POST"
-                        }).append(
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_token",
-                                value: "{{ csrf_token() }}"
-                            }),
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_method",
-                                value: "DELETE"
-                            })
-                        );
-                        $("body").append(form);
-                        form.submit();
-                    }
-                })
-            })
-            $(".delete-anggota-project").click(function(e) {
-                e.preventDefault();
-
-                let id = $(this).data("id");
-                let nama = $(this).data("nama");
-
-                Swal.fire({
-                    title: "Konfirmasi Hapus Anggota Project!",
-                    text: "Apakah Kamu yakin ingin menghapus Anggota Project '" + nama + "' ?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#cf0202",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Ya, Hapus!",
-                    cancelButtonText: "Batal"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let form = $("<form>", {
-                            action: "/manajer/project/delete/anggota/" + id,
-                            method: "POST"
-                        }).append(
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_token",
-                                value: "{{ csrf_token() }}"
-                            }),
-                            $("<input>", {
-                                type: "hidden",
-                                name: "_method",
-                                value: "DELETE"
-                            })
-                        );
-                        $("body").append(form);
-                        form.submit();
-                    }
-                })
-            })
-        });
-    </script>
-    <script>
-        let calendarEl = document.getElementById('calendar2');
-
-        if (calendarEl) {
-            let calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: @json($events),
-                dateClick: function(info) {
-                    let selectedDate = info.dateStr;
-                    let filteredEvents = calendar.getEvents().filter(event =>
-                        event.startStr.startsWith(selectedDate)
-                    );
-
-                    let modalTitle = document.getElementById('eventTitle');
-                    let modalBody = document.getElementById('eventBody');
-
-                    if (filteredEvents.length > 0) {
-                        modalTitle.innerText = "Events pada tanggal " + selectedDate;
-                        modalBody.innerHTML = filteredEvents.map(event => `<li>${event.title}</li>`).join('');
-                    } else {
-                        modalTitle.innerText = `Tidak ada event pada ${selectedDate}`;
-                        modalBody.innerHTML = '<li class="text-muted">Tidak ada event.</li>';
-                    }
-                    let eventModal = new bootstrap.Modal(document.getElementById('infoModal'));
-                    eventModal.show();
-                }
-            });
-            calendar.render();
-        }
-    </script>
-    <script>
-        var options = {
-            series: [{{ $progress }}],
-            chart: {
-                type: 'radialBar',
-                height: 320,
-                offsetY: -20,
-                sparkline: {
-                    enabled: true
-                },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
-                },
-                tooltip: {
-                    enabled: true,
-                    y: {
-                        formatter: function(val) {
-                            return val + "% Complete";
-                        }
-                    }
-                }
-            },
-            plotOptions: {
-                radialBar: {
-                    startAngle: -90,
-                    endAngle: 90,
-                    track: {
-                        background: "#fff",
-                        strokeWidth: '97%',
-                        margin: 5,
-                        dropShadow: {
-                            enabled: false,
-                            top: 2,
-                            left: 0,
-                            color: '#999',
-                            opacity: 1,
-                            blur: 2
-                        }
-                    },
-                    dataLabels: {
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            offsetY: -2,
-                            fontSize: '22px'
-                        }
-                    }
-                }
-            },
-            colors: [
-                function({ value }) {
-                    if(value < 30) return '#ff0000';
-                    if(value < 70) return '#ffd700';
-                    return '#00ff00';
-                }
-            ],
-            grid: {
-                padding: {
-                    top: -10
-                }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'light',
-                    shadeIntensity: 0.4,
-                    inverseColors: false,
-                    opacityFrom: 1,
-                    opacityTo: 1,
-                    stops: [0, 50, 53, 91]
-                },
-            },
-            labels: ['Average Results'],
-        };
-        var chart = new ApexCharts(document.querySelector("#progres-bar"), options);
-        chart.render();
-
-        setInterval(() => {
-            fetch(`/project/{{ $project->id }}/progress`)
-                .then(response => response.json())
-                .then(data => {
-                    chart.updateSeries([data.progress]);
-                });
-        }, 5000);
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll("#user, #user2").forEach(function(element) {
-                new Choices(element, {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    noResultsText: "Tidak ada hasil yang cocok",
-                    noChoicesText: "Tidak ada pilihan tersedia"
+                    if (result.isConfirmed) form.submit();
                 });
             });
-            const dateConfig = {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d F Y",
-                locale: 'id',
-            };
-            flatpickr("#waktu_mulai", dateConfig);
-            flatpickr("#waktu_berakhir", dateConfig);
-            flatpickr("#deadline", dateConfig);
+            
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
         });
     </script>
 @endsection

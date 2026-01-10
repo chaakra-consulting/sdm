@@ -13,6 +13,7 @@ use App\Models\ProjectPerusahaan;
 use App\Models\UsersTask;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use function Symfony\Component\Clock\now;
 
 class ProjectController extends Controller
 {
@@ -39,7 +40,7 @@ class ProjectController extends Controller
             'nama_perusahaan' => 'required',
             'nama_project' => 'required',
             'waktu_mulai' => 'required',
-            'deadline' => 'required',
+            'deadline' => 'nullable|date',
             'user.*' => 'required',
         ]);
 
@@ -80,9 +81,11 @@ class ProjectController extends Controller
     public function detail(string $id)
     {
         $title = 'Detail Project';
-        $project = ProjectPerusahaan::where('id', $id)->with('tasks', 'tasks.users_task')->first();
+        $project = ProjectPerusahaan::where('id', $id)->with('tasks', 'tasks.users_task')->firstOrFail();
+        
         $userProject = UsersProject::where('id', $id)->with('project_perusahaan', 'user')->first();
         $tasks = Task::where('project_perusahaan_id', $id)->with('users_task')->get();
+        
         $userstasks = UsersTask::whereHas('task', function ($query) use ($id) {
             $query->where('project_perusahaan_id', $id);
         })
@@ -92,16 +95,18 @@ class ProjectController extends Controller
             'user.dataDiri.kepegawaian.subJabatan'
         ])
         ->get();
+
         $perusahaan = Perusahaan::all();
         $user = UsersProject::where('project_perusahaan_id', $id)
             ->with([
-                'user.socialMedias',
-                'user.dataDiri.kepegawaian.subJabatan',
+                'user',
             ])
             ->get();
+            
         $progress = $project->calculateProgress();
         $existingUserIds = UsersProject::where('project_perusahaan_id', $id)->pluck('user_id')->toArray();
         $users = User::whereNotIn('id', $existingUserIds)->get();
+        
         $events = [];
         if ($project->waktu_mulai) {
             $events[] = [
@@ -117,6 +122,31 @@ class ProjectController extends Controller
                 'color' => 'red'
             ];
         }
+        
+        if ($progress == 100 && $project->status != 'selesai') {
+            $project->update([
+                'status' => 'selesai',
+                'waktu_berakhir' => now(),
+                'progres' => 100
+            ]);
+            $project = $project->fresh();
+        } 
+
+        elseif ($progress == 100 && $project->status == 'selesai' && is_null($project->waktu_berakhir)) {
+             $project->update([
+                'waktu_berakhir' => now()
+            ]);
+            $project = $project->fresh();
+        }
+
+        elseif ($progress < 100 && $project->status == 'selesai') {
+            $project->update([
+                'status' => 'proses',
+                'waktu_berakhir' => null
+            ]);
+             $project = $project->fresh();
+        }
+
         return view('project.detail_project', compact(
             'project',
             'title',
@@ -133,37 +163,42 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
-        $project = ProjectPerusahaan::find($id);
+        $project = ProjectPerusahaan::findOrFail($id);
 
         $request->validate([
             'perusahaan_id' => 'required',
             'nama_project' => 'required',
-            'waktu_mulai' => 'required',
-            'waktu_berakhir' => 'nullable',
-            'deadline' => 'required',
+            'waktu_mulai' => 'required|date',
+            'waktu_berakhir' => 'nullable|date',
+            'deadline' => 'nullable|date',
             'status' => 'nullable',
         ]);
-
-        if ($request->waktu_mulai !== null) {
+        
+        if ($request->filled('status')) {
+            $status = $request->status;
+        } else {
             $waktuMulai = Carbon::parse($request->waktu_mulai);
             $hariIni = Carbon::today();
-            if ($waktuMulai->lessThanOrEqualTo($hariIni)) {
-                $status = "proses";
-            } else {
-                $status = "belum";
-            }
-        } else {
-            $status = "belum";
+            $status = ($waktuMulai->isPast() || $waktuMulai->isToday()) ? 'proses' : 'belum';
+        }
+
+        $waktuBerakhir = $request->waktu_berakhir;
+
+        if ($status == 'selesai' && empty($waktuBerakhir)) {
+            $waktuBerakhir = now();
+        }
+
+        elseif ($status != 'selesai' && empty($request->waktu_berakhir)) {
+            $waktuBerakhir = null;
         }
 
         $data = [
             'perusahaan_id' => $request->perusahaan_id,
-            'status' => $status ?? $project->status,
+            'status' => $status,
             'nama_project' => $request->nama_project,
             'waktu_mulai' => $request->waktu_mulai,
-            'waktu_berakhir' => $request->waktu_berakhir,
+            'waktu_berakhir' => $waktuBerakhir,
             'deadline' => $request->deadline,
-            'progres' => $project->progres,
         ];
 
         $project->update($data);
@@ -224,9 +259,10 @@ class ProjectController extends Controller
             return back()->with('error', 'Gagal menghapus Anggota Project.');
         }
     }
+
     public function storeFromExternal(Request $request)
     {
-        \Log::info('Data diterima dari CI3:', $request->all());
+        // \Log::info('Data diterima dari CI3:', $request->all());
         $request->validate([
             'nama_perusahaan' => 'required|string',
             'nama_project' => 'required|string',
