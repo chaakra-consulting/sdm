@@ -9,6 +9,9 @@
                     <h6 class="modal-title" id="laporanKinerjaModalLabel"></h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="alert-status" style="margin: 10px 10px 0 10px">
+
+                </div>
                 <form action="" method="POST" id="formLaporanKinerja" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
@@ -229,7 +232,6 @@
 @section('script')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
@@ -320,13 +322,14 @@
 
                         if (response.data.length > 0) {
                             response.data.forEach((detail, index) => {
+
                                 const csrf = document.querySelector(
                                     'meta[name="csrf-token"]').getAttribute(
                                     'content');
                                 const deleteUrl =
                                     `${routePrefix}/laporan_kinerja/delete/${detail.id}`;
 
-                                const row = `
+                                row = `
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td class="fw-semibold">${detail.nama_subtask ?? '-'}</td>
@@ -337,27 +340,41 @@
                                         </div>
                                     </td>
                                     <td>${new Date(detail.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
-                                    <td>${Math.floor(detail.durasi / 60)} Jam ${detail.durasi % 60} Menit</td>
-                                    <td class="text-wrap" style="max-width: 300px;">${detail.keterangan ?? '-'}</td>
+                                    <td>${Math.floor(detail.durasi / 60)} Jam ${detail.durasi % 60} Menit</td>`;
+                                //Check if the task is revised
+                                if (detail.status == 'revise') {
+                                    row +=
+                                        `<td class="text-wrap" style="max-width: 100px; width: 100px;"><span class="badge bg-warning-transparent"><i class="bi bi-exclamation me-1"></i>Revisi</span></td>`
+                                    // `<td class="text-wrap" style="max-width: 300px;">Revisi, ${detail.approval_notes ?? '-'}</td>`
+                                } else {
+                                    row +=
+                                        `<td class="text-wrap" style="max-width: 300px;">${detail.keterangan ?? '-'}</td>`
+                                }
+
+                                row += `
                                     <td class="text-center">
-                                        ${detail.is_active == 0 ? `
-                                                                                                                                                                                                                                                                                                                                                                    <div class="btn-group btn-group-sm">
-                                                                                                                                                                                                                                                                                                                                                                        <button class="btn btn-warning btn-sm updateSubTask" 
-                                                                                                                                                                                                                                                                                                                                                                            data-id="${detail.id}" 
-                                                                                                                                                                                                                                                                                                                                                                            data-subtask_id="${detail.sub_task_id}"
-                                                                                                                                                                                                                                                                                                                                                                            data-durasi="${detail.durasi}"
-                                                                                                                                                                                                                                                                                                                                                                            data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
-                                                                                                                                                                                                                                                                                                                                                                            <i class="bi bi-pencil-square"></i>
-                                                                                                                                                                                                                                                                                                                                                                        </button>
-                                                                                                                                                                                                                                                                                                                                                                        <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
-                                                                                                                                                                                                                                                                                                                                                                            <input type="hidden" name="_token" value="${csrf}">
-                                                                                                                                                                                                                                                                                                                                                                            <input type="hidden" name="_method" value="DELETE">
-                                                                                                                                                                                                                                                                                                                                                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                                                                                                                                                                                                                                                                                                                                                <i class="fas fa-trash"></i>
-                                                                                                                                                                                                                                                                                                                                                                            </button>
-                                                                                                                                                                                                                                                                                                                                                                        </form>
-                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                    ` : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
+                                        ${detail.is_active == 0 || detail.status == 'revise' ? `
+                                                                                                                                      <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
+                                                                                                                                                       <input type="hidden" name="_token" value="${csrf}">
+                                                                                                                                                       <input type="hidden" name="_method" value="DELETE">
+                                                                                                                                               <div class="btn-group btn-group-sm">
+                                                                                                                                                   <button class="btn btn-warning btn-sm updateSubTask" 
+                                                                                                                                                       data-id="${detail.id}"
+                                                                                                                                                       data-status  ="${detail.status}"
+                                                                                                                                                       data-status-reason = "${detail.approval_notes ?? '-'}"
+                                                                                                                                                       type="button"
+                                                                                                                                                       data-subtask_id="${detail.sub_task_id}"
+                                                                                                                                                       data-durasi="${detail.durasi}"
+                                                                                                                                                       data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
+                                                                                                                                                       <i class="bi bi-pencil-square"></i>
+                                                                                                                                                   </button>
+                                                                                                                                                   
+                                                                                                                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                                                                                                                          <i class="fas fa-trash"></i>
+                                                                                                                                                      </button>
+                                                                                                                                                      </div>
+                                                                                                                                                 </form>
+                                                                                                                                              ` : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
                                     </td>
                                 </tr>`;
                                 tableBody.append(row);
@@ -370,7 +387,7 @@
                     },
                     error: function(xhr) {
                         $('#datatable-basic tbody').html(
-                            `<tr><td colspan="7" class="text-center text-danger">Gagal memuat data.</td></tr>`
+                            `<tr><td colspan="7" class="text-center text-danger">Gagal memuat data. Status: ${xhr.status}</td></tr>`
                         );
                     }
                 });
@@ -472,9 +489,6 @@
 
             $('#tambahLaporanKinerja').click(function() {
 
-                console.log(selectedDateChoice);
-
-
                 $('#sub_task_id').empty(); // make sure delete all choices before showing the modal
                 $(".modal-title").text('Update Pekerjaan Baru');
                 $("#btnSimpanModal").text("Simpan");
@@ -510,15 +524,55 @@
 
 
             $(document).on('click', '.updateSubTask', function() {
+                const status = $(this).data('status');
+                const statusReason = $(this).data('status-reason');
                 const subtaskId = $(this).data('id');
-                const subTaskOptionId = $(this).data('subtask_id').toString();
+                const subTaskOptionId = $(this).data('subtask_id');
                 const durasi = $(this).data('durasi');
                 const keterangan = $(this).data('keterangan');
                 const jam = Math.floor(durasi / 60);
                 const menit = durasi % 60;
 
-                const modal = new bootstrap.Modal(document.getElementById('laporanKinerjaModal'));
-                modal.show();
+                console.log(status);
+
+
+
+
+                //load list of subtasks
+                var url = "{{ route('karyawan.laporan_kinerja.subtask.date', ':date') }}"
+                var subTasksChoice = $('#sub_task_id')
+                subTasksChoice.select2({
+                    theme: 'bootstrap-5',
+                    dataType: 'json',
+                    multiple: false,
+                    placeholder: 'Pilih Sub Task',
+                    dropdownParent: $('#laporanKinerjaModal'),
+                    ajax: {
+                        url: url.replace(':date', selectedDateChoice),
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data.data, function(item) {
+                                    return {
+                                        text: item.nama_subtask,
+                                        id: item.id
+                                    }
+                                })
+                            };
+                        },
+                    }
+                })
+
+                //show alert when status is revise
+                if (status == 'revise') {
+                    $('.alert-status').append(
+                        ` <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          <p class="alert-heading">Revisi ditemukan</p>
+                          <p>${statusReason}</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i
+                                class="bi bi-x me-1"></i></button>
+                    </div>`
+                    )
+                }
 
                 $(".modal-title").text('Edit Pekerjaan');
                 // subTaskSelect.setChoiceByValue(subTaskOptionId);
@@ -534,6 +588,8 @@
                 } else {
                     $("#formLaporanKinerja input[name='_method']").val('PUT');
                 }
+
+                $('#laporanKinerjaModal').modal('show');
             });
         })
     </script>
