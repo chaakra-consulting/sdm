@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ResponseFactory;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
@@ -11,11 +12,13 @@ use App\Models\DetailSubTask;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use function Symfony\Component\Clock\now;
 
 class LaporanKinerjaController extends Controller
 {
+    use ResponseFactory;
     private function getReportPeriod(Carbon $date = null)
     {
         $date = $date ?: Carbon::now();
@@ -33,10 +36,11 @@ class LaporanKinerjaController extends Controller
                 'task',
                 'task.tipe_task',
                 'lampiran',
-                'detail_sub_task'])
+                'detail_sub_task'
+            ])
             ->get();
         $today = Carbon::now();
-        $getDataUser = User::where('id', Auth::user()->id)->first();        
+        $getDataUser = User::where('id', Auth::user()->id)->first();
         $selectedMonth = $request->input('month', $today->month);
         $selectedYear = $request->input('year', $today->year);
 
@@ -66,20 +70,20 @@ class LaporanKinerjaController extends Controller
         }
         $dates = collect();
         $detailSubtasks = DetailSubTask::where('user_id', Auth::user()->id)
-        ->whereBetween('tanggal', [$startDate, $endDate])
-        ->with([
-            'subtask.task.tipe_task',
-            'subtask.lampiran'
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->with([
+                'subtask.task.tipe_task',
+                'subtask.lampiran'
             ])
             ->get();
-            $datesData = $detailSubtasks->groupBy(function ($item) {
-                return Carbon::parse($item->tanggal)->format('Y-m-d');
-            })->map(function ($group) {
-                return [
-                    'total_durasi' => $group->sum('durasi'),
-                    'jumlah_task' => $group->unique('sub_task_id')->count()
-                ];
-            });
+        $datesData = $detailSubtasks->groupBy(function ($item) {
+            return Carbon::parse($item->tanggal)->format('Y-m-d');
+        })->map(function ($group) {
+            return [
+                'total_durasi' => $group->sum('durasi'),
+                'jumlah_task' => $group->unique('sub_task_id')->count()
+            ];
+        });
         $current = $startDate->copy();
         $activeFound = false;
         $hariLibur = HariLibur::whereYear('tanggal', $selectedYear)
@@ -229,14 +233,14 @@ class LaporanKinerjaController extends Controller
     {
         $tanggal = $request->input('tanggal');
         $detailSubtasks = DetailSubTask::with([
-                'subtask.task.tipe_task',
-                'subtask.lampiran',
-                'subtask.task.project_perusahaan.perusahaan'
-            ])
+            'subtask.task.tipe_task',
+            'subtask.lampiran',
+            'subtask.task.project_perusahaan.perusahaan'
+        ])
             ->whereDate('tanggal', $tanggal)
             ->where('user_id', Auth::user()->id)
             ->get();
-            
+
         $data = $detailSubtasks->map(function ($detailSubtask) {
             $subtask = $detailSubtask->subtask;
             return [
@@ -247,6 +251,8 @@ class LaporanKinerjaController extends Controller
                 'nama_tipe' => $subtask->task->tipe_task->nama_tipe ?? '-',
                 'tanggal' => $detailSubtask->tanggal,
                 'durasi' => $detailSubtask->durasi,
+                'status' => $detailSubtask->status,
+                'approval_notes' => $detailSubtask->approval_notes ?? '',
                 'keterangan' => $detailSubtask->keterangan,
                 'is_active' => $detailSubtask->is_active,
                 'lampiran' => $subtask->lampiran->map(function ($lampiran) {
@@ -319,15 +325,15 @@ class LaporanKinerjaController extends Controller
         try {
             $detailSubTask = DetailSubTask::findOrFail($id);
             $user = Auth::user();
-            
+
             if ($user->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menyetujui laporan kinerja.');
             }
 
             $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
+                ->project_users()
+                ->where('user_id', $user->id)
+                ->exists();
 
             if (!$hasAccess) {
                 return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui laporan kinerja ini.');
@@ -355,15 +361,15 @@ class LaporanKinerjaController extends Controller
         try {
             $detailSubTask = DetailSubTask::findOrFail($id);
             $user = Auth::user();
-            
+
             if ($user->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menolak laporan kinerja.');
             }
 
             $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
+                ->project_users()
+                ->where('user_id', $user->id)
+                ->exists();
 
             if (!$hasAccess) {
                 return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak laporan kinerja ini.');
@@ -397,10 +403,10 @@ class LaporanKinerjaController extends Controller
             }
 
             $hasAccess = $detailSubTask->subtask->task->project_perusahaan
-                        ->project_users()
-                        ->where('user_id', $user->id)
-                        ->exists();
-                    
+                ->project_users()
+                ->where('user_id', $user->id)
+                ->exists();
+
             if (!$hasAccess) {
                 return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk meminta revisi laporan kinerja ini.');
             }
@@ -423,15 +429,15 @@ class LaporanKinerjaController extends Controller
         $title = 'Laporan Kinerja Menunggu Approval';
         $user = Auth::user();
         $getDataLaporan = DetailSubTask::where('status', 'submitted')
-                                            ->where('is_active', 1)
-                                            ->whereHas('subtask')
-                                        ->with([
-                                            'subtask.task.project_perusahaan',
-                                            'subtask.task.tipe_task',
-                                            'subtask.user'
-                                        ])
-                                            ->orderBy('created_at', 'desc')
-                                            ->paginate(10);
+            ->where('is_active', 1)
+            ->whereHas('subtask')
+            ->with([
+                'subtask.task.project_perusahaan',
+                'subtask.task.tipe_task',
+                'subtask.user'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('manajer.pending_approvals', compact('title', 'getDataLaporan'));
     }
@@ -451,7 +457,7 @@ class LaporanKinerjaController extends Controller
         $totalDurasiHariIni = DetailSubTask::where('user_id', $request->user_id)
             ->whereDate('tanggal', $request->tanggal)
             ->sum('durasi');
-        
+
         if ($totalDurasiHariIni + $durasiTotal > 480) {
             return redirect()->back()->with('error', 'Total durasi per hari tidak boleh lebih dari 8 jam.');
         }
@@ -500,11 +506,15 @@ class LaporanKinerjaController extends Controller
             'keterangan' => $request->keterangan,
             'durasi' => ($request->durasi_jam * 60) + $request->durasi_menit,
         ];
+
+        if ($detail->status == "revise") {
+            $data['status'] = "submitted";
+        }
         $detail->update($data);
 
         return redirect()->back()->with('success', 'Update Pekerjaan berhasil di edit');
     }
-    
+
     public function destroy($id)
     {
         $detail = DetailSubTask::findOrFail($id);
@@ -518,7 +528,7 @@ class LaporanKinerjaController extends Controller
             'month' => 'required|integer|between:1,12',
             'year' => 'required|integer|min:2000|max:2100'
         ]);
-        
+
         try {
             $date = Carbon::create($request->year, $request->month, 1);
             $startDate = Carbon::create($date->year, $date->month, 26)->subMonth();
@@ -534,7 +544,7 @@ class LaporanKinerjaController extends Controller
                 ]);
 
             if ($affectedRows > 0) {
-                return redirect()->back()->with('success', 'Berhasil mengirim ' . $affectedRows . ' laporan kinerja untuk periode ' . 
+                return redirect()->back()->with('success', 'Berhasil mengirim ' . $affectedRows . ' laporan kinerja untuk periode ' .
                     $startDate->translatedFormat('F Y') . ' - ' . $endDate->translatedFormat('F Y'));
             }
         } catch (\Exception $e) {
@@ -564,13 +574,35 @@ class LaporanKinerjaController extends Controller
                 ]);
 
             if ($affectedRows > 0) {
-                return redirect()->back()->with('success', 'Berhasil membatalkan pengiriman ' . $affectedRows . ' laporan kinerja untuk periode ' . 
+                return redirect()->back()->with('success', 'Berhasil membatalkan pengiriman ' . $affectedRows . ' laporan kinerja untuk periode ' .
                     $startDate->translatedFormat('F Y') . ' - ' . $endDate->translatedFormat('F Y'));
             }
 
             return redirect()->back()->with('error', 'Tidak ada laporan kinerja yang dapat dibatalkan pada periode ini');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal membatalkan laporan kinerja: ' . $e->getMessage());
+        }
+    }
+
+    function getTaskWithinDate(Request $request, $date)
+    {
+        $q = $request->get('q');
+        $like = "%$q%";
+        $user = Auth::user();
+        // create date until day and month now until 2031
+        $date = Carbon::now()->addYears(5);
+        if ($request->has('q') && $request->get('q') != '') {
+            $data = DB::select(
+                "SELECT * FROM `sub_tasks` WHERE ? BETWEEN (SELECT min(tgl_sub_task) FROM sub_tasks WHERE user_id = ?) AND ? and user_id = ? and status is NULL ",
+                [$date, $user->id, $date, $user->id,]
+            );
+            return $this->successResponseData("Data Within Date", $data);
+        } else {
+            $data = DB::select(
+                "SELECT * FROM `sub_tasks` WHERE ? BETWEEN (SELECT min(tgl_sub_task) FROM sub_tasks WHERE user_id = ?) AND ? and user_id = ? and status is NULL  and nama_subtask like ?",
+                [$date, $user->id, $date, $user->id, $like]
+            );
+            return $this->successResponseData("Data Within Date", $data);
         }
     }
 }

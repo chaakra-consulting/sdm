@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ResponseFactory;
 use Log;
 use Carbon\Carbon;
 use App\Models\Task;
@@ -17,6 +18,7 @@ use function Symfony\Component\Clock\now;
 
 class ProjectController extends Controller
 {
+    use ResponseFactory;
     public function show()
     {
         $title = 'Daftar Project';
@@ -26,10 +28,10 @@ class ProjectController extends Controller
         $users = User::all();
 
         return view('project.daftar_project', compact(
-            'title', 
-            'project', 
-            'perusahaan', 
-            'users', 
+            'title',
+            'project',
+            'perusahaan',
+            'users',
             'userProject'
         ));
     }
@@ -82,19 +84,19 @@ class ProjectController extends Controller
     {
         $title = 'Detail Project';
         $project = ProjectPerusahaan::where('id', $id)->with('tasks', 'tasks.users_task')->firstOrFail();
-        
+
         $userProject = UsersProject::where('id', $id)->with('project_perusahaan', 'user')->first();
         $tasks = Task::where('project_perusahaan_id', $id)->with('users_task')->get();
-        
+
         $userstasks = UsersTask::whereHas('task', function ($query) use ($id) {
             $query->where('project_perusahaan_id', $id);
         })
-        ->where('user_id', Auth::user()->id)
-        ->with([
-            'user.socialMedias',
-            'user.dataDiri.kepegawaian.subJabatan'
-        ])
-        ->get();
+            ->where('user_id', Auth::user()->id)
+            ->with([
+                'user.socialMedias',
+                'user.dataDiri.kepegawaian.subJabatan'
+            ])
+            ->get();
 
         $perusahaan = Perusahaan::all();
         $user = UsersProject::where('project_perusahaan_id', $id)
@@ -102,11 +104,11 @@ class ProjectController extends Controller
                 'user',
             ])
             ->get();
-            
+
         $progress = $project->calculateProgress();
         $existingUserIds = UsersProject::where('project_perusahaan_id', $id)->pluck('user_id')->toArray();
         $users = User::whereNotIn('id', $existingUserIds)->get();
-        
+
         $events = [];
         if ($project->waktu_mulai) {
             $events[] = [
@@ -122,7 +124,7 @@ class ProjectController extends Controller
                 'color' => 'red'
             ];
         }
-        
+
         if ($progress == 100 && $project->status != 'selesai') {
             $project->update([
                 'status' => 'selesai',
@@ -130,21 +132,17 @@ class ProjectController extends Controller
                 'progres' => 100
             ]);
             $project = $project->fresh();
-        } 
-
-        elseif ($progress == 100 && $project->status == 'selesai' && is_null($project->waktu_berakhir)) {
-             $project->update([
+        } elseif ($progress == 100 && $project->status == 'selesai' && is_null($project->waktu_berakhir)) {
+            $project->update([
                 'waktu_berakhir' => now()
             ]);
             $project = $project->fresh();
-        }
-
-        elseif ($progress < 100 && $project->status == 'selesai') {
+        } elseif ($progress < 100 && $project->status == 'selesai') {
             $project->update([
                 'status' => 'proses',
                 'waktu_berakhir' => null
             ]);
-             $project = $project->fresh();
+            $project = $project->fresh();
         }
 
         return view('project.detail_project', compact(
@@ -173,7 +171,7 @@ class ProjectController extends Controller
             'deadline' => 'nullable|date',
             'status' => 'nullable',
         ]);
-        
+
         if ($request->filled('status')) {
             $status = $request->status;
         } else {
@@ -186,9 +184,7 @@ class ProjectController extends Controller
 
         if ($status == 'selesai' && empty($waktuBerakhir)) {
             $waktuBerakhir = now();
-        }
-
-        elseif ($status != 'selesai' && empty($request->waktu_berakhir)) {
+        } elseif ($status != 'selesai' && empty($request->waktu_berakhir)) {
             $waktuBerakhir = null;
         }
 
@@ -307,5 +303,22 @@ class ProjectController extends Controller
             'success' => true,
             'data' => $project
         ], 201);
+    }
+
+    function saveSyncProject(Request $request)
+    {
+        $data = $request->only('data')['data'];
+        // dd($data);
+        foreach ($data as $key => $value) {
+            $perusahaan = Perusahaan::updateOrCreate(
+                ['nama_perusahaan' => $value['company_name']],
+                ['nama_perusahaan' => $value['company_name'], 'alamat' => '-', 'nama_pimpinan' => '-', 'kontak' => '-', 'gender' => '-']
+            );
+            ProjectPerusahaan::updateOrCreate(
+                ['perusahaan_id' => $perusahaan->id],
+                ['perusahaan_id' => $perusahaan->id, 'nama_project' => $value['title']]
+            );
+        }
+        return $this->successResponse("Data berhasil di sinkronisasi");
     }
 }
