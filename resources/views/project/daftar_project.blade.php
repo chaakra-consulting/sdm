@@ -19,7 +19,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="nama_perusahaan">Nama Instansi</label>
-                                <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan" required>
+                                <select class="form-control" data-trigger name="nama_perusahaan" id="nama_perusahaan"
+                                    required>
                                     <option selected disabled>Pilih Instansi</option>
                                     @foreach ($perusahaan as $item)
                                         <option value="{{ $item->id }}" required>{{ $item->nama_perusahaan }}</option>
@@ -31,7 +32,8 @@
                                     <label for="format-waktu_mulai">Tanggal Mulai</label>
                                     <div class="input-group">
                                         <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                        <input type="text" class="form-control" name="format-waktu_mulai" id="format-waktu_mulai" placeholder="Tanggal Mulai" required>
+                                        <input type="text" class="form-control" name="format-waktu_mulai"
+                                            id="format-waktu_mulai" placeholder="Tanggal Mulai" required>
                                         <input type="hidden" name="waktu_mulai" id="waktu_mulai">
                                     </div>
                                 </div>
@@ -39,7 +41,8 @@
                                     <label for="format-deadline">Deadline</label>
                                     <div class="input-group">
                                         <div class="input-group-text text-muted"> <i class="ri-calendar-line"></i> </div>
-                                        <input type="text" class="form-control" name="format-deadline" id="format-deadline" placeholder="Deadline">
+                                        <input type="text" class="form-control" name="format-deadline"
+                                            id="format-deadline" placeholder="Deadline">
                                         <input type="hidden" name="deadline" id="deadline">
                                     </div>
                                 </div>
@@ -47,7 +50,7 @@
                             <div class="form-group">
                                 <label for="user">Anggota Project</label>
                                 <select name="user[]" id="user" multiple class="form-control">
-                                    @foreach($users as $user)
+                                    @foreach ($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
@@ -64,10 +67,47 @@
     @endif
     <div class="container-fluid">
         @if (Auth::check() && Auth::user()->role->slug == 'manager')
+            <div class="modal fade" id="syncronizeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="syncronizeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h6 class="modal-title" id="syncronizeModalLabel"></h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div style="margin: 15px 15px 15px 15px">
+                            <p>Pilh project yang akan di import <span class="text-danger">*</span> </p>
+                            <div class="table-responsive">
+                                <table id="data-project" class="table table-bordered text-nowrap w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nama Project</th>
+                                            <th>Nama Instansi</th>
+                                            <th>Deadline</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+                            <button type="button" id="save-selected" class="btn btn-primary">Simpan</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <div class="mb-2">
                 <button type="button" class="btn btn-primary tambahDaftarProject" data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop">
                     Tambah Project
+                </button>
+                <button type="button" class="btn btn-success syncronize-show">
+                    Sinkronisasi
                 </button>
             </div>
         @endif
@@ -92,19 +132,24 @@
                         </thead>
                         <tbody>
                             @php
-                                $projectData = (Auth::check() && Auth::user()->role->slug == 'manager') ? $project : $userProject;
+                                $projectData =
+                                    Auth::check() && Auth::user()->role->slug == 'manager' ? $project : $userProject;
                             @endphp
 
                             @foreach ($projectData as $item)
                                 @php
-                                    $proj = (Auth::user()->role->slug == 'manager') ? $item : $item->project_perusahaan;
-                                    
+                                    $proj = Auth::user()->role->slug == 'manager' ? $item : $item->project_perusahaan;
+
                                     $badgeColor = 'secondary';
                                     $statusText = ucwords($proj->status ?? 'Belum');
 
                                     if ($proj->status == 'selesai') {
                                         $badgeColor = 'success';
-                                    } elseif ($proj->deadline && \Carbon\Carbon::parse($proj->deadline)->endOfDay()->isPast() && $proj->status != 'selesai') {
+                                    } elseif (
+                                        $proj->deadline &&
+                                        \Carbon\Carbon::parse($proj->deadline)->endOfDay()->isPast() &&
+                                        $proj->status != 'selesai'
+                                    ) {
                                         $badgeColor = 'danger';
                                         $statusText = 'Telat';
                                     } elseif ($proj->status == 'proses') {
@@ -118,7 +163,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $proj->nama_project }}</td>
                                     <td>{{ $proj->perusahaan->nama_perusahaan ?? '-' }}</td>
-                                    <td>{{ $proj->deadline ? \Carbon\Carbon::parse($proj->deadline)->translatedFormat('l, d F Y') : '-' }}</td>
+                                    <td>{{ $proj->deadline ? \Carbon\Carbon::parse($proj->deadline)->translatedFormat('l, d F Y') : '-' }}
+                                    </td>
                                     <td class="text-center">
                                         <span class="badge bg-{{ $badgeColor }}">
                                             {{ $statusText }}
@@ -127,27 +173,30 @@
                                     <td class="text-center">
                                         @php
                                             $detailRoute = '#';
-                                            if(Auth::user()->role->slug == 'manager') $detailRoute = route('manajer.detail.project', $proj->id);
-                                            elseif(Auth::user()->role->slug == 'karyawan') $detailRoute = route('karyawan.detail.project', $proj->id);
-                                            elseif(Auth::user()->role->slug == 'admin-sdm') $detailRoute = route('admin_sdm.detail.project', $proj->id);
+                                            if (Auth::user()->role->slug == 'manager') {
+                                                $detailRoute = route('manajer.detail.project', $proj->id);
+                                            } elseif (Auth::user()->role->slug == 'karyawan') {
+                                                $detailRoute = route('karyawan.detail.project', $proj->id);
+                                            } elseif (Auth::user()->role->slug == 'admin-sdm') {
+                                                $detailRoute = route('admin_sdm.detail.project', $proj->id);
+                                            }
                                         @endphp
 
-                                        <a href="{{ $detailRoute }}"
-                                            class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                            data-bs-custom-class="tooltip-secondary" data-bs-placement="top"
-                                            title="Detail Project!">
+                                        <a href="{{ $detailRoute }}" class="btn btn-secondary btn-sm"
+                                            data-bs-toggle="tooltip" data-bs-custom-class="tooltip-secondary"
+                                            data-bs-placement="top" title="Detail Project!">
                                             <i class='bx bx-detail'></i>
                                         </a>
 
                                         @if (Auth::user()->role->slug == 'manager')
-                                            <form action="{{ route('manajer.delete.project', $proj->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('manajer.delete.project', $proj->id) }}"
+                                                method="POST" class="d-inline">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm delete"
                                                     data-id="{{ $proj->id }}"
-                                                    data-nama_project="{{ $proj->nama_project }}" 
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-custom-class="tooltip-danger" data-bs-placement="top"
-                                                    title="Hapus Project!">
+                                                    data-nama_project="{{ $proj->nama_project }}"
+                                                    data-bs-toggle="tooltip" data-bs-custom-class="tooltip-danger"
+                                                    data-bs-placement="top" title="Hapus Project!">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -174,15 +223,102 @@
                 $("#formProject").attr('action', '/manajer/project/store');
             });
         })
+
+        function loadTable() {
+            var url = "{{ env('CRM_URL') }}:path";
+            $('#data-project').DataTable({
+                searching: true,
+                paging: true,
+                destroy: true,
+                "ordering": false,
+                // serverSide: true,
+                ajax: {
+                    "url": url.replace(":path", "api/project/list"),
+                    beforeSend: function() {
+                        $('#data-project tbody').html(
+                            `<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>`
+                        );
+                    },
+                },
+                // columnDefs: [{
+                //     target: 2,
+                //     visible: false,
+                // }],
+                columns: [{
+                        data: 'checkbox',
+                        render: function(data, type, row, meta) {
+                            return `<input type="checkbox" data-title="${row.title}" data-company_name="${row.company_name}" data-contract_date="${row.inv_contract_date}" name="data-project-list" id="data-project-list">`;
+                        }
+                    },
+                    {
+                        data: 'title',
+                        name: 'title'
+                    },
+                    {
+                        data: 'company_name',
+                        name: 'company_name'
+                    },
+                    {
+                        data: 'inv_contract_date',
+                        name: 'inv_contract_date'
+                    },
+                ],
+            });
+        }
+
+        $('.syncronize-show').on('click', function() {
+            loadTable();
+            $('#syncronizeModal').modal('show');
+        })
+
+        $('#save-selected').on('click', function() {
+            var rows_selected = $('#data-project input[type="checkbox"]:checked').map(function() {
+                data = [{
+                    'title': this.getAttribute('data-title'),
+                    'company_name': this.getAttribute('data-company_name'),
+                    'inv_contract_date': this.getAttribute('data-contract_date'),
+                }]
+                return data;
+            }).get();
+            $.ajax({
+                url: "{{ route('manajer.save.sync.project') }}",
+                type: 'POST',
+                data: {
+                    'data': rows_selected,
+                },
+                beforeSend: function() {
+                    $("#save-selected").empty()
+                    $("#save-selected").html(
+                        `<div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                            </div>`
+                    );
+                },
+                success: function(response) {
+                    $('#syncronizeModal').modal('hide');
+                    Swal.fire({
+                        title: "Berhasil",
+                        text: "Data berhasil di sinkronisasi",
+                        icon: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Iya",
+                    }).then((result) => {
+                        window.location.reload();
+                    });
+                }
+            })
+        })
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function(){
+        document.addEventListener("DOMContentLoaded", function() {
             flatpickr("#format-waktu_mulai", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
-                onChange: function(selectedDates, dateStr, instance){
+                onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("waktu_mulai").value = dateStr;
                 },
                 appendTo: document.getElementById("staticBackdrop")
@@ -192,7 +328,7 @@
                 altInput: true,
                 altFormat: "d F Y",
                 locale: 'id',
-                onChange: function(selectedDates, dateStr, instance){
+                onChange: function(selectedDates, dateStr, instance) {
                     document.getElementById("deadline").value = dateStr;
                 },
                 appendTo: document.getElementById("staticBackdrop")
@@ -200,7 +336,7 @@
         });
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             new Choices('#user', {
                 removeItemButton: true,
                 searchEnabled: true,

@@ -39,6 +39,7 @@ use App\Http\Controllers\LaporanKinerjaController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\StatusPekerjaanController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 //Auth Register & Login
 // Route::get('/register', function () {
@@ -300,6 +301,10 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::put('/karyawan/subtask/update/{id}', [SubTaskController::class, 'update'])->name('karyawan.subtask.update');
     Route::delete('/karyawan/subtask/delete/{id}', [SubTaskController::class, 'destroy'])->name('karyawan.subtask.delete');
 
+
+    //get subtask within date
+    Route::get('subtask/within-date/{date}', [LaporanKinerjaController::class, 'getTaskWithinDate'])->name('karyawan.subtask.within-date');
+
     // karyawan : laporan kinerja
     Route::get('/karyawan/laporan_kinerja', [LaporanKinerjaController::class, 'show'])->name('karyawan.laporan_kinerja');
     Route::post('/karyawan/laporan_kinerja/store', [LaporanKinerjaController::class, 'store'])->name('karyawan.laporan_kinerja.store');
@@ -397,6 +402,10 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
 
     // manajer : data transfer
     Route::get('/manajer/transfer-data', [ManajerController::class, 'dataTransfer'])->name('manajer.transfer.data');
+
+    //Syncronize project on crm
+    Route::get('/project/sync-project', [ProjectController::class, 'syncProject'])->name('manajer.sync.project');
+    Route::post('/project/save-sync-project', [ProjectController::class, 'saveSyncProject'])->name('manajer.save.sync.project');
 });
 
 Route::middleware(['auth', 'role:direktur'])->group(function () {
@@ -443,7 +452,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
-    
+
     Route::get('/fix-data-status', function () {
         $subTasks = SubTask::with('detail_sub_task')->get();
         $updatedCount = 0;
@@ -498,5 +507,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/karyawan/social_media/store', [SocialMediaController::class, 'store'])->name('karyawan.social_media.store');
     Route::put('/karyawan/social_media/update/{id}', [SocialMediaController::class, 'update'])->name('karyawan.social_media.update');
     Route::delete('/karyawan/social_media/delete/{id}', [SocialMediaController::class, 'destroy'])->name('karyawan.social_media.delete');
-
 });
