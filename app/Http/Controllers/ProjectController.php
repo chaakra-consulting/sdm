@@ -14,6 +14,8 @@ use App\Models\ProjectPerusahaan;
 use App\Models\UsersTask;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+
 use function Symfony\Component\Clock\now;
 
 class ProjectController extends Controller
@@ -23,7 +25,7 @@ class ProjectController extends Controller
     {
         $title = 'Daftar Project';
         $project = ProjectPerusahaan::with('perusahaan', 'project_users')->get();
-        $userProject = UsersProject::where('user_id', Auth::user()->id)->with('project_perusahaan.perusahaan')->get();
+        $userProject = UsersProject::where('user_id', Auth::user()->id)->with('project_perusahaan')->get();
         $perusahaan = Perusahaan::all();
         $users = User::all();
 
@@ -106,6 +108,7 @@ class ProjectController extends Controller
             ->get();
 
         $progress = $project->calculateProgress();
+
         $existingUserIds = UsersProject::where('project_perusahaan_id', $id)->pluck('user_id')->toArray();
         $users = User::whereNotIn('id', $existingUserIds)->get();
 
@@ -316,9 +319,19 @@ class ProjectController extends Controller
             );
             ProjectPerusahaan::updateOrCreate(
                 ['perusahaan_id' => $perusahaan->id],
-                ['perusahaan_id' => $perusahaan->id, 'nama_project' => $value['title']]
+                ['perusahaan_id' => $perusahaan->id, 'nama_project' => $value['title'], 'ref_bukukas_id' => $value['ref_bukukas_id']]
             );
         }
         return $this->successResponse("Data berhasil di sinkronisasi");
+    }
+
+    function getProjectProgress(Request $request)
+    {
+        $title = $request->get('title');
+        $company_name = $request->get('company_name');
+        $project = ProjectPerusahaan::whereHas('perusahaan', function ($query) use ($company_name) {
+            $query->where('nama_perusahaan', '=', $company_name);
+        })->where('nama_project', '=', $title)->select('progres')->first();
+        return $this->successResponseData("Progress Data", $project);
     }
 }

@@ -247,7 +247,7 @@
                 columns: [{
                         data: 'checkbox',
                         render: function(data, type, row, meta) {
-                            return `<input type="checkbox" data-title="${row.title}" data-company_name="${row.company_name}" data-contract_date="${row.inv_contract_date}" name="data-project-list" id="data-project-list">`;
+                            return `<input type="checkbox" data-title="${row.title}" data-ref-bukukas="${row.id}" data-company_name="${row.company_name}" data-contract_date="${row.inv_contract_date}" name="data-project-list" id="data-project-list">`;
                         }
                     },
                     {
@@ -277,6 +277,7 @@
                     'title': this.getAttribute('data-title'),
                     'company_name': this.getAttribute('data-company_name'),
                     'inv_contract_date': this.getAttribute('data-contract_date'),
+                    'ref_bukukas_id': this.getAttribute('data-ref-bukukas')
                 }]
                 return data;
             }).get();

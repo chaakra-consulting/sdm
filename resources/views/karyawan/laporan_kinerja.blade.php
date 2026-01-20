@@ -317,6 +317,7 @@
 
                         if (response.data.length > 0) {
                             response.data.forEach((detail, index) => {
+
                                 const csrf = document.querySelector(
                                     'meta[name="csrf-token"]').getAttribute(
                                     'content');
@@ -337,26 +338,45 @@
                                     <td>${Math.floor(detail.durasi / 60)} Jam ${detail.durasi % 60} Menit</td>
                                     <td class="text-wrap" style="max-width: 300px;">${detail.keterangan ?? '-'}</td>
                                     <td class="text-center">
-                                        ${detail.status != "submitted"  ? `
-                                                                                                                                                <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
-                                                                                                                                                    <div class="btn-group btn-group-sm">
-                                                                                                                                                        <button type="button" class="btn btn-warning btn-sm updateSubTask" 
-                                                                                                                                                            data-id="${detail.id}" 
-                                                                                                                                                            data-status="${detail.status}"
-                                                                                                                                                            data-notes="${detail.approval_notes}"
-                                                                                                                                                            data-subtask_id="${detail.sub_task_id}"
-                                                                                                                                                            data-durasi="${detail.durasi}"
-                                                                                                                                                            data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
-                                                                                                                                                            <i class="bi bi-pencil-square"></i>
-                                                                                                                                                        </button>
-                                                                                                                                                            <input type="hidden" name="_token" value="${csrf}">
-                                                                                                                                                            <input type="hidden" name="_method" value="DELETE">
-                                                                                                                                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                                                                                                                                <i class="fas fa-trash"></i>
-                                                                                                                                                            </button>
-                                                                                                                                                            </div>
-                                                                                                                                                            </form>
-                                                                                                                                                    ` : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
+                                        ${detail.status == "revise"  ? `
+                                                                 <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button type="button" class="btn btn-warning btn-sm updateSubTask" 
+                                                                        data-id="${detail.id}" 
+                                                                        data-status="${detail.status}"
+                                                                        data-notes="${detail.approval_notes}"
+                                                                        data-subtask_id="${detail.sub_task_id}"
+                                                                        data-durasi="${detail.durasi}"
+                                                                        data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
+                                                                        <i class="bi bi-pencil-square"></i>
+                                                                    </button>
+                                                                        <input type="hidden" name="_token" value="${csrf}">
+                                                                        <input type="hidden" name="_method" value="DELETE">
+                                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </button>
+                                                                        </div>
+                                                                        </form>
+                                                                    ` : detail.status == "draft" ?  `
+                                                                 <form action="${deleteUrl}" method="POST" class="d-inline form-delete-item">
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button type="button" class="btn btn-warning btn-sm updateSubTask" 
+                                                                        data-id="${detail.id}" 
+                                                                        data-status="${detail.status}"
+                                                                        data-notes="${detail.approval_notes}"
+                                                                        data-subtask_id="${detail.sub_task_id}"
+                                                                        data-durasi="${detail.durasi}"
+                                                                        data-keterangan="${detail.keterangan ? detail.keterangan.replace(/"/g, '&quot;') : ''}">
+                                                                        <i class="bi bi-pencil-square"></i>
+                                                                    </button>
+                                                                        <input type="hidden" name="_token" value="${csrf}">
+                                                                        <input type="hidden" name="_method" value="DELETE">
+                                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </button>
+                                                                        </div>
+                                                                        </form>
+                                                                    ` : detail.status == "approved" ? '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Approved</span>' : '<span class="badge bg-success-transparent"><i class="bi bi-check-circle me-1"></i>Terkirim</span>'}
                                     </td>
                                 </tr>`;
                                 tableBody.append(row);
