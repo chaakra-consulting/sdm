@@ -118,15 +118,8 @@ class GajiBulananController extends Controller
 
         $pegawais = DatadiriUser::whereHas('kepegawaian', function ($query) {
             $query->where('is_active', 1);
-<<<<<<< Updated upstream
-        })->whereHas('kepegawaian.statusPekerjaan', function ($query) {
-            $query->whereIn('slug', ['freelance','magang','surveyor']);
-        })->get(); 
-        
-=======
         })->get();
 
->>>>>>> Stashed changes
         $data = [
             'title' => 'Realisasi Gaji Bulanan',
             'pegawais' => $pegawais,
@@ -260,8 +253,8 @@ class GajiBulananController extends Controller
             ]);
 
             $userId = DatadiriUser::where('id', $request->pegawai_id)->value('user_id');
-            //$tanggalGaji = Carbon::create($request->year,$request->month,1);
-            $tanggalGaji = Carbon::create(2025, 4, 1);
+            $tanggalGaji = Carbon::create($request->year, $request->month, 1);
+            // $tanggalGaji = Carbon::create(2025, 4, 1);
             $hash = (string) Str::ulid();
 
             $data = [
