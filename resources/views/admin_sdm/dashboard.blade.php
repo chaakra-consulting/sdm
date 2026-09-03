@@ -1152,10 +1152,12 @@
 
             function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
                 let canvas = document.getElementById(canvasId);
+                const existingChart = Chart.getChart("barKehadiranValue");
 
-                if (chartInstance instanceof Chart) {
+                if (chartInstance instanceof Chart && existingChart) {
                     chartInstance.destroy();
                     chartInstance = null;
+                    existingChart.destroy();
                 }
 
                 const canvasParent = canvas.parentNode;
@@ -1217,25 +1219,7 @@
             fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        let selectedMonthBtnHari = document.getElementById('selectedMonthKehadiranPerHari');
-        let monthOptions = document.querySelectorAll('.month-option');
-
-        let selectedYearHari = document.getElementById('selectedYearKehadiranPerHari').textContent.trim();
-        let selectedMonth = selectedMonthBtnHari.textContent.trim();
-
-        // Event listener untuk memilih bulan
-        monthOptions.forEach(item => {
-            item.addEventListener('click', function () {
-                selectedMonth = this.getAttribute('data-month');
-                selectedMonthBtnHari.textContent = this.textContent; // Perbarui teks dropdown
-
-                // Panggil fungsi fetch untuk memperbarui grafik
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-            });
-        });
-    });
+    
 
 
     document.getElementById('applyFilter').addEventListener('click', function () {
