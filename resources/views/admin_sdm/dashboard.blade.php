@@ -30,6 +30,34 @@
                 <div class="card bg-primary-gradient text-fixed-white">
                     <div class="card-body text-fixed-white">
                         <div class="row">
+
+<div class="container-fluid">
+    <style>
+    #barKehadiranValuePerHari, #barKehadiranPercentagePerHari {
+        max-height: 300px;
+    }
+    </style>
+    <!-- row -->
+    <div class="row">
+        <div class="card-body">
+            <form action="" method="GET" class="ms-auto" style="max-width: 400px;">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                            <input type="text" class="form-control" autocomplete="false" readonly id="date_range" name="date_range" value="{{ old('date_range', $default_range) }}" placeholder="Pilih Range Tanggal">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" id="applyFilter" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div> 
+        <div class="col-lg-4">
+            <div class="card bg-primary-gradient text-fixed-white">
+                <div class="card-body text-fixed-white">
+                    <div class="row">
                             <div class="mt-0 text-center">
                                 <span class="text-fixed-white">{{ $widget_absensi[0]->nama }}</span>
                                 <h3 class="text-fixed-white mt-3">{{ $widget_absensi[0]->count }}%</h3>
@@ -296,6 +324,203 @@
     <script>
         const url = "{{ url('/admin_sdm/dashboard_chart') }}";
         const default_range = @json($default_range);
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Keterangan Absensi
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#keterangan-absensi-percentage" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#keterangan-absensi-value"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="keterangan-absensi-percentage" role="tabpanel">
+                            <div id="chart-wrapper-keteranganAbsensiPercentage" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="keteranganAbsensiPercentage" class="chartjs-chart" style="display:none;"></canvas>
+                            </div>
+                            
+                        </div>
+                    
+                        <div class="tab-pane text-muted" id="keterangan-absensi-value" role="tabpanel">
+                            <div id="chart-wrapper-keteranganAbsensiValue" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="keteranganAbsensiValue" class="chartjs-chart" style="display:none;"></canvas>
+                            </div>
+                            
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div> 
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Kehadiran Per Bulan
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#kehadiran-percentage" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#kehadiran-value"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <?php $defaultYear = $arr_year[0] ?? date('Y');?>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedYearKehadiranPerBulan">
+                                <?= $defaultYear ?>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($arr_year as $year): ?>
+                                    <li><a class="dropdown-item year-option" href="javascript:void(0);" data-target="bulan" data-year="<?= $year ?>"><?= $year ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranPercentage" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranPercentage" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>                        
+                        </div>
+                        <div class="tab-pane text-muted" id="kehadiran-value" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranValue" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranValue" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="col-xl-12">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        Data Kehadiran Per Hari
+                    </div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" role="tab"
+                                href="#kehadiran-percentage-per-hari" aria-selected="true">Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" role="tab" href="#kehadiran-value-per-hari"
+                                aria-selected="false">Value</a>
+                        </li>
+                    </ul>
+                </div>
+                <?php 
+                $defaultYear = $arr_year[0] ?? date('Y');
+                $defaultMonth = $month ?? '01';
+                $months = [
+                    '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+                    '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+                    '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                ];
+                ?>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title"></div>
+                    <ul class="nav nav-tabs nav-justified nav-style-1 d-sm-flex d-block" role="tablist">
+                        <div class="btn-group">
+                            <!-- Dropdown Tahun -->
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedYearKehadiranPerHari">
+                                <?= $defaultYear ?>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($arr_year as $year): ?>
+                                    <li><a class="dropdown-item year-option" href="javascript:void(0);" data-target="hari" data-year="<?= $year ?>"><?= $year ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                
+                        <div class="btn-group ms-2">
+                            <!-- Dropdown Bulan -->
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="selectedMonthKehadiranPerHari">
+                                <?= $months[$defaultMonth] ?>
+                            </button>
+                            
+                            <ul class="dropdown-menu">
+                                <?php foreach ($months as $key => $month): ?>
+                                    <li><a class="dropdown-item month-option" href="javascript:void(0);" data-target="hari" data-month="<?= $key ?>"><?= $month ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+                
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active text-muted" id="kehadiran-percentage-per-hari" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranPercentagePerHari" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranPercentagePerHari" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
+                        </div>
+                        <div class="tab-pane text-muted" id="kehadiran-value-per-hari" role="tabpanel">
+                            <div id="chart-wrapper-barKehadiranValuePerHari" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <canvas id="barKehadiranValuePerHari" class="chartjs-chart"style="display:none;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div class="col-xl-6">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <div class="card-title">Data Rata-Rata Jam Masuk</div>
+                </div>
+                <div class="card-body">
+                    <div id="chart-wrapper-barAbsensi" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <canvas id="barAbsensi" class="chartjs-chart"style="display:none;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+<script>
+    const url = "{{ url('/admin_sdm/dashboard_chart') }}";
+    const default_range = @json($default_range);
 
         const absensiHarianByKetValueUrl = `${url}?chart=value_absensi_harian_by_ket&date_range=${default_range}`;
         const absensiHarianByKetPercentageUrl = `${url}?chart=percentage_absensi_harian_by_ket&date_range=${default_range}`;
@@ -343,6 +568,19 @@
             loadChartData(absensiHarianByKetPercentageUrl, createDoughnutPercentageAbsensiHarian,
                 'keteranganAbsensiPercentage');
             loadChartData(pegawaiByJamMasukUrl, createBarChart, 'barAbsensi');
+    document.addEventListener("DOMContentLoaded", function () {
+
+        if (typeof flatpickr !== 'undefined') {
+        flatpickr("#date_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+    }
+        // 1. Load Standalone Charts
+        loadChartData(absensiHarianByKetValueUrl, createDoughnutValueAbsensiHarian, 'keteranganAbsensiValue');
+        loadChartData(absensiHarianByKetPercentageUrl, createDoughnutPercentageAbsensiHarian, 'keteranganAbsensiPercentage');
+        loadChartData(pegawaiByJamMasukUrl, createBarChart, 'barAbsensi');
 
             // 2. Initialize Filter-based Charts
             let selectedYearBtnBulan = document.getElementById('selectedYearKehadiranPerBulan');
@@ -938,4 +1176,7 @@
             });
         }
     </script>
+    
+</script>
+
 @endsection
