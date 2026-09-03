@@ -498,7 +498,7 @@
                             </svg>
                             <span class="side-menu__label">Laporan Kinerja</span>
                         </a>
-                    </li> --}}
+                    </li> 
 
                     <!-- Start::slide__category -->
                     <li class="slide__category"><span class="category-name">General</span></li>
