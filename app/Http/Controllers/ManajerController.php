@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CRMTicket;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\HariLibur;
 use App\Models\Perusahaan;
 use App\Models\Notification;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Models\DetailSubTask;
+use App\Models\ProjectCRM;
+use App\Models\ProjectPerusahaan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 
 class ManajerController extends Controller
 {
@@ -19,10 +25,10 @@ class ManajerController extends Controller
     {
         $cacheKey = "hari_kerja_{$start}_{$end}";
 
-        return Cache::remember($cacheKey, 3600, function () use ($start, $end){
+        return Cache::remember($cacheKey, 3600, function () use ($start, $end) {
             $libur = HariLibur::whereBetween('tanggal', [$start, $end])
                 ->pluck('tanggal')
-                ->map(function($tgl){
+                ->map(function ($tgl) {
                     return \Carbon\Carbon::parse($tgl)->format('Y-m-d');
                 })
                 ->toArray();
@@ -113,16 +119,16 @@ class ManajerController extends Controller
 
         return redirect()->back()->with('success', 'Instansi berhasil di hapus');
     }
-    
+
     public function dataTransfer()
     {
         $getDataPerusahaan = DB::connection('db_bukukas')->table('master_customers')
             ->select(
-                'id', 
-                'name', 
-                'address', 
-                'email', 
-                'contact', 
+                'id',
+                'name',
+                'address',
+                'email',
+                'contact',
                 'gender_contact'
             )
             ->get();
@@ -177,7 +183,7 @@ class ManajerController extends Controller
 
         return redirect()->back()->with('success', "Berhasil! {$insert} data baru ditambahkan, {$update} data disinkronisasi.");
     }
-    
+
     public function laporanKinerja()
     {
         $title = 'Laporan Kinerja';
@@ -192,14 +198,14 @@ class ManajerController extends Controller
         $getDataUser = User::with(
             'users_project.project_perusahaan',
             'users_task.task',
-            )->find($id);
+        )->find($id);
         $periode = $request->query('periode');
         $tanggalAwal = null;
         $tanggalAkhir = null;
-        if($periode){
+        if ($periode) {
             [$tanggalAwal, $tanggalAkhir] = explode('_', $periode);
         }
-        
+
         $getDataLaporan = $getDataUser->subtask()
             ->with([
                 'task' => function ($query) {
@@ -253,69 +259,68 @@ class ManajerController extends Controller
                 } catch (\Exception $e) {
                     continue;
                 }
-
             }
         }
 
         $groupedLaporan = collect($periodeMap);
         $statuses = [];
 
-            foreach ($groupedLaporan as $periodeKey => $data) {
-                $items = $data['items'];
-                $start = $data['start'];
-                $end = $data['end'];
-                
-                $tanggalKerja = $this->hariKerja($start->format('Y-m-d'), $end->format('Y-m-d'));
-                $tanggalApprove = [];
-                $tanggalDikirim = [];
-                $hasRevise = false;
-                $hasNull = false;
+        foreach ($groupedLaporan as $periodeKey => $data) {
+            $items = $data['items'];
+            $start = $data['start'];
+            $end = $data['end'];
 
-                foreach ($items as $item) {
-                    $subtask = $item['subtask'];
-                    $detail = $item['detail'];
+            $tanggalKerja = $this->hariKerja($start->format('Y-m-d'), $end->format('Y-m-d'));
+            $tanggalApprove = [];
+            $tanggalDikirim = [];
+            $hasRevise = false;
+            $hasNull = false;
 
-                    if ($detail->tanggal) {
-                        $tanggal = \Carbon\Carbon::parse($detail->tanggal)->format('Y-m-d');
-                        $tanggalDikirim[] = $tanggal;
-                        
-                        if ($subtask->status === 'approve') {
-                            $tanggalApprove[] = $tanggal;
-                        }
-                        
-                        if ($subtask->status === 'revise') {
-                            $hasRevise = true;
-                        }
-                        
-                        if ($subtask->status === null) {
-                            $hasNull = true;
-                        }
+            foreach ($items as $item) {
+                $subtask = $item['subtask'];
+                $detail = $item['detail'];
+
+                if ($detail->tanggal) {
+                    $tanggal = \Carbon\Carbon::parse($detail->tanggal)->format('Y-m-d');
+                    $tanggalDikirim[] = $tanggal;
+
+                    if ($subtask->status === 'approve') {
+                        $tanggalApprove[] = $tanggal;
+                    }
+
+                    if ($subtask->status === 'revise') {
+                        $hasRevise = true;
+                    }
+
+                    if ($subtask->status === null) {
+                        $hasNull = true;
                     }
                 }
-
-                $tanggalDikirim = array_unique($tanggalDikirim);
-                $tanggalApprove = array_unique($tanggalApprove);
-                $hariKerjaCount = count($tanggalKerja);
-                $dikirimCount = count($tanggalDikirim);
-                $approveCount = count($tanggalApprove);
-                $semuaDikirim = $dikirimCount === $hariKerjaCount;
-                $semuaApprove = $approveCount === $hariKerjaCount;
-
-                $statuses[$periodeKey] = [
-                    'perlu_revisi' => $hasRevise,
-                    'belum_dikirim' => !$semuaDikirim && !$hasRevise,
-                    'semua_approve' => $semuaApprove,
-                    'semua_dikirim' => $semuaDikirim,
-                    'hari_kerja_count' => $hariKerjaCount,
-                    'dikirim_count' => $dikirimCount,
-                    'approve_count' => $approveCount,
-                ];
             }
 
+            $tanggalDikirim = array_unique($tanggalDikirim);
+            $tanggalApprove = array_unique($tanggalApprove);
+            $hariKerjaCount = count($tanggalKerja);
+            $dikirimCount = count($tanggalDikirim);
+            $approveCount = count($tanggalApprove);
+            $semuaDikirim = $dikirimCount === $hariKerjaCount;
+            $semuaApprove = $approveCount === $hariKerjaCount;
+
+            $statuses[$periodeKey] = [
+                'perlu_revisi' => $hasRevise,
+                'belum_dikirim' => !$semuaDikirim && !$hasRevise,
+                'semua_approve' => $semuaApprove,
+                'semua_dikirim' => $semuaDikirim,
+                'hari_kerja_count' => $hariKerjaCount,
+                'dikirim_count' => $dikirimCount,
+                'approve_count' => $approveCount,
+            ];
+        }
+
         return view('manajer.list_laporan_kinerja', compact(
-            'title', 
-            'getDataUser', 
-            'getDataLaporan', 
+            'title',
+            'getDataUser',
+            'getDataLaporan',
             'groupedLaporan',
             'periode',
             'statuses'
@@ -333,9 +338,9 @@ class ManajerController extends Controller
             if (!preg_match('/\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}/', $periode)) {
                 abort(400, 'Format periode tidak valid');
             }
-            
+
             [$start, $end] = explode('_', $periode);
-            
+
             try {
                 $filterTanggal = [
                     Carbon::parse($start)->startOfDay(),
@@ -345,21 +350,21 @@ class ManajerController extends Controller
                 abort(400, 'Format tanggal tidak valid');
             }
         }
-        
+
         $getDataLaporan = DetailSubTask::query()
             ->with([
                 'subtask.task.tipe_task' => function ($query) {
                     $query->select('id', 'nama_tipe');
                 },
-                
+
                 'subtask.task.project_perusahaan' => function ($query) {
-                    $query->select('id', 'nama_project', 'perusahaan_id'); 
+                    $query->select('id', 'nama_project', 'perusahaan_id');
                 },
-                
+
                 'subtask.task.project_perusahaan.perusahaan' => function ($query) {
-                    $query->select('id', 'nama_perusahaan'); 
+                    $query->select('id', 'nama_perusahaan');
                 },
-                
+
                 'subtask.lampiran' => function ($query) {
                     $query->select('id', 'sub_task_id');
                 }
@@ -374,15 +379,15 @@ class ManajerController extends Controller
             ->orderBy('tanggal', 'asc')
             ->orderBy('created_at', 'asc')
             ->get();
-            
+
         $totalDurasiMenit = $getDataLaporan->sum('durasi');
-        
+
         $durasiJam = floor($totalDurasiMenit / 60);
         $durasiMenit = $totalDurasiMenit % 60;
 
         return view('manajer.detail_laporan_kinerja', compact(
-            'title', 
-            'getDataUser', 
+            'title',
+            'getDataUser',
             'getDataLaporan',
             'periode',
             'durasiJam',
@@ -396,8 +401,12 @@ class ManajerController extends Controller
             'approval_notes' => 'nullable|string|max:500'
         ]);
 
+
         try {
-            $detailSubTask = DetailSubTask::findOrFail($id);
+            $detailSubTask = DetailSubTask::with([
+                'user',
+                'subtask.task.project_perusahaan'
+            ])->findOrFail($id);
             if (Auth::user()->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menyetujui laporan kinerja.');
             }
@@ -408,6 +417,23 @@ class ManajerController extends Controller
                 'approved_at' => now(),
                 'approval_notes' => $request->approval_notes,
             ]);
+
+            // dd($detailSubTask[]);
+            //send and update the progress to crm
+            $ref_bukukas = $detailSubTask->subtask->task->project_perusahaan->ref_bukukas_id;
+            $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+            $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                [
+                    'progress' => $project->calculateProgress(),
+                ]
+            );
+
+            //send and update status to tickets
+            $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->first();
+            CRMTicket::where('project_id', '=', $project_crm->id)->update([
+                'status' => 'closed'
+            ]);
+
 
             return redirect()->back()->with('success', 'Laporan kinerja berhasil disetujui.');
         } catch (\Exception $e) {
@@ -427,13 +453,22 @@ class ManajerController extends Controller
             if (Auth::user()->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menolak laporan kinerja.');
             }
-            
+
             $detailSubTask->update([
                 'status' => 'rejected',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
                 'approval_notes' => $request->approval_notes,
             ]);
+
+            //send and update the progress to crm
+            $ref_bukukas = $detailSubTask->subtask->task->project_perusahaan->ref_bukukas_id;
+            $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+            $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                [
+                    'progress' => $project->calculateProgress(),
+                ]
+            );
 
             $this->kirimNotifikasi($detailSubTask, 'ditolak', $request->approval_notes);
 
@@ -454,14 +489,23 @@ class ManajerController extends Controller
             if (Auth::user()->role->slug !== 'manager') {
                 return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk meminta revisi laporan kinerja.');
             }
-            
+
             $detailSubTask->update([
                 'status' => 'revise',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
                 'approval_notes' => $request->approval_notes,
             ]);
-            
+
+            //send and update the progress to crm
+            $ref_bukukas = $detailSubTask->subtask->task->project_perusahaan->ref_bukukas_id;
+            $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+            $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                [
+                    'progress' => $project->calculateProgress(),
+                ]
+            );
+
             $this->kirimNotifikasi($detailSubTask, 'perlu direvisi', $request->approval_notes, 'laporan_kinerja_revised');
 
             return redirect()->back()->with('success', 'Permintaan revisi laporan kinerja berhasil dikirim.');
@@ -469,7 +513,7 @@ class ManajerController extends Controller
             return redirect()->back()->with('error', 'Gagal meminta revisi laporan kinerja: ' . $e->getMessage());
         }
     }
-    
+
     public function bulkApproveDetailSubTask(Request $request)
     {
         $request->validate(['detail_ids' => 'required|string']);
@@ -482,7 +526,7 @@ class ManajerController extends Controller
         try {
             $details = DetailSubTask::whereIn('id', $detailIds)
                 ->where('status', 'submitted')->get();
-                
+
             foreach ($details as $detail) {
                 $detail->update([
                     'status' => 'approved',
@@ -490,6 +534,15 @@ class ManajerController extends Controller
                     'approved_at' => now(),
                     'approval_notes' => $request->approval_notes,
                 ]);
+
+                //send and update the progress to crm
+                $ref_bukukas = $detail->subtask->task->project_perusahaan->ref_bukukas_id;
+                $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+                $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                    [
+                        'progress' => $project->calculateProgress(),
+                    ]
+                );
             }
 
             return redirect()->back()->with('success', count($details) . ' laporan kinerja berhasil disetujui.');
@@ -516,7 +569,16 @@ class ManajerController extends Controller
                     'approved_at' => now(),
                     'approval_notes' => $request->approval_notes,
                 ]);
-                $this->kirimNotifikasi($detail, 'ditolak', $request->approval_notes);   
+
+                //send and update the progress to crm
+                $ref_bukukas = $detail->subtask->task->project_perusahaan->ref_bukukas_id;
+                $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+                $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                    [
+                        'progress' => $project->calculateProgress(),
+                    ]
+                );
+                $this->kirimNotifikasi($detail, 'ditolak', $request->approval_notes);
             }
 
             return redirect()->back()->with('success', $details->count() . ' laporan kinerja berhasil ditolak.');
@@ -543,6 +605,15 @@ class ManajerController extends Controller
                     'approved_at' => now(),
                     'approval_notes' => $request->approval_notes,
                 ]);
+
+                //send and update the progress to crm
+                $ref_bukukas = $detail->subtask->task->project_perusahaan->ref_bukukas_id;
+                $project = ProjectPerusahaan::where('ref_bukukas_id', $ref_bukukas)->first();
+                $project_crm = ProjectCRM::where('project_bukukas_id', '=', $ref_bukukas)->update(
+                    [
+                        'progress' => $project->calculateProgress(),
+                    ]
+                );
                 $this->kirimNotifikasi($detail, 'perlu direvisi', $request->approval_notes, 'laporan_kinerja_revised');
             }
 
@@ -552,7 +623,8 @@ class ManajerController extends Controller
         }
     }
 
-    private function kirimNotifikasi($detail, $msg, $notes, $type = 'laporan_kinerja_rejected') {
+    private function kirimNotifikasi($detail, $msg, $notes, $type = 'laporan_kinerja_rejected')
+    {
         $karyawan = $detail->user;
 
         $namaProject = '-';
@@ -562,7 +634,7 @@ class ManajerController extends Controller
         }
 
         Notification::create([
-            'type' => $type, 
+            'type' => $type,
             'notifiable_type' => User::class,
             'notifiable_id' => $karyawan->id,
             'data' => [
@@ -575,7 +647,7 @@ class ManajerController extends Controller
                 'approved_by'       => Auth::user()->name,
                 'notes'             => $notes,
                 'action_url'        => route('karyawan.laporan_kinerja', ['tanggal' => $detail->tanggal])
-            ] 
+            ]
         ]);
     }
 
@@ -586,10 +658,10 @@ class ManajerController extends Controller
             'user',
             'subtask.task.project_perusahaan'
         ])
-        ->where('status', 'submitted')
-        ->where('is_active', 1)
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+            ->where('status', 'submitted')
+            ->where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('manajer.laporan_kinerja.pending', compact('title', 'getDataLaporan'));
     }

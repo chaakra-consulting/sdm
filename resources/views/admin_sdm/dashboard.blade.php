@@ -622,17 +622,12 @@
     <!-- /row -->
 </div>
 <script>
-
     const url = "{{ url('/admin_sdm/dashboard_chart') }}";
     const default_range = @json($default_range);
 
     const absensiHarianByKetValueUrl = `${url}?chart=value_absensi_harian_by_ket&date_range=${default_range}`;
     const absensiHarianByKetPercentageUrl = `${url}?chart=percentage_absensi_harian_by_ket&date_range=${default_range}`;
     const pegawaiByJamMasukUrl = `${url}?chart=bar_pegawai_by_jam_masuk&date_range=${default_range}`;
-    const kehadiranPerBulanValueUrl = `${url}?chart=bar_value_kehadiran_per_bulan&date_range=${default_range}`;
-    const kehadiranPerBulanPercentageUrl = `${url}?chart=bar_percentage_kehadiran_per_bulan&date_range=${default_range}`;
-    const kehadiranPerHariValueUrl = `${url}?chart=bar_value_kehadiran_per_hari&date_range=${default_range}`;
-    const kehadiranPerHariPercentageUrl = `${url}?chart=bar_percentage_kehadiran_per_hari&date_range=${default_range}`;
 
     var barKehadiranPerBulanValue = null;
     var barKehadiranPerBulanPercentage = null;
@@ -653,16 +648,16 @@
 
             const data = await response.json();
 
-            // panggil chart function
+            // Panggil chart function
             callback(elementId, data);
 
-            // sukses: sembunyikan spinner, tampilkan canvas
+            // Sukses: sembunyikan spinner, tampilkan canvas
             if (spinner) spinner.style.display = "none";
             if (canvas) canvas.style.display = "block";
         } catch (error) {
             console.error("Error load data chart:", chartUrl, error);
 
-            // ganti spinner jadi error message
+            // Ganti spinner jadi error message
             if (spinner) {
                 spinner.outerHTML = `<div class="text-danger small">Failed to load chart</div>`;
             }
@@ -670,18 +665,175 @@
     }
 
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Load Standalone Charts
         loadChartData(absensiHarianByKetValueUrl, createDoughnutValueAbsensiHarian, 'keteranganAbsensiValue');
         loadChartData(absensiHarianByKetPercentageUrl, createDoughnutPercentageAbsensiHarian, 'keteranganAbsensiPercentage');
         loadChartData(pegawaiByJamMasukUrl, createBarChart, 'barAbsensi');
-        loadChartData(kehadiranPerBulanValueUrl, createBarValueKehadiran, 'barKehadiranValue');
-        loadChartData(kehadiranPerBulanPercentageUrl, createBarPercentageKehadiran, 'barKehadiranPercentage');
-        loadChartData(kehadiranPerHariValueUrl, createBarValueKehadiranPerDay, 'barKehadiranValuePerHari');
-        loadChartData(kehadiranPerHariPercentageUrl, createBarPercentageKehadiranPerDay, 'barKehadiranPercentagePerHari');
+
+        // 2. Initialize Filter-based Charts
+        let selectedYearBtnBulan = document.getElementById('selectedYearKehadiranPerBulan');
+        let selectedYearBtnHari = document.getElementById('selectedYearKehadiranPerHari');
+
+        let yearOptionsBulan = document.querySelectorAll('.year-option[data-target="bulan"]');
+        let yearOptionsHari = document.querySelectorAll('.year-option[data-target="hari"]');
+
+        let monthOptions = document.querySelectorAll('.month-option');
+
+        let graphBarValueKehadiranPerBulan = null;
+        let graphBarPercentageKehadiranPerBulan = null;
+        let graphBarValueKehadiranPerHari = null;
+        let graphBarPercentageKehadiranPerHari = null;
+
+        let selectedYearBulan = selectedYearBtnBulan ? selectedYearBtnBulan.textContent.trim() : null;
+        let selectedYearHari = selectedYearBtnHari ? selectedYearBtnHari.textContent.trim() : null;
+        let selectedMonth = null;
+
+        // Event listener untuk memilih tahun pada grafik per bulan
+        yearOptionsBulan.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedYearBulan = this.getAttribute('data-year');
+                selectedYearBtnBulan.textContent = selectedYearBulan;
+                fetchChartDataPerBulan(selectedYearBulan, 'value');
+                fetchChartDataPerBulan(selectedYearBulan, 'percentage');
+            });
+        });
+
+        // Event listener untuk memilih tahun pada grafik per hari
+        yearOptionsHari.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedYearHari = this.getAttribute('data-year');
+                selectedYearBtnHari.textContent = selectedYearHari;
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+            });
+        });
+
+        // Event listener untuk memilih bulan pada grafik per hari
+        monthOptions.forEach(item => {
+            item.addEventListener('click', function () {
+                selectedMonth = this.getAttribute('data-month');
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
+            });
+        });
+
+        function fetchChartDataPerBulan(year, type) {
+            if(!year) return;
+            let url = type === 'value' 
+                ? `/get-kehadiran-data-value?year=${year}` 
+                : `/get-kehadiran-data-percentage?year=${year}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (type === 'value') {
+                        updateChart(data, 'barKehadiranValue', graphBarValueKehadiranPerBulan, updatedChart => {
+                            graphBarValueKehadiranPerBulan = updatedChart;
+                        });
+                    } else {
+                        updateChart(data, 'barKehadiranPercentage', graphBarPercentageKehadiranPerBulan, updatedChart => {
+                            graphBarPercentageKehadiranPerBulan = updatedChart;
+                        }, true);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function fetchChartDataPerHari(year, month, type) {
+            if(!year) return;
+            let url = type === 'value' 
+                ? `/get-kehadiran-data-value-per-hari?year=${year}&month=${month || ''}`
+                : `/get-kehadiran-data-percentage-per-hari?year=${year}&month=${month || ''}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (type === 'value') {
+                        updateChart(data, 'barKehadiranValuePerHari', graphBarValueKehadiranPerHari, updatedChart => {
+                            graphBarValueKehadiranPerHari = updatedChart;
+                        });
+                    } else {
+                        updateChart(data, 'barKehadiranPercentagePerHari', graphBarPercentageKehadiranPerHari, updatedChart => {
+                            graphBarPercentageKehadiranPerHari = updatedChart;
+                        }, true);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
+            // Destroy existing chart on this canvas dynamic ID
+            const existingChart = Chart.getChart(canvasId);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            // Destroy the specific tracked instance
+            if (chartInstance instanceof Chart) {
+                chartInstance.destroy();
+            }
+
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            var labels = data.map(item => item.day_text || item.month_text);
+            var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
+
+            var datasets = keteranganTypes.map(keterangan => ({
+                label: keterangan,
+                data: data.map(item => {
+                    let found = item.data.find(k => k.nama === keterangan);
+                    return found ? found.count : 0;
+                }),
+                backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
+            }));
+
+            let newChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: isPercentage ? {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    let value = tooltipItem.raw;
+                                    return `${tooltipItem.dataset.label}: ${value}%`;
+                                }
+                            }
+                        } : {}
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                    }
+                },
+            });
+
+            setChartInstance(newChart);
+        }
+
+        // Muat data awal berdasarkan tahun yang sudah dipilih di button
+        fetchChartDataPerBulan(selectedYearBulan, 'value');
+        fetchChartDataPerBulan(selectedYearBulan, 'percentage');
+        fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
+        fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
     });
 
-    // Fungsi untuk membuat Doughnut Chart
+    // --- CHART CREATION FUNCTIONS ---
+
     function createDoughnutValueAbsensiHarian(canvasId, data) {
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         var ctx = document.getElementById(canvasId).getContext('2d');
         var labels = data.map(item => item.nama);
         var counts = data.map(item => item.count);
@@ -706,9 +858,7 @@
                             usePointStyle: true,
                             boxWidth: 10,
                             padding: 15,
-                            font: {
-                                size: 12
-                            }
+                            font: { size: 12 }
                         }
                     },
                     datalabels: {  
@@ -716,10 +866,7 @@
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
                         borderRadius: 5, 
                         padding: 6,
-                        font: {
-                            weight: 'bold',
-                            size: 7
-                        },
+                        font: { weight: 'bold', size: 7 },
                         formatter: (value, ctx) => {
                             let label = ctx.chart.data.labels[ctx.dataIndex];
                             return `${label}\n${value}`;
@@ -727,18 +874,18 @@
                     }
                 }
             },
-            plugins: [ChartDataLabels] // Aktifkan plugin datalabels
+            plugins: [ChartDataLabels]
         });
     }
 
     function createDoughnutPercentageAbsensiHarian(canvasId, data) {
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         var ctx = document.getElementById(canvasId).getContext('2d');
         var labels = data.map(item => item.nama);
         var counts = data.map(item => item.count);
         var colors = data.map(item => item.color);
-
-        // Hitung total untuk persentase
-        var total = counts.reduce((sum, value) => sum + value, 0);
 
         new Chart(ctx, {
             type: 'doughnut',
@@ -759,9 +906,7 @@
                             usePointStyle: true,
                             boxWidth: 10,
                             padding: 15,
-                            font: {
-                                size: 12
-                            }
+                            font: { size: 12 }
                         }
                     },
                     tooltip: {
@@ -777,10 +922,7 @@
                         backgroundColor: 'rgba(0, 0, 0, 0.5)', 
                         borderRadius: 5,
                         padding: 6,
-                        font: {
-                            weight: 'bold',
-                            size: 7
-                        },
+                        font: { weight: 'bold', size: 7 },
                         formatter: (value, ctx) => {
                             let label = ctx.chart.data.labels[ctx.dataIndex];
                             return `${label}\n${value}%`;
@@ -793,10 +935,12 @@
     }
 
     function createBarChart(canvasId, data) { 
-        var ctx = document.getElementById(canvasId).getContext('2d');
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
 
+        var ctx = document.getElementById(canvasId).getContext('2d');
         var labels = data.map(item => item.nama);
-        var times = data.map(item => item.count * 3600); // Konversi jam desimal ke detik
+        var times = data.map(item => item.count * 3600); 
         var colors = data.map(item => item.color);
 
         new Chart(ctx, {
@@ -852,10 +996,7 @@
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
                         borderRadius: 5, 
                         padding: 5,
-                        font: {
-                            weight: 'bold',
-                            size: 10
-                        }
+                        font: { weight: 'bold', size: 10 }
                     }
                 }
             },
@@ -864,10 +1005,11 @@
     }
 
     function createBarValueKehadiran(canvasId, data) { 
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         const ctx = document.getElementById(canvasId).getContext('2d');
-
         var labels = data.map(item => item.month_text);
-
         var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
 
         var datasets = keteranganTypes.map(keterangan => {
@@ -883,34 +1025,21 @@
 
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
+            data: { labels: labels, datasets: datasets },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            },
+                plugins: { legend: { position: 'top' } },
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
         });
     }
 
     function createBarPercentageKehadiran(canvasId, data) { 
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         const ctx = document.getElementById(canvasId).getContext('2d');
-
         var labels = data.map(item => item.month_text);
-
         var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
 
         var datasets = keteranganTypes.map(keterangan => {
@@ -926,16 +1055,11 @@
 
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
+            data: { labels: labels, datasets: datasets },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },  
+                    legend: { position: 'top' },  
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
@@ -945,25 +1069,19 @@
                         }
                     }
                 },
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            },
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
         });
     }
 
     function createBarValueKehadiranPerDay(canvasId, data) { 
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         const ctx = document.getElementById(canvasId).getContext('2d');
-        ctx.width = 200;
-        ctx.height = 200;
-
+        ctx.canvas.width = 200;
+        ctx.canvas.height = 200;
         var labels = data.map(item => item.day_text);
-
         var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
 
         var datasets = keteranganTypes.map(keterangan => {
@@ -979,16 +1097,11 @@
 
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
+            data: { labels: labels, datasets: datasets },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },  
+                    legend: { position: 'top' },  
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
@@ -998,23 +1111,17 @@
                         }
                     }
                 },
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            },
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
         });
     }
 
     function createBarPercentageKehadiranPerDay(canvasId, data) { 
+        let existingChart = Chart.getChart(canvasId);
+        if (existingChart) existingChart.destroy();
+
         const ctx = document.getElementById(canvasId).getContext('2d');
-
         var labels = data.map(item => item.day_text);
-
         var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
 
         var datasets = keteranganTypes.map(keterangan => {
@@ -1030,16 +1137,11 @@
 
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
+            data: { labels: labels, datasets: datasets },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },  
+                    legend: { position: 'top' },  
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
@@ -1049,198 +1151,16 @@
                         }
                     }
                 },
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            },
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
         });
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        let selectedYearBtnBulan = document.getElementById('selectedYearKehadiranPerBulan');
-        let selectedYearBtnHari = document.getElementById('selectedYearKehadiranPerHari');
-
-        let yearOptionsBulan = document.querySelectorAll('.year-option[data-target="bulan"]');
-        let yearOptionsHari = document.querySelectorAll('.year-option[data-target="hari"]');
-
-        let monthOptions = document.querySelectorAll('.month-option');
-
-        let graphBarValueKehadiranPerBulan = null;
-        let graphBarPercentageKehadiranPerBulan = null;
-        let graphBarValueKehadiranPerHari = null;
-        let graphBarPercentageKehadiranPerHari = null;
-
-        let selectedYearBulan = selectedYearBtnBulan.textContent.trim();
-        let selectedYearHari = selectedYearBtnHari.textContent.trim();
-        let selectedMonth = null;
-
-        // Event listener untuk memilih tahun pada grafik per bulan
-        yearOptionsBulan.forEach(item => {
-            item.addEventListener('click', function () {
-                selectedYearBulan = this.getAttribute('data-year');
-                selectedYearBtnBulan.textContent = selectedYearBulan;
-                fetchChartDataPerBulan(selectedYearBulan, 'value');
-                fetchChartDataPerBulan(selectedYearBulan, 'percentage');
-            });
-        });
-
-        // Event listener untuk memilih tahun pada grafik per hari
-        yearOptionsHari.forEach(item => {
-            item.addEventListener('click', function () {
-                selectedYearHari = this.getAttribute('data-year');
-                selectedYearBtnHari.textContent = selectedYearHari;
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-            });
-        });
-
-            // Event listener untuk memilih bulan pada grafik per hari
-            monthOptions.forEach(item => {
-                item.addEventListener('click', function () {
-                    selectedMonth = this.getAttribute('data-month');
-                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                    fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-                });
-            });
-
-            function fetchChartDataPerBulan(year, type) {
-                let url = type === 'value' 
-                    ? `/get-kehadiran-data-value?year=${year}` 
-                    : `/get-kehadiran-data-percentage?year=${year}`;
-                
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (type === 'value') {
-                            updateChart(data, 'barKehadiranValue', graphBarValueKehadiranPerBulan, updatedChart => {
-                                graphBarValueKehadiranPerBulan = updatedChart;
-                            });
-                        } else {
-                            updateChart(data, 'barKehadiranPercentage', graphBarPercentageKehadiranPerBulan, updatedChart => {
-                                graphBarPercentageKehadiranPerBulan = updatedChart;
-                            }, true);
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            }
-
-            function fetchChartDataPerHari(year, month, type) {
-                let url = type === 'value' 
-                    ? `/get-kehadiran-data-value-per-hari?year=${year}&month=${month || ''}`
-                    : `/get-kehadiran-data-percentage-per-hari?year=${year}&month=${month || ''}`;
-                
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (type === 'value') {
-                            updateChart(data, 'barKehadiranValuePerHari', graphBarValueKehadiranPerHari, updatedChart => {
-                                graphBarValueKehadiranPerHari = updatedChart;
-                            });
-                        } else {
-                            updateChart(data, 'barKehadiranPercentagePerHari', graphBarPercentageKehadiranPerHari, updatedChart => {
-                                graphBarPercentageKehadiranPerHari = updatedChart;
-                            }, true);
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            }
-
-            function updateChart(data, canvasId, chartInstance, setChartInstance, isPercentage = false) {
-                let canvas = document.getElementById(canvasId);
-
-                if (chartInstance instanceof Chart) {
-                    chartInstance.destroy();
-                    chartInstance = null;
-                }
-
-                const canvasParent = canvas.parentNode;
-                canvas.remove();
-                const newCanvas = document.createElement('canvas');
-                newCanvas.id = canvasId;
-                canvasParent.appendChild(newCanvas);
-
-                canvas = document.getElementById(canvasId);
-                const ctx = canvas.getContext('2d');
-
-                var labels = data.map(item => item.day_text || item.month_text);
-                var keteranganTypes = [...new Set(data.flatMap(item => item.data.map(k => k.nama)))];
-
-                var datasets = keteranganTypes.map(keterangan => ({
-                    label: keterangan,
-                    data: data.map(item => {
-                        let found = item.data.find(k => k.nama === keterangan);
-                        return found ? found.count : 0;
-                    }),
-                    backgroundColor: data.find(item => item.data.find(k => k.nama === keterangan))?.data.find(k => k.nama === keterangan)?.color || 'rgba(200, 200, 200, 0.8)'
-                }));
-
-                let newChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: datasets
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: isPercentage ? {
-                                callbacks: {
-                                    label: function (tooltipItem) {
-                                        let value = tooltipItem.raw;
-                                        return `${tooltipItem.dataset.label}: ${value}%`;
-                                    }
-                                }
-                            } : {}
-                        },
-                        scales: {
-                            x: { stacked: true },
-                            y: { stacked: true }
-                        }
-                    },
-                });
-
-                setChartInstance(newChart);
-            }
-
-            // Muat data awal berdasarkan tahun yang sudah dipilih di button
-            fetchChartDataPerBulan(selectedYearBulan, 'value');
-            fetchChartDataPerBulan(selectedYearBulan, 'percentage');
-            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-            fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        let selectedMonthBtnHari = document.getElementById('selectedMonthKehadiranPerHari');
-        let monthOptions = document.querySelectorAll('.month-option');
-
-        let selectedYearHari = document.getElementById('selectedYearKehadiranPerHari').textContent.trim();
-        let selectedMonth = selectedMonthBtnHari.textContent.trim();
-
-        // Event listener untuk memilih bulan
-        monthOptions.forEach(item => {
-            item.addEventListener('click', function () {
-                selectedMonth = this.getAttribute('data-month');
-                selectedMonthBtnHari.textContent = this.textContent; // Perbarui teks dropdown
-
-                // Panggil fungsi fetch untuk memperbarui grafik
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'value');
-                fetchChartDataPerHari(selectedYearHari, selectedMonth, 'percentage');
-            });
-        });
-    });
-
+    // --- OTHER LISTENERS ---
 
     document.getElementById('applyFilter').addEventListener('click', function () {
         const dateRange = document.getElementById('date_range').value;
-        const baseUrl = `/admin_sdm/dashboard/`; // Bangun URL dinamis
+        const baseUrl = `/admin_sdm/dashboard/`; 
 
         let queryParams = [];
         if (dateRange) {
@@ -1250,15 +1170,16 @@
         const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
         const finalUrl = baseUrl + queryString;
 
-        // Redirect to the filtered URL
         window.location.href = finalUrl;
     });
 
-    flatpickr("#date_range", {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        allowInput: true
-    });
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr("#date_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+    }
 </script>
 
 @endsection
